@@ -222,6 +222,7 @@ export function humanType(type: string): string {
     IncompatibleTypes: 'Typfehler',
     NonStaticFromStatic: 'Nicht-statischer Zugriff aus statischem Kontext',
     NoMainMethod: 'Keine main-Methode',
+    UnsupportedLibrary: 'Nicht unterstützter Teil der Java-Bibliothek',
   }
   return map[type] ?? type
 }

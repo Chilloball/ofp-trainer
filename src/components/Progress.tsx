@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from 'react'
 import { EXAM_DATE, TOPICS, TOPIC_BY_ID, examWeight } from '@/content/topics'
 import { useStore } from '@/lib/store'
 import { daysUntil } from '@/lib/srs'
+import { lastDayKeys } from '@/lib/day'
 import { AnimatedNumber, Dialog, Loading, Reveal, Segmented } from './ui'
 import { ActivityCalendar, Meter, PointsBar, Ring, Sparkline, toneFor } from './viz'
 import { Page } from './Shell'
@@ -323,10 +324,5 @@ export function ProgressPage() {
 }
 
 function lastDays(days: Record<string, { done: number }>, n: number) {
-  const out: { date: string; done: number }[] = []
-  for (let i = n - 1; i >= 0; i--) {
-    const iso = new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10)
-    out.push({ date: iso, done: days[iso]?.done ?? 0 })
-  }
-  return out
+  return lastDayKeys(n).map((key) => ({ date: key, done: days[key]?.done ?? 0 }))
 }

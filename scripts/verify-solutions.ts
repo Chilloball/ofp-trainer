@@ -21,6 +21,7 @@ const norm = (s: string) =>
 
 let checked = 0
 let ok = 0
+let unsupported = 0
 const fails: string[] = []
 
 for (const f of readdirSync(DIR).filter((x) => x.startsWith('java-') && x.endsWith('.json'))) {
@@ -36,7 +37,12 @@ for (const f of readdirSync(DIR).filter((x) => x.startsWith('java-') && x.endsWi
     checked++
     const r = runJava(source, { stdin: ex.stdin ?? '', maxMillis: 3000, allowSnippet: false })
     if (norm(r.stdout) === norm(ex.expectedOutput)) ok++
-    else {
+    else if (r.exception?.type === 'UnsupportedLibrary') {
+      /* Dateien, Netzwerk und Fenster gibt es im Browser nicht — solche
+         Aufgaben werden nur gelesen, nicht ausgeführt. */
+      unsupported++
+      checked--
+    } else {
       fails.push(
         `✗ ${ex.id} (${ex.type})\n  erwartet: ${JSON.stringify(norm(ex.expectedOutput).slice(0, 220))}\n` +
           `  Compiler: ${JSON.stringify(norm(r.stdout).slice(0, 220))}` +
@@ -46,5 +52,11 @@ for (const f of readdirSync(DIR).filter((x) => x.startsWith('java-') && x.endsWi
   }
 }
 
-console.log(`Java-Musterlösungen: ${ok}/${checked} erzeugen exakt die hinterlegte Ausgabe`)
-if (fails.length) console.log('\n' + fails.join('\n\n'))
+console.log(
+  `Java-Musterlösungen: ${ok}/${checked} erzeugen exakt die hinterlegte Ausgabe` +
+    (unsupported ? ` (${unsupported} nutzen Bibliotheksteile, die es im Browser nicht gibt)` : ''),
+)
+if (fails.length) {
+  console.log('\n' + fails.join('\n\n'))
+  process.exit(1)
+}

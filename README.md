@@ -33,12 +33,14 @@ npm run check
 
 Führt nacheinander aus:
 
-| Skript             | prüft                                                                       |
-| ------------------ | --------------------------------------------------------------------------- |
-| `content`          | Aufgaben, Klausuren und Baupläne auf Vollständigkeit und Konsistenz          |
-| `typecheck`        | TypeScript ohne Fehler                                                      |
-| `test:java`        | 52 Testfälle für den Java-Compiler (Semantik, Fehlermeldungen, Grenzfälle)   |
-| `verify:java`      | alle Java-Musterlösungen erzeugen exakt die hinterlegte Ausgabe             |
+| Skript        | prüft                                                                          |
+| ------------- | ------------------------------------------------------------------------------ |
+| `content`     | Aufgaben, Klausuren und Baupläne auf Vollständigkeit und Konsistenz             |
+| `typecheck`   | TypeScript ohne Fehler                                                         |
+| `lint`        | ESLint über App und Skripte, inklusive Hook-Abhängigkeiten                      |
+| `test:java`   | 52 Testfälle für den Java-Compiler (Semantik, Fehlermeldungen, Grenzfälle)      |
+| `test:logic`  | 94 Prüfungen zu Tagesrechnung, Sicherungen, Aufgabenauswahl und Klausurbauplänen |
+| `verify:java` | alle Java-Musterlösungen erzeugen exakt die hinterlegte Ausgabe                 |
 
 Zusätzlich, wenn lokal ein JDK installiert ist:
 

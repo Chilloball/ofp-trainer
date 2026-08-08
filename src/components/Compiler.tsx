@@ -209,6 +209,8 @@ export function Compiler() {
       setCode(EXAMPLES[lang][0].code)
       setStdin(EXAMPLES[lang][0].stdin ?? '')
     }
+    /* Läuft bewusst nur einmal: danach gehört das Feld dem Nutzer, ein
+       erneutes Überschreiben würde seine Eingabe verwerfen. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready])
 
@@ -227,8 +229,7 @@ export function Compiler() {
     if (!ready || !loaded.current) return
     const t = setTimeout(() => setScratch(lang, code), 900)
     return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, lang, ready])
+  }, [code, lang, ready, setScratch])
 
   const run = useCallback(async () => {
     if (busy) return

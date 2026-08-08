@@ -542,7 +542,6 @@ public class Main { public static void main(String[] a) throws Exception {
 ]
 
 let passed = 0
-let failed = 0
 const failures: string[] = []
 
 for (const c of cases) {
@@ -565,7 +564,6 @@ for (const c of cases) {
 
   if (ok) passed++
   else {
-    failed++
     failures.push(
       `✗ ${c.name}\n  erwartet: ${JSON.stringify(c.expect)}\n  bekommen: ${JSON.stringify(actual)}`,
     )

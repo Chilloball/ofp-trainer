@@ -465,8 +465,7 @@ export function staticMethod(cls: string, name: string, args: Val[], ctx: Native
     switch (name) {
       case 'currentTimeMillis': return jlong(BigInt(Date.now()))
       case 'nanoTime': return jlong(BigInt(Math.round(performance.now() * 1e6)))
-      case 'exit': ctx.exit(args.length ? Math.trunc(n(0)) : 0)
-      // eslint-disable-next-line no-fallthrough
+      case 'exit': return ctx.exit(args.length ? Math.trunc(n(0)) : 0)
       case 'lineSeparator': return jstr('\n')
       case 'arraycopy': {
         const src = args[0]
@@ -1221,6 +1220,47 @@ export function constructNative(cls: string, args: Val[], ctx: NativeCtx): Val |
     case 'Thread': return T('Thread', { name: 'Thread-0', runnable: args[0] })
   }
   return undefined
+}
+
+/* ------------------ Bewusst nicht unterstützte Teile ------------------ */
+
+/**
+ * Diese Klassen gehören zu Java, lassen sich im Browser aber nicht sinnvoll
+ * nachbilden. Statt einer nichtssagenden „Symbol nicht gefunden"-Meldung
+ * bekommt man hier den Grund und weiß, dass nicht der eigene Code schuld ist.
+ */
+export const UNSUPPORTED_CLASSES: Record<string, string> = {
+  File: 'Dateizugriff',
+  FileReader: 'Dateizugriff',
+  FileWriter: 'Dateizugriff',
+  FileInputStream: 'Dateizugriff',
+  FileOutputStream: 'Dateizugriff',
+  BufferedReader: 'Dateizugriff',
+  BufferedWriter: 'Dateizugriff',
+  PrintWriter: 'Dateizugriff',
+  ObjectInputStream: 'Serialisierung',
+  ObjectOutputStream: 'Serialisierung',
+  Serializable: 'Serialisierung',
+  Socket: 'Netzwerk',
+  ServerSocket: 'Netzwerk',
+  DatagramSocket: 'Netzwerk',
+  URL: 'Netzwerk',
+  HttpURLConnection: 'Netzwerk',
+  JFrame: 'grafische Oberflächen',
+  JPanel: 'grafische Oberflächen',
+  JButton: 'grafische Oberflächen',
+  Files: 'Dateizugriff',
+  Paths: 'Dateizugriff',
+}
+
+export function unsupportedMessage(name: string): string | null {
+  const area = UNSUPPORTED_CLASSES[name]
+  if (!area) return null
+  return (
+    `${name} gehört zum Bereich ${area}. Den gibt es im Browser nicht — ` +
+    'dieser Compiler kennt keine Dateien, kein Netzwerk und keine Fenster. ' +
+    'Die Aufgabe lässt sich hier nicht ausführen; vergleiche deine Lösung mit der Musterlösung.'
+  )
 }
 
 /* -------------------- Eingebaute Ausnahmeklassen -------------------- */

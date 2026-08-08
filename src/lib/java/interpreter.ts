@@ -4,7 +4,7 @@ import type {
 } from './ast'
 import {
   BUILTIN_EXCEPTIONS, STATIC_CLASSES, constructNative, iterableToArray, javaFormat,
-  nativeMethod, staticField, staticMethod, stringMethod, hashOf, type NativeCtx,
+  nativeMethod, staticField, staticMethod, stringMethod, hashOf, unsupportedMessage, type NativeCtx,
 } from './natives'
 import {
   FALSE, JavaRuntimeError, NULL, ThrownException, TRUE, arith, asBoolean, asNumber, asBigInt,
@@ -794,7 +794,7 @@ export class Interpreter implements NativeCtx {
       return { value: v, names }
     }
     if (e instanceof JavaRuntimeError) {
-      if (['Timeout', 'StepLimit', 'OutputLimit', 'NoMainMethod', 'NoSuchMethod', 'IncompatibleTypes'].includes(e.javaType)) return null
+      if (['Timeout', 'StepLimit', 'OutputLimit', 'NoMainMethod', 'NoSuchMethod', 'IncompatibleTypes', 'UnsupportedLibrary'].includes(e.javaType)) return null
       const names = new Set<string>([e.javaType, ...(BUILTIN_EXCEPTIONS[e.javaType] ?? [])])
       names.add('Throwable')
       return { value: { k: 'nat', tag: 'Throwable', v: { type: e.javaType, message: e.detail } }, names }
@@ -1018,6 +1018,9 @@ export class Interpreter implements NativeCtx {
     }
     if (BUILTIN_EXCEPTIONS[name]) return { k: 'nat', tag: 'StaticClass', v: name }
     if (name === 'java' || name === 'javax') return { k: 'nat', tag: 'Package', v: name }
+
+    const unsupported = unsupportedMessage(name)
+    if (unsupported) throw new JavaRuntimeError('UnsupportedLibrary', unsupported, line)
 
     throw new JavaRuntimeError(
       'CannotFindSymbol',
@@ -1492,9 +1495,12 @@ export class Interpreter implements NativeCtx {
       return { k: 'nat', tag: 'Throwable', v: { type: name, message: args.length ? this.str(args[0]) : '' } }
     }
 
+    const unsupported = unsupportedMessage(name)
+    if (unsupported) throw new JavaRuntimeError('UnsupportedLibrary', unsupported)
+
     throw new JavaRuntimeError(
       'CannotFindSymbol',
-      `Die Klasse «${name}» ist nicht bekannt. Entweder ist sie nicht definiert oder sie gehört zu einem Teil der Java-Bibliothek, den dieser Compiler nicht unterstützt.`,
+      `Die Klasse «${name}» ist nicht bekannt. Prüfe die Schreibweise — Klassennamen beginnen in Java groß.`,
     )
   }
 

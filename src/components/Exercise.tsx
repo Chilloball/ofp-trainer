@@ -79,11 +79,15 @@ export function ExerciseView({
       if (exercise.lang === 'python') python.preload()
       else java.preload()
     }
+    /* Nur bei einem echten Aufgabenwechsel zurücksetzen — nicht, wenn
+       sich lediglich eine Rückruffunktion neu gebildet hat. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exercise.id])
 
   useEffect(() => {
     onAnswerChange?.(answer)
+    /* Absichtlich nur an der Antwort hängend: die Meldefunktion wechselt
+       bei jedem Tastendruck der Elternkomponente die Identität. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer])
 

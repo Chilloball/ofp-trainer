@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion, useReducedMotion, useSpring, useTransform } from 'motion/react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 
 /* ==================================================================== *
  *  Bausteine und Bewegung
@@ -92,7 +92,7 @@ export function AnimatedNumber({
   )
 
   useEffect(() => {
-    spring.set(value)
+    spring.set(Number.isFinite(value) ? value : 0)
   }, [value, spring])
 
   if (still) {
@@ -152,7 +152,10 @@ export function Segmented<T extends string>({
   /** eigener Name, damit der gleitende Marker nicht zwischen Gruppen springt */
   name?: string
 }) {
-  const id = useRef(name ?? `seg-${Math.random().toString(36).slice(2)}`)
+  /* useId ist über Server- und Clientseite hinweg stabil — eine
+     Zufallszahl wäre es nicht. */
+  const auto = useId()
+  const group = name ?? auto
   return (
     <div className="inline-flex rounded-lg border border-line bg-sunken p-0.5" role="tablist">
       {options.map((o) => {
@@ -170,7 +173,7 @@ export function Segmented<T extends string>({
           >
             {on && (
               <motion.span
-                layoutId={id.current}
+                layoutId={group}
                 className="absolute inset-0 rounded-[7px] border border-line bg-surface shadow-[0_1px_2px_rgb(var(--shadow-color)/0.12)]"
                 transition={{ duration: 0.22, ease: EASE }}
               />

@@ -24,9 +24,19 @@ const HARD_LIMIT_MS = 9000
 
 export function useJava() {
   const workerRef = useRef<Worker | null>(null)
-  const pending = useRef(new Map<number, { resolve: (v: never) => void; timer: ReturnType<typeof setTimeout> }>())
+  /* Zu jedem offenen Auftrag gehört auch, womit er beantwortet wird, falls
+     der Worker abgeschossen wird — sonst bliebe die Oberfläche auf
+     „läuft …" stehen. */
+  const pending = useRef(
+    new Map<
+      number,
+      { resolve: (v: never) => void; timer: ReturnType<typeof setTimeout>; onAbort: () => unknown }
+    >(),
+  )
   const seq = useRef(0)
   const [status, setStatus] = useState<Status>('idle')
+
+  const killRef = useRef<() => void>(() => {})
 
   const spawn = useCallback(() => {
     if (typeof window === 'undefined') return null
@@ -36,6 +46,7 @@ export function useJava() {
     } catch {
       return null
     }
+    w.onerror = () => killRef.current()
     w.onmessage = (ev: MessageEvent<{ id: number; type: string } & Record<string, unknown>>) => {
       const entry = pending.current.get(ev.data.id)
       if (!entry) return
@@ -53,8 +64,13 @@ export function useJava() {
   const kill = useCallback(() => {
     workerRef.current?.terminate()
     workerRef.current = null
-    for (const [, e] of pending.current) clearTimeout(e.timer)
+    /* Offene Aufträge beantworten, nicht einfach vergessen. */
+    const open = [...pending.current.values()]
     pending.current.clear()
+    for (const e of open) {
+      clearTimeout(e.timer)
+      e.resolve(e.onAbort() as never)
+    }
     setStatus('idle')
   }, [])
 
@@ -86,7 +102,11 @@ export function useJava() {
           kill()
           resolve(onTimeout())
         }, HARD_LIMIT_MS)
-        pending.current.set(id, { resolve: resolve as (v: never) => void, timer })
+        pending.current.set(id, {
+          resolve: resolve as (v: never) => void,
+          timer,
+          onAbort: onTimeout,
+        })
         w.postMessage({ ...payload, id })
       })
     },
@@ -126,6 +146,10 @@ export function useJava() {
   const preload = useCallback(() => {
     if (!workerRef.current) ensure()
   }, [ensure])
+
+  useEffect(() => {
+    killRef.current = kill
+  }, [kill])
 
   useEffect(() => () => kill(), [kill])
 

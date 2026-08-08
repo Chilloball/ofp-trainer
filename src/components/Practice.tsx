@@ -63,8 +63,9 @@ export function Practice() {
     setScores([])
     setLoading(false)
     prefetchTopics([...new Set(picked.map((p) => p.topicId))])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, mode, topicId, lang, count])
+    /* progress gehört dazu: „Nächste Runde" muss den Stand von eben
+       berücksichtigen, sonst kämen gerade beantwortete Aufgaben wieder. */
+  }, [index, progress, mode, topicId, lang, count])
 
   useEffect(() => {
     if (!ready || !index) return
@@ -75,7 +76,8 @@ export function Practice() {
   }, [ready, index, mode, topicId, lang, count, build])
 
   const current = queue?.[pos]
-  const done = queue && pos >= queue.length
+  /* Eine leere Warteschlange ist nicht geschafft, sondern hat nichts zu tun. */
+  const done = !!queue && queue.length > 0 && pos >= queue.length
 
   const onDone = useCallback(
     (r: ExerciseResult) => {

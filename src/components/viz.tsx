@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion, useReducedMotion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { EASE } from './ui'
+import { dayFromKey, dayKey } from '@/lib/day'
 
 /* ==================================================================== *
  *  Darstellungen, die beim Lernen helfen
@@ -35,7 +36,7 @@ const FILL: Record<Tone, string> = {
 }
 
 export function toneFor(value: number, seen = true): Tone {
-  if (!seen) return 'line'
+  if (!seen || !Number.isFinite(value)) return 'line'
   if (value >= 0.75) return 'ok'
   if (value >= 0.4) return 'warn'
   return 'bad'
@@ -55,7 +56,7 @@ export function Meter({
   delay?: number
 }) {
   const still = useReducedMotion()
-  const pct = Math.max(0, Math.min(1, value)) * 100
+  const pct = Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0)) * 100
   return (
     <div className={`meter ${className}`}>
       <motion.span
@@ -106,7 +107,7 @@ export function Ring({
         {rings.map((r, i) => {
           const radius = size / 2 - stroke / 2 - i * (gap + 5)
           const circ = 2 * Math.PI * radius
-          const shown = Math.max(0, Math.min(1, r.value))
+          const shown = Math.max(0, Math.min(1, Number.isFinite(r.value) ? r.value : 0))
           return (
             <g key={i}>
               <circle
@@ -192,15 +193,16 @@ export function ActivityCalendar({
     const out: { iso: string; done: number; label: string; future: boolean }[] = []
     const today = new Date()
     today.setHours(12, 0, 0, 0)
-    // bis zum Ende der laufenden Woche auffüllen (Montag als Wochenstart)
+    /* Bis zum Ende der laufenden Woche auffüllen (Montag als Wochenstart),
+       damit die letzte Spalte vollständig ist. */
     const weekday = (today.getDay() + 6) % 7
-    const end = new Date(today.getTime() + (6 - weekday) * 86_400_000)
     for (let i = weeks * 7 - 1; i >= 0; i--) {
-      const d = new Date(end.getTime() - i * 86_400_000)
-      const iso = d.toISOString().slice(0, 10)
+      const d = new Date(today.getTime())
+      d.setDate(d.getDate() + (6 - weekday) - i)
+      const key = dayKey(d)
       out.push({
-        iso,
-        done: days[iso]?.done ?? 0,
+        iso: key,
+        done: days[key]?.done ?? 0,
         label: d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'long' }),
         future: d.getTime() > today.getTime(),
       })
@@ -211,7 +213,7 @@ export function ActivityCalendar({
   const months: { col: number; name: string }[] = []
   cells.forEach((c, i) => {
     if (i % 7 !== 0) return
-    const m = new Date(c.iso).toLocaleDateString('de-DE', { month: 'short' })
+    const m = dayFromKey(c.iso).toLocaleDateString('de-DE', { month: 'short' })
     if (!months.length || months[months.length - 1].name !== m) months.push({ col: i / 7, name: m })
   })
 

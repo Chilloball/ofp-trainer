@@ -12,7 +12,7 @@ import { useJava } from '@/lib/useJava'
 import { ExerciseView, Solution, initialAnswer } from './Exercise'
 import { Markdown } from './Markdown'
 import { CodeBlock } from './CodeBlock'
-import { AnimatedNumber, Dialog, EASE, Loading, Reveal, Spinner } from './ui'
+import { AnimatedNumber, Dialog, Loading, Reveal, Spinner } from './ui'
 import { Meter, Ring, toneFor } from './viz'
 import { Page } from './Shell'
 
@@ -81,6 +81,13 @@ export function ExamSession({ examId }: { examId: string }) {
       const per = list.length ? task.points / list.length : task.points
       for (const ex of list) built.push({ task, exercise: ex, points: per })
     }
+    if (built.length === 0) {
+      setError(
+        'Für diese Klausur ließen sich keine Aufgaben zusammenstellen. Lade die Seite neu — bleibt es dabei, ' +
+          'fehlen in der Aufgabenbank passende Aufgaben zu diesem Bauplan.',
+      )
+      return
+    }
     setSlots(built)
     setAnswers(Object.fromEntries(built.map((s) => [s.exercise.id, initialAnswer(s.exercise)])))
     setCursor(0)
@@ -95,15 +102,22 @@ export function ExamSession({ examId }: { examId: string }) {
 
   /* ------------------------------- Uhr ------------------------------- */
 
+  /*
+   * Die Uhr läuft in einem Intervall, das nur beim Start eingerichtet wird.
+   * Ohne diesen Verweis würde bei Zeitablauf die Abgabe-Funktion von damals
+   * laufen — samt der damals noch leeren Antworten. Der Verweis zeigt immer
+   * auf die aktuelle Fassung.
+   */
+  const submitRef = useRef<() => Promise<void>>(async () => {})
+
   useEffect(() => {
     if (phase !== 'running' || !exam) return
     const i = setInterval(() => {
       const left = exam.minutes * 60_000 - (Date.now() - startedAt)
       setRemaining(left)
-      if (left <= 0) void submit()
+      if (left <= 0) void submitRef.current()
     }, 1000)
     return () => clearInterval(i)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, exam, startedAt])
 
   /* ------------------------------ Abgabe ------------------------------ */
@@ -180,6 +194,10 @@ export function ExamSession({ examId }: { examId: string }) {
     setPhase('result')
     window.scrollTo({ top: 0 })
   }, [exam, slots, answers, startedAt, python, java, index, recordAnswer, recordExam])
+
+  useEffect(() => {
+    submitRef.current = submit
+  }, [submit])
 
   /* ------------------------------ Anzeige ------------------------------ */
 
@@ -275,7 +293,16 @@ export function ExamSession({ examId }: { examId: string }) {
 
   /* ------------------------------ Laufend ------------------------------ */
 
-  const slot = slots[cursor]
+  const slot = slots[Math.min(cursor, slots.length - 1)]
+  if (!slot) {
+    return (
+      <Page title={exam.title}>
+        <div className="panel border-bad/35 bg-badWash px-5 py-4 text-[14px] text-bad">
+          Diese Klausur enthält keine Aufgaben.
+        </div>
+      </Page>
+    )
+  }
   const mins = Math.max(0, Math.floor(remaining / 60000))
   const secs = Math.max(0, Math.floor((remaining % 60000) / 1000))
   const urgent = remaining < 5 * 60_000

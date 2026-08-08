@@ -49,13 +49,31 @@ export function usePython() {
       } else if (m.type === 'fatal') {
         setStatus('error')
         setProgress(m.error)
+        const open = [...pending.current.values()]
+        pending.current.clear()
+        for (const fn of open) {
+          fn({ stdout: '', error: m.error, errorType: 'Fatal', tests: [] })
+        }
       } else if (m.type === 'result') {
         const fn = pending.current.get(m.id)
         pending.current.delete(m.id)
         setStatus('ready')
         if (m.needsRestart) {
+          /* Nach einer Zeitüberschreitung ist der Interpreter tot. Der Worker
+             wird ersetzt — offene Aufträge müssen vorher beantwortet werden,
+             sonst warten sie ewig. */
           w.terminate()
           workerRef.current = null
+          const open = [...pending.current.values()]
+          pending.current.clear()
+          for (const other of open) {
+            other({
+              stdout: '',
+              error: 'Die Python-Laufzeit wurde neu gestartet — bitte noch einmal ausführen.',
+              errorType: 'Restarted',
+              tests: [],
+            })
+          }
           setStatus('idle')
         }
         fn?.({
@@ -68,7 +86,19 @@ export function usePython() {
         })
       }
     }
-    w.onerror = () => setStatus('error')
+    w.onerror = () => {
+      setStatus('error')
+      const open = [...pending.current.values()]
+      pending.current.clear()
+      for (const fn of open) {
+        fn({
+          stdout: '',
+          error: 'Die Python-Laufzeit konnte nicht geladen werden. Besteht eine Internetverbindung?',
+          errorType: 'WorkerError',
+          tests: [],
+        })
+      }
+    }
     workerRef.current = w
     return w
   }, [])
