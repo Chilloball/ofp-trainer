@@ -1,0 +1,1602 @@
+{
+ "topicId": "py-currying-decorators",
+ "exercises": [
+  {
+   "type": "short-answer",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Die Currying-Gleichung f_curry(a1)(a2)",
+   "prompt": "**Klausuraufgabe 5b (Teil 2).** Geben Sie an, was allgemein für die *gecurryte* Form `f_curry` einer zweistelligen Funktion `f` gilt:\n\n```\nf_curry(a1)(a2) = ?\n```\n\nErklären Sie zusätzlich in **einem Satz**, was der Ausdruck `f_curry(a1)` allein (also ohne das zweite Klammerpaar) zurückgibt. **(2 P)**",
+   "solution": "**Musterlösung**\n\n```\nf_curry(a1)(a2) = f(a1, a2)\n```\n\n`f_curry(a1)` allein liefert **eine Funktion**, die noch einen Parameter (nämlich `a2`) als Eingabe erwartet - also eine spezialisierte Funktion, in der `a1` bereits fest gebunden ist.\n\nVerallgemeinerung auf n Parameter:\n\n```\nf_curry(a1)(a2)(a3)...(an) = f(a1, a2, a3, ..., an)\n```\n\n**Bewertungsrubrik (2 P)**\n\n- 1 P: Gleichung `f_curry(a1)(a2) = f(a1, a2)` korrekt (Reihenfolge der Argumente zählt!).\n- 1 P: `f_curry(a1)` liefert eine *Funktion* (ein Funktionsobjekt), die noch ein Argument erwartet.\n- 0 P, wenn behauptet wird, `f_curry(a1)` liefere bereits einen Zahlenwert oder `f_curry` sei mit `f(a1, a2)` aufrufbar.",
+   "explanation": "Currying ist laut Vorlesung *\"die Möglichkeit, eine von mehreren Parametern abhängige Funktion als Verkettung von Funktionen zu schreiben, die nur von einem Parameter abhängen und eine Funktion zurückgeben\"*.\n\nMathematisch: Eine Funktion mit zwei Eingabeargumenten kann auch als Funktion verstanden werden, die **einen** Parameter auf eine **Funktion in einem weiteren Parameter** abbildet. Deshalb darf man `f_curry(a1)` auch allein auswerten - man bekommt dann eben keine Zahl, sondern ein Funktionsobjekt zurück.\n\nDer typische Denkfehler ist, `f_curry(a1)(a2)` als \"Funktion mit zwei Argumentlisten\" zu lesen. In Wahrheit passieren hier **zwei getrennte Aufrufe**: Erst wird `f_curry` mit `a1` aufgerufen (Ergebnis: eine Funktion), dann wird *dieses Ergebnis* mit `a2` aufgerufen.\n\nDer Name kommt übrigens vom Mathematiker **Haskell Brooks Curry** (1900-1982) - nach ihm ist auch die Sprache Haskell benannt, die stark auf dieses Konzept ausgelegt ist.\n\n**Merkregel:** *Ein Klammerpaar pro Parameter - jedes Klammerpaar frisst genau ein Argument, das letzte liefert den eigentlichen Wert.*",
+   "hints": [
+    "Die rechte Seite der Gleichung enthält die ungecurryte Funktion f mit beiden Argumenten.",
+    "Überlegen Sie, was der Typ des Ausdrucks f_curry(a1) ist - Zahl oder Funktion?",
+    "Schreiben Sie es konkret hin: Wenn f(a,b) = a+b, dann ist f_curry(3) die Funktion 'addiere 3 dazu'."
+   ],
+   "pitfalls": [
+    "Argumentreihenfolge vertauschen: f(a2, a1) statt f(a1, a2).",
+    "Behaupten, f_curry(a1) liefere schon das Endergebnis - es liefert eine Funktion.",
+    "f_curry(a1, a2) schreiben - die gecurryte Form nimmt pro Aufruf genau ein Argument."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "Currying: f(a1,a2) als Funktion, die a1 auf eine Funktion in a2 abbildet"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika funktionaler Programmierung: higher order functions, Currying"
+    }
+   ],
+   "tags": [
+    "currying",
+    "theorie",
+    "klausur",
+    "definition"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-001"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "Funktionsfabrik: addiere(x) gibt eine Funktion zurück",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?",
+   "code": "def addiere(x):\n    return lambda y: x + y\n\nplus_5 = addiere(5)\n\nprint(plus_5(3))\nprint(plus_5(-2))\nprint(addiere(2)(10))\nprint(type(plus_5).__name__)\nprint(addiere(5) == plus_5)",
+   "expectedOutput": "8\n3\n12\nfunction\nFalse",
+   "solution": "```\n8\n3\n12\nfunction\nFalse\n```\n\n- `plus_5 = addiere(5)` ruft `addiere` **einmal** auf. Der Rückgabewert ist das `lambda`-Objekt, in dem `x` fest an `5` gebunden ist.\n- `plus_5(3)` -> `5 + 3` -> `8`, `plus_5(-2)` -> `5 + (-2)` -> `3`.\n- `addiere(2)(10)`: zwei Aufrufe hintereinander -> `2 + 10` -> `12`.\n- `type(plus_5).__name__` ist `'function'` - auch ein `lambda` ist ein ganz normales Funktionsobjekt.\n- `addiere(5) == plus_5` ist `False`: Jeder Aufruf von `addiere` erzeugt ein **neues** Funktionsobjekt. Funktionen werden mit `==` per Identität verglichen, nicht per Verhalten.",
+   "explanation": "Das ist die Standard-Bauform des Currying aus der Vorlesung: eine Funktion, deren Rückgabewert selbst wieder eine Funktion ist (*higher order function*). `addiere` ist die \"Fabrik\", `plus_5` das \"Produkt\".\n\nEntscheidend ist der Unterschied zwischen `addiere(5)` und `addiere(5)(3)`: Der erste Ausdruck liefert eine **Funktion**, der zweite eine **Zahl**. Jedes Klammerpaar löst genau einen Aufruf aus.\n\nDie letzte Zeile ist die Falle: Zwei getrennte Aufrufe von `addiere(5)` liefern zwei verschiedene Objekte im Speicher. Python kann nicht prüfen, ob zwei Funktionen \"dasselbe tun\" - `==` fällt bei Funktionen auf den Identitätsvergleich zurück, und die Identitäten sind verschieden. Genau deshalb muss man sich `plus_5` in einer Variablen merken, wenn man es mehrfach braucht.\n\n**Merkregel:** *Fabrik aufrufen = Werkzeug bekommen. Werkzeug aufrufen = Ergebnis bekommen. Zwei Fabrikaufrufe liefern zwei verschiedene Werkzeuge.*",
+   "hints": [
+    "Zählen Sie die Klammerpaare: Wie viele Aufrufe stecken in addiere(2)(10)?",
+    "Was ist der Typ des Rückgabewerts von addiere? Schauen Sie sich das return an.",
+    "Bei der letzten Zeile: Erzeugt ein erneuter Aufruf von addiere(5) dasselbe Objekt wie vorher, oder ein neues?"
+   ],
+   "pitfalls": [
+    "type(plus_5).__name__ als 'lambda' raten - lambda ist nur eine Schreibweise, der Typ ist function.",
+    "Die letzte Zeile mit True beantworten, weil beide Funktionen dasselbe Verhalten haben.",
+    "addiere(2)(10) als Fehler ansehen, weil addiere scheinbar nur ein Argument nimmt."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Aufgabe A5 - Currying: addiere(3)(5) ergibt 8"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 26,
+     "label": "Lösung A5: def addiere(x): return lambda y: x + y"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "Currying: f(a1,a2) als Funktion, die a1 auf eine Funktion in a2 abbildet"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 11,
+     "label": "Schreiben sie eine Funktion, die eine Funktion als Rückgabewert liefert"
+    }
+   ],
+   "tags": [
+    "currying",
+    "closure",
+    "higher-order-function",
+    "predict-output",
+    "lambda"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-002"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Klausuraufgabe 5b: quadrat durch Binden eines Parameters",
+   "prompt": "**Klausuraufgabe 5b (Teil 1).** Gegeben ist:\n\n```python\ndef potenz(basis, exponent):\n    return basis ** exponent\n```\n\nErzeugen Sie durch **Binden eines Parameters** (wie beim Currying aus der Vorlesung) mit einem **`lambda`-Ausdruck** eine neue Funktion `quadrat`, sodass `quadrat(5)` den Wert `25` liefert.\n\n`potenz` darf dabei **nicht** verändert werden, und `quadrat` darf das Quadrieren **nicht** selbst ausrechnen, sondern muss `potenz` aufrufen. **(3 P)**",
+   "starterCode": "def potenz(basis, exponent):\n    return basis ** exponent\n\n# quadrat durch Binden des Parameters exponent an den Wert 2:\nquadrat = ...\n\nprint(quadrat(5))   # 25",
+   "constraints": [
+    "quadrat muss mit einem lambda-Ausdruck erzeugt werden (kein def quadrat)",
+    "quadrat muss potenz aufrufen und darf ** nicht selbst verwenden",
+    "keine Schleifen"
+   ],
+   "solution": "def potenz(basis, exponent):\n    return basis ** exponent\n\nquadrat = lambda basis: potenz(basis, 2)",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "quadrat(5)",
+     "expected": "25"
+    },
+    {
+     "name": "Quadrat von 0",
+     "call": "quadrat(0)",
+     "expected": "0"
+    },
+    {
+     "name": "negative Basis",
+     "call": "quadrat(-3)",
+     "expected": "9"
+    },
+    {
+     "name": "Kommazahl",
+     "call": "quadrat(1.5)",
+     "expected": "2.25"
+    },
+    {
+     "name": "potenz bleibt unverändert",
+     "call": "potenz(2, 10)",
+     "expected": "1024"
+    },
+    {
+     "name": "quadrat ist ein Funktionsobjekt",
+     "call": "type(quadrat).__name__",
+     "expected": "'function'"
+    }
+   ],
+   "forbidden": [
+    "def quadrat",
+    "** 2",
+    "**2",
+    "for ",
+    "while "
+   ],
+   "required": [
+    "lambda",
+    "potenz("
+   ],
+   "explanation": "Das ist genau das Muster aus dem Vorlesungscode `neues_spiel.py`:\n\n```python\nallgemeine_strategie = lambda x, aufhoerzahl: x < aufhoerzahl\nstrategie_aufhoeren_bei_15 = lambda x: allgemeine_strategie(x, 15)\n```\n\nMan schreibt ein `lambda`, das **nur noch den freien Parameter** entgegennimmt, und ruft darin die allgemeine Funktion mit dem **fest verdrahteten** zweiten Argument auf. Der Parameter `exponent` ist damit *gebunden*, `basis` bleibt frei.\n\nWichtig ist die Argumentreihenfolge: `potenz(basis, 2)` und nicht `potenz(2, basis)`. `quadrat(5)` soll `5 ** 2 = 25` liefern, `potenz(2, 5)` wäre dagegen `32`. Beide Varianten \"laufen\" - nur eine ist richtig, und genau da verliert man in der Klausur Punkte.\n\nDer Parametername im `lambda` ist frei wählbar (`lambda b: potenz(b, 2)` ist genauso korrekt); er verdeckt lediglich innerhalb des `lambda` einen gleichnamigen äußeren Namen.\n\n**Merkregel:** *Binden heißt: ein Argument einfrieren, das andere als lambda-Parameter durchreichen.*",
+   "hints": [
+    "Ihr lambda braucht genau EINEN Parameter - nämlich den, der später noch variabel bleiben soll.",
+    "Im Rumpf des lambda rufen Sie potenz mit zwei Argumenten auf: dem lambda-Parameter und der festen 2.",
+    "Achten Sie auf die Reihenfolge: quadrat(5) muss potenz(5, 2) auslösen, nicht potenz(2, 5)."
+   ],
+   "pitfalls": [
+    "lambda basis, exponent: potenz(basis, 2) - das lambda darf nur noch einen Parameter haben.",
+    "Reihenfolge vertauscht: lambda basis: potenz(2, basis) liefert 2**5 = 32 statt 25.",
+    "quadrat = potenz(basis, 2) ohne lambda - dann ist basis gar nicht definiert (NameError)."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    },
+    {
+     "file": "neues_spiel.py",
+     "page": 1,
+     "label": "strategie_aufhoeren_bei_15 = lambda x: allgemeine_strategie(x,15)"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying: abstrakte Funktionen durch Binden von Parametern spezialisieren"
+    }
+   ],
+   "tags": [
+    "currying",
+    "lambda",
+    "parameter-binden",
+    "klausur",
+    "partial"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-003"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Aussagen zu Currying und Funktionsfabriken",
+   "prompt": "Gegeben sei\n\n```python\ndef mal(a):\n    return lambda b: a * b\n```\n\nWelche der folgenden Aussagen sind **richtig**? (Mehrfachauswahl)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`mal(3)` liefert eine Funktion, kein Zahlenergebnis.",
+     "correct": true,
+     "why": "Der Rumpf von mal besteht nur aus return lambda ... - zurückgegeben wird ein Funktionsobjekt."
+    },
+    {
+     "id": "b",
+     "text": "`mal(3, 4)` und `mal(3)(4)` liefern bei dieser Definition beide 12.",
+     "correct": false,
+     "why": "mal nimmt genau einen Parameter. mal(3, 4) endet mit TypeError: mal() takes 1 positional argument but 2 were given."
+    },
+    {
+     "id": "c",
+     "text": "Currying wandelt eine n-stellige Funktion in eine Kette von n einstelligen Funktionen um.",
+     "correct": true,
+     "why": "Genau so definiert es die Vorlesung: eine Verkettung von Funktionen, die je nur von einem Parameter abhängen."
+    },
+    {
+     "id": "d",
+     "text": "Das zurückgegebene lambda kann auf `a` zugreifen, obwohl der Aufruf von `mal` längst beendet ist.",
+     "correct": true,
+     "why": "Das ist eine closure: die innere Funktion hält die Bindung an a des umgebenden Aufrufs am Leben."
+    },
+    {
+     "id": "e",
+     "text": "Currying lässt sich in Python nur mit `lambda` umsetzen, nicht mit `def`.",
+     "correct": false,
+     "why": "Eine innere def-Funktion tut es genauso: def mal(a):\\n  def innen(b): return a*b\\n  return innen."
+    },
+    {
+     "id": "f",
+     "text": "Für die gecurryte Form gilt allgemein `f_curry(a1)(a2) = f(a1, a2)`.",
+     "correct": true,
+     "why": "Das ist die Currying-Gleichung aus der Vorlesung und aus Klausuraufgabe 5b."
+    },
+    {
+     "id": "g",
+     "text": "`mal` ist eine higher order function.",
+     "correct": true,
+     "why": "Higher order function = Funktion, die Funktionen als Eingabe bekommt UND/ODER als Rückgabewert liefert. mal liefert eine Funktion."
+    },
+    {
+     "id": "h",
+     "text": "`mal(3)` und `mal(3)` liefern dasselbe Objekt, weil das Ergebnis zwischengespeichert wird.",
+     "correct": false,
+     "why": "Python cached Funktionsobjekte nicht. Jeder Aufruf erzeugt ein neues lambda-Objekt; ein Vergleich mit == ergibt False."
+    }
+   ],
+   "solution": "Richtig sind **a, c, d, f und g**.\n\nFalsch sind **b** (`mal` hat nur einen Parameter -> `TypeError`), **e** (Currying geht mit `def` genauso) und **h** (jeder Aufruf erzeugt ein neues Funktionsobjekt).",
+   "explanation": "Die vier Kernideen dieses Themas stecken in den richtigen Antworten:\n\n1. **Rückgabewert ist eine Funktion** (a) - das macht `mal` zur *higher order function* (g).\n2. **Closure** (d): Die innere Funktion merkt sich die Umgebung, in der sie entstanden ist. Ohne diesen Mechanismus könnte Currying gar nicht funktionieren, denn `a` wäre nach dem Ende von `mal` verschwunden.\n3. **Kette einstelliger Funktionen** (c) und die Gleichung `f_curry(a1)(a2) = f(a1, a2)` (f) sind die Definition aus der Vorlesung.\n\nDie falschen Aussagen decken die drei typischen Missverständnisse ab: Man kann die gecurryte Form **nicht** wie die ursprüngliche Form mit zwei Argumenten aufrufen (b); `lambda` ist nur bequem, aber nicht notwendig (e); und Python führt keinen Cache für Funktionsobjekte (h).\n\n**Merkregel:** *Currying = Funktionsfabrik + closure. Ein Argument pro Klammerpaar.*",
+   "hints": [
+    "Fragen Sie sich bei jeder Aussage: Was ist der TYP des Ausdrucks - Zahl oder Funktion?",
+    "Zählen Sie die Parameter in der def-Zeile von mal. Wie viele Argumente verträgt ein Aufruf?",
+    "Überlegen Sie, was mit dem Parameter a passiert, nachdem mal fertig ist - warum funktioniert das lambda trotzdem?"
+   ],
+   "pitfalls": [
+    "Annehmen, eine gecurryte Funktion sei auch weiterhin mit allen Argumenten auf einmal aufrufbar.",
+    "Currying mit der lambda-Syntax gleichsetzen - es ist ein Konzept, keine Syntax.",
+    "Vergessen, dass die closure eine Bindung und keine Kopie zum Zeitpunkt der Definition ist."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "Currying: f(a1,a2) als Funktion, die a1 auf eine Funktion in a2 abbildet"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika funktionaler Programmierung: higher order functions, Currying"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 11,
+     "label": "Schreiben sie eine Funktion, die eine Funktion als Rückgabewert liefert"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Aufgabe A5 - Currying: addiere(3)(5) ergibt 8"
+    }
+   ],
+   "tags": [
+    "currying",
+    "closure",
+    "higher-order-function",
+    "multi-mc",
+    "theorie"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-004"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Goofspiel: dreistellige Funktion vollständig currien",
+   "prompt": "Die Goofspiel-Funktion `runde_auswerten` hängt von **drei** Parametern ab. Sie soll vollständig gecurryt werden, sodass `runde_curry(k1)(k2)(pk)` denselben Wert liefert wie `runde_auswerten(k1, k2, pk)`.\n\nFüllen Sie die drei Lücken so aus, dass der Code die Ausgabe\n\n```\n10\n-4\n0\nTrue\n```\n\nerzeugt. Verwenden Sie in Lücke 1 die `lambda`-Notation. **(je 1-2 P)**",
+   "code": "def runde_auswerten(karte1, karte2, preiskarte):\n    if karte1 > karte2:\n        return preiskarte\n    elif karte2 > karte1:\n        return -preiskarte\n    else:\n        return 0\n\ndef runde_curry(karte1):\n    return ## Lücke 1 ##\n\nprint(runde_curry(7)(3)(10))\nprint(runde_curry(2)(9)(4))\n\n# Spieler 1 hat sich schon auf die 5 festgelegt, Spieler 2 legt ebenfalls die 5 nach:\nzug_von_spieler1 = runde_curry(5)\ngleichstand = ## Lücke 2 ##\nprint(gleichstand(8))\n\n# gecurryt und direkt müssen dasselbe liefern:\ngleich = ## Lücke 3 ##\nprint(gleich)",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "lambda karte2: lambda preiskarte: runde_auswerten(karte1, karte2, preiskarte)",
+      "lambda k2: lambda pk: runde_auswerten(karte1, k2, pk)",
+      "lambda karte2: (lambda preiskarte: runde_auswerten(karte1, karte2, preiskarte))",
+      "lambda a: lambda b: runde_auswerten(karte1, a, b)"
+     ],
+     "explanation": "Zwei geschachtelte lambdas: das äußere nimmt karte2, das innere preiskarte. Erst das innerste ruft runde_auswerten mit allen drei Argumenten auf."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "zug_von_spieler1(5)",
+      "runde_curry(5)(5)"
+     ],
+     "explanation": "zug_von_spieler1 ist die Funktion mit gebundenem karte1=5. Ein weiterer Aufruf mit 5 bindet karte2=5 und liefert wieder eine Funktion, die nur noch die Preiskarte erwartet."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "runde_curry(7)(3)(10) == runde_auswerten(7, 3, 10)",
+      "runde_auswerten(7, 3, 10) == runde_curry(7)(3)(10)",
+      "runde_curry(2)(9)(4) == runde_auswerten(2, 9, 4)"
+     ],
+     "explanation": "Die Currying-Gleichung für drei Parameter: f_curry(a1)(a2)(a3) == f(a1, a2, a3)."
+    }
+   ],
+   "expectedOutput": "10\n-4\n0\nTrue",
+   "solution": "```python\ndef runde_auswerten(karte1, karte2, preiskarte):\n    if karte1 > karte2:\n        return preiskarte\n    elif karte2 > karte1:\n        return -preiskarte\n    else:\n        return 0\n\ndef runde_curry(karte1):\n    return lambda karte2: lambda preiskarte: runde_auswerten(karte1, karte2, preiskarte)\n\nprint(runde_curry(7)(3)(10))    # 10\nprint(runde_curry(2)(9)(4))     # -4\n\nzug_von_spieler1 = runde_curry(5)\ngleichstand = zug_von_spieler1(5)\nprint(gleichstand(8))           # 0\n\ngleich = runde_curry(7)(3)(10) == runde_auswerten(7, 3, 10)\nprint(gleich)                   # True\n```",
+   "explanation": "Currying lässt sich laut Vorlesung *\"auf beliebig viele Parameter erweitern\"*. Bei drei Parametern braucht man zwei geschachtelte Rückgabefunktionen, denn jedes Klammerpaar darf genau ein Argument aufnehmen:\n\n```\nrunde_curry(7)      -> Funktion, die karte2 erwartet\nrunde_curry(7)(3)   -> Funktion, die preiskarte erwartet\nrunde_curry(7)(3)(10) -> Zahl\n```\n\nIn Lücke 1 stehen deshalb **zwei** `lambda` hintereinander. Das ist kein Tippfehler: `lambda karte2: lambda preiskarte: ...` bedeutet \"eine Funktion, die eine Funktion zurückgibt\". Beide inneren Funktionen sind *closures* - sie greifen auf `karte1` bzw. `karte2` der äußeren Ebenen zu.\n\nLücke 2 zeigt den praktischen Nutzen: Man kann den Aufruf **anhalten**. `zug_von_spieler1` ist ein halbfertiger Zug, dem noch zwei Angaben fehlen. Genau dafür ist Currying gedacht - abstrakte Funktionen mit vielen Parametern schrittweise spezialisieren.\n\nDer typische Fehler in Lücke 1 ist ein einziges `lambda` mit zwei Parametern (`lambda karte2, preiskarte: ...`). Das läuft zwar, aber dann braucht man `runde_curry(7)(3, 10)` - und das ist **nicht** gecurryt.\n\n**Merkregel:** *So viele lambdas wie noch offene Parameter.*",
+   "hints": [
+    "Wie viele Klammerpaare stehen in runde_curry(7)(3)(10)? So viele Aufrufe müssen stattfinden.",
+    "Nach dem ersten Aufruf müssen noch zwei Argumente entgegengenommen werden - also braucht es noch zwei Funktionsebenen.",
+    "In Lücke 2 müssen Sie die schon vorhandene Teilfunktion zug_von_spieler1 weiterverwenden, statt neu bei runde_curry anzufangen."
+   ],
+   "pitfalls": [
+    "Nur ein lambda mit zwei Parametern schreiben - dann funktioniert runde_curry(7)(3)(10) nicht.",
+    "runde_auswerten(karte2, karte1, preiskarte) - die Argumentreihenfolge dreht das Vorzeichen um.",
+    "In Lücke 3 runde_curry(7, 3, 10) schreiben - die gecurryte Funktion nimmt nur ein Argument pro Aufruf."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "Currying: f(a1,a2) als Funktion, die a1 auf eine Funktion in a2 abbildet"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "runde_auswerten(karte_spieler1, karte_spieler2, preiskarte, ...)"
+    }
+   ],
+   "tags": [
+    "currying",
+    "goofspiel",
+    "fill-gaps",
+    "lambda",
+    "closure"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-005"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": false,
+   "title": "Generischer Curry-Operator curry2",
+   "prompt": "Schreiben Sie eine Funktion `curry2(f)`, die eine **beliebige zweistellige Funktion** `f` entgegennimmt und deren gecurryte Form zurückgibt. Es soll also für jedes `f` gelten:\n\n```python\ncurry2(f)(a1)(a2) == f(a1, a2)\n```\n\nBeispiel:\n\n```python\nplus = curry2(lambda a, b: a + b)\nprint(plus(3)(4))    # 7\n```\n\nVerwenden Sie keine Schleifen. **(4 P)**",
+   "starterCode": "def curry2(f):\n    \"\"\"\n    Wandelt eine zweistellige Funktion in ihre gecurryte Form um.\n    Eingabe: f - Funktion mit zwei Parametern\n    Rueckgabe: Funktion g mit g(a1)(a2) == f(a1, a2)\n    \"\"\"\n    ...\n\nplus = curry2(lambda a, b: a + b)\nprint(plus(3)(4))    # 7",
+   "constraints": [
+    "keine Schleifen",
+    "lambda verwenden",
+    "f darf nicht verändert werden"
+   ],
+   "solution": "def curry2(f):\n    \"\"\"\n    Wandelt eine zweistellige Funktion in ihre gecurryte Form um.\n    Eingabe: f - Funktion mit zwei Parametern\n    Rückgabe: Funktion g mit g(a1)(a2) == f(a1, a2)\n    \"\"\"\n    return lambda a1: lambda a2: f(a1, a2)",
+   "tests": [
+    {
+     "name": "Addition",
+     "call": "curry2(lambda a, b: a + b)(3)(4)",
+     "expected": "7"
+    },
+    {
+     "name": "eingebaute Funktion pow",
+     "call": "curry2(pow)(2)(10)",
+     "expected": "1024"
+    },
+    {
+     "name": "Reihenfolge zählt (Subtraktion)",
+     "call": "curry2(lambda a, b: a - b)(10)(3)",
+     "expected": "7"
+    },
+    {
+     "name": "Methode auf Strings",
+     "call": "curry2(str.count)('hallo')('l')",
+     "expected": "2"
+    },
+    {
+     "name": "Zwischenergebnis ist eine Funktion",
+     "call": "type(curry2(pow)(2)).__name__",
+     "expected": "'function'"
+    },
+    {
+     "name": "spezialisierte Funktion mehrfach nutzen",
+     "call": "list(map(curry2(lambda a, b: a * b)(3), [1, 2, 3]))",
+     "expected": "[3, 6, 9]"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "lambda"
+   ],
+   "explanation": "`curry2` ist eine higher order function in **beide** Richtungen: Sie bekommt eine Funktion als Eingabe *und* liefert eine Funktion als Rückgabe.\n\nDer Rumpf besteht aus zwei geschachtelten `lambda`. Das äußere nimmt `a1` entgegen und gibt sofort das innere `lambda` zurück; erst dieses ruft `f(a1, a2)` auf. Beide `lambda` sind *closures*: das innere sieht `a1` (aus dem äußeren `lambda`) und `f` (aus `curry2`).\n\nWarum ist das nützlich? Weil man damit **jede** vorhandene Funktion nachträglich currien kann, ohne sie umzuschreiben - auch eingebaute wie `pow` oder Methoden wie `str.count`. Der letzte Test zeigt den typischen Einsatz: `curry2(mult)(3)` ist eine einstellige Funktion und passt damit direkt als erstes Argument in `map`.\n\nEin häufiger Fehler ist `return lambda a1, a2: f(a1, a2)`. Das ist keine gecurryte Form, sondern nur eine Kopie von `f` - der Aufruf `curry2(f)(3)(4)` scheitert dann mit `TypeError: <lambda>() missing 1 required positional argument`.\n\n**Merkregel:** *Gecurryt heißt: ein Doppelpunkt pro Argument, nicht ein Komma.*",
+   "hints": [
+    "curry2 muss etwas zurückgeben, das man noch zweimal hintereinander aufrufen kann.",
+    "Die äußere Ebene nimmt a1 und gibt eine Funktion zurück; die innere Ebene nimmt a2 und rechnet.",
+    "Der Rumpf ist eine einzige return-Zeile mit zwei lambda-Schlüsselwörtern."
+   ],
+   "pitfalls": [
+    "return lambda a1, a2: f(a1, a2) - das ist nur eine Kopie von f, nicht die gecurryte Form.",
+    "return f(a1, a2) - a1 und a2 existieren an dieser Stelle gar nicht (NameError).",
+    "curry2 aufrufen statt zurückgeben: return lambda a1: lambda a2: f(a1)(a2) - f ist ungecurryt!"
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "Currying: f(a1,a2) als Funktion, die a1 auf eine Funktion in a2 abbildet"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika funktionaler Programmierung: higher order functions, Currying"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 11,
+     "label": "Schreiben sie eine Funktion, die eine Funktion als Rückgabewert liefert"
+    }
+   ],
+   "tags": [
+    "currying",
+    "higher-order-function",
+    "lambda",
+    "transfer"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-006"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Woran erinnert sich eine closure wirklich?",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben? Begründen Sie beide Zeilen.",
+   "code": "faktor = 2\n\ndef mache_skalierer(start):\n    def skaliere(x):\n        return x * start\n    start = start + 1          # NACH der Definition von skaliere!\n    return skaliere\n\nglobal_skaliere = lambda x: x * faktor\n\nf = mache_skalierer(2)\nprint(f(10))\n\nfaktor = 10\nprint(global_skaliere(10))",
+   "expectedOutput": "30\n100",
+   "solution": "```\n30\n100\n```\n\n**Zeile 1 (`30`):** `mache_skalierer(2)` legt zuerst die innere Funktion `skaliere` an, erhöht danach `start` auf `3` und gibt `skaliere` zurück. Die closure merkt sich **nicht** den Wert `2` von der Definitionsstelle, sondern die **Variable** `start`. Beim späteren Aufruf `f(10)` wird deren aktueller Wert `3` gelesen: `10 * 3 = 30`.\n\n**Zeile 2 (`100`):** `global_skaliere` wurde erzeugt, als `faktor` noch `2` war. Auch hier wird `faktor` erst **beim Aufruf** nachgeschlagen - inzwischen steht dort `10`, also `10 * 10 = 100`.",
+   "explanation": "Beide Zeilen zeigen dasselbe Prinzip aus zwei Blickwinkeln: **Namen in einer Funktion werden erst zur Aufrufzeit ausgewertet, nicht zur Definitionszeit** (*late binding*).\n\nBei `skaliere` ist `start` eine Variable des *umschließenden* Geltungsbereichs (enclosing scope). Die closure hält eine Referenz auf diese Variable am Leben - deshalb funktioniert `f(10)` überhaupt noch, obwohl `mache_skalierer` längst beendet ist. Aber sie speichert eben eine *Bindung*, keine *Kopie*: Die Zuweisung `start = start + 1` nach der `def`-Zeile wirkt sich voll aus.\n\nBei `global_skaliere` ist `faktor` eine globale Variable, die erst beim Aufruf gelesen wird - derselbe Effekt eine Ebene höher.\n\nWer den Wert wirklich einfrieren will, nutzt ein Default-Argument, das **zur Definitionszeit** ausgewertet wird: `lambda x, f=faktor: x * f` liefert auch nach `faktor = 10` noch `20`.\n\nGenau daraus entsteht auch die berühmte Schleifen-Falle (`[lambda x: x*i for i in range(3)]` liefert dreimal denselben Faktor).\n\n**Merkregel:** *Eine closure merkt sich die Variable, nicht den Wert. Nur Default-Argumente frieren Werte ein.*",
+   "hints": [
+    "Wann wird der Rumpf von skaliere ausgeführt - bei der def-Zeile oder beim Aufruf f(10)?",
+    "Die Zeile start = start + 1 steht zwar nach der Definition, aber vor jedem Aufruf von f. Welchen Wert sieht skaliere also?",
+    "Für die zweite Ausgabe: Wird faktor im lambda beim Erzeugen oder beim Aufrufen nachgeschlagen?"
+   ],
+   "pitfalls": [
+    "20 raten, weil skaliere 'mit start = 2 definiert wurde' - closures speichern die Variable, nicht deren Wert.",
+    "20 für die zweite Zeile raten, weil faktor beim Erzeugen des lambda 2 war.",
+    "Einen UnboundLocalError vermuten - start wird in skaliere nur gelesen, nicht zugewiesen."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Adaptive Strategie als lambda mit einer closure"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying: abstrakte Funktionen durch Binden von Parametern spezialisieren"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Geltungsbereiche und Lebensdauer von Variablen"
+    }
+   ],
+   "tags": [
+    "closure",
+    "scope",
+    "late-binding",
+    "predict-output",
+    "lambda"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-007"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Fehlersuche: drei Fehler beim Currying",
+   "prompt": "Ein Kommilitone hat versucht, die Funktion `potenz` zu currien, und bittet Sie um Hilfe bei der Fehlersuche. Im Code stecken **genau drei** Fehler. Benennen Sie jeweils die Zeile, den Fehler und die Korrektur. Der Code soll am Ende `9`, `25` und `16` ausgeben. **(4 P)**",
+   "code": "def potenz(basis, exponent):\n    return basis ** exponent\n\ndef potenz_curry(basis):\n    lambda exponent: potenz(basis, exponent)\n\nbasis3 = potenz_curry(3)\nprint(basis3(2))\n\nquadrat = lambda b: potenz(b)\nprint(quadrat(5))\n\nbasis2 = potenz_curry(2)(4)\nprint(basis2(4))",
+   "errors": [
+    {
+     "line": 5,
+     "wrong": "    lambda exponent: potenz(basis, exponent)",
+     "fix": "    return lambda exponent: potenz(basis, exponent)",
+     "why": "Das return fehlt. Der lambda-Ausdruck wird zwar ausgewertet, aber sofort weggeworfen - potenz_curry liefert implizit None. Zeile 8 scheitert deshalb mit TypeError: 'NoneType' object is not callable."
+    },
+    {
+     "line": 10,
+     "wrong": "quadrat = lambda b: potenz(b)",
+     "fix": "quadrat = lambda b: potenz(b, 2)",
+     "why": "Der zu bindende Parameter exponent wurde nicht mitgegeben. Beim Aufruf quadrat(5) fehlt potenz das zweite Argument: TypeError: potenz() missing 1 required positional argument: 'exponent'."
+    },
+    {
+     "line": 13,
+     "wrong": "basis2 = potenz_curry(2)(4)",
+     "fix": "basis2 = potenz_curry(2)   # und in Zeile 14: print(basis2(4))",
+     "why": "Ein Klammerpaar zu viel: potenz_curry(2)(4) ist bereits der fertige Zahlenwert 2**4 = 16, keine Funktion mehr. Zeile 14 versucht dann, eine Zahl aufzurufen: TypeError: 'int' object is not callable."
+    }
+   ],
+   "solution": "**Die drei Fehler**\n\n1. **Zeile 5** - `return` fehlt: `potenz_curry` gibt `None` zurück, `basis3(2)` scheitert mit `TypeError: 'NoneType' object is not callable`.\n2. **Zeile 10** - `potenz(b)` bindet den Parameter `exponent` nicht: `TypeError: potenz() missing 1 required positional argument: 'exponent'`.\n3. **Zeile 13** - ein Klammerpaar zu viel: `potenz_curry(2)(4)` ist schon die Zahl `16`, `basis2(4)` scheitert mit `TypeError: 'int' object is not callable`.\n\n**Korrigierte Fassung**\n\n```python\ndef potenz(basis, exponent):\n    return basis ** exponent\n\ndef potenz_curry(basis):\n    return lambda exponent: potenz(basis, exponent)\n\nbasis3 = potenz_curry(3)\nprint(basis3(2))            # 9\n\nquadrat = lambda b: potenz(b, 2)\nprint(quadrat(5))           # 25\n\nbasis2 = potenz_curry(2)\nprint(basis2(4))            # 16\n```\n\nAusgabe: `9`, `25`, `16`.",
+   "explanation": "Alle drei Fehler sind Varianten desselben Denkfehlers: **Verwechslung von Funktion und Funktionswert**.\n\nIn Zeile 5 wird eine Funktion erzeugt, aber nicht zurückgegeben - ein `lambda` als alleinstehende Anweisung ist syntaktisch erlaubt und völlig wirkungslos. Merken Sie sich: In einer Currying-Fabrik steht *immer* `return lambda ...`.\n\nIn Zeile 10 wurde das Binden vergessen. Beim Currying muss die innere Funktion die ursprüngliche Funktion mit **allen** Argumenten aufrufen - dem durchgereichten und dem festen.\n\nIn Zeile 13 wurde ein Klammerpaar zu früh gesetzt. `potenz_curry(2)(4)` konsumiert bereits beide Argumente. Das ist der Grund, warum man beim Lesen gecurryten Codes immer die Klammerpaare zählen sollte: `n` Parameter = `n` Klammerpaare bis zum Zahlenwert.\n\n**Merkregel:** *return nicht vergessen, alle Argumente binden, Klammerpaare zählen.*",
+   "hints": [
+    "Fehler 1: Was gibt eine Funktion zurück, in deren Rumpf kein return steht?",
+    "Fehler 2: Zählen Sie die Parameter von potenz und die Argumente im Aufruf innerhalb des lambda.",
+    "Fehler 3: Zählen Sie die Klammerpaare. Wie viele braucht man bei zwei Parametern bis zur fertigen Zahl?"
+   ],
+   "pitfalls": [
+    "Nur den fehlenden return finden und die beiden Folgefehler übersehen.",
+    "Zeile 10 mit lambda b: potenz(2, b) 'korrigieren' - das liefert 2**5 = 32 statt 25.",
+    "Zeile 13 als korrekt ansehen, weil sie für sich genommen läuft - der Fehler zeigt sich erst in Zeile 14."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "Currying: f(a1,a2) als Funktion, die a1 auf eine Funktion in a2 abbildet"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 26,
+     "label": "Lösung A5: def addiere(x): return lambda y: x + y"
+    }
+   ],
+   "tags": [
+    "currying",
+    "find-errors",
+    "fehlersuche",
+    "klausur",
+    "lambda"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-008"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Partielle Anwendung: den zweiten Parameter binden",
+   "prompt": "Schreiben Sie eine higher order function `binde_zweites(f, wert)`. Sie bekommt eine **zweistellige** Funktion `f` und einen `wert` und gibt eine **einstellige** Funktion zurück, bei der der **zweite** Parameter von `f` fest an `wert` gebunden ist:\n\n```python\nbinde_zweites(f, w)(a) == f(a, w)\n```\n\nBeispiel:\n\n```python\nquadrat = binde_zweites(pow, 2)\nprint(quadrat(5))    # 25\n```\n\nVerwenden Sie keine Schleifen. **(3 P)**",
+   "starterCode": "def binde_zweites(f, wert):\n    \"\"\"\n    Bindet den zweiten Parameter einer zweistelligen Funktion.\n    Eingaben: f - Funktion mit zwei Parametern, wert - fester Wert fuer den zweiten Parameter\n    Rueckgabe: einstellige Funktion g mit g(a) == f(a, wert)\n    \"\"\"\n    ...\n\nquadrat = binde_zweites(pow, 2)\nprint(quadrat(5))    # 25",
+   "constraints": [
+    "keine Schleifen",
+    "lambda verwenden"
+   ],
+   "solution": "def binde_zweites(f, wert):\n    \"\"\"\n    Bindet den zweiten Parameter einer zweistelligen Funktion.\n    Eingaben: f - Funktion mit zwei Parametern, wert - fester Wert für den zweiten Parameter\n    Rückgabe: einstellige Funktion g mit g(a) == f(a, wert)\n    \"\"\"\n    return lambda a: f(a, wert)",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "binde_zweites(pow, 2)(5)",
+     "expected": "25"
+    },
+    {
+     "name": "Reihenfolge zählt (Subtraktion)",
+     "call": "binde_zweites(lambda a, b: a - b, 3)(10)",
+     "expected": "7"
+    },
+    {
+     "name": "Methode auf Strings",
+     "call": "binde_zweites(str.count, 'l')('hallo')",
+     "expected": "2"
+    },
+    {
+     "name": "Kombination mit map",
+     "call": "list(map(binde_zweites(lambda x, n: x ** n, 3), [1, 2, 3]))",
+     "expected": "[1, 8, 27]"
+    },
+    {
+     "name": "Kombination mit filter",
+     "call": "list(filter(binde_zweites(lambda x, s: x > s, 4), [2, 7, 4, 9]))",
+     "expected": "[7, 9]"
+    },
+    {
+     "name": "Rückgabe ist eine Funktion",
+     "call": "type(binde_zweites(pow, 2)).__name__",
+     "expected": "'function'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "lambda"
+   ],
+   "explanation": "Das ist die **partielle Anwendung** (partial application): Aus einer zweistelligen Funktion wird eine einstellige, indem ein Argument fest verdrahtet wird. Genau das verlangt Klausuraufgabe 5b mit den Worten *\"Erzeugen Sie durch Binden eines Parameters ... eine neue Funktion quadrat\"*.\n\nDer Unterschied zum echten Currying: `curry2(f)(a)(b)` zerlegt `f` in eine **Kette** einstelliger Funktionen; `binde_zweites(f, w)` friert dagegen **sofort** ein bestimmtes Argument ein und liefert genau eine Funktion. In der Praxis benutzt man beides für dasselbe Ziel - Spezialisierung einer allgemeinen Funktion.\n\nDer große Nutzen zeigt sich in den letzten beiden Tests: `map` und `filter` verlangen **einstellige** Funktionen. Eine zweistellige Funktion passt dort nicht hinein - nach dem Binden schon.\n\nAufpassen bei der Argumentreihenfolge: Der gebundene Wert muss an die **zweite** Stelle, sonst rechnet man `f(wert, a)` und bekommt bei nicht-kommutativen Operationen (`-`, `/`, `**`) falsche Ergebnisse.\n\n**Merkregel:** *Binden = ein Argument einfrieren, den Rest als lambda-Parameter durchreichen.*",
+   "hints": [
+    "Die zurückgegebene Funktion darf nur noch EINEN Parameter haben.",
+    "Im lambda-Rumpf rufen Sie f mit dem lambda-Parameter und dem eingefrorenen wert auf.",
+    "Achten Sie auf die Position: der gebundene Wert gehört an die zweite Argumentstelle von f."
+   ],
+   "pitfalls": [
+    "return lambda a: f(wert, a) - vertauscht die Argumente; pow(2, 5) = 32 statt 25.",
+    "return f(a, wert) ohne lambda - a existiert an dieser Stelle nicht (NameError).",
+    "Die Funktion sofort aufrufen: return lambda a: f(a, wert)() - der Rückgabewert ist keine Funktion."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying: abstrakte Funktionen durch Binden von Parametern spezialisieren"
+    },
+    {
+     "file": "neues_spiel.py",
+     "page": 1,
+     "label": "strategie_aufhoeren_bei_15 = lambda x: allgemeine_strategie(x,15)"
+    }
+   ],
+   "tags": [
+    "currying",
+    "partial",
+    "higher-order-function",
+    "map",
+    "filter"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-009"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Currying vs. partielle Anwendung",
+   "prompt": "Gegeben ist die Funktion\n\n```python\ndef volumen(laenge, breite, hoehe):\n    return laenge * breite * hoehe\n```\n\na) Erklären Sie den Unterschied zwischen **Currying** und **partieller Anwendung** anhand dieser Funktion. Geben Sie für beides je eine Beispielzeile Python-Code an. (2 P)\n\nb) Nennen Sie einen konkreten Vorteil, den das Binden von Parametern beim Arbeiten mit `map` und `filter` bringt. (1 P)",
+   "solution": "**Musterlösung**\n\n**a) Currying** zerlegt die dreistellige Funktion in eine **Kette** von drei einstelligen Funktionen. Erst nach dem dritten Aufruf entsteht ein Zahlenwert:\n\n```python\nvolumen_curry = lambda l: lambda b: lambda h: volumen(l, b, h)\nprint(volumen_curry(2)(3)(4))    # 24\n```\n\n**Partielle Anwendung** friert dagegen **einzelne** Argumente sofort ein und lässt die restlichen offen. Es entsteht in einem Schritt eine Funktion mit weniger Parametern:\n\n```python\ngrundflaeche_2x3 = lambda h: volumen(2, 3, h)\nprint(grundflaeche_2x3(4))       # 24\n```\n\nKurz: Currying legt die Reihenfolge fest (ein Argument pro Aufruf, von links nach rechts), partielle Anwendung darf beliebige Argumente binden und beliebig viele auf einmal. Beide Konzepte nutzen denselben Mechanismus - eine *closure*, die sich die gebundenen Werte merkt. In der Standardbibliothek gibt es dafür auch `functools.partial`:\n\n```python\nfrom functools import partial\nflaeche = partial(volumen, 2, 3)   # flaeche(4) -> 24\n```\n\n**b)** `map` und `filter` erwarten eine Funktion, die **genau ein** Argument entgegennimmt. Eine mehrstellige Funktion passt dort nicht hinein. Durch Binden der übrigen Parameter entsteht genau die benötigte einstellige Funktion, z. B.\n\n```python\nprint(list(map(lambda h: volumen(2, 3, h), [1, 2, 3])))   # [6, 12, 18]\n```\n\n**Bewertungsrubrik (3 P)**\n\n- 1 P: Currying korrekt beschrieben (Kette einstelliger Funktionen, ein Argument pro Aufruf) **mit** lauffähiger Beispielzeile.\n- 1 P: Partielle Anwendung korrekt beschrieben (feste Werte einsetzen, Rest bleibt offen) **mit** lauffähiger Beispielzeile.\n- 1 P: Vorteil für map/filter genannt: dort werden einstellige Funktionen gebraucht.\n- Abzug, wenn die Beispielzeilen keine Funktion, sondern direkt einen Zahlenwert erzeugen.",
+   "explanation": "Beide Techniken verfolgen das in der Vorlesung genannte Ziel: *\"abstrakte Funktionen schreiben zu können, die von vielen Parametern abhängen, und diese dann durch das Binden bestimmter Parameter an fixe Werte spezialisieren zu können\"*.\n\nDer Unterschied ist eher formal als praktisch. **Currying** ist die strenge mathematische Form: `f_curry(a1)(a2)(a3) = f(a1, a2, a3)`, immer ein Argument pro Klammerpaar, immer in dieser Reihenfolge. **Partielle Anwendung** ist die pragmatische Form: Man setzt ein, was man schon weiß, und lässt offen, was noch variabel ist.\n\nIn der Klausur wird die partielle Anwendung verlangt (\"Binden eines Parameters mit einem lambda-Ausdruck\"), aber mit dem ausdrücklichen Hinweis *\"wie beim Currying aus der Vorlesung\"* - der Prof behandelt beides als eine Familie.\n\nDer Praxisnutzen bei `map`/`filter` ist der eigentliche Grund, warum das Thema in dieser Vorlesung überhaupt vorkommt: Diese Funktionen sind auf einstellige Funktionen angewiesen. Genau so entstehen im Push-Your-Luck-Beispiel die Strategien (`strategie_aufhoeren_bei_15 = lambda x: allgemeine_strategie(x, 15)`).\n\n**Merkregel:** *Currying = Kette. Partielle Anwendung = Abkürzung. Beide leben von closures.*",
+   "hints": [
+    "Fragen Sie sich für beide Varianten: Wie viele Klammerpaare braucht es bis zum Zahlenwert?",
+    "Bei der partiellen Anwendung dürfen mehrere Argumente gleichzeitig fest werden.",
+    "Für b): Wie viele Argumente übergibt map der Funktion, die es bekommt?"
+   ],
+   "pitfalls": [
+    "Als Beispiel volumen(2, 3, 4) angeben - das ist ein fertiger Wert, keine spezialisierte Funktion.",
+    "Currying und partielle Anwendung als völlig getrennte Konzepte darstellen; beide binden Parameter mittels closure.",
+    "Bei b) nur 'ist kürzer' antworten statt des eigentlichen Grundes (map/filter brauchen einstellige Funktionen)."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying: abstrakte Funktionen durch Binden von Parametern spezialisieren"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "Currying: f(a1,a2) als Funktion, die a1 auf eine Funktion in a2 abbildet"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    },
+    {
+     "file": "neues_spiel.py",
+     "page": 1,
+     "label": "strategie_aufhoeren_bei_15 = lambda x: allgemeine_strategie(x,15)"
+    }
+   ],
+   "tags": [
+    "currying",
+    "partial",
+    "theorie",
+    "map",
+    "filter",
+    "short-answer"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-010"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": false,
+   "title": "Tage in Sekunden: Currying plus Funktionsverkettung",
+   "prompt": "**Übungsblatt 4/5, Aufgabe 6.** Rechnen Sie mit Currying schrittweise Tage in Sekunden um.\n\nSchreiben Sie dazu:\n\n1. `mal(faktor)` - eine Funktionsfabrik, die eine **Funktion** zurückgibt, welche ihr Argument mit `faktor` multipliziert.\n2. `verkette(*funktionen)` - eine Funktion, die beliebig viele Funktionen entgegennimmt und **eine** Funktion zurückgibt, die diese der Reihe nach (von links nach rechts) auf ihr Argument anwendet. `verkette()` ohne Argumente liefert die Identität.\n3. Erzeugen Sie damit `tage_zu_stunden`, `stunden_zu_minuten`, `minuten_zu_sekunden` und setzen Sie diese zu `tage_zu_sekunden` zusammen.\n\nVerwenden Sie **keine Schleifen** - `verkette` soll mit `reduce` arbeiten. **(5 P)**",
+   "starterCode": "from functools import reduce\n\ndef mal(faktor):\n    \"\"\"Gibt eine Funktion zurueck, die ihr Argument mit faktor multipliziert.\"\"\"\n    ...\n\ndef verkette(*funktionen):\n    \"\"\"Gibt eine Funktion zurueck, die alle uebergebenen Funktionen nacheinander anwendet.\"\"\"\n    ...\n\ntage_zu_stunden = ...\nstunden_zu_minuten = ...\nminuten_zu_sekunden = ...\n\ntage_zu_sekunden = ...\n\nprint(tage_zu_sekunden(1))   # 86400",
+   "constraints": [
+    "keine Schleifen",
+    "verkette muss reduce verwenden",
+    "alle Funktionen sind pure functions"
+   ],
+   "solution": "from functools import reduce\n\ndef mal(faktor):\n    \"\"\"Gibt eine Funktion zurück, die ihr Argument mit faktor multipliziert.\"\"\"\n    return lambda x: x * faktor\n\ndef verkette(*funktionen):\n    \"\"\"Gibt eine Funktion zurück, die alle übergebenen Funktionen nacheinander anwendet.\"\"\"\n    return lambda x: reduce(lambda wert, f: f(wert), funktionen, x)\n\ntage_zu_stunden = mal(24)\nstunden_zu_minuten = mal(60)\nminuten_zu_sekunden = mal(60)\n\ntage_zu_sekunden = verkette(tage_zu_stunden, stunden_zu_minuten, minuten_zu_sekunden)",
+   "tests": [
+    {
+     "name": "ein Tag hat 86400 Sekunden",
+     "call": "tage_zu_sekunden(1)",
+     "expected": "86400"
+    },
+    {
+     "name": "zwei Tage",
+     "call": "tage_zu_sekunden(2)",
+     "expected": "172800"
+    },
+    {
+     "name": "Einzelschritt Tage -> Stunden",
+     "call": "tage_zu_stunden(3)",
+     "expected": "72"
+    },
+    {
+     "name": "verkette ohne Argumente ist die Identität",
+     "call": "verkette()(5)",
+     "expected": "5"
+    },
+    {
+     "name": "Reihenfolge der Verkettung",
+     "call": "verkette(mal(2), lambda x: x + 1)(5)",
+     "expected": "11"
+    },
+    {
+     "name": "mal liefert eine Funktion",
+     "call": "type(mal(24)).__name__",
+     "expected": "'function'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "reduce",
+    "lambda"
+   ],
+   "explanation": "Diese Aufgabe verbindet drei Bausteine der Vorlesung: **Currying** (`mal` ist eine Funktionsfabrik), **higher order functions** (`verkette` nimmt Funktionen entgegen *und* gibt eine zurück) und **reduce**.\n\nDer Trick in `verkette` ist, dass `reduce` hier nicht über Zahlen, sondern über **Funktionen** faltet. Der Akkumulator ist der jeweils aktuelle Zwischenwert, das nächste Element ist die nächste Funktion:\n\n```\nreduce(lambda wert, f: f(wert), (f1, f2, f3), x)\n  = f3(f2(f1(x)))\n```\n\nDer Startwert `x` (drittes Argument von `reduce`) ist wichtig: Er sorgt dafür, dass `verkette()` mit leerer Funktionsliste die Identität liefert statt eines `TypeError: reduce() of empty iterable with no initial value`.\n\nBeachten Sie die **Reihenfolge**: Hier wird von links nach rechts angewendet (`verkette(mal(2), plus1)(5) = plus1(mal(2)(5)) = 11`). Die mathematische Komposition `f o g` wäre genau andersherum - deshalb sollte man in der Klausur immer ein Beispiel durchrechnen, statt der Intuition zu vertrauen.\n\nAlle beteiligten Funktionen sind *pure*: Sie hängen nur von ihren Argumenten ab und haben keine Nebeneffekte.\n\n**Merkregel:** *reduce faltet auch Funktionen - Akkumulator ist der Wert, Element ist die Funktion.*",
+   "hints": [
+    "mal ist dieselbe Bauform wie addiere(x): return lambda ... aus der Vorlesung.",
+    "verkette bekommt die Funktionen als Tupel funktionen. Was faltet reduce hier - Zahlen oder Funktionen?",
+    "Der Akkumulator in reduce ist der bisherige Zwischenwert; das Startargument von reduce ist das x der zurückgegebenen Funktion."
+   ],
+   "pitfalls": [
+    "Startwert bei reduce vergessen - dann scheitert verkette() mit leerem Funktionstupel.",
+    "reduce(lambda f, wert: ...) - Akkumulator und Element vertauscht.",
+    "In verkette die Funktionen sofort aufrufen statt eine neue Funktion zurückzugeben."
+   ],
+   "sources": [
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying: abstrakte Funktionen durch Binden von Parametern spezialisieren"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce faltet ein iterierbares Objekt mit einer zweistelligen Funktion"
+    }
+   ],
+   "tags": [
+    "currying",
+    "reduce",
+    "higher-order-function",
+    "verkettung",
+    "pure-function"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-011"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Closure mit Gedächtnis: ein Zähler ohne globale Variable",
+   "prompt": "Schreiben Sie eine Funktion `mache_zaehler()`, die **eine Funktion zurückgibt**. Die zurückgegebene Funktion nimmt kein Argument entgegen und liefert bei jedem Aufruf die nächste Zahl: beim ersten Aufruf `1`, beim zweiten `2`, usw.\n\nWichtig: Der Zählerstand darf **nicht** in einer globalen Variablen liegen, sondern muss im Geltungsbereich von `mache_zaehler` gespeichert werden (*closure*). Zwei verschiedene Zähler müssen deshalb **unabhängig** voneinander zählen.\n\n```python\nz = mache_zaehler()\nprint(z(), z(), z())   # 1 2 3\n```\n\nVerwenden Sie kein `global`. **(4 P)**",
+   "starterCode": "def mache_zaehler():\n    \"\"\"\n    Erzeugt einen Zaehler.\n    Rueckgabe: Funktion ohne Parameter, die bei jedem Aufruf 1, 2, 3, ... liefert.\n    \"\"\"\n    ...\n\nz = mache_zaehler()\nprint(z(), z(), z())   # 1 2 3",
+   "constraints": [
+    "kein global",
+    "der Zählerstand liegt im enclosing scope (closure)"
+   ],
+   "solution": "def mache_zaehler():\n    \"\"\"\n    Erzeugt einen Zähler.\n    Rückgabe: Funktion ohne Parameter, die bei jedem Aufruf 1, 2, 3, ... liefert.\n    \"\"\"\n    stand = 0\n\n    def zaehle():\n        nonlocal stand\n        stand = stand + 1\n        return stand\n\n    return zaehle",
+   "tests": [
+    {
+     "name": "drei Aufrufe hintereinander",
+     "call": "(lambda z: [z(), z(), z()])(mache_zaehler())",
+     "expected": "[1, 2, 3]"
+    },
+    {
+     "name": "zwei Zähler sind unabhängig",
+     "call": "(lambda a, b: [a(), a(), b(), a()])(mache_zaehler(), mache_zaehler())",
+     "expected": "[1, 2, 1, 3]"
+    },
+    {
+     "name": "erster Aufruf liefert 1",
+     "call": "mache_zaehler()()",
+     "expected": "1"
+    },
+    {
+     "name": "Rückgabe ist eine Funktion",
+     "call": "type(mache_zaehler()).__name__",
+     "expected": "'function'"
+    }
+   ],
+   "forbidden": [
+    "global ",
+    "for ",
+    "while "
+   ],
+   "required": [
+    "nonlocal"
+   ],
+   "explanation": "Das ist die Bauform aus der `zusammenfassung.ipynb` (`funktion_die_um_eins_hochzaehlt`), nur mit Gedächtnis. Die innere Funktion `zaehle` ist eine **closure**: Sie hält die Variable `stand` des umschließenden Aufrufs am Leben, auch nachdem `mache_zaehler` längst zurückgekehrt ist.\n\nDer Knackpunkt ist `nonlocal`. Ohne dieses Schlüsselwort behandelt Python jede Zuweisung innerhalb einer Funktion als **Erzeugung einer neuen lokalen Variablen**. `stand = stand + 1` würde dann versuchen, die noch gar nicht existierende lokale Variable `stand` zu lesen - Ergebnis: `UnboundLocalError`. `nonlocal stand` sagt: \"Nimm die Variable aus dem umschließenden Geltungsbereich.\" (`global` wäre falsch: `stand` ist nicht global, sondern eine Ebene darüber.)\n\nWeil jeder Aufruf von `mache_zaehler` einen **eigenen** Geltungsbereich anlegt, sind zwei Zähler völlig unabhängig - genau das zeigt der zweite Test. Das ist der große Vorteil gegenüber einer globalen Zählvariablen.\n\nAchtung: Diese Funktion ist **nicht pure** - sie liefert bei gleicher (leerer) Eingabe unterschiedliche Werte, weil sie einen internen *state* hat. Das ist hier bewusst so; genau dieselbe Technik braucht man später für Decorators, die Aufrufe zählen.\n\n**Merkregel:** *Lesen aus dem enclosing scope geht immer, Schreiben nur mit `nonlocal`.*",
+   "hints": [
+    "Legen Sie den Zählerstand als lokale Variable in mache_zaehler an - noch vor der inneren def.",
+    "Die innere Funktion muss den Stand nicht nur lesen, sondern auch verändern. Welches Schlüsselwort erlaubt das?",
+    "global ist hier falsch: der Stand liegt eine Ebene darüber, nicht ganz außen."
+   ],
+   "pitfalls": [
+    "nonlocal vergessen -> UnboundLocalError beim ersten Aufruf.",
+    "global stand benutzen -> alle Zähler teilen sich denselben Stand und der Name landet im globalen Namensraum.",
+    "return zaehle() statt return zaehle - dann wird die 1 zurückgegeben statt der Funktion."
+   ],
+   "sources": [
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "funktion_die_um_eins_hochzaehlt: Funktion, die eine Funktion zurückgibt"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Geltungsbereiche, Lebensdauer, global"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Adaptive Strategie als lambda mit einer closure"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 11,
+     "label": "Schreiben sie eine Funktion, die eine Funktion als Rückgabewert liefert"
+    }
+   ],
+   "tags": [
+    "closure",
+    "nonlocal",
+    "scope",
+    "higher-order-function",
+    "state"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-012"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Warum wirft dieser Closure-Code einen Fehler?",
+   "prompt": "Was passiert, wenn der folgende Code ausgeführt wird? Nennen Sie den **Fehlertyp** und begründen Sie, **warum** der Fehler auftritt. Wie behebt man ihn mit einem einzigen zusätzlichen Schlüsselwort?",
+   "code": "def mache_konto(startguthaben):\n    guthaben = startguthaben\n\n    def einzahlen(betrag):\n        guthaben = guthaben + betrag\n        return guthaben\n\n    return einzahlen\n\nkonto = mache_konto(100)\nprint(konto(50))",
+   "expectedOutput": "UnboundLocalError",
+   "solution": "Der Code wirft einen **`UnboundLocalError`** (Meldung je nach Python-Version: *cannot access local variable 'guthaben' where it is not associated with a value* bzw. *local variable 'guthaben' referenced before assignment*).\n\n**Warum:** In `einzahlen` steht die Zuweisung `guthaben = ...`. Python entscheidet bereits beim Übersetzen der Funktion: Ein Name, dem im Funktionsrumpf irgendwo etwas zugewiesen wird, ist **lokal** - für den gesamten Rumpf. Auf der rechten Seite soll aber genau diese lokale Variable gelesen werden, bevor sie jemals einen Wert bekommen hat. Das äußere `guthaben` aus `mache_konto` wird dabei komplett verdeckt.\n\n**Behebung:** `nonlocal guthaben` als erste Zeile in `einzahlen`:\n\n```python\ndef mache_konto(startguthaben):\n    guthaben = startguthaben\n\n    def einzahlen(betrag):\n        nonlocal guthaben\n        guthaben = guthaben + betrag\n        return guthaben\n\n    return einzahlen\n\nkonto = mache_konto(100)\nprint(konto(50))     # 150\n```\n\nMit `nonlocal` gibt der Code `150` aus.",
+   "explanation": "Das ist die klassische Scope-Falle bei closures - der Prof fragt so etwas in Aufgabe 2 der Klausur (*\"Wieso wirft der folgende Code einen Fehler?\"*).\n\nWichtig ist die Unterscheidung zwischen **Lesen** und **Schreiben**:\n\n- Nur **lesen** (`return guthaben + betrag`) funktioniert ohne jedes Schlüsselwort. Python sucht dann nach der LEGB-Regel: local -> enclosing -> global -> builtins.\n- **Zuweisen** (`guthaben = ...`) macht den Namen automatisch lokal - für die *ganze* Funktion, auch für Zeilen davor.\n\nDeshalb ist es kein `NameError`, sondern ein `UnboundLocalError`: Python *weiß*, dass `guthaben` lokal ist, aber die Variable hat noch keinen Wert.\n\n`nonlocal` greift auf den **umschließenden Funktions**-Geltungsbereich zu, `global` auf den Modul-Geltungsbereich. Hier wäre `global guthaben` falsch: Es gibt gar kein globales `guthaben`, und der Zählerstand würde von allen Konten geteilt.\n\n**Merkregel:** *Eine Zuweisung im Rumpf macht den Namen lokal - für die ganze Funktion. Wer nach außen schreiben will, braucht `nonlocal` (eine Ebene höher) oder `global` (ganz außen).*",
+   "hints": [
+    "Es ist kein NameError. Überlegen Sie, was die Zuweisung in Zeile 5 mit dem Namen guthaben macht.",
+    "Ein Name, dem in einer Funktion irgendwo etwas zugewiesen wird, gilt im ganzen Rumpf als lokal.",
+    "Zum Beheben brauchen Sie kein global, sondern das Schlüsselwort für die nächsthöhere Funktionsebene."
+   ],
+   "pitfalls": [
+    "150 als Ausgabe raten - beim reinen Lesen würde es klappen, beim Zuweisen nicht.",
+    "NameError statt UnboundLocalError nennen.",
+    "Mit global 'reparieren' - das greift auf den Modulnamensraum zu, nicht auf mache_konto."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Geltungsbereiche, Lebensdauer, global"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Adaptive Strategie als lambda mit einer closure"
+    },
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "funktion_die_um_eins_hochzaehlt: Funktion, die eine Funktion zurückgibt"
+    }
+   ],
+   "tags": [
+    "closure",
+    "nonlocal",
+    "scope",
+    "UnboundLocalError",
+    "predict-output",
+    "klausur"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-013"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Bonusaufgabe: Decorator rufezeichen",
+   "prompt": "**Bonusaufgabe der Klausur (+4 Punkte).**\n\nSchreiben Sie einen Decorator `rufezeichen`, der jede Funktion, die einen String zurückgibt, so verändert, dass an den Rückgabewert drei Ausrufezeichen (`\"!!!\"`) angehängt werden.\n\nDekorieren Sie damit anschließend **per `@`-Syntax** eine Funktion `begruessung(name)`, die `\"Hallo, <name>\"` zurückgibt.\n\nDer Decorator soll mit beliebigen Argumenten funktionieren (positional **und** keyword). **(4 P)**",
+   "starterCode": "def rufezeichen(func):\n    ...\n\n\n# hier die @-Syntax verwenden\ndef begruessung(name):\n    return \"Hallo, \" + name\n\n\nprint(begruessung(\"Anna\"))   # Hallo, Anna!!!",
+   "constraints": [
+    "@-Syntax verwenden",
+    "wrapper mit *args und **kwargs",
+    "keine Schleifen"
+   ],
+   "solution": "def rufezeichen(func):\n    \"\"\"\n    Decorator: hängt an den (String-)Rueckgabewert von func drei Ausrufezeichen an.\n    Eingabe: func - Funktion, die einen String zurückgibt\n    Rückgabe: umhüllte Funktion\n    \"\"\"\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs) + \"!!!\"\n    return wrapper\n\n\n@rufezeichen\ndef begruessung(name):\n    return \"Hallo, \" + name",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "begruessung('Anna')",
+     "expected": "'Hallo, Anna!!!'"
+    },
+    {
+     "name": "anderer Name",
+     "call": "begruessung('Ben')",
+     "expected": "'Hallo, Ben!!!'"
+    },
+    {
+     "name": "Aufruf mit keyword-Argument",
+     "call": "begruessung(name='Cara')",
+     "expected": "'Hallo, Cara!!!'"
+    },
+    {
+     "name": "Decorator ist allgemein einsetzbar",
+     "call": "rufezeichen(lambda a, b: a + ' ' + b)('gut', 'gemacht')",
+     "expected": "'gut gemacht!!!'"
+    },
+    {
+     "name": "begruessung ist nach dem Dekorieren der wrapper",
+     "call": "begruessung.__name__",
+     "expected": "'wrapper'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "@rufezeichen",
+    "def rufezeichen",
+    "!!!"
+   ],
+   "explanation": "Ein Decorator ist laut Vorlesung nichts anderes als eine **higher order function**, die eine Funktion \"in eine Funktion höherer Ordnung hüllt (wrapt)\". Das Grundgerüst ist immer dasselbe und sollte auswendig sitzen:\n\n```python\ndef deko(func):\n    def wrapper(*args, **kwargs):\n        # vorher ...\n        ergebnis = func(*args, **kwargs)\n        # nachher ...\n        return ergebnis\n    return wrapper\n```\n\nHier wird nur die Zeile \"nachher\" gebraucht: Der Rückgabewert wird verändert, bevor er weitergereicht wird.\n\nDie drei häufigsten Fehler: (1) `return wrapper()` statt `return wrapper` - dann wird der wrapper sofort aufgerufen; (2) das `return` im wrapper vergessen - dann liefert `begruessung(\"Anna\")` `None` und der `+`-Operator schlägt später fehl; (3) `wrapper(name)` statt `wrapper(*args, **kwargs)` - dann funktioniert der Decorator nur für genau diese eine Signatur.\n\n`*args`/`**kwargs` sorgen laut Übungsblatt dafür, *\"dass wrapper mit beliebig vielen Argumenten funktioniert\"*. Der letzte Test zeigt außerdem eine Nebenwirkung: Nach dem Dekorieren heißt die Funktion intern `wrapper` - dagegen hilft `functools.wraps`.\n\n**Merkregel:** *Decorator = Funktion rein, Funktion raus. `@deko` über `def f` bedeutet `f = deko(f)`.*",
+   "hints": [
+    "Das Grundgerüst steht auf dem Übungsblatt: def deko(func): def wrapper(*args, **kwargs): ... return wrapper",
+    "Im wrapper rufen Sie func auf, verändern das Ergebnis und geben es zurück - der Rückgabewert ist ein String.",
+    "Vergessen Sie nicht, hinter dem wrapper return wrapper zu schreiben (ohne Klammern!)."
+   ],
+   "pitfalls": [
+    "return wrapper() statt return wrapper - der wrapper wird dann sofort ausgeführt.",
+    "Im wrapper das return vergessen - begruessung liefert dann None.",
+    "wrapper(name) statt wrapper(*args, **kwargs) - der Decorator ist dann nicht allgemein einsetzbar."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "klausur",
+    "bonus",
+    "args-kwargs",
+    "higher-order-function"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-014"
+  },
+  {
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Was bedeutet die @-Syntax genau?",
+   "prompt": "Gegeben ist:\n\n```python\ndef rufezeichen(func):\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs) + \"!!!\"\n    return wrapper\n\n@rufezeichen\ndef begruessung(name):\n    return \"Hallo, \" + name\n```\n\nWelche Anweisung ist **gleichbedeutend** mit der Zeile `@rufezeichen`?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`begruessung = rufezeichen(begruessung)`",
+     "correct": true,
+     "why": "Genau das macht die @-Syntax: Die soeben definierte Funktion wird durch den Decorator geschickt und der Name wird an das Ergebnis neu gebunden."
+    },
+    {
+     "id": "b",
+     "text": "`begruessung = rufezeichen(begruessung())`",
+     "correct": false,
+     "why": "Mit Klammern würde begruessung zuerst aufgerufen - und zwar ohne das nötige Argument name (TypeError). Der Decorator bekommt die Funktion selbst, nicht deren Rückgabewert."
+    },
+    {
+     "id": "c",
+     "text": "`rufezeichen = begruessung`",
+     "correct": false,
+     "why": "Das würde nur den Namen rufezeichen überschreiben und den Decorator zerstören."
+    },
+    {
+     "id": "d",
+     "text": "`begruessung(rufezeichen)`",
+     "correct": false,
+     "why": "Hier würde der Decorator als Argument an begruessung übergeben - genau andersherum als gemeint."
+    },
+    {
+     "id": "e",
+     "text": "Nichts davon - die @-Zeile wird erst beim ersten Aufruf von begruessung ausgewertet.",
+     "correct": false,
+     "why": "Der Decorator wird direkt bei der Definition der Funktion ausgeführt, nicht erst beim Aufruf. Ein print im Decorator-Rumpf erscheint deshalb schon beim Import des Moduls."
+    }
+   ],
+   "solution": "Richtig ist **a**: `@rufezeichen` über `def begruessung` ist genau die Kurzschreibweise für\n\n```python\nbegruessung = rufezeichen(begruessung)\n```\n\nwobei die Zuweisung **unmittelbar nach** der `def`-Anweisung ausgeführt wird.",
+   "explanation": "Die Vorlesung formuliert es so: *\"In Python genügt es nun, vor die Definition einer Funktion mit einem @-Zeichen den obigen Wrapper zu schreiben.\"* Die `@`-Syntax ist also reiner **syntaktischer Zucker** - man könnte jeden Decorator auch von Hand als Zuweisung schreiben.\n\nDrei Konsequenzen folgen direkt daraus:\n\n1. Der Decorator läuft **zur Definitionszeit**, nicht beim Aufruf (deshalb ist e falsch). Ein `print` im Decorator-Rumpf erscheint sofort.\n2. Der Name `begruessung` zeigt danach auf den **wrapper**, nicht mehr auf die Originalfunktion. Deshalb liefert `begruessung.__name__` ohne `functools.wraps` den Wert `'wrapper'`.\n3. Der Decorator bekommt das **Funktionsobjekt** übergeben, nicht dessen Rückgabewert - darum stehen bei `rufezeichen(begruessung)` keine Klammern hinter `begruessung` (deshalb ist b falsch).\n\n**Merkregel:** *`@deko` über `def f(...)` heißt schlicht `f = deko(f)` - sofort, nicht später.*",
+   "hints": [
+    "Ein Decorator bekommt eine Funktion und gibt eine Funktion zurück. Welche Variable muss danach auf das Ergebnis zeigen?",
+    "Achten Sie auf die Klammern: Wird die Funktion selbst oder ihr Rückgabewert übergeben?",
+    "Überlegen Sie, wann der Decorator ausgeführt wird - bei der Definition oder beim Aufruf?"
+   ],
+   "pitfalls": [
+    "Denken, der Decorator werde erst beim Aufruf der dekorierten Funktion aktiv.",
+    "Klammern setzen: rufezeichen(begruessung()) statt rufezeichen(begruessung).",
+    "Übersehen, dass der ursprüngliche Funktionsname nach dem Dekorieren auf den wrapper zeigt."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "at-syntax",
+    "mc",
+    "theorie",
+    "higher-order-function"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-015"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Der Türsteher: Decorator login_required vervollständigen",
+   "prompt": "**Übungsblatt 4/5, Aufgabe 5.** Bestimmte Funktionen sollen nur ausgeführt werden, wenn der Nutzer eingeloggt ist. Füllen Sie die drei Lücken im Decorator-Gerüst so aus, dass der Code genau diese Ausgabe erzeugt:\n\n```\nProfil von Anna wird angezeigt.\nKauf bestaetigt: Laptop fuer 999 EUR\nZugriff verweigert. Bitte einloggen.\n```\n\nDer Decorator muss für **beide** Funktionen funktionieren, obwohl sie unterschiedlich viele Parameter haben. **(je 1-2 P)**",
+   "code": "eingeloggt = True\n\ndef login_required(func):\n    def wrapper(## Lücke 1 ##):\n        if eingeloggt:\n            return ## Lücke 2 ##\n        else:\n            print(\"Zugriff verweigert. Bitte einloggen.\")\n    ## Lücke 3 ##\n\n@login_required\ndef zeige_profil(name):\n    print(f\"Profil von {name} wird angezeigt.\")\n\n@login_required\ndef kaufe_produkt(produkt, preis):\n    print(f\"Kauf bestaetigt: {produkt} fuer {preis} EUR\")\n\nzeige_profil(\"Anna\")\nkaufe_produkt(\"Laptop\", preis=999)\n\neingeloggt = False\nzeige_profil(\"Anna\")",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "*args, **kwargs",
+      "*args,**kwargs"
+     ],
+     "explanation": "Der wrapper muss beliebig viele positional und keyword Argumente entgegennehmen, denn er wird für zeige_profil(name) UND kaufe_produkt(produkt, preis) verwendet."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "func(*args, **kwargs)",
+      "func(*args,**kwargs)"
+     ],
+     "explanation": "Die eingesammelten Argumente werden mit * und ** wieder ausgepackt und an die ursprüngliche Funktion weitergereicht."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "return wrapper"
+     ],
+     "explanation": "Der Decorator gibt die umhüllende Funktion zurück - ohne Klammern, sonst würde sie sofort aufgerufen."
+    }
+   ],
+   "expectedOutput": "Profil von Anna wird angezeigt.\nKauf bestaetigt: Laptop fuer 999 EUR\nZugriff verweigert. Bitte einloggen.",
+   "solution": "```python\neingeloggt = True\n\ndef login_required(func):\n    def wrapper(*args, **kwargs):\n        if eingeloggt:\n            return func(*args, **kwargs)\n        else:\n            print(\"Zugriff verweigert. Bitte einloggen.\")\n    return wrapper\n\n@login_required\ndef zeige_profil(name):\n    print(f\"Profil von {name} wird angezeigt.\")\n\n@login_required\ndef kaufe_produkt(produkt, preis):\n    print(f\"Kauf bestaetigt: {produkt} fuer {preis} EUR\")\n\nzeige_profil(\"Anna\")                    # Profil von Anna wird angezeigt.\nkaufe_produkt(\"Laptop\", preis=999)      # Kauf bestaetigt: Laptop für 999 EUR\n\neingeloggt = False\nzeige_profil(\"Anna\")                    # Zugriff verweigert. Bitte einloggen.\n```",
+   "explanation": "Dieses Gerüst ist der Prototyp eines Decorators, der den Aufruf **kontrolliert** statt ihn nur zu verändern. Der wrapper entscheidet, ob `func` überhaupt aufgerufen wird.\n\n**Lücke 1 und 2 gehören zusammen.** `*args, **kwargs` in der Definition *sammelt* alle Argumente ein (positional in ein Tupel, keyword in ein Dictionary). `func(*args, **kwargs)` im Aufruf *packt sie wieder aus*. Nur so funktioniert derselbe Decorator für `zeige_profil(name)` (ein positional Argument) und `kaufe_produkt(produkt, preis=999)` (ein positional, ein keyword Argument).\n\n**Lücke 3** ist die klassische Stolperstelle: `return wrapper` **ohne Klammern**. Mit `return wrapper()` würde der wrapper schon beim Dekorieren ausgeführt.\n\nInteressant ist noch das Timing: `eingeloggt` wird **bei jedem Aufruf** neu gelesen, nicht beim Dekorieren. Deshalb wirkt `eingeloggt = False` auch auf die bereits dekorierten Funktionen. Der wrapper greift auf die globale Variable zu - er ist also **nicht pure**.\n\n**Merkregel:** *Definition sammelt mit `*`, Aufruf packt aus mit `*`. Und: `return wrapper` ohne Klammern.*",
+   "hints": [
+    "Lücke 1: Der wrapper wird für Funktionen mit unterschiedlich vielen Parametern verwendet - welche Schreibweise verträgt beliebig viele Argumente?",
+    "Lücke 2: Die eingesammelten Argumente müssen beim Weiterreichen wieder ausgepackt werden - mit denselben Sternchen.",
+    "Lücke 3: Der Decorator muss die umhüllende Funktion zurückgeben. Achten Sie darauf, sie nicht versehentlich aufzurufen."
+   ],
+   "pitfalls": [
+    "In Lücke 2 nur func() schreiben - dann fehlen die Argumente (TypeError).",
+    "In Lücke 3 return wrapper() schreiben - der wrapper läuft dann sofort beim Dekorieren.",
+    "In Lücke 1 name schreiben - der Decorator wäre dann für kaufe_produkt unbrauchbar."
+   ],
+   "sources": [
+    {
+     "file": "blatt4u5.pdf",
+     "page": 3,
+     "label": "Aufgabe 5 - Dekoratoren: Der Türsteher"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 21,
+     "label": "Klausurrelevant: *args/**kwargs, Funktionen die Funktionen zurückgeben"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "fill-gaps",
+    "args-kwargs",
+    "klausur",
+    "wrapper"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-016"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Wann läuft ein Decorator eigentlich?",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?",
+   "code": "def deko(f):\n    print(\"dekoriere:\", f.__name__)\n\n    def wrapper(*args, **kwargs):\n        print(\"--> vorher\")\n        ergebnis = f(*args, **kwargs)\n        print(\"<-- nachher\")\n        return ergebnis\n\n    return wrapper\n\n@deko\ndef gruss(name):\n    print(\"Hallo,\", name)\n    return len(name)\n\nprint(\"Programm laeuft\")\nx = gruss(\"Ada\")\nprint(x)",
+   "expectedOutput": "dekoriere: gruss\nProgramm laeuft\n--> vorher\nHallo, Ada\n<-- nachher\n3",
+   "solution": "```\ndekoriere: gruss\nProgramm laeuft\n--> vorher\nHallo, Ada\n<-- nachher\n3\n```\n\n1. `dekoriere: gruss` erscheint **zuerst** - `@deko` bedeutet `gruss = deko(gruss)` und wird unmittelbar bei der Definition ausgeführt. Zu diesem Zeitpunkt heißt `f` noch `gruss`.\n2. `Programm laeuft` - erst danach läuft der übrige Modulcode.\n3. `gruss(\"Ada\")` ruft in Wahrheit `wrapper(\"Ada\")` auf: `--> vorher`, dann die Originalfunktion (`Hallo, Ada`), dann `<-- nachher`.\n4. Der wrapper reicht den Rückgabewert `len(\"Ada\") = 3` durch, deshalb `3`.",
+   "explanation": "Diese Aufgabe trennt sauber die zwei Zeitpunkte, die man beim Thema Decorators auseinander halten muss:\n\n- **Definitionszeit:** Der Decorator-Rumpf läuft *genau einmal*, nämlich wenn Python die `def gruss`-Anweisung abarbeitet. Alles, was direkt im Decorator steht (hier das erste `print`), passiert also sofort - auch wenn `gruss` nie aufgerufen wird.\n- **Aufrufzeit:** Der wrapper-Rumpf läuft bei *jedem* Aufruf von `gruss`.\n\nDer typische Fehler ist, `dekoriere: gruss` an die zweite Stelle (nach `Programm laeuft`) zu setzen oder es bei jedem Aufruf zu erwarten.\n\nDer zweite wichtige Punkt ist die Zeile `ergebnis = f(*args, **kwargs)` gefolgt von `return ergebnis`. Ohne dieses `return` wäre `x` gleich `None` und die letzte Zeile würde `None` ausgeben - ein Decorator muss den Rückgabewert der Originalfunktion **aktiv durchreichen**.\n\nBeachten Sie auch: Innerhalb des Decorators heißt die Originalfunktion `f` und hat noch ihren echten Namen (`f.__name__` ist `'gruss'`). Nach dem Dekorieren zeigt der globale Name `gruss` dagegen auf `wrapper`.\n\n**Merkregel:** *Decorator-Rumpf: einmal bei der Definition. Wrapper-Rumpf: bei jedem Aufruf.*",
+   "hints": [
+    "Überlegen Sie zuerst, welche prints beim bloßen Definieren der Funktion passieren.",
+    "@deko ist gleichbedeutend mit gruss = deko(gruss) - direkt hinter der def-Anweisung.",
+    "Verfolgen Sie den Rückgabewert: Was liefert wrapper zurück, und was steht am Ende in x?"
+   ],
+   "pitfalls": [
+    "'dekoriere: gruss' nach 'Programm läuft' einordnen.",
+    "'dekoriere: gruss' bei jedem Aufruf von gruss erwarten - es erscheint nur einmal.",
+    "None statt 3 erwarten, weil man das return ergebnis im wrapper übersieht."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "predict-output",
+    "definitionszeit",
+    "wrapper",
+    "klausur"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-017"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Decorator logge_aufruf mit *args und **kwargs",
+   "prompt": "**Beispiel von der Vorlesungsfolie.** Schreiben Sie einen Decorator `logge_aufruf`, der **vor** jedem Funktionsaufruf den Funktionsnamen und die übergebenen Argumente auf der Konsole ausgibt und danach die Funktion ganz normal ausführt (der Rückgabewert muss erhalten bleiben).\n\nDie Log-Zeile hat exakt das Format\n\n```\nAufruf von <funktionsname> mit <args-Tupel> <kwargs-Dict>\n```\n\nalso z. B. `Aufruf von addiere mit (3, 4) {}`. Erzeugen Sie diese Zeile mit einem einzigen `print`, dem Sie die vier Bestandteile als Argumente übergeben.\n\nDekorieren Sie damit die beiden vorgegebenen Funktionen. **(4 P)**",
+   "starterCode": "def logge_aufruf(func):\n    ...\n\n\n# hier die @-Syntax verwenden\ndef addiere(a, b):\n    return a + b\n\n\n# hier die @-Syntax verwenden\ndef begruesse(name, gruss=\"Hallo\"):\n    return gruss + \", \" + name\n\n\nprint(addiere(3, 4))\nprint(begruesse(\"Ada\", gruss=\"Moin\"))",
+   "constraints": [
+    "@-Syntax verwenden",
+    "wrapper mit *args und **kwargs",
+    "keine Schleifen"
+   ],
+   "solution": "def logge_aufruf(func):\n    \"\"\"\n    Decorator: gibt vor jedem Aufruf Funktionsname und Argumente aus.\n    Eingabe: func - beliebige Funktion\n    Rückgabe: umhüllte Funktion mit gleichem Rueckgabewert\n    \"\"\"\n    def wrapper(*args, **kwargs):\n        print(\"Aufruf von\", func.__name__, \"mit\", args, kwargs)\n        return func(*args, **kwargs)\n    return wrapper\n\n\n@logge_aufruf\ndef addiere(a, b):\n    return a + b\n\n\n@logge_aufruf\ndef begruesse(name, gruss=\"Hallo\"):\n    return gruss + \", \" + name\n\n\nprint(addiere(3, 4))\nprint(begruesse(\"Ada\", gruss=\"Moin\"))",
+   "expectedOutput": "Aufruf von addiere mit (3, 4) {}\n7\nAufruf von begruesse mit ('Ada',) {'gruss': 'Moin'}\nMoin, Ada",
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "__name__",
+    "*args",
+    "**kwargs",
+    "@logge_aufruf"
+   ],
+   "explanation": "Die Vorlesungsfolie stellt genau diese Aufgabe: *\"Schreibe einen Dekorator logge_aufruf, der vor jedem Funktionsaufruf den Funktionsnamen und die übergebenen Argumente auf der Konsole ausgibt.\"*\n\nZwei Details entscheiden hier über die Punkte:\n\n1. **`func.__name__`** liefert den Namen der *ursprünglichen* Funktion. Wichtig: Innerhalb des Decorators steht `func` noch für das Original - `wrapper.__name__` wäre `'wrapper'`, was völlig nutzlos wäre.\n2. **`args` und `kwargs` ohne Sternchen** ausgeben. In der Definition sammeln `*args` und `**kwargs` die Argumente ein; *innerhalb* des wrappers sind `args` ein Tupel und `kwargs` ein Dictionary, die man ganz normal ausgeben kann. Beim Weiterreichen an `func` brauchen sie dagegen wieder die Sternchen.\n\nAn der Ausgabe sieht man die Aufteilung sehr schön: `addiere(3, 4)` füllt `args = (3, 4)` und lässt `kwargs = {}` leer; `begruesse(\"Ada\", gruss=\"Moin\")` füllt `args = ('Ada',)` und `kwargs = {'gruss': 'Moin'}`.\n\nDas `return` vor `func(*args, **kwargs)` ist nicht optional: Ohne es wären beide `print`-Ausgaben am Ende `None`.\n\n**Merkregel:** *Loggen heißt: erst ausgeben, dann durchreichen - und den Rückgabewert nicht verschlucken.*",
+   "hints": [
+    "Nutzen Sie das Standardgerüst def deko(func): def wrapper(*args, **kwargs): ... return wrapper.",
+    "Den Namen der Originalfunktion bekommen Sie über das Attribut func.__name__.",
+    "Innerhalb des wrappers sind args ein Tupel und kwargs ein Dictionary - beim print ohne Sternchen, beim Weiterreichen mit Sternchen."
+   ],
+   "pitfalls": [
+    "wrapper.__name__ statt func.__name__ ausgeben.",
+    "print(\"...\", *args, **kwargs) schreiben - dann werden die Argumente entpackt und kwargs landet als ungültiges print-Schlüsselwort.",
+    "Das return vor func(*args, **kwargs) vergessen - der Rückgabewert geht verloren."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 15,
+     "label": "functools.wraps zur Erhaltung der Metadaten; Beispiel logge_aufruf"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 21,
+     "label": "Klausurrelevant: *args/**kwargs, Funktionen die Funktionen zurückgeben"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "logging",
+    "args-kwargs",
+    "klausur",
+    "wrapper"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-018"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "functools.wraps: was passiert mit den Metadaten?",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben? Achten Sie besonders auf den Unterschied zwischen den beiden Decorators.",
+   "code": "import functools\n\ndef laut(func):\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs).upper()\n    return wrapper\n\ndef leise(func):\n    @functools.wraps(func)\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs).lower()\n    return wrapper\n\n@laut\ndef gruss_a(name):\n    \"\"\"Begruesst eine Person.\"\"\"\n    return \"Hallo, \" + name\n\n@leise\ndef gruss_b(name):\n    \"\"\"Begruesst eine Person.\"\"\"\n    return \"Hallo, \" + name\n\nprint(gruss_a(\"Ada\"))\nprint(gruss_b(\"Ada\"))\nprint(gruss_a.__name__)\nprint(gruss_b.__name__)\nprint(gruss_a.__doc__)\nprint(gruss_b.__doc__)",
+   "expectedOutput": "HALLO, ADA\nhallo, ada\nwrapper\ngruss_b\nNone\nBegruesst eine Person.",
+   "solution": "```\nHALLO, ADA\nhallo, ada\nwrapper\ngruss_b\nNone\nBegruesst eine Person.\n```\n\n- Die ersten beiden Zeilen zeigen die eigentliche Wirkung der Decorators: Großbuchstaben bzw. Kleinbuchstaben.\n- `gruss_a.__name__` ist `'wrapper'`: Nach `gruss_a = laut(gruss_a)` zeigt der Name auf die innere Funktion `wrapper` - und die heißt nun einmal `wrapper`.\n- `gruss_b.__name__` ist `'gruss_b'`, weil `functools.wraps(func)` die Metadaten der Originalfunktion auf den wrapper kopiert.\n- `gruss_a.__doc__` ist `None`: `wrapper` hat keinen docstring. `gruss_b.__doc__` liefert dagegen den Original-docstring.",
+   "explanation": "Die Vorlesung sagt dazu: *\"Damit Metadaten (Funktionsname, docstring, etc.) trotz Dekorator noch von der ursprünglichen Funktion erhalten bleiben, schreibt man noch ein `@functools.wraps(func)` mit in die Definition der umhüllenden Funktion. Hierfür muss man functools importieren.\"*\n\nDer Grund für das Problem ist, dass `@laut` nichts anderes ist als `gruss_a = laut(gruss_a)`. Danach ist die Originalfunktion nur noch über die closure-Variable `func` erreichbar; der globale Name zeigt auf `wrapper`. Alle Metadaten - `__name__`, `__doc__`, `__module__` - sind die des wrappers.\n\n`functools.wraps` ist selbst ein Decorator (genauer: eine Decorator-Fabrik, deshalb die Klammern mit `func`), der genau diese Attribute vom Original auf den wrapper kopiert.\n\nPraktische Folgen ohne `wraps`: `help(gruss_a)` zeigt nichts Sinnvolles mehr, Debugger und Fehlermeldungen sprechen von `wrapper`, und ein Decorator wie `logge_aufruf`, der `func.__name__` loggt, würde bei doppelt dekorierten Funktionen nur noch `wrapper` melden.\n\nDer häufigste Fehler in dieser Aufgabe ist `''` (leerer String) statt `None` für `gruss_a.__doc__` - eine Funktion ohne docstring hat `__doc__ is None`.\n\n**Merkregel:** *Ohne `@functools.wraps` heißt nach dem Dekorieren alles `wrapper`.*",
+   "hints": [
+    "Überlegen Sie zuerst, worauf der Name gruss_a nach dem Dekorieren tatsächlich zeigt.",
+    "functools.wraps kopiert die Metadaten der Originalfunktion auf den wrapper - welcher der beiden Decorators nutzt es?",
+    "Was ist der Wert von __doc__ bei einer Funktion, die gar keinen docstring hat?"
+   ],
+   "pitfalls": [
+    "gruss_a.__name__ als 'gruss_a' erwarten - ohne wraps heißt es 'wrapper'.",
+    "Für gruss_a.__doc__ einen leeren String statt None angeben.",
+    "Glauben, functools.wraps verändere das Verhalten der Funktion - es kopiert nur Metadaten."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 15,
+     "label": "functools.wraps zur Erhaltung der Metadaten; Beispiel logge_aufruf"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "functools",
+    "wraps",
+    "metadaten",
+    "predict-output",
+    "klausur"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-019"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Fehlersuche: drei Fehler in einem Decorator",
+   "prompt": "Ein Kommilitone wollte einen Decorator schreiben, der den String-Rückgabewert einer Funktion in Großbuchstaben umwandelt. Im Code stecken **genau drei** Fehler. Benennen Sie jeweils die Zeile, den Fehler und die Korrektur. Nach der Korrektur soll `print(begruessung(\"Ada\", gruss=\"Moin\"))` die Ausgabe `MOIN, ADA` liefern. **(4 P)**",
+   "code": "def gross(func):\n    def wrapper(text):\n        func(text).upper()\n    return wrapper()\n\n@gross\ndef begruessung(name, gruss=\"Hallo\"):\n    return gruss + \", \" + name\n\nprint(begruessung(\"Ada\", gruss=\"Moin\"))",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "    return wrapper()",
+     "fix": "    return wrapper",
+     "why": "Mit den Klammern wird der wrapper sofort aufgerufen - und zwar schon beim Dekorieren und ohne Argument. Ein Decorator muss die Funktion selbst zurückgeben, nicht ihr Ergebnis. Fehlermeldung: TypeError: wrapper() missing 1 required positional argument: 'text'."
+    },
+    {
+     "line": 3,
+     "wrong": "        func(text).upper()",
+     "fix": "        return func(*args, **kwargs).upper()",
+     "why": "Das Ergebnis wird berechnet, aber nicht zurückgegeben. Der wrapper liefert dann implizit None, und print würde None ausgeben statt des Textes."
+    },
+    {
+     "line": 2,
+     "wrong": "    def wrapper(text):",
+     "fix": "    def wrapper(*args, **kwargs):",
+     "why": "Der wrapper akzeptiert nur ein einziges positional Argument. begruessung wird aber mit einem positional und einem keyword Argument aufgerufen: TypeError: wrapper() got an unexpected keyword argument 'gruss'. Mit *args/**kwargs funktioniert der Decorator für beliebige Signaturen."
+    }
+   ],
+   "solution": "**Die drei Fehler**\n\n1. **Zeile 4** - `return wrapper()`: Der wrapper wird sofort (und ohne Argument) aufgerufen. Richtig ist `return wrapper` **ohne Klammern**.\n2. **Zeile 3** - das `return` fehlt: `func(text).upper()` berechnet den Wert und wirft ihn weg, der wrapper liefert `None`.\n3. **Zeile 2** - `def wrapper(text)`: Der wrapper verträgt keine keyword-Argumente. Richtig ist `def wrapper(*args, **kwargs)` mit Weitergabe `func(*args, **kwargs)`.\n\n**Korrigierte Fassung**\n\n```python\nimport functools\n\ndef gross(func):\n    @functools.wraps(func)          # optional, erhält die Metadaten\n    def wrapper(*args, **kwargs):\n        return func(*args, **kwargs).upper()\n    return wrapper\n\n@gross\ndef begruessung(name, gruss=\"Hallo\"):\n    return gruss + \", \" + name\n\nprint(begruessung(\"Ada\", gruss=\"Moin\"))   # MOIN, ADA\n```",
+   "explanation": "Die drei Fehler sind exakt die drei Standardfehler beim Schreiben von Decorators - wer sie kennt, kommt in der Bonusaufgabe der Klausur sicher durch.\n\n**Klammern-Fehler (Zeile 4):** Ein Decorator gibt ein *Funktionsobjekt* zurück. `wrapper()` ist dagegen bereits das *Ergebnis eines Aufrufs*. Hier fällt es sofort auf, weil der Aufruf ohne Argument passiert; bei einem parameterlosen wrapper würde der Fehler viel subtiler zuschlagen (die Funktion liefe genau einmal beim Import und `begruessung` wäre danach gar keine Funktion mehr).\n\n**Fehlendes return (Zeile 3):** Ein wrapper ohne `return` verschluckt den Rückgabewert. Das ist besonders tückisch, weil der Code fehlerfrei läuft - nur eben mit `None` als Ergebnis.\n\n**Zu enge Signatur (Zeile 2):** Das Übungsblatt sagt es ausdrücklich: *\"`*args` und `**kwargs` sorgen dafür, dass wrapper mit beliebig vielen Argumenten funktioniert.\"* Wer die Parameter fest verdrahtet, baut einen Decorator, der nur für genau eine Funktion passt.\n\n**Merkregel:** *`return wrapper` ohne Klammern, `return` im wrapper, `*args, **kwargs` in der Signatur.*",
+   "hints": [
+    "Vergleichen Sie Zeile 4 mit dem Gerüst vom Übungsblatt: steht dort return wrapper oder return wrapper()?",
+    "Was liefert eine Funktion zurück, in deren Rumpf zwar gerechnet, aber nichts zurückgegeben wird?",
+    "Der Aufruf übergibt gruss als keyword-Argument. Verträgt die Parameterliste des wrappers das?"
+   ],
+   "pitfalls": [
+    "Nur den offensichtlichen Klammern-Fehler finden und die beiden stillen Fehler übersehen.",
+    "Den wrapper mit (name, gruss) 'reparieren' - dann ist der Decorator nur für diese eine Funktion brauchbar.",
+    "func(*args, **kwargs) im Aufruf vergessen, nachdem man die Signatur auf *args/**kwargs umgestellt hat."
+   ],
+   "sources": [
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 3,
+     "label": "Aufgabe 5 - Dekoratoren: Der Türsteher"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5b: Currying / Aufgabe Bonus: Decorators"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "find-errors",
+    "fehlersuche",
+    "args-kwargs",
+    "klausur"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-020"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": false,
+   "title": "Zwei Decorators übereinander: in welcher Reihenfolge?",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben? Achten Sie auf die Reihenfolge der beiden Decorators.",
+   "code": "def klammern(func):\n    def wrapper(*args, **kwargs):\n        return \"(\" + func(*args, **kwargs) + \")\"\n    return wrapper\n\ndef sterne(func):\n    def wrapper(*args, **kwargs):\n        return \"*\" + func(*args, **kwargs) + \"*\"\n    return wrapper\n\n@klammern\n@sterne\ndef wort_a(w):\n    return w\n\n@sterne\n@klammern\ndef wort_b(w):\n    return w\n\nprint(wort_a(\"hi\"))\nprint(wort_b(\"hi\"))\nprint(wort_a.__name__)",
+   "expectedOutput": "(*hi*)\n*(hi)*\nwrapper",
+   "solution": "```\n(*hi*)\n*(hi)*\nwrapper\n```\n\nDecorators werden **von unten nach oben** angewendet. Für `wort_a` gilt also\n\n```python\nwort_a = klammern(sterne(wort_a))\n```\n\nDer **innerste** Decorator (`sterne`, direkt über der `def`-Zeile) liegt damit am nächsten an der Originalfunktion und wirkt beim Aufruf **zuerst**: erst `*hi*`, dann setzt `klammern` außen herum die Klammern -> `(*hi*)`.\n\nBei `wort_b` ist die Reihenfolge umgekehrt: `wort_b = sterne(klammern(wort_b))` -> erst `(hi)`, dann die Sterne -> `*(hi)*`.\n\n`wort_a.__name__` ist `'wrapper'`, weil kein `functools.wraps` verwendet wurde - der Name zeigt auf den wrapper von `klammern`.",
+   "explanation": "Beim Stapeln von Decorators verwirrt oft, dass es zwei \"Reihenfolgen\" gibt, die gegenläufig wirken:\n\n1. **Anwendungsreihenfolge (Definitionszeit):** von unten nach oben. Der Decorator direkt über `def` wird zuerst angewendet.\n2. **Ausführungsreihenfolge (Aufrufzeit):** von außen nach innen. Der oberste Decorator bekommt den Aufruf zuerst zu sehen - aber sein Ergebnis entsteht zuletzt, weil er auf das Ergebnis der inneren Schicht wartet.\n\nDas Bild der **Zwiebelschalen** hilft: `@sterne` liegt bei `wort_a` näher am Kern, also klebt der Stern direkt am Wort. `@klammern` ist die äußere Schale, also stehen die Klammern ganz außen.\n\nUmschreiben in die äquivalente Zuweisungsform löst jede Unsicherheit auf:\n\n```python\n@klammern\n@sterne\ndef wort_a(w): ...\n\n# ist identisch zu:\nwort_a = klammern(sterne(wort_a))\n```\n\nMan liest die `@`-Zeilen also von unten nach oben in die Klammern hinein.\n\nDie dritte Ausgabe erinnert daran, dass bei jeder Schicht die Metadaten verloren gehen. Mit `functools.wraps` in beiden Decorators wäre `wort_a.__name__` weiterhin `'wort_a'`.\n\n**Merkregel:** *Von unten nach oben angewendet - der unterste Decorator klebt am Wort.*",
+   "hints": [
+    "Schreiben Sie die beiden Decorator-Stapel in die äquivalente Form f = deko1(deko2(f)) um.",
+    "Welcher Decorator liegt näher an der Originalfunktion - der obere oder der untere?",
+    "Für die letzte Zeile: Welche Funktion steckt nach dem Dekorieren tatsächlich hinter dem Namen wort_a?"
+   ],
+   "pitfalls": [
+    "Die Decorators von oben nach unten anwenden und deshalb *(hi)* statt (*hi*) angeben.",
+    "Bei beiden Funktionen dieselbe Ausgabe erwarten - die Reihenfolge der @-Zeilen macht den Unterschied.",
+    "wort_a.__name__ als 'wort_a' angeben, obwohl kein functools.wraps verwendet wird."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 15,
+     "label": "functools.wraps zur Erhaltung der Metadaten; Beispiel logge_aufruf"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "stacking",
+    "predict-output",
+    "reihenfolge",
+    "transfer"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-021"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": false,
+   "title": "Decorator mit Parameter: @wiederhole(n)",
+   "prompt": "**Zusatzaufgabe vom Übungsblatt.** Bisher hatten unsere Decorators keine eigenen Parameter. Schreiben Sie nun eine **Decorator-Fabrik** `wiederhole(n)`, sodass man schreiben kann:\n\n```python\n@wiederhole(3)\ndef gruss(name):\n    return \"Hallo, \" + name\n\nprint(gruss(\"Ada\"))\n# ['Hallo, Ada', 'Hallo, Ada', 'Hallo, Ada']\n```\n\nDie dekorierte Funktion soll also `n`-mal aufgerufen werden und die `n` Ergebnisse als **Liste** zurückgeben. Der Decorator muss für beliebige Signaturen funktionieren.\n\nVerwenden Sie **keine Schleifen** (auch keine List Comprehension), sondern `map` und `range`. **(5 P)**",
+   "starterCode": "def wiederhole(n):\n    \"\"\"\n    Decorator-Fabrik: erzeugt einen Decorator, der die dekorierte Funktion\n    n-mal aufruft und die Ergebnisse als Liste zurueckgibt.\n    \"\"\"\n    ...\n\n\n@wiederhole(3)\ndef gruss(name):\n    return \"Hallo, \" + name\n\n\nprint(gruss(\"Ada\"))",
+   "constraints": [
+    "keine Schleifen",
+    "keine List Comprehension",
+    "map und range verwenden",
+    "wrapper mit *args und **kwargs"
+   ],
+   "solution": "def wiederhole(n):\n    \"\"\"\n    Decorator-Fabrik: erzeugt einen Decorator, der die dekorierte Funktion\n    n-mal aufruft und die Ergebnisse als Liste zurückgibt.\n    Eingabe: n - Anzahl der Wiederholungen\n    Rückgabe: Decorator (Funktion, die eine Funktion auf eine Funktion abbildet)\n    \"\"\"\n    def dekorator(func):\n        def wrapper(*args, **kwargs):\n            return list(map(lambda i: func(*args, **kwargs), range(n)))\n        return wrapper\n    return dekorator\n\n\n@wiederhole(3)\ndef gruss(name):\n    return \"Hallo, \" + name",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "gruss('Ada')",
+     "expected": "['Hallo, Ada', 'Hallo, Ada', 'Hallo, Ada']"
+    },
+    {
+     "name": "Aufruf mit keyword-Argument",
+     "call": "gruss(name='Ben')",
+     "expected": "['Hallo, Ben', 'Hallo, Ben', 'Hallo, Ben']"
+    },
+    {
+     "name": "Fabrik direkt benutzt (zwei Wiederholungen)",
+     "call": "wiederhole(2)(lambda: 7)()",
+     "expected": "[7, 7]"
+    },
+    {
+     "name": "n = 0 liefert die leere Liste",
+     "call": "wiederhole(0)(lambda: 1)()",
+     "expected": "[]"
+    },
+    {
+     "name": "beliebige Signatur",
+     "call": "wiederhole(2)(lambda a, b=1: a + b)(5, b=2)",
+     "expected": "[7, 7]"
+    },
+    {
+     "name": "wiederhole(n) liefert einen Decorator, also eine Funktion",
+     "call": "type(wiederhole(3)).__name__",
+     "expected": "'function'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "map(",
+    "range(",
+    "*args",
+    "**kwargs"
+   ],
+   "explanation": "Ein Decorator **mit Parameter** braucht eine Ebene mehr als ein gewöhnlicher Decorator - insgesamt **drei** geschachtelte Funktionen:\n\n```\nwiederhole(3)            -> dekorator      (Decorator-Fabrik, nimmt n)\ndekorator(gruss)         -> wrapper        (der eigentliche Decorator, nimmt func)\nwrapper(\"Ada\")            -> Liste          (der Aufruf, nimmt die Argumente)\n```\n\nDer Grund ist die `@`-Syntax selbst: `@wiederhole(3)` bedeutet `gruss = wiederhole(3)(gruss)`. Hinter `@` steht hier also ein **Ausdruck**, der erst ausgewertet wird und dessen Ergebnis dann als Decorator dient. Genau das ist der Unterschied zu `@wiederhole` (ohne Klammern), wo `wiederhole` selbst der Decorator wäre.\n\nDamit ist eine Decorator-Fabrik im Grunde nichts anderes als **Currying**: eine dreifach gecurryte Funktion `wiederhole(n)(func)(*args)`. Deshalb gehören die beiden Themen zusammen - `functools.wraps(func)` funktioniert übrigens nach genau demselben Prinzip.\n\nDas `map`/`range`-Konstrukt ersetzt die Schleife: `range(n)` liefert `n` Elemente, das `lambda` ignoriert das jeweilige Element und ruft stattdessen `func` erneut auf. Wichtig ist das `list(...)` außen herum - `map` ist *lazy* und würde die Funktion sonst gar nicht aufrufen.\n\n**Merkregel:** *Decorator ohne Parameter = 2 Ebenen, Decorator mit Parameter = 3 Ebenen.*",
+   "hints": [
+    "@wiederhole(3) bedeutet gruss = wiederhole(3)(gruss). Wie viele Aufrufe stecken darin?",
+    "wiederhole(n) muss selbst einen ganz gewöhnlichen Decorator zurückgeben - also eine Funktion, die func entgegennimmt.",
+    "Im wrapper ersetzt list(map(lambda i: ..., range(n))) die verbotene Schleife; das lambda ignoriert i und ruft func erneut auf."
+   ],
+   "pitfalls": [
+    "Nur zwei Ebenen schreiben - dann bekommt der Decorator die Zahl 3 statt der Funktion.",
+    "list(...) um map vergessen - map ist lazy, die Funktion wird dann nie aufgerufen und der Rückgabewert ist ein map-Objekt.",
+    "func(*args, **kwargs) einmal vorab berechnen und n-mal in die Liste kopieren - dann wird die Funktion nur einmal wirklich ausgeführt."
+   ],
+   "sources": [
+    {
+     "file": "blatt4u5.pdf",
+     "page": 4,
+     "label": "Gerüst login_required + Aufgabe 6 Currying"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 3,
+     "label": "Aufgabe 5 - Dekoratoren: Der Türsteher"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 14,
+     "label": "Decorators: Funktion in eine higher order function hüllen (wrappen), @-Syntax"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "Currying: f(a1,a2) als Funktion, die a1 auf eine Funktion in a2 abbildet"
+    }
+   ],
+   "tags": [
+    "decorator",
+    "decorator-factory",
+    "currying",
+    "map",
+    "transfer",
+    "haertetest"
+   ],
+   "lang": "python",
+   "topicId": "py-currying-decorators",
+   "id": "py-currying-decorators-022"
+  }
+ ]
+}

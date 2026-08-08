@@ -1,0 +1,2308 @@
+{
+ "topicId": "py-recursion",
+ "exercises": [
+  {
+   "id": "py-recursion-001",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "short-answer",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Abbruchbedingung und Call Stack (Kurzfrage)",
+   "prompt": "**Kurzfrage aus der Klausur (Aufgabe 1c).**\n\nWorauf muss bei jeder rekursiven Funktion **zwingend** geachtet werden, und was passiert **intern** bei rekursiven Aufrufen (Stichwort: welche Struktur entsteht)? **(2 P)**",
+   "solution": "**Musterlösung**\n\n1. **Abbruchbedingung (Basisfall).** Jede rekursive Funktion braucht mindestens einen Fall, in dem sie sich *nicht* mehr selbst aufruft, sondern direkt ein Ergebnis zurückgibt. Außerdem muss sich das Argument bei jedem Aufruf so verändern, dass dieser Basisfall garantiert erreicht wird - nur dann **terminiert** die Rekursion.\n2. **Intern entsteht ein Stack (Stapel) von Funktionsaufrufen.** Jeder noch nicht beendete Aufruf wird mit seinen lokalen Variablen auf dem Call Stack abgelegt; die Aufrufe werden erst abgearbeitet (in umgekehrter Reihenfolge, von oben nach unten), wenn der Basisfall erreicht ist. Fehlt die Abbruchbedingung, wächst der Stack unbegrenzt - Python bricht mit einem `RecursionError: maximum recursion depth exceeded` ab.\n\n**Bewertungsrubrik (2 P)**\n\n- 1 P: Abbruchbedingung / Basisfall genannt (sinngemäß: \"damit die Rekursion terminiert\").\n- 1 P: Stack / Stapel von Funktionsaufrufen genannt.\n- 0 P für \"die Funktion ruft sich selbst auf\" - das ist die Definition von Rekursion, nicht die Frage.\n",
+   "explanation": "Der Professor formuliert es auf der Folie wörtlich: *\"Wichtig ist, dass bei der Rekursion stets auf eine geeignete Abbruchbedingung geachtet wird, damit die Rekursion immer terminiert!\"* und eine Folie später: *\"Es bildet sich ein stack (Stapel) von Funktionsaufrufen, der nacheinander abgearbeitet wird!\"*. Genau diese beiden Stichworte will die Klausurfrage hören.\n\nDer Basisfall alleine reicht nicht: Er muss auch **erreichbar** sein. `fakultaet(n-1)` nähert sich der 0, `fakultaet(n)` (ohne Verkleinerung) niemals. Deshalb gehören immer zwei Dinge zusammen: ein Basisfall *und* ein Rekursionsschritt, der das Problem echt verkleinert.\n\nDer Call Stack erklärt auch den zweiten Nachteil der Rekursion: Jeder offene Aufruf belegt Speicher (Parameter, lokale Variablen, Rücksprungadresse). Deshalb ist Rekursion oft speicherhungriger als eine Schleife, und Python begrenzt die Rekursionstiefe standardmäßig auf ca. 1000.\n\n**Merkregel:** *Ohne Basisfall kein Boden - der Stapel wächst, bis er umfällt (RecursionError).*",
+   "hints": [
+    "Denken Sie an das Baumfäll-Beispiel aus der Vorlesung: Was muss gelten, damit irgendwann 'Baum fällt!' gerufen wird?",
+    "Der zweite Teil der Frage zielt auf eine Datenstruktur, die im Deutschen 'Stapel' heißt.",
+    "Beide Stichworte stehen wörtlich auf den Folien 6 und 7 der Rekursions-Vorlesung."
+   ],
+   "pitfalls": [
+    "Nur 'die Funktion ruft sich selbst auf' antworten - das beantwortet keine der beiden Teilfragen.",
+    "Abbruchbedingung nennen, aber den Stack vergessen (kostet den zweiten Punkt).",
+    "'Schleife' statt 'Stack' schreiben - intern entsteht keine Schleife, sondern ein Stapel offener Funktionsaufrufe."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 6,
+     "label": "Abbruchbedingung, damit die Rekursion terminiert"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 7,
+     "label": "Es bildet sich ein stack von Funktionsaufrufen"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1c) Kurzfragen"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "abbruchbedingung",
+    "basisfall",
+    "call-stack",
+    "kurzfrage"
+   ]
+  },
+  {
+   "id": "py-recursion-002",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "Runterzählen per Rekursion",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Schreiben Sie **jede** ausgegebene Zeile untereinander auf.",
+   "code": "def zaehle_runter(n):\n    if n < 0:\n        print(\"fertig\")\n    else:\n        print(n)\n        zaehle_runter(n - 1)\n\nzaehle_runter(3)",
+   "expectedOutput": "3\n2\n1\n0\nfertig",
+   "solution": "```\n3\n2\n1\n0\nfertig\n```\n\nDie Funktion druckt erst `n` und ruft sich dann mit `n - 1` erneut auf. Erst wenn `n` negativ wird (`n = -1`), greift die Abbruchbedingung und `\"fertig\"` wird gedruckt.",
+   "explanation": "Das ist das Vorlesungsbeispiel `zaehle_runter`, das der Professor als rekursive Alternative zu `for i in range(9, -1, -1)` gezeigt hat.\n\nDie Aufrufkette ist: `zaehle_runter(3)` druckt `3`, ruft `zaehle_runter(2)` -> druckt `2`, ruft `zaehle_runter(1)` -> druckt `1`, ruft `zaehle_runter(0)` -> druckt `0`, ruft `zaehle_runter(-1)`. Jetzt ist `n < 0` erfüllt, es wird `\"fertig\"` gedruckt und **kein** weiterer Aufruf gestartet - der Stapel wird von oben nach unten wieder abgebaut, ohne dass dabei noch etwas gedruckt wird.\n\nWichtig für das Verständnis: `print(n)` steht **vor** dem rekursiven Aufruf. Deshalb erscheinen die Zahlen absteigend in der Reihenfolge des Hinabsteigens. Stünde `print(n)` hinter dem Aufruf, käme die Ausgabe in umgekehrter Reihenfolge (siehe Aufgabe zum Call Stack).\n\n**Merkregel:** *Was vor dem rekursiven Aufruf steht, passiert beim Hinabsteigen; was danach steht, beim Zurückkommen.*",
+   "hints": [
+    "Verfolgen Sie die Aufrufe von Hand: Welchen Wert hat n bei jedem Aufruf?",
+    "Der Basisfall n < 0 wird erst erreicht, wenn n den Wert -1 hat - für n = 0 wird also noch gedruckt.",
+    "Zählen Sie am Ende die Zeilen: Es sind vier Zahlen plus eine Textzeile."
+   ],
+   "pitfalls": [
+    "Bei n = 0 abbrechen und die 0 vergessen - die Abbruchbedingung lautet n < 0, nicht n <= 0.",
+    "'fertig' zuerst schreiben - der Basisfall wird zuletzt erreicht.",
+    "Glauben, die Zahlen würden nach dem Basisfall noch einmal aufsteigend gedruckt - nach dem rekursiven Aufruf steht hier kein print."
+   ],
+   "sources": [
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "def zaehle_runter(n=9) - Rekursion statt for-Schleife"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 6,
+     "label": "Abbruchbedingung"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "basisfall",
+    "ausgabe",
+    "trace"
+   ]
+  },
+  {
+   "id": "py-recursion-003",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "Fakultät rekursiv",
+   "prompt": "Schreiben Sie eine **rekursive** Funktion `fakultaet(n)`, die die Fakultät `n! = 1 * 2 * ... * n` berechnet.\n\nEs gilt `0! = 1`. Verwenden Sie **keine Schleife** und kein Modul (`math`).\n\nBeispiel: `fakultaet(4)` -> `24`",
+   "starterCode": "def fakultaet(n):\n    # Basisfall zuerst: Wann ist das Ergebnis direkt bekannt?\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein import math",
+    "Rekursion verwenden"
+   ],
+   "tests": [
+    {
+     "name": "Basisfall 0! = 1",
+     "call": "fakultaet(0)",
+     "expected": "1"
+    },
+    {
+     "name": "1! = 1",
+     "call": "fakultaet(1)",
+     "expected": "1"
+    },
+    {
+     "name": "Beispiel aus der Vorlesung: 4!",
+     "call": "fakultaet(4)",
+     "expected": "24"
+    },
+    {
+     "name": "5!",
+     "call": "fakultaet(5)",
+     "expected": "120"
+    },
+    {
+     "name": "7! (wie im Übungsblatt)",
+     "call": "fakultaet(7)",
+     "expected": "5040"
+    },
+    {
+     "name": "große Zahl 10!",
+     "call": "fakultaet(10)",
+     "expected": "3628800"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "math.",
+    "import "
+   ],
+   "solution": "def fakultaet(n):\n    if n <= 0:\n        return 1\n    else:\n        return n * fakultaet(n - 1)",
+   "explanation": "Das ist das Standardbeispiel der Vorlesung (`fakultaet_rekur`). Die Rekursion nutzt die mathematische Rekursionsgleichung `n! = n * (n-1)!` mit dem Basisfall `0! = 1`.\n\nZwei Dinge müssen zusammenpassen:\n\n1. **Basisfall:** `n <= 0` gibt `1` zurück. Die `1` ist das *neutrale Element der Multiplikation* - mit `return 0` wäre jedes Ergebnis 0.\n2. **Rekursionsschritt:** `n * fakultaet(n - 1)`. Das Argument wird echt kleiner, der Basisfall wird also garantiert erreicht.\n\nDer Professor schreibt in der Vorlesung `if x <= 0: return 1` statt `if x == 0`. Das ist robuster: Bei `fakultaet(-3)` würde `x == 0` nie greifen und die Rekursion liefe bis zum `RecursionError`.\n\nZum Vergleich die imperative Variante aus der Vorlesung:\n\n```python\ndef fakultaet(x):\n    resultat = 1\n    for i in range(1, x + 1):\n        resultat = resultat * i\n    return resultat\n```\n\nSie braucht eine **mutable** Variable `resultat`, die ständig überschrieben wird - genau das vermeidet die rekursive Fassung, weshalb sie zur funktionalen Programmierung passt.\n\n**Merkregel:** *Basisfall = neutrales Element (bei `*` die 1, bei `+` die 0).*",
+   "hints": [
+    "Für welches n können Sie das Ergebnis sofort hinschreiben, ohne zu rechnen?",
+    "Schreiben Sie die mathematische Gleichung auf: n! = n * (n-1)! - diese Zeile ist fast schon der Code.",
+    "Das Ergebnis des rekursiven Aufrufs muss mit n multipliziert und mit return zurückgegeben werden."
+   ],
+   "pitfalls": [
+    "Im Basisfall 0 statt 1 zurückgeben - dann ist das Endergebnis immer 0.",
+    "Das return vor dem rekursiven Aufruf vergessen: 'n * fakultaet(n-1)' ohne return liefert None.",
+    "fakultaet(n) statt fakultaet(n-1) aufrufen - dann wird das Argument nie kleiner (RecursionError)."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 9,
+     "label": "Rekursion - Beispiel: Berechne n! mit for-Schleife und rekursiv"
+    },
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "def fakultaet_rekur(x)"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "7! = 5040"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "fakultaet",
+    "basisfall",
+    "klassiker"
+   ]
+  },
+  {
+   "id": "py-recursion-004",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Call Stack: vor und nach dem rekursiven Aufruf",
+   "prompt": "Was passiert, wenn folgender Code ausgeführt wird? Geben Sie die **vollständige Ausgabe** zeilenweise an und begründen Sie in einem Satz, warum die zweite Hälfte der Ausgabe in umgekehrter Reihenfolge erscheint.",
+   "code": "def stapel(n):\n    if n == 0:\n        return\n    print(\"rein\", n)\n    stapel(n - 1)\n    print(\"raus\", n)\n\nstapel(3)",
+   "expectedOutput": "rein 3\nrein 2\nrein 1\nraus 1\nraus 2\nraus 3",
+   "solution": "```\nrein 3\nrein 2\nrein 1\nraus 1\nraus 2\nraus 3\n```\n\n**Begründung:** Die `print(\"rein\", n)`-Zeilen laufen beim *Hinabsteigen* (bevor der nächste Aufruf startet), die `print(\"raus\", n)`-Zeilen laufen erst, wenn der jeweilige Aufruf vom Stack *zurückkehrt* - und der Stack wird von oben nach unten abgebaut (last in, first out).",
+   "explanation": "Diese Aufgabe prüft genau das, was auf der Folie *\"Was geschieht hier?\"* steht: *\"Es bildet sich ein stack (Stapel) von Funktionsaufrufen, der nacheinander abgearbeitet wird!\"*\n\nDer Ablauf im Detail: `stapel(3)` druckt `rein 3` und ruft `stapel(2)` auf. Dieser Aufruf ist damit *noch nicht fertig* - er liegt auf dem Stack und wartet an der Stelle des rekursiven Aufrufs. `stapel(2)` druckt `rein 2`, ruft `stapel(1)`; `stapel(1)` druckt `rein 1`, ruft `stapel(0)`. `stapel(0)` trifft den Basisfall und kehrt sofort mit `return` zurück (ohne Ausgabe). Jetzt wird der Stapel abgebaut: `stapel(1)` macht hinter seinem Aufruf weiter und druckt `raus 1`, dann `stapel(2)` -> `raus 2`, dann `stapel(3)` -> `raus 3`.\n\nJeder Stack-Eintrag hat sein **eigenes** `n`. Deshalb erscheinen bei `raus` wieder die alten Werte 1, 2, 3 - obwohl es dazwischen scheinbar 'verloren' war. Ein Stack arbeitet nach dem Prinzip *last in, first out*.\n\n**Merkregel:** *Vor dem Aufruf = Hinweg, nach dem Aufruf = Rückweg. Der Rückweg läuft immer rückwärts.*",
+   "hints": [
+    "Notieren Sie für jeden Aufruf eine eigene Zeile mit dem Wert von n - so machen Sie den Stack sichtbar.",
+    "Die Zeile print('raus', n) wird erst erreicht, wenn der rekursive Aufruf komplett fertig ist.",
+    "Der Basisfall n == 0 gibt gar nichts aus - er beendet nur die Abwärtsbewegung."
+   ],
+   "pitfalls": [
+    "Erwarten, dass 'raus 3' direkt nach 'rein 3' kommt - dazwischen läuft der komplette rekursive Aufruf.",
+    "'raus 0' mitschreiben - der Aufruf mit n = 0 kehrt vor dem print zurück.",
+    "Die zweite Hälfte in derselben Reihenfolge (3, 2, 1) notieren statt umgekehrt (1, 2, 3)."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 7,
+     "label": "Was geschieht hier? - stack von Funktionsaufrufen"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2 - Ausgabe angeben und begründen"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "call-stack",
+    "ausgabe",
+    "trace",
+    "reihenfolge"
+   ]
+  },
+  {
+   "id": "py-recursion-005",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler in der rekursiven Fakultät",
+   "prompt": "Der folgende Code soll `4! = 24` berechnen, tut es aber nicht. **In welchen Zeilen befinden sich die 3 Fehler?** Benennen Sie jeden Fehler und geben Sie die Korrektur an.",
+   "code": "1  def fakultaet(n):\n2      if n == 1:\n3          return 0\n4      else:\n5          fakultaet(n - 1) * n\n6\n7  print(fakultaet(4))",
+   "errors": [
+    {
+     "line": 3,
+     "wrong": "return 0",
+     "fix": "return 1",
+     "why": "Der Basisfall muss das **neutrale Element der Multiplikation** liefern, also `1`. Mit `0` wird die gesamte Produktkette zu 0 - selbst wenn alles andere stimmt, käme `0` heraus."
+    },
+    {
+     "line": 5,
+     "wrong": "fakultaet(n - 1) * n",
+     "fix": "return fakultaet(n - 1) * n",
+     "why": "Das `return` fehlt. Der Wert wird zwar berechnet, aber weggeworfen; die Funktion liefert im else-Zweig implizit `None`. Beim nächsten Rechenschritt gibt es dann `TypeError: unsupported operand type(s) for *: 'NoneType' and 'int'`."
+    },
+    {
+     "line": 2,
+     "wrong": "if n == 1:",
+     "fix": "if n <= 1:",
+     "why": "Der Basisfall ist nicht für jede Eingabe erreichbar: Bei `fakultaet(0)` oder negativen Zahlen wird `n == 1` nie wahr, das Argument wird immer kleiner und Python bricht mit `RecursionError: maximum recursion depth exceeded` ab. Außerdem ist `0! = 1` definiert. Robust ist `if n <= 1: return 1` (oder `if n <= 0: return 1`)."
+    }
+   ],
+   "solution": "```python\ndef fakultaet(n):\n    if n <= 1:\n        return 1\n    else:\n        return fakultaet(n - 1) * n\n\nprint(fakultaet(4))\n```\n\nAusgabe des korrigierten Codes:\n\n```\n24\n```\n\n**Die 3 Fehler:**\n\n| Zeile | falsch | richtig |\n|---|---|---|\n| 2 | `if n == 1:` | `if n <= 1:` (Basisfall auch für 0 und negative n erreichbar) |\n| 3 | `return 0` | `return 1` (neutrales Element der Multiplikation) |\n| 5 | `fakultaet(n - 1) * n` | `return fakultaet(n - 1) * n` |",
+   "explanation": "Die drei Fehler sind exakt die drei typischen Rekursionsfehler, die in der Klausur immer wieder auftauchen:\n\n1. **Falscher Rückgabewert im Basisfall.** Bei Summen ist der Startwert `0`, bei Produkten `1`. Wer das verwechselt, bekommt ein syntaktisch korrektes Programm, das immer `0` liefert.\n2. **Fehlendes `return` beim rekursiven Aufruf.** Ein sehr häufiger Flüchtigkeitsfehler: Anders als bei einer Schleife, in der man ein Ergebnis in einer Variablen sammelt, muss das Ergebnis eines rekursiven Aufrufs **explizit zurückgegeben** werden. Ohne `return` gibt Python `None` zurück.\n3. **Nicht erreichbarer Basisfall.** `n == 1` funktioniert nur, wenn man mit einem positiven `n` startet. Der Professor schreibt deshalb in der Vorlesung `if x <= 0: return 1`.\n\nBei der Fehlersuche hilft es, den Code für ein kleines Argument gedanklich auszuführen (`fakultaet(1)`, `fakultaet(0)`) - dabei fallen genau solche Randfälle auf.\n\n**Merkregel:** *Basisfall erreichbar? Richtiges neutrales Element? `return` vor dem rekursiven Aufruf?*",
+   "hints": [
+    "Führen Sie den Code für n = 1 im Kopf aus - welchen Wert bekommen Sie, und ist der richtig?",
+    "Was gibt eine Funktion zurück, wenn eine Zeile zwar rechnet, aber kein return davorsteht?",
+    "Probieren Sie gedanklich fakultaet(0): Wird der if-Zweig jemals wahr?"
+   ],
+   "pitfalls": [
+    "Nur den fehlenden return-Fehler finden und die 0 im Basisfall übersehen.",
+    "Die Rekursion durch eine Schleife 'reparieren' - in Klausuraufgabe 4 sind Schleifen verboten.",
+    "n == 1 für korrekt halten, weil das Beispiel fakultaet(4) zufällig funktionieren würde."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 9,
+     "label": "Rekursion - Beispiel Fakultät"
+    },
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "def fakultaet_rekur(x) mit if x <= 0: return 1"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabenformat: 'In welchen Zeilen befinden sich Fehler?'"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "fehlersuche",
+    "basisfall",
+    "return",
+    "fakultaet"
+   ]
+  },
+  {
+   "id": "py-recursion-006",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "String rekursiv umkehren (Klausur Aufgabe 4a)",
+   "prompt": "**Verwenden Sie in dieser Aufgabe keine Schleifen, sondern ausschließlich Rekursion.**\n\nSchreiben Sie eine rekursive Funktion `umkehren(text)`, die eine Zeichenkette rückwärts zurückgibt.\n\nBeispiel: `umkehren(\"hallo\")` -> `\"ollah\"` **(4 P)**\n\nVerboten sind außerdem `[::-1]` und `reversed(...)` - gefragt ist die rekursive Idee.",
+   "starterCode": "def umkehren(text):\n    # Basisfall: Welcher String ist bereits sein eigenes Spiegelbild?\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein Slicing-Trick [::-1]",
+    "kein reversed()"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Klausur",
+     "call": "umkehren('hallo')",
+     "expected": "'ollah'"
+    },
+    {
+     "name": "leerer String (Basisfall)",
+     "call": "umkehren('')",
+     "expected": "''"
+    },
+    {
+     "name": "einzelnes Zeichen",
+     "call": "umkehren('a')",
+     "expected": "'a'"
+    },
+    {
+     "name": "Palindrom bleibt gleich",
+     "call": "umkehren('otto')",
+     "expected": "'otto'"
+    },
+    {
+     "name": "längeres Wort",
+     "call": "umkehren('Goofspiel')",
+     "expected": "'leipsfooG'"
+    },
+    {
+     "name": "mit Leerzeichen",
+     "call": "umkehren('ab cd')",
+     "expected": "'dc ba'"
+    },
+    {
+     "name": "zweimal umkehren ergibt das Original",
+     "call": "umkehren(umkehren('rekursion'))",
+     "expected": "'rekursion'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "[::-1]",
+    "reversed("
+   ],
+   "required": [
+    "umkehren("
+   ],
+   "solution": "def umkehren(text):\n    if text == \"\":\n        return \"\"\n    else:\n        return umkehren(text[1:]) + text[0]",
+   "explanation": "Die rekursive Idee lautet: *Der umgedrehte String ist der umgedrehte Rest, gefolgt vom ersten Zeichen.* Formal `umkehren(t) = umkehren(t[1:]) + t[0]`.\n\n- **Basisfall:** Der leere String ist umgedreht wieder der leere String. Alternativ funktioniert auch `len(text) <= 1: return text`.\n- **Rekursionsschritt:** `text[1:]` ist der String ohne das erste Zeichen und damit **echt kürzer** - der Basisfall wird garantiert erreicht.\n\nEntscheidend ist die **Reihenfolge der Konkatenation**: `umkehren(text[1:]) + text[0]` hängt das erste Zeichen ganz hinten an. Schreibt man `text[0] + umkehren(text[1:])`, bekommt man den Original-String zurück - ein sehr häufiger Klausurfehler.\n\nGenauso gut funktioniert die spiegelbildliche Variante `umkehren(t) = t[-1] + umkehren(t[:-1])`.\n\nStrings sind in Python **immutable**: `text[1:]` erzeugt jedes Mal einen neuen String, es wird nichts verändert. Genau deshalb ist diese Lösung eine pure function.\n\n**Merkregel:** *Erstes Zeichen abschneiden, Rest umdrehen, abgeschnittenes Zeichen hinten anhängen.*",
+   "hints": [
+    "Zerlegen Sie den String in 'erstes Zeichen' (text[0]) und 'Rest' (text[1:]).",
+    "Wenn der Rest bereits umgedreht ist: An welche Stelle gehört dann das erste Zeichen - nach vorne oder nach hinten?",
+    "Der Basisfall ist der leere String: umkehren('') muss '' liefern, sonst hängen Sie ein Sonderzeichen an."
+   ],
+   "pitfalls": [
+    "text[0] + umkehren(text[1:]) schreiben - das liefert den unveränderten String zurück.",
+    "Den Basisfall bei len(text) == 1 setzen und den leeren String vergessen: umkehren('') wirft dann einen IndexError.",
+    "Statt Rekursion [::-1] benutzen - in der Klausur gibt das keine Punkte, weil die rekursive Idee geprüft wird."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 4a) umkehren(text)"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 3,
+     "label": "Optional: Beispiele zur Rekursion"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "strings",
+    "klausuraufgabe-4",
+    "slicing"
+   ]
+  },
+  {
+   "id": "py-recursion-007",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Verschachtelte Liste aufsummieren (Klausur Aufgabe 4b)",
+   "prompt": "**Verwenden Sie keine Schleifen, sondern ausschließlich Rekursion.**\n\nSchreiben Sie eine rekursive Funktion `verschachtelte_summe(liste)`, die alle Zahlen in einer **beliebig tief verschachtelten** Liste aufsummiert.\n\nBeispiel: `verschachtelte_summe([1, 2, [3, 4], [5, [6]], 7])` -> `28` **(5 P)**\n\n*Hinweis:* Mit `isinstance(x, list)` prüfen Sie, ob `x` eine Liste ist.",
+   "starterCode": "def verschachtelte_summe(liste):\n    # Drei Fälle: leere Liste - erstes Element ist Liste - erstes Element ist Zahl\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein sum()",
+    "isinstance verwenden"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Klausur",
+     "call": "verschachtelte_summe([1, 2, [3, 4], [5, [6]], 7])",
+     "expected": "28"
+    },
+    {
+     "name": "leere Liste (Basisfall)",
+     "call": "verschachtelte_summe([])",
+     "expected": "0"
+    },
+    {
+     "name": "flache Liste",
+     "call": "verschachtelte_summe([1, 2, 3])",
+     "expected": "6"
+    },
+    {
+     "name": "sehr tief verschachtelt",
+     "call": "verschachtelte_summe([[[[5]]]])",
+     "expected": "5"
+    },
+    {
+     "name": "Verschachtelung rechts",
+     "call": "verschachtelte_summe([1, [2, [3, [4, [5]]]]])",
+     "expected": "15"
+    },
+    {
+     "name": "nur leere Listen",
+     "call": "verschachtelte_summe([[], [[]], []])",
+     "expected": "0"
+    },
+    {
+     "name": "negative Zahlen und Floats",
+     "call": "verschachtelte_summe([-1, [2.5, [-1.5]], 3])",
+     "expected": "3"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "sum("
+   ],
+   "required": [
+    "isinstance"
+   ],
+   "solution": "def verschachtelte_summe(liste):\n    if liste == []:\n        return 0\n    elif isinstance(liste[0], list):\n        return verschachtelte_summe(liste[0]) + verschachtelte_summe(liste[1:])\n    else:\n        return liste[0] + verschachtelte_summe(liste[1:])",
+   "explanation": "Diese Aufgabe ist die schwerste Teilaufgabe der Probeklausur, weil hier **zwei** rekursive Aufrufe nötig sind - man spricht von *Baumrekursion*:\n\n1. **Basisfall:** leere Liste -> `0` (neutrales Element der Addition).\n2. **Erstes Element ist selbst eine Liste** (`isinstance(liste[0], list)`): Dann muss man *in die Tiefe* gehen (`verschachtelte_summe(liste[0])`) **und** danach weiter *in die Breite* (`verschachtelte_summe(liste[1:])`). Beide Teilsummen werden addiert.\n3. **Erstes Element ist eine Zahl:** direkt addieren und mit dem Rest weitermachen.\n\nDas Muster `liste[0] + rekursion(liste[1:])` ist dasselbe wie bei `summiere_alle_zahlen` aus der Vorlesung - neu ist nur der Zwischenfall für verschachtelte Elemente.\n\nWarum `isinstance` und nicht `type(x) == list`? Beides funktioniert hier; der Professor gibt `isinstance` explizit als Hinweis in der Klausur vor.\n\nTypischer Denkfehler: Nur `verschachtelte_summe(liste[0])` zurückgeben und den Rest vergessen - dann fehlt alles hinter der Unterliste.\n\n**Merkregel:** *Ist der Kopf eine Liste, brauchst du zwei Aufrufe: einen nach unten, einen nach rechts.*",
+   "hints": [
+    "Betrachten Sie immer nur das erste Element liste[0] und den Rest liste[1:] - wie bei der einfachen Listensumme.",
+    "Unterscheiden Sie mit isinstance(liste[0], list) zwei Fälle: Kopf ist eine Liste oder eine Zahl.",
+    "Ist der Kopf eine Liste, brauchen Sie die Summe DIESER Liste plus die Summe des Rests - also zwei rekursive Aufrufe in einer Zeile."
+   ],
+   "pitfalls": [
+    "Im Listen-Fall den Rest vergessen: return verschachtelte_summe(liste[0]) ignoriert alles danach.",
+    "isinstance(liste, list) statt isinstance(liste[0], list) prüfen - liste ist immer eine Liste.",
+    "Als Basisfall len(liste) == 1 wählen: Dann bricht der Fall [[1, 2]] ab, weil das eine Element selbst eine Liste ist."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 4b) verschachtelte_summe(liste)"
+    },
+    {
+     "file": "final_lecture_examples.ipynb",
+     "page": 1,
+     "label": "summiere_alle_zahlen - Muster zahlen[0] + rekursion(zahlen[1:])"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "listen",
+    "isinstance",
+    "baumrekursion",
+    "klausuraufgabe-4"
+   ]
+  },
+  {
+   "id": "py-recursion-008",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 4,
+   "points": 3,
+   "examStyle": true,
+   "title": "Rekursive higher order function wiederhole (Klausur Aufgabe 4c)",
+   "prompt": "**Verwenden Sie keine Schleifen, sondern ausschließlich Rekursion.**\n\nSchreiben Sie eine rekursive **Funktion höherer Ordnung** `wiederhole(f, x, abbruch)`, die die Funktion `f` so lange wiederholt auf `x` anwendet, bis `abbruch(x)` den Wert `True` liefert, und dann `x` zurückgibt. **(3 P)**\n\nBeispiel: `wiederhole(lambda x: x + 1, 0, lambda x: x >= 5)` -> `5`",
+   "starterCode": "def wiederhole(f, x, abbruch):\n    # abbruch ist eine Funktion, die x entgegennimmt und True/False liefert\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "f und abbruch sind Funktionen (higher order function)"
+   ],
+   "tests": [
+    {
+     "name": "Hochzählen bis 5",
+     "call": "wiederhole(lambda x: x + 1, 0, lambda x: x >= 5)",
+     "expected": "5"
+    },
+    {
+     "name": "Verdoppeln bis über 100",
+     "call": "wiederhole(lambda x: x * 2, 1, lambda x: x > 100)",
+     "expected": "128"
+    },
+    {
+     "name": "Abbruch sofort erfüllt - x unverändert",
+     "call": "wiederhole(lambda x: x + 1, 10, lambda x: x >= 5)",
+     "expected": "10"
+    },
+    {
+     "name": "funktioniert auch auf Strings",
+     "call": "wiederhole(lambda s: s + '!', 'hi', lambda s: len(s) >= 5)",
+     "expected": "'hi!!!'"
+    },
+    {
+     "name": "String bis leer abbauen",
+     "call": "wiederhole(lambda s: s[1:], 'hallo', lambda s: s == '')",
+     "expected": "''"
+    },
+    {
+     "name": "Halbieren bis unter 1",
+     "call": "wiederhole(lambda x: x / 2, 64, lambda x: x < 1)",
+     "expected": "0.5"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "wiederhole("
+   ],
+   "solution": "def wiederhole(f, x, abbruch):\n    if abbruch(x):\n        return x\n    else:\n        return wiederhole(f, f(x), abbruch)",
+   "explanation": "Hier treffen zwei Konzepte der Vorlesung aufeinander: **Rekursion** und **Funktionen höherer Ordnung** (Funktionen, die Funktionen als Eingabe bekommen).\n\nDie Struktur ist die einer while-Schleife - nur ohne Mutation:\n\n```python\n# imperativ (verboten in der Klausur):\nwhile not abbruch(x):\n    x = f(x)\nreturn x\n```\n\nRekursiv wird aus der Zuweisung `x = f(x)` einfach das **Argument** des nächsten Aufrufs: `wiederhole(f, f(x), abbruch)`. Genau das meint der Professor mit *\"Rekursion kann oft die Mutation von Variablen verhindern\"*.\n\nDrei Details entscheiden über die Punkte:\n\n1. Die Abbruchbedingung wird **auf `x` angewendet** (`abbruch(x)`), nicht auf `f` oder auf den Rückgabewert von `f`.\n2. `f` und `abbruch` müssen an den rekursiven Aufruf **weitergereicht** werden - sonst gibt es einen `NameError`/`TypeError`.\n3. Ist `abbruch(x)` schon beim ersten Aufruf `True`, wird `f` **gar nicht** angewendet (siehe Test 3).\n\nDieselbe Struktur steckt in `spiel_rekursiv(abbruchbedingung, spielrunde, states)` aus dem Goofspiel-Helper: eine allgemeine rekursive Schleife, die mit übergebenen Funktionen arbeitet.\n\n**Merkregel:** *Aus `x = f(x)` in der Schleife wird `rekursion(..., f(x), ...)` im Aufruf.*",
+   "hints": [
+    "Überlegen Sie zuerst, wie die Aufgabe mit einer while-Schleife aussähe - und übersetzen Sie sie dann.",
+    "Der Basisfall ist keine Zahl, sondern das Ergebnis eines Funktionsaufrufs: abbruch(x).",
+    "Im rekursiven Aufruf muss x durch f(x) ersetzt werden; f und abbruch bleiben unverändert."
+   ],
+   "pitfalls": [
+    "f(x) berechnen und dann wiederhole(f, x, abbruch) aufrufen - x wird nie verändert (RecursionError).",
+    "abbruch als Wahrheitswert statt als Funktion behandeln: if abbruch: statt if abbruch(x):.",
+    "Am Ende f(x) statt x zurückgeben - gefragt ist der Wert, bei dem abbruch erstmals True wird."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 4c) wiederhole(f, x, abbruch)"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "def spiel_rekursiv(abbruchbedingung, spielrunde, states)"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Funktionen höherer Ordnung"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "higher-order-function",
+    "klausuraufgabe-4",
+    "lambda"
+   ]
+  },
+  {
+   "id": "py-recursion-009",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "Summe eines Tupels rekursiv",
+   "prompt": "Aus der Vorlesung: Gegeben ist ein **Tupel** von Zahlen, z. B. `zahlen = (1, 2, 3, 4, 5, 6, 7)`.\n\nSchreiben Sie eine rekursive Funktion `summiere_alle_zahlen(zahlen)`, die alle Einträge aufsummiert - **ohne Schleife** und **ohne `sum()`**.\n\nBeispiel: `summiere_alle_zahlen((1, 2, 3, 4, 5, 6, 7))` -> `28`",
+   "starterCode": "def summiere_alle_zahlen(zahlen):\n    # zahlen ist ein Tupel; zahlen[0] ist der Kopf, zahlen[1:] der Rest\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein sum()"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Vorlesung",
+     "call": "summiere_alle_zahlen((1, 2, 3, 4, 5, 6, 7))",
+     "expected": "28"
+    },
+    {
+     "name": "leeres Tupel (Basisfall)",
+     "call": "summiere_alle_zahlen(())",
+     "expected": "0"
+    },
+    {
+     "name": "einelementiges Tupel",
+     "call": "summiere_alle_zahlen((5,))",
+     "expected": "5"
+    },
+    {
+     "name": "negative Zahlen",
+     "call": "summiere_alle_zahlen((-3, 3))",
+     "expected": "0"
+    },
+    {
+     "name": "funktioniert auch auf einer Liste",
+     "call": "summiere_alle_zahlen([10, 20, 30])",
+     "expected": "60"
+    },
+    {
+     "name": "Gauss: 1 + ... + 100",
+     "call": "summiere_alle_zahlen(tuple(range(1, 101)))",
+     "expected": "5050"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "sum("
+   ],
+   "solution": "def summiere_alle_zahlen(zahlen):\n    if len(zahlen) == 0:\n        return 0\n    else:\n        return zahlen[0] + summiere_alle_zahlen(zahlen[1:])",
+   "explanation": "Das ist das **Grundmuster jeder Listen- bzw. Tupelrekursion**, das der Professor im Abschlussbeispiel gezeigt hat:\n\n> `zahlen[0] + summiere_alle_zahlen(zahlen[1:])`\n\nMan zerlegt die Sequenz in **Kopf** (`zahlen[0]`) und **Rest** (`zahlen[1:]`) und formuliert: *Die Summe ist der Kopf plus die Summe des Rests.* Weil `zahlen[1:]` bei jedem Schritt ein Element kürzer ist, wird der Basisfall (leere Sequenz) garantiert erreicht.\n\nDer Basisfall gibt `0` zurück - das neutrale Element der Addition. Praktisch: Der Code funktioniert unverändert für Tupel **und** Listen, weil `[0]`, `[1:]` und `len()` für beide gleich funktionieren.\n\nBesonders passend für die funktionale Programmierung: Tupel sind **immutable**. `zahlen[1:]` erzeugt ein neues Tupel, es wird nichts verändert - die Funktion ist damit pure.\n\nAchtung bei sehr langen Sequenzen: Jeder Aufruf legt einen Eintrag auf den Call Stack. Ab ca. 1000 Elementen bricht Python mit `RecursionError` ab - genau der Nachteil, den die Vorlesungsfolie *\"Warum nicht Rekursion?\"* nennt.\n\n**Merkregel:** *Kopf + Rekursion auf dem Rest, Basisfall = neutrales Element.*",
+   "hints": [
+    "Zerlegen Sie das Tupel in zahlen[0] und zahlen[1:].",
+    "Welche Summe hat ein leeres Tupel? Das ist Ihr Basisfall.",
+    "len(zahlen) == 0 ist die übliche Prüfung; das Ergebnis des rekursiven Aufrufs wird zum Kopf addiert."
+   ],
+   "pitfalls": [
+    "zahlen[1] statt zahlen[1:] schreiben - das ist ein einzelnes Element, kein Rest-Tupel.",
+    "Im Basisfall 1 statt 0 zurückgeben (das wäre das neutrale Element der Multiplikation).",
+    "Vergessen, dass ein einelementiges Tupel (5,) heißt - (5) ist nur eine geklammerte Zahl."
+   ],
+   "sources": [
+    {
+     "file": "final_lecture_examples.ipynb",
+     "page": 1,
+     "label": "def summiere_alle_zahlen(zahlen) mit zahlen[0] + ...(zahlen[1:])"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 11,
+     "label": "Datentypen Tuple, Konzept Rekursion"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "tupel",
+    "listen",
+    "summe",
+    "immutable"
+   ]
+  },
+  {
+   "id": "py-recursion-010",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Finden Sie die 3 Fehler im rekursiven Produkt",
+   "prompt": "`produkt(liste)` soll das Produkt aller Zahlen einer Liste berechnen, also für `[2, 3, 4]` das Ergebnis `24`. Der Code enthält **3 Fehler**. Benennen Sie Zeile, Fehler und Korrektur.",
+   "code": "1  def produkt(liste):\n2      if liste == 0:\n3          return 0\n4      else:\n5          return liste[0] * produkt(liste)\n6\n7  print(produkt([2, 3, 4]))",
+   "errors": [
+    {
+     "line": 2,
+     "wrong": "if liste == 0:",
+     "fix": "if liste == []:",
+     "why": "Hier wird eine **Liste mit einer Zahl** verglichen. Das ist zwar erlaubt, aber niemals `True` - der Basisfall wird also nie erreicht. Richtig ist `liste == []` (bzw. `len(liste) == 0` oder `not liste`)."
+    },
+    {
+     "line": 3,
+     "wrong": "return 0",
+     "fix": "return 1",
+     "why": "Der Basisfall eines **Produkts** muss `1` liefern (neutrales Element der Multiplikation). Mit `0` wäre jedes Ergebnis 0, weil am Ende der Kette mit 0 multipliziert wird."
+    },
+    {
+     "line": 5,
+     "wrong": "produkt(liste)",
+     "fix": "produkt(liste[1:])",
+     "why": "Das Argument wird nicht verkleinert - die Funktion ruft sich mit **derselben** Liste auf. Der Basisfall ist damit unerreichbar und Python bricht mit `RecursionError: maximum recursion depth exceeded` ab."
+    }
+   ],
+   "solution": "```python\ndef produkt(liste):\n    if liste == []:\n        return 1\n    else:\n        return liste[0] * produkt(liste[1:])\n\nprint(produkt([2, 3, 4]))\n```\n\nAusgabe des korrigierten Codes:\n\n```\n24\n```\n\n**Die 3 Fehler:** Zeile 2 (Basisfall unerreichbar: `liste == 0` statt `liste == []`), Zeile 3 (`0` statt `1` als neutrales Element), Zeile 5 (`produkt(liste)` statt `produkt(liste[1:])` - keine Verkleinerung).",
+   "explanation": "Alle drei Fehler betreffen die zwei Säulen jeder Rekursion: **Basisfall** und **Verkleinerung**.\n\nDer Vergleich `liste == 0` ist besonders tückisch, weil er **keinen Fehler wirft**: In Python darf man beliebige Objekte mit `==` vergleichen, das Ergebnis ist hier einfach immer `False`. Solche 'stillen' Fehler findet man nur durch gedankliches Ausführen.\n\nDer Basisfall-Wert `1` folgt derselben Regel wie bei der Fakultät: Bei Summen `0`, bei Produkten `1`. Man kann sich das an der kürzesten Kette klarmachen: `produkt([5])` soll `5 * produkt([])` sein - das stimmt nur, wenn `produkt([])` gleich `1` ist.\n\nDer dritte Fehler ist der häufigste Rekursionsfehler überhaupt: Wenn das Argument nicht kleiner wird, entsteht eine unendliche Aufrufkette. Python schützt hier mit dem `RecursionError` (Standardtiefe ca. 1000), während in anderen Sprachen der Stack überläuft.\n\n**Merkregel:** *Jeder rekursive Aufruf muss dem Basisfall näher kommen - sonst wächst nur der Stack.*",
+   "hints": [
+    "Fragen Sie sich bei Zeile 2: Kann eine Liste jemals gleich der Zahl 0 sein?",
+    "Rechnen Sie produkt([5]) im Kopf: 5 mal was muss 5 ergeben?",
+    "Vergleichen Sie das Argument im rekursiven Aufruf mit dem Argument der Funktion - wird es kleiner?"
+   ],
+   "pitfalls": [
+    "Nur den fehlenden Slice finden und den falschen Basisfall-Wert übersehen.",
+    "liste == 0 für einen Syntaxfehler halten - es ist ein Logikfehler, der Code läuft ja an.",
+    "Das Problem mit einer for-Schleife lösen statt die Rekursion zu reparieren."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 6,
+     "label": "Geeignete Abbruchbedingung, damit die Rekursion terminiert"
+    },
+    {
+     "file": "final_lecture_examples.ipynb",
+     "page": 1,
+     "label": "Muster liste[0] + rekursion(liste[1:])"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "fehlersuche",
+    "produkt",
+    "basisfall",
+    "recursionerror"
+   ]
+  },
+  {
+   "id": "py-recursion-011",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Lücken: rekursive pure function summiere_gerade_zahlen",
+   "prompt": "Aus dem Klausurüberblick der Vorlesung: *\"Schreiben sie eine rekursive pure Funktion `summiere_gerade_zahlen`\"*.\n\nDie Funktion soll alle **geraden** Zahlen einer Liste aufsummieren - ohne Schleife. Füllen Sie die vier Lücken so aus, dass das Programm `6` ausgibt.",
+   "code": "def summiere_gerade_zahlen(liste):\n    if ## Lücke 1 ##:\n        return ## Lücke 2 ##\n    elif liste[0] % 2 == 0:\n        return ## Lücke 3 ##\n    else:\n        return ## Lücke 4 ##\n\nprint(summiere_gerade_zahlen([1, 2, 3, 4]))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "not liste",
+      "liste == []",
+      "len(liste) == 0",
+      "liste == list()",
+      "len(liste)==0",
+      "liste==[]"
+     ],
+     "explanation": "Abbruchbedingung: Die leere Liste. `not liste` nutzt aus, dass eine leere Liste zu `False` evaluiert; genauso korrekt sind `liste == []` und `len(liste) == 0`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "0"
+     ],
+     "explanation": "Die Summe der leeren Liste ist `0` - das neutrale Element der Addition. Mit `1` wäre jede Summe um 1 zu groß."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "liste[0] + summiere_gerade_zahlen(liste[1:])",
+      "summiere_gerade_zahlen(liste[1:]) + liste[0]"
+     ],
+     "explanation": "Das erste Element ist gerade, wird also mitgezählt: Kopf plus die Summe des Rests."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "summiere_gerade_zahlen(liste[1:])"
+     ],
+     "explanation": "Das erste Element ist ungerade und wird übersprungen: nur die Summe des Rests zurückgeben - **ohne** `liste[0]`."
+    }
+   ],
+   "solution": "```python\ndef summiere_gerade_zahlen(liste):\n    if not liste:\n        return 0\n    elif liste[0] % 2 == 0:\n        return liste[0] + summiere_gerade_zahlen(liste[1:])\n    else:\n        return summiere_gerade_zahlen(liste[1:])\n\nprint(summiere_gerade_zahlen([1, 2, 3, 4]))   # 6\n```\n\nZum Vergleich die funktionale Variante mit `filter` und `reduce` aus derselben Vorlesungsdatei:\n\n```python\nfrom functools import reduce\ndef summiere_gerade_zahlen_filter_reduce(liste):\n    return reduce(lambda x, y: x + y, filter(lambda x: x % 2 == 0, liste))\n```",
+   "explanation": "Diese Funktion steht wörtlich in der `zusammenfassung.ipynb` des Professors und wird im Klausurüberblick als Aufgabe genannt. Sie kombiniert zwei Muster:\n\n- **Listenrekursion:** Kopf `liste[0]` und Rest `liste[1:]`.\n- **Filtern per Rekursion:** In einem Zweig wird der Kopf mitgenommen, im anderen einfach übersprungen. Genau so implementiert man `filter` von Hand.\n\nDer entscheidende Unterschied zwischen Lücke 3 und Lücke 4 ist das Weglassen von `liste[0]`. Beide Zweige rufen sich mit `liste[1:]` auf - deshalb terminiert die Rekursion in jedem Fall.\n\nDie Funktion ist **pure**: Sie hängt nur von `liste` ab, verändert nichts (Slicing erzeugt eine neue Liste) und hat keine Nebeneffekte. Beachten Sie: Die `reduce`-Variante würde bei einer Liste ganz ohne gerade Zahlen einen `TypeError` werfen (leere Sequenz ohne Startwert) - die rekursive Variante liefert dann korrekt `0`.\n\n**Merkregel:** *Filtern rekursiv = im Ja-Zweig Kopf mitnehmen, im Nein-Zweig Kopf weglassen - der rekursive Aufruf bleibt gleich.*",
+   "hints": [
+    "Lücke 1 und 2 bilden zusammen den Basisfall: Was passiert, wenn nichts mehr in der Liste steht?",
+    "In Lücke 3 wird der Kopf gebraucht, in Lücke 4 nicht - der rekursive Aufruf ist in beiden Fällen identisch.",
+    "Der rekursive Aufruf lautet immer summiere_gerade_zahlen(liste[1:])."
+   ],
+   "pitfalls": [
+    "In Lücke 4 aus Versehen liste[0] mit addieren - dann werden ungerade Zahlen mitgezählt.",
+    "In Lücke 4 das return oder den rekursiven Aufruf weglassen (None als Ergebnis).",
+    "Als Basisfall len(liste) == 1 wählen - dann wird das letzte Element nie geprüft."
+   ],
+   "sources": [
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "def summiere_gerade_zahlen_rekursiv(liste)"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 14,
+     "label": "Überblick VL4+5: 'Schreiben sie eine rekursive pure Funktion summiere_gerade_zahlen'"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "luecken",
+    "filtern",
+    "pure-function",
+    "listen"
+   ]
+  },
+  {
+   "id": "py-recursion-012",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "filter selbst gebaut - rekursiv filtern",
+   "prompt": "**Keine Schleifen, kein `filter(...)`** - nur Rekursion.\n\nSchreiben Sie eine rekursive Funktion höherer Ordnung `filtere(bedingung, liste)`, die eine **neue Liste** mit genau den Elementen zurückgibt, für die `bedingung(element)` den Wert `True` liefert.\n\nBeispiel: `filtere(lambda x: x % 2 == 0, [1, 2, 3, 4, 5, 6])` -> `[2, 4, 6]`",
+   "starterCode": "def filtere(bedingung, liste):\n    # drei Fälle: leere Liste - Kopf erfüllt die Bedingung - Kopf erfüllt sie nicht\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein filter()",
+    "keine List Comprehension"
+   ],
+   "tests": [
+    {
+     "name": "gerade Zahlen",
+     "call": "filtere(lambda x: x % 2 == 0, [1, 2, 3, 4, 5, 6])",
+     "expected": "[2, 4, 6]"
+    },
+    {
+     "name": "leere Liste (Basisfall)",
+     "call": "filtere(lambda x: x > 4, [])",
+     "expected": "[]"
+    },
+    {
+     "name": "Wörter mit mehr als vier Buchstaben",
+     "call": "filtere(lambda w: len(w) > 4, ['die', 'schnelle', 'braune', 'katze'])",
+     "expected": "['schnelle', 'braune', 'katze']"
+    },
+    {
+     "name": "nichts erfüllt die Bedingung",
+     "call": "filtere(lambda x: False, [1, 2, 3])",
+     "expected": "[]"
+    },
+    {
+     "name": "alles erfüllt die Bedingung",
+     "call": "filtere(lambda x: True, [1, 2, 3])",
+     "expected": "[1, 2, 3]"
+    },
+    {
+     "name": "Reihenfolge bleibt erhalten",
+     "call": "filtere(lambda x: x > 2, [5, 1, 4, 2, 3])",
+     "expected": "[5, 4, 3]"
+    },
+    {
+     "name": "Original bleibt unverändert (pure)",
+     "call": "(lambda l: (filtere(lambda x: x > 1, l), l))([1, 2, 3])",
+     "expected": "([2, 3], [1, 2, 3])"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "filter("
+   ],
+   "required": [
+    "filtere("
+   ],
+   "solution": "def filtere(bedingung, liste):\n    if liste == []:\n        return []\n    elif bedingung(liste[0]):\n        return [liste[0]] + filtere(bedingung, liste[1:])\n    else:\n        return filtere(bedingung, liste[1:])",
+   "explanation": "Hier bauen Sie den Vorlesungsbefehl `filter` selbst nach - mit Rekursion statt Iterator. Das Muster ist dasselbe wie bei `summiere_gerade_zahlen`, nur wird statt einer Zahl eine **Liste** aufgebaut:\n\n- **Basisfall:** leere Liste -> leere Liste (das neutrale Element der Listenkonkatenation).\n- **Kopf erfüllt die Bedingung:** `[liste[0]] + filtere(bedingung, liste[1:])`. Die eckigen Klammern sind entscheidend! `liste[0] + ...` würde eine Zahl mit einer Liste addieren -> `TypeError`.\n- **Kopf erfüllt sie nicht:** Kopf weglassen, nur den Rest weiterverarbeiten.\n\n`bedingung` ist eine **Funktion**, meist ein `lambda`. `filtere` ist damit eine *higher order function*, genau wie `filter` selbst.\n\nUnterschied zum eingebauten `filter`: Dieses liefert einen **Iterator** (den man mit `list(...)` auspacken muss), die rekursive Variante liefert direkt eine Liste. Beides sind pure functions - die Eingabeliste wird nie verändert, weil Slicing und `+` neue Listen erzeugen.\n\n**Merkregel:** *Element behalten = `[kopf] + rekursion(rest)`, Element verwerfen = `rekursion(rest)`.*",
+   "hints": [
+    "Überlegen Sie zuerst den Basisfall: Was ist die gefilterte leere Liste?",
+    "Für den Kopf gibt es zwei Fälle - prüfen Sie mit bedingung(liste[0]), welcher gilt.",
+    "Zum Anhängen eines einzelnen Elements an das Ergebnis brauchen Sie [liste[0]] + ... (mit eckigen Klammern)."
+   ],
+   "pitfalls": [
+    "liste[0] + filtere(...) ohne eckige Klammern schreiben -> TypeError: unsupported operand type(s) for +: 'int' and 'list'.",
+    "Im else-Zweig den rekursiven Aufruf weglassen und einfach [] zurückgeben - dann bricht die Verarbeitung beim ersten nicht passenden Element ab.",
+    "bedingung ohne Klammern verwenden (if bedingung:) - eine Funktion ist immer 'wahr', damit werden alle Elemente behalten."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "filter: nur Elemente behalten, auf denen die Funktion True liefert"
+    },
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "summiere_gerade_zahlen_rekursiv - Filtern per Rekursion"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 4: Programmieren mit Rekursion, keine Schleifen"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "filter",
+    "higher-order-function",
+    "listen",
+    "lambda"
+   ]
+  },
+  {
+   "id": "py-recursion-013",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Palindrom-Test rekursiv",
+   "prompt": "Schreiben Sie eine rekursive Funktion `ist_palindrom(text)`, die `True` zurückgibt, wenn `text` vorwärts und rückwärts gleich gelesen wird, sonst `False`.\n\nBeispiele: `ist_palindrom(\"otto\")` -> `True`, `ist_palindrom(\"hallo\")` -> `False`\n\n**Keine Schleifen**, kein `[::-1]`, kein `reversed(...)`. Sie dürfen annehmen, dass der Text bereits klein geschrieben und ohne Leerzeichen ist.",
+   "starterCode": "def ist_palindrom(text):\n    # Vergleichen Sie das erste mit dem letzten Zeichen und arbeiten Sie sich nach innen\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein [::-1] und kein reversed()"
+   ],
+   "tests": [
+    {
+     "name": "klassisches Palindrom",
+     "call": "ist_palindrom('otto')",
+     "expected": "True"
+    },
+    {
+     "name": "kein Palindrom",
+     "call": "ist_palindrom('hallo')",
+     "expected": "False"
+    },
+    {
+     "name": "leerer String (Basisfall)",
+     "call": "ist_palindrom('')",
+     "expected": "True"
+    },
+    {
+     "name": "einzelnes Zeichen",
+     "call": "ist_palindrom('a')",
+     "expected": "True"
+    },
+    {
+     "name": "ungerade Länge",
+     "call": "ist_palindrom('anna')",
+     "expected": "True"
+    },
+    {
+     "name": "langes Palindrom",
+     "call": "ist_palindrom('reliefpfeiler')",
+     "expected": "True"
+    },
+    {
+     "name": "unterscheidet sich nur in der Mitte",
+     "call": "ist_palindrom('abcba')",
+     "expected": "True"
+    },
+    {
+     "name": "erstes und letztes Zeichen gleich, Mitte nicht",
+     "call": "ist_palindrom('abcda')",
+     "expected": "False"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "[::-1]",
+    "reversed("
+   ],
+   "required": [
+    "ist_palindrom("
+   ],
+   "solution": "def ist_palindrom(text):\n    if len(text) <= 1:\n        return True\n    elif text[0] != text[-1]:\n        return False\n    else:\n        return ist_palindrom(text[1:-1])",
+   "explanation": "Die rekursive Idee: *Ein Wort ist ein Palindrom, wenn erstes und letztes Zeichen gleich sind **und** der Teil dazwischen ebenfalls ein Palindrom ist.*\n\nDrei Fälle:\n\n1. **Basisfall:** `len(text) <= 1` -> `True`. Der leere String und ein einzelnes Zeichen sind immer Palindrome. Beide Fälle sind nötig, weil bei Wörtern gerader Länge (`otto`) am Ende der leere String übrig bleibt, bei ungerader Länge (`abcba`) ein einzelnes Zeichen.\n2. **Frühes `False`:** Sind außen zwei verschiedene Zeichen, kann es kein Palindrom mehr sein - man muss gar nicht weiter suchen.\n3. **Rekursion:** `text[1:-1]` schneidet **beide** Randzeichen ab und wird pro Schritt um zwei Zeichen kürzer.\n\nAlternative Lösung über die Umkehrfunktion: `return text == umkehren(text)` - das ist aber nur erlaubt, wenn `umkehren` selbst rekursiv ist.\n\nBeachten Sie die Verwandtschaft zur binären Suche: Auch dort wird das Problem in jedem Schritt substanziell kleiner, weshalb die Rekursionstiefe klein bleibt.\n\n**Merkregel:** *Außen vergleichen, innen weitermachen - Basisfall bei 0 oder 1 Zeichen.*",
+   "hints": [
+    "Was können Sie über das erste (text[0]) und das letzte Zeichen (text[-1]) sagen, wenn text ein Palindrom ist?",
+    "Wie erhalten Sie den Text ohne erstes und letztes Zeichen? Denken Sie an Slicing.",
+    "Sie brauchen zwei Abbruchfälle: einen für 'gefunden, dass es kein Palindrom ist' und einen für 'nichts mehr zu prüfen'."
+   ],
+   "pitfalls": [
+    "Nur len(text) == 1 als Basisfall nehmen und den leeren String vergessen: Bei gerader Wortlänge ('otto' -> 'tt' -> '') bleibt am Ende der leere String übrig, und text[0] wirft dann einen IndexError.",
+    "text[1:-1] mit text[1:] verwechseln - dann wird das letzte Zeichen nie entfernt und die Rekursion vergleicht falsche Paare.",
+    "return ist_palindrom(...) ohne return schreiben - die Funktion liefert dann None statt True/False."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 3,
+     "label": "Optional: Beispiele zur Rekursion"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 1,
+     "label": "Strings, Slicing, negative Indizes"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "strings",
+    "palindrom",
+    "slicing"
+   ]
+  },
+  {
+   "id": "py-recursion-014",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Lücken: Potenz rekursiv berechnen",
+   "prompt": "Vervollständigen Sie den folgenden Code so, dass `potenz(basis, exponent)` die Potenz `basis ** exponent` **rekursiv** berechnet (für `exponent >= 0`). Der Operator `**` darf nicht verwendet werden.\n\nDas Programm soll `1024` ausgeben.",
+   "code": "def potenz(basis, exponent):\n    if ## Lücke 1 ##:\n        return ## Lücke 2 ##\n    else:\n        return ## Lücke 3 ##\n\nprint(potenz(2, 10))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "exponent == 0",
+      "exponent <= 0",
+      "exponent==0",
+      "exponent<=0",
+      "0 == exponent"
+     ],
+     "explanation": "Abbruchbedingung: Exponent 0. `exponent <= 0` ist robuster, falls jemand versehentlich negativ startet."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "1"
+     ],
+     "explanation": "`basis ** 0` ist per Definition `1` - und `1` ist zugleich das neutrale Element der Multiplikation, mit dem die Kette enden muss."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "basis * potenz(basis, exponent - 1)",
+      "potenz(basis, exponent - 1) * basis",
+      "basis*potenz(basis,exponent-1)"
+     ],
+     "explanation": "Rekursionsschritt: `b^n = b * b^(n-1)`. Der Exponent wird um 1 kleiner und erreicht damit garantiert die 0."
+    }
+   ],
+   "solution": "```python\ndef potenz(basis, exponent):\n    if exponent == 0:\n        return 1\n    else:\n        return basis * potenz(basis, exponent - 1)\n\nprint(potenz(2, 10))   # 1024\n```",
+   "explanation": "Die Potenz folgt derselben Rekursionsgleichung wie die Fakultät, nur wird nicht mit dem Zähler, sondern immer mit derselben Basis multipliziert: `b^n = b * b^(n-1)` mit `b^0 = 1`.\n\nWichtig ist, **welches Argument kleiner wird**: der Exponent, nicht die Basis. Ein häufiger Fehler ist `potenz(basis - 1, exponent)` - damit würde etwas ganz anderes berechnet und die Rekursion bei negativer Basis nie enden.\n\nDer Basisfall `1` ist wieder das neutrale Element der Multiplikation. Mit `return 0` wäre jedes Ergebnis 0, mit `return basis` wäre jedes Ergebnis um den Faktor `basis` zu groß (das entspräche dem Basisfall `exponent == 1`).\n\nInteressant für Schnelle: Es geht auch mit halber Rekursionstiefe, indem man `b^n = (b^(n//2))^2` (bei geradem n) verwendet - das ist die 'schnelle Exponentiation'. Für die Klausur genügt die einfache Variante.\n\n**Merkregel:** *Ein Faktor pro Rekursionsschritt - der Exponent zählt runter bis 0.*",
+   "hints": [
+    "Für welchen Exponenten kennen Sie das Ergebnis, ohne zu rechnen?",
+    "Schreiben Sie die Gleichung b hoch n = b * (b hoch n-1) auf.",
+    "Achten Sie darauf, welches der beiden Argumente sich im rekursiven Aufruf verändert."
+   ],
+   "pitfalls": [
+    "Im Basisfall 0 oder basis zurückgeben statt 1.",
+    "Die Basis statt des Exponenten verkleinern.",
+    "Statt Rekursion basis ** exponent schreiben - das ist hier ausdrücklich verboten."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 4,
+     "label": "Optional: Beispiele zur Rekursion"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 9,
+     "label": "Rekursionsmuster wie bei der Fakultät"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "luecken",
+    "potenz",
+    "basisfall"
+   ]
+  },
+  {
+   "id": "py-recursion-015",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Größter gemeinsamer Teiler (Euklid) rekursiv",
+   "prompt": "Der **euklidische Algorithmus** berechnet den größten gemeinsamen Teiler zweier nicht-negativer ganzer Zahlen nach der Regel\n\n```\nggt(a, 0) = a\nggt(a, b) = ggt(b, a % b)   fuer b != 0\n```\n\nSetzen Sie diese Regel als rekursive Funktion `ggt(a, b)` um - **ohne Schleife** und ohne `math.gcd`.\n\nBeispiel: `ggt(48, 18)` -> `6`",
+   "starterCode": "def ggt(a, b):\n    # Die Regel oben ist bereits die komplette Fallunterscheidung\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein math.gcd"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel 48 und 18",
+     "call": "ggt(48, 18)",
+     "expected": "6"
+    },
+    {
+     "name": "Argumente vertauscht",
+     "call": "ggt(18, 48)",
+     "expected": "6"
+    },
+    {
+     "name": "teilerfremd",
+     "call": "ggt(7, 13)",
+     "expected": "1"
+    },
+    {
+     "name": "Basisfall b = 0",
+     "call": "ggt(12, 0)",
+     "expected": "12"
+    },
+    {
+     "name": "a = 0",
+     "call": "ggt(0, 5)",
+     "expected": "5"
+    },
+    {
+     "name": "große Zahlen",
+     "call": "ggt(270, 192)",
+     "expected": "6"
+    },
+    {
+     "name": "Vielfaches",
+     "call": "ggt(100, 75)",
+     "expected": "25"
+    },
+    {
+     "name": "gleiche Zahlen",
+     "call": "ggt(9, 9)",
+     "expected": "9"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "math.",
+    "gcd("
+   ],
+   "required": [
+    "ggt("
+   ],
+   "solution": "def ggt(a, b):\n    if b == 0:\n        return a\n    else:\n        return ggt(b, a % b)",
+   "explanation": "Der euklidische Algorithmus ist das Musterbeispiel dafür, dass eine mathematische Rekursionsgleichung **eins zu eins** in Python-Code übersetzt werden kann. Die beiden Zeilen der Regel werden zu den beiden Zweigen der Fallunterscheidung.\n\nWarum terminiert das? Der Rest `a % b` ist immer echt kleiner als `b` und nicht negativ. Die zweite Komponente wird also in jedem Schritt streng kleiner und erreicht garantiert 0.\n\nBesonders elegant: Man muss **nicht** prüfen, welche Zahl größer ist. Bei `ggt(18, 48)` ist der erste Schritt `ggt(48, 18 % 48)` = `ggt(48, 18)` - die Zahlen tauschen sich von selbst in die richtige Reihenfolge.\n\nBeispielablauf für `ggt(48, 18)`: `ggt(48,18)` -> `ggt(18, 12)` -> `ggt(12, 6)` -> `ggt(6, 0)` -> `6`. Nur vier Aufrufe liegen auf dem Stack - im Gegensatz zur Listenrekursion wächst der Stack hier sehr langsam (logarithmisch).\n\n**Merkregel:** *b wird zur neuen ersten Zahl, der Rest zur neuen zweiten - Ende bei b = 0.*",
+   "hints": [
+    "Die Abbruchbedingung steht in der ersten Zeile der Regel: Was gilt, wenn b gleich 0 ist?",
+    "Der Modulo-Operator % liefert den Rest der Division - genau das brauchen Sie im rekursiven Aufruf.",
+    "Achten Sie auf die Reihenfolge der Argumente: aus (a, b) wird (b, a % b)."
+   ],
+   "pitfalls": [
+    "ggt(a % b, b) statt ggt(b, a % b) aufrufen - die Argumente müssen wandern.",
+    "a == 0 statt b == 0 als Abbruchbedingung nehmen.",
+    "Eine Division / statt Modulo % verwenden - das liefert Kommazahlen und terminiert nicht."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 4,
+     "label": "Optional: Beispiele zur Rekursion"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 4: Programmieren mit Rekursion"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "ggt",
+    "euklid",
+    "modulo",
+    "mathematik"
+   ]
+  },
+  {
+   "id": "py-recursion-016",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Quersumme einer Zahl rekursiv",
+   "prompt": "Schreiben Sie eine rekursive Funktion `quersumme(n)`, die die Ziffernsumme einer nicht-negativen ganzen Zahl berechnet.\n\nBeispiel: `quersumme(1234)` -> `10` (weil 1+2+3+4 = 10)\n\n**Keine Schleifen** und **keine Umwandlung in einen String** (`str(...)` ist verboten) - arbeiten Sie mit `%` und `//`.",
+   "starterCode": "def quersumme(n):\n    # n % 10 liefert die letzte Ziffer, n // 10 die Zahl ohne letzte Ziffer\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein str()",
+    "nur % und // verwenden"
+   ],
+   "tests": [
+    {
+     "name": "einstellige Zahl (Basisfall)",
+     "call": "quersumme(7)",
+     "expected": "7"
+    },
+    {
+     "name": "Null",
+     "call": "quersumme(0)",
+     "expected": "0"
+    },
+    {
+     "name": "Beispiel 1234",
+     "call": "quersumme(1234)",
+     "expected": "10"
+    },
+    {
+     "name": "nur Neunen",
+     "call": "quersumme(999)",
+     "expected": "27"
+    },
+    {
+     "name": "viele Nullen",
+     "call": "quersumme(1000000)",
+     "expected": "1"
+    },
+    {
+     "name": "vierstellig",
+     "call": "quersumme(4711)",
+     "expected": "13"
+    },
+    {
+     "name": "Quersumme der Quersumme",
+     "call": "quersumme(quersumme(987654321))",
+     "expected": "9"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "str(",
+    "sum("
+   ],
+   "required": [
+    "quersumme("
+   ],
+   "solution": "def quersumme(n):\n    if n < 10:\n        return n\n    else:\n        return n % 10 + quersumme(n // 10)",
+   "explanation": "Statt einer Sequenz wird hier eine **Zahl** zerlegt - das Muster bleibt aber identisch zur Listenrekursion:\n\n- `n % 10` ist der 'Kopf' (die letzte Ziffer),\n- `n // 10` ist der 'Rest' (die Zahl ohne letzte Ziffer, **ganzzahlige** Division!),\n- Basisfall: `n < 10`, dann ist die Zahl selbst schon die Quersumme.\n\nDie ganzzahlige Division `//` ist entscheidend. Mit `/` bekäme man Kommazahlen (`1234 / 10 = 123.4`), und die Rekursion rechnet stillschweigend Unsinn: Aus `quersumme(1234)` würde `4 + 3.4 + 2.34 + 1.234`, also rund `10.974` statt `10`. Der Code läuft also durch, das Ergebnis ist aber falsch.\n\nWarum `n < 10` und nicht `n == 0`? Beides funktioniert, `n == 0` braucht aber einen Schritt mehr und liefert bei `quersumme(0)` ebenfalls `0`. Mit `n < 10` deckt man einstellige Zahlen und die Null in einem Fall ab.\n\nSchöne Beobachtung für den letzten Test: Die wiederholte Quersumme führt auf die *digitale Wurzel*; für Vielfache von 9 ist sie immer 9.\n\n**Merkregel:** *Letzte Ziffer per `% 10` abschneiden, mit `// 10` weiterrechnen.*",
+   "hints": [
+    "Wie bekommen Sie die letzte Ziffer einer Zahl - ohne sie in einen String zu verwandeln?",
+    "n // 10 entfernt die letzte Ziffer. Damit wird die Zahl in jedem Schritt kürzer.",
+    "Ab wann müssen Sie nicht mehr weiterrechnen? Wenn nur noch eine Ziffer übrig ist."
+   ],
+   "pitfalls": [
+    "n / 10 statt n // 10 verwenden - float statt int, die Rekursion endet nicht sauber.",
+    "n // 10 und n % 10 vertauschen: n // 10 ist der Rest der Zahl, n % 10 die Ziffer.",
+    "Die Zahl per str(n) in Zeichen zerlegen - hier ausdrücklich verboten, und in der Klausur wird die Rechenidee geprüft."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 3,
+     "label": "Optional: Beispiele zur Rekursion"
+    },
+    {
+     "file": "1_installation_variablen_anweisungen_26.pdf",
+     "page": 1,
+     "label": "Operatoren % und // "
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "zahlen",
+    "quersumme",
+    "modulo",
+    "ganzzahldivision"
+   ]
+  },
+  {
+   "id": "py-recursion-017",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": false,
+   "title": "Türme von Hanoi - Zugliste rekursiv erzeugen",
+   "prompt": "Bei den **Türmen von Hanoi** liegen `n` unterschiedlich große Scheiben auf Stapel `von`. Sie sollen auf Stapel `nach` gebracht werden; `hilfs` ist der dritte Stapel. Es darf immer nur eine Scheibe bewegt werden und nie eine größere auf eine kleinere.\n\nSchreiben Sie eine rekursive Funktion `hanoi(n, von, nach, hilfs)`, die ein **Tupel aller Züge** zurückgibt. Jeder Zug ist ein Tupel `(quelle, ziel)`.\n\nBeispiel: `hanoi(2, 'A', 'C', 'B')` -> `(('A', 'B'), ('A', 'C'), ('B', 'C'))`\n\n**Keine Schleifen**, keine `print`-Ausgaben - nur die Rückgabe.",
+   "starterCode": "def hanoi(n, von, nach, hilfs):\n    # Idee: n-1 Scheiben auf den Hilfsstapel, größte Scheibe ans Ziel,\n    # dann die n-1 Scheiben vom Hilfsstapel ans Ziel\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein print",
+    "Rückgabe ist ein Tupel von Zug-Tupeln"
+   ],
+   "tests": [
+    {
+     "name": "keine Scheibe (Basisfall)",
+     "call": "hanoi(0, 'A', 'C', 'B')",
+     "expected": "()"
+    },
+    {
+     "name": "eine Scheibe",
+     "call": "hanoi(1, 'A', 'C', 'B')",
+     "expected": "(('A', 'C'),)"
+    },
+    {
+     "name": "zwei Scheiben",
+     "call": "hanoi(2, 'A', 'C', 'B')",
+     "expected": "(('A', 'B'), ('A', 'C'), ('B', 'C'))"
+    },
+    {
+     "name": "drei Scheiben - vollständige Zugfolge",
+     "call": "hanoi(3, 'A', 'C', 'B')",
+     "expected": "(('A', 'C'), ('A', 'B'), ('C', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'C'), ('A', 'C'))"
+    },
+    {
+     "name": "Anzahl der Züge bei 4 Scheiben ist 2**4 - 1",
+     "call": "len(hanoi(4, 'A', 'C', 'B'))",
+     "expected": "15"
+    },
+    {
+     "name": "Anzahl der Züge bei 6 Scheiben",
+     "call": "len(hanoi(6, 'A', 'C', 'B'))",
+     "expected": "63"
+    },
+    {
+     "name": "letzter Zug landet immer auf dem Zielstapel",
+     "call": "hanoi(5, 'A', 'C', 'B')[-1][1]",
+     "expected": "'C'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "print("
+   ],
+   "required": [
+    "hanoi("
+   ],
+   "solution": "def hanoi(n, von, nach, hilfs):\n    if n == 0:\n        return ()\n    else:\n        return hanoi(n - 1, von, hilfs, nach) + ((von, nach),) + hanoi(n - 1, hilfs, nach, von)",
+   "explanation": "Die Türme von Hanoi sind das klassische Beispiel dafür, dass ein Problem rekursiv **trivial** und iterativ sehr mühsam ist. Der gesamte Algorithmus passt in eine Zeile:\n\n1. Bringe die oberen `n-1` Scheiben von `von` nach `hilfs` (dabei dient `nach` als Hilfsstapel!).\n2. Bewege die größte Scheibe direkt von `von` nach `nach` - das ist der Zug `(von, nach)`.\n3. Bringe die `n-1` Scheiben von `hilfs` nach `nach` (jetzt dient `von` als Hilfsstapel).\n\nEntscheidend ist das **Durchtauschen der Rollen** in den beiden rekursiven Aufrufen. Wer immer `hanoi(n-1, von, nach, hilfs)` schreibt, bekommt eine falsche Zugfolge.\n\nSyntaktisch wichtig: `((von, nach),)` - das Komma macht daraus ein Tupel **mit einem Element**, das ein Zug-Tupel enthält. Ohne das Komma wäre `(von, nach)` selbst schon das Tupel und `+` würde die beiden Strings einzeln anhängen.\n\nDie Zuganzahl ist `2^n - 1` (jede Scheibe verdoppelt den Aufwand plus einen Zug). Das erklärt, warum das Problem exponentiell wächst - und warum die Legende vom Turm mit 64 Scheiben so lange dauert.\n\n**Merkregel:** *n-1 weg, größte hin, n-1 nach - mit vertauschten Rollen.*",
+   "hints": [
+    "Nehmen Sie an, Sie könnten n-1 Scheiben bereits bewegen. Wohin müssen die, damit die größte frei wird?",
+    "Es gibt genau zwei rekursive Aufrufe und dazwischen genau einen echten Zug.",
+    "Achten Sie auf die Rollen: Im ersten Aufruf ist der Zielstapel der Hilfsstapel, im zweiten ist der Startstapel der Hilfsstapel.",
+    "Ein Tupel mit genau einem Element schreibt man ((von, nach),) - mit Komma!"
+   ],
+   "pitfalls": [
+    "Das Komma in ((von, nach),) vergessen - dann werden Strings statt Züge konkateniert.",
+    "In den rekursiven Aufrufen die Rollen von 'nach' und 'hilfs' nicht tauschen.",
+    "Die Züge mit print ausgeben statt zurückzugeben - dann ist die Funktion nicht mehr pure und die Tests schlagen fehl."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 3,
+     "label": "Optional: Beispiele zur Rekursion"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 8,
+     "label": "Vorteil: Manche Probleme sind rekursiv einfacher und eleganter"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "hanoi",
+    "tupel",
+    "baumrekursion",
+    "transfer"
+   ]
+  },
+  {
+   "id": "py-recursion-018",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": false,
+   "title": "Lücken: binäre Suche rekursiv",
+   "prompt": "Die **binäre Suche** prüft, ob ein Wert in einer **aufsteigend sortierten** Liste vorkommt: Man schaut in die Mitte und sucht dann nur noch in der linken oder rechten Hälfte weiter.\n\nFüllen Sie die drei Lücken so aus, dass das Programm `True False` ausgibt. Es sind **keine Schleifen** erlaubt.",
+   "code": "def binaere_suche(liste, gesucht):\n    if len(liste) == 0:\n        return False\n    mitte = len(liste) // 2\n    if liste[mitte] == gesucht:\n        return True\n    elif ## Lücke 1 ##:\n        return ## Lücke 2 ##\n    else:\n        return ## Lücke 3 ##\n\nprint(binaere_suche([1, 3, 5, 7, 9, 11], 9), binaere_suche([1, 3, 5, 7, 9, 11], 4))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "gesucht < liste[mitte]",
+      "liste[mitte] > gesucht",
+      "gesucht<liste[mitte]",
+      "liste[mitte]>gesucht"
+     ],
+     "explanation": "Ist der gesuchte Wert kleiner als das mittlere Element, kann er in einer sortierten Liste nur links davon stehen."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "binaere_suche(liste[:mitte], gesucht)",
+      "binaere_suche(liste[0:mitte], gesucht)"
+     ],
+     "explanation": "Links weitersuchen: `liste[:mitte]` enthält alle Elemente **vor** der Mitte - das mittlere Element wurde ja bereits geprüft."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "binaere_suche(liste[mitte + 1:], gesucht)",
+      "binaere_suche(liste[mitte+1:], gesucht)"
+     ],
+     "explanation": "Rechts weitersuchen: `liste[mitte + 1:]` lässt das bereits geprüfte mittlere Element weg. Genau dieses `+ 1` sorgt dafür, dass die Liste echt kürzer wird und die Rekursion terminiert."
+    }
+   ],
+   "solution": "```python\ndef binaere_suche(liste, gesucht):\n    if len(liste) == 0:\n        return False\n    mitte = len(liste) // 2\n    if liste[mitte] == gesucht:\n        return True\n    elif gesucht < liste[mitte]:\n        return binaere_suche(liste[:mitte], gesucht)\n    else:\n        return binaere_suche(liste[mitte + 1:], gesucht)\n\nprint(binaere_suche([1, 3, 5, 7, 9, 11], 9), binaere_suche([1, 3, 5, 7, 9, 11], 4))\n# True False\n```",
+   "explanation": "Die binäre Suche zeigt eine andere Sorte Rekursion als die Listenrekursion: Statt das Problem um **ein** Element zu verkleinern, wird es in jedem Schritt **halbiert**. Deshalb liegen nur etwa `log2(n)` Aufrufe auf dem Stack - bei einer Million Einträge rund 20.\n\nDrei Fälle:\n\n1. `len(liste) == 0` -> der Wert kommt nicht vor (`False`). Das ist die Abbruchbedingung für den Misserfolg.\n2. Mittleres Element passt -> `True`. Das ist die Abbruchbedingung für den Erfolg.\n3. Sonst wird in genau einer Hälfte weitergesucht.\n\nDer häufigste Fehler ist das fehlende `+ 1` in Lücke 3. Ohne `+ 1` enthält `liste[mitte:]` das mittlere Element weiterhin; bei einer einelementigen Liste würde sich die Liste nie verkleinern -> `RecursionError`.\n\nVoraussetzung ist, dass die Liste **sortiert** ist - sonst darf man eine Hälfte nicht einfach verwerfen.\n\nHinweis zur Effizienz: Diese Variante ist elegant, kopiert aber in jedem Schritt eine Teilliste (`Slicing`). Die klassische Fassung übergibt stattdessen Indexgrenzen `links` und `rechts`.\n\n**Merkregel:** *Mitte prüfen, eine Hälfte wegwerfen, die Mitte nicht doppelt mitnehmen.*",
+   "hints": [
+    "Überlegen Sie, wann der gesuchte Wert links vom mittleren Element liegen muss - dafür muss die Liste sortiert sein.",
+    "Für die linke Hälfte brauchen Sie liste[:mitte], für die rechte einen Slice, der bei mitte beginnt.",
+    "Das mittlere Element wurde schon geprüft. Wenn Sie es in einer Hälfte belassen, wird die Liste unter Umständen nie kürzer."
+   ],
+   "pitfalls": [
+    "liste[mitte:] statt liste[mitte + 1:] schreiben - RecursionError bei einelementigen Listen.",
+    "liste[:mitte + 1] für die linke Hälfte nehmen - das mittlere Element wird unnötig erneut geprüft.",
+    "Vergessen, dass die binäre Suche nur auf sortierten Listen korrekt arbeitet."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 4,
+     "label": "Optional: Beispiele zur Rekursion"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 8,
+     "label": "Rekursion als Alternative zu Schleifen"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "luecken",
+    "binaere-suche",
+    "slicing",
+    "effizienz"
+   ]
+  },
+  {
+   "id": "py-recursion-019",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "Goofspiel: das ganze Spiel rekursiv statt mit while-Schleife",
+   "prompt": "Im Goofspiel wurden bisher alle Zustände in einem **Tupel `states`** gesammelt - mit einer Schleife:\n\n```python\nwhile not abbruchbedingung(states):\n    states += (spielrunde(states),)\n```\n\nSchreiben Sie diese Schleife als rekursive pure function `spiel_rekursiv(abbruchbedingung, spielrunde, states)` um:\n\n- `abbruchbedingung` ist eine Funktion, die das Tupel `states` bekommt und `True` liefert, wenn das Spiel enden soll.\n- `spielrunde` ist eine Funktion, die `states` bekommt und den **nächsten** Eintrag (den neuen state) zurückgibt.\n- `states` ist das Tupel aller bisherigen Zustände (mindestens der Anfangszustand).\n\nRückgabe ist das Tupel **aller** Zustände nach Spielende. **Keine Schleifen, keine Mutation.**",
+   "starterCode": "def spiel_rekursiv(abbruchbedingung, spielrunde, states):\n    # states ist ein Tupel; states[-1] ist der aktuellste Zustand\n    # Ein Tupel erweitert man mit states + (neuer_state,)\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "keine Mutation - states ist ein Tupel",
+    "kein print"
+   ],
+   "tests": [
+    {
+     "name": "drei Runden zählen",
+     "call": "spiel_rekursiv(lambda s: s[-1]['runde'] >= 3, lambda s: {'runde': s[-1]['runde'] + 1}, ({'runde': 0},))",
+     "expected": "({'runde': 0}, {'runde': 1}, {'runde': 2}, {'runde': 3})"
+    },
+    {
+     "name": "Abbruch schon zu Beginn - Anfangszustand bleibt unverändert",
+     "call": "spiel_rekursiv(lambda s: True, lambda s: {'x': 99}, ({'x': 0},))",
+     "expected": "({'x': 0},)"
+    },
+    {
+     "name": "Punkte sammeln bis über 10",
+     "call": "spiel_rekursiv(lambda s: s[-1]['punkte'] > 10, lambda s: {'punkte': s[-1]['punkte'] + 4}, ({'punkte': 0},))",
+     "expected": "({'punkte': 0}, {'punkte': 4}, {'punkte': 8}, {'punkte': 12})"
+    },
+    {
+     "name": "Preiskarten abspielen - Anzahl der gespeicherten Zustände",
+     "call": "len(spiel_rekursiv(lambda s: len(s[-1]['preiskarten']) == 0, lambda s: {'preiskarten': s[-1]['preiskarten'][1:]}, ({'preiskarten': (1, 2, 3, 4, 5)},)))",
+     "expected": "6"
+    },
+    {
+     "name": "letzter Zustand nach dem Abspielen aller Preiskarten",
+     "call": "spiel_rekursiv(lambda s: len(s[-1]['preiskarten']) == 0, lambda s: {'preiskarten': s[-1]['preiskarten'][1:]}, ({'preiskarten': (1, 2, 3)},))[-1]",
+     "expected": "{'preiskarten': ()}"
+    },
+    {
+     "name": "Anfangstupel wird nicht verändert (pure)",
+     "call": "(lambda anfang: (len(spiel_rekursiv(lambda s: s[-1]['n'] >= 2, lambda s: {'n': s[-1]['n'] + 1}, anfang)), len(anfang)))(({'n': 0},))",
+     "expected": "(3, 1)"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "print(",
+    ".append("
+   ],
+   "required": [
+    "spiel_rekursiv("
+   ],
+   "solution": "def spiel_rekursiv(abbruchbedingung, spielrunde, states):\n    if abbruchbedingung(states):\n        return states\n    else:\n        return spiel_rekursiv(abbruchbedingung, spielrunde, states + (spielrunde(states),))",
+   "explanation": "Das ist der Kern der Vorlesung 4: Das komplette Goofspiel wird zu **einem** rekursiven Funktionsaufruf. Im Original-Helper des Professors steht dieselbe Funktion (dort mit `states += (spielrunde(states),)` vor dem rekursiven Aufruf - weil Tupel immutable sind, ist das trotzdem keine Mutation eines fremden Objekts, sondern nur eine Neubindung der lokalen Variablen).\n\nDrei Konzepte greifen ineinander:\n\n1. **Rekursion statt while-Schleife.** Der Zustand wird nicht in einer Variablen fortgeschrieben, sondern als **Argument** weitergereicht.\n2. **Tupel als Historie.** `states + (neuer_state,)` erzeugt ein **neues** Tupel. Nichts wird verändert, alle Zwischenzustände bleiben erhalten - ideal, um am Ende die gesamte Dokumentation mit `map`/`reduce` daraus zu erzeugen.\n3. **Higher order functions.** `abbruchbedingung` und `spielrunde` werden als Funktionen übergeben. Dieselbe `spiel_rekursiv`-Funktion funktioniert damit für Goofspiel, Pig, Kniffel - der Professor nennt das *Transfer der Konzepte auf neue Probleme*.\n\nAchtung beim Klammer-Komma: `(spielrunde(states),)` ist ein Tupel mit einem Element. Ohne Komma versucht Python, ein `dict` an ein Tupel zu addieren -> `TypeError`.\n\nBeachten Sie, dass die Abbruchbedingung **vor** dem Anhängen geprüft wird - sonst hängte man noch eine Runde zu viel an.\n\n**Merkregel:** *Abbruch prüfen, sonst neuen state anhängen und mit dem größeren Tupel weitermachen.*",
+   "hints": [
+    "Vergleichen Sie mit wiederhole(f, x, abbruch): Hier ist x das Tupel states.",
+    "Der Basisfall gibt states unverändert zurück - das Spiel ist dann vorbei.",
+    "Wie hängt man an ein Tupel genau ein Element an? states + (neuer_eintrag,) - das Komma ist Pflicht.",
+    "Der neue Eintrag entsteht durch spielrunde(states); das Ergebnis gehört direkt in den rekursiven Aufruf."
+   ],
+   "pitfalls": [
+    "states + spielrunde(states) ohne Klammer-Komma schreiben -> TypeError: can only concatenate tuple.",
+    "states.append(...) verwenden - Tupel haben keine append-Methode (und Mutation ist verboten).",
+    "Die Abbruchbedingung auf states[-1] statt auf states anwenden - laut Spezifikation bekommt sie das ganze Tupel.",
+    "Nur den letzten Zustand zurückgeben statt das komplette Tupel aller states."
+   ],
+   "sources": [
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "def spiel_rekursiv(abbruchbedingung, spielrunde, states)"
+    },
+    {
+     "file": "goofspiel26-4.py",
+     "page": 1,
+     "label": "states = helper.spiel_rekursiv(lambda states: ..., lambda states: ..., anfangsstates)"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 10,
+     "label": "Rekursion - Goofspiel: Hauptprogramm besteht nur noch aus einem print"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "goofspiel",
+    "states",
+    "tupel",
+    "higher-order-function",
+    "pure-function"
+   ]
+  },
+  {
+   "id": "py-recursion-020",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Aufrufreihenfolge bei der rekursiven Fibonacci-Funktion",
+   "prompt": "Was gibt der folgende Code aus? Notieren Sie **alle** Zeilen in der richtigen Reihenfolge.\n\n*Hinweis:* Achten Sie darauf, dass `fib` sich **zweimal** selbst aufruft und dass Python Ausdrücke von links nach rechts auswertet.",
+   "code": "def fib(n):\n    print(\"fib(\" + str(n) + \")\")\n    if n < 2:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nprint(fib(4))",
+   "expectedOutput": "fib(4)\nfib(3)\nfib(2)\nfib(1)\nfib(0)\nfib(1)\nfib(2)\nfib(1)\nfib(0)\n3",
+   "solution": "```\nfib(4)\nfib(3)\nfib(2)\nfib(1)\nfib(0)\nfib(1)\nfib(2)\nfib(1)\nfib(0)\n3\n```\n\nDer Aufrufbaum:\n\n```\nfib(4)\n├── fib(3)\n│   ├── fib(2)\n│   │   ├── fib(1)  -> 1\n│   │   └── fib(0)  -> 0\n│   └── fib(1)      -> 1\n└── fib(2)\n    ├── fib(1)      -> 1\n    └── fib(0)      -> 0\n```\n\nInsgesamt **9** Aufrufe für ein Ergebnis von `3`.",
+   "explanation": "Zwei Dinge müssen zusammen gedacht werden:\n\n**1. Auswertungsreihenfolge.** In `fib(n-1) + fib(n-2)` wird zuerst der **linke** Summand komplett ausgewertet - inklusive aller seiner Unteraufrufe - bevor der rechte startet. Deshalb steigt die Ausgabe erst ganz nach links hinab (`fib(4)`, `fib(3)`, `fib(2)`, `fib(1)`), bevor rechte Zweige an die Reihe kommen.\n\n**2. Mehrfachauswertung.** `fib(2)` wird **zweimal** berechnet, `fib(1)` sogar dreimal. Nichts wird zwischengespeichert - genau das ist der Grund, warum die naive Fibonacci-Rekursion exponentiell viele Aufrufe braucht (ca. `1.6^n`). Der Professor nennt als Vorteil funktionaler Programmierung deshalb die **Memoisation** (Zwischenspeichern von Rückgabewerten): Weil `fib` eine pure function ist, darf man ihr Ergebnis gefahrlos cachen.\n\nBeachten Sie außerdem: Das `print` steht **vor** der Fallunterscheidung, also wird auch für die Basisfälle `fib(1)` und `fib(0)` gedruckt.\n\nDie Zahl `3` am Ende stammt vom äußeren `print(fib(4))`: Es gilt fib(0)=0, fib(1)=1, fib(2)=1, fib(3)=2, fib(4)=3.\n\n**Merkregel:** *Linker Teilbaum komplett, dann rechter - und jeder Aufruf druckt, bevor er entscheidet.*",
+   "hints": [
+    "Zeichnen Sie den Aufrufbaum von fib(4) auf - jeder Knoten druckt genau eine Zeile.",
+    "Der linke Aufruf fib(n-1) wird vollständig abgearbeitet, bevor fib(n-2) startet.",
+    "Auch die Basisfälle fib(1) und fib(0) drucken, weil das print vor dem if steht.",
+    "Zählen Sie am Ende die Zeilen: neun Aufruf-Zeilen plus das Ergebnis."
+   ],
+   "pitfalls": [
+    "Nur die 'neuen' Aufrufe notieren - fib(2), fib(1) und fib(0) kommen mehrfach vor, weil nichts gespeichert wird.",
+    "Beide Zweige gleichzeitig abarbeiten (in der Breite) statt streng von links nach rechts in die Tiefe.",
+    "Die Ergebniszeile 3 vergessen oder fib(4) = 5 rechnen (das wäre die Zählung ab fib(1) = 1, fib(2) = 1)."
+   ],
+   "sources": [
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "def fibbonaci(...) - Fibonacci in der Vorlesung"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 7,
+     "label": "stack von Funktionsaufrufen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 15,
+     "label": "Vorteil: hohe Effizienz durch Memoisation"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "fibonacci",
+    "ausgabe",
+    "call-stack",
+    "baumrekursion",
+    "effizienz"
+   ]
+  },
+  {
+   "id": "py-recursion-021",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Lücken: Fibonacci rekursiv",
+   "prompt": "Die Fibonacci-Folge ist definiert durch `fib(0) = 0`, `fib(1) = 1` und `fib(n) = fib(n-1) + fib(n-2)`.\n\nFüllen Sie die Lücken so aus, dass das Programm `55` ausgibt. **Keine Schleifen.**",
+   "code": "def fib(n):\n    if ## Lücke 1 ##:\n        return ## Lücke 2 ##\n    else:\n        return ## Lücke 3 ##\n\nprint(fib(10))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "n < 2",
+      "n <= 1",
+      "n == 0 or n == 1",
+      "n<2",
+      "n<=1"
+     ],
+     "explanation": "Es gibt **zwei** Basisfälle (n = 0 und n = 1), die sich zu einer Bedingung zusammenfassen lassen: `n < 2`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "n"
+     ],
+     "explanation": "Trick der zusammengefassten Basisfälle: Für n = 0 ist das Ergebnis 0, für n = 1 ist es 1 - also jeweils `n` selbst."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "fib(n - 1) + fib(n - 2)",
+      "fib(n-1) + fib(n-2)",
+      "fib(n - 2) + fib(n - 1)",
+      "fib(n-2)+fib(n-1)"
+     ],
+     "explanation": "Die Rekursionsgleichung der Folge: die beiden Vorgänger addieren. Hier ruft sich die Funktion **zweimal** selbst auf (Baumrekursion)."
+    }
+   ],
+   "solution": "```python\ndef fib(n):\n    if n < 2:\n        return n\n    else:\n        return fib(n - 1) + fib(n - 2)\n\nprint(fib(10))   # 55\n```\n\nDie Folge lautet: 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, **55**, ...",
+   "explanation": "Fibonacci ist nach der Fakultät das zweite Standardbeispiel für Rekursion - mit einem entscheidenden Unterschied: Es gibt **zwei** Basisfälle und **zwei** rekursive Aufrufe.\n\nWarum zwei Basisfälle? Weil der Rekursionsschritt auf zwei Vorgänger zugreift. Fängt man nur `n == 0` ab, läuft `fib(1)` weiter zu `fib(0) + fib(-1)` und von dort ins Unendliche (`RecursionError`).\n\nDer Trick `if n < 2: return n` fasst beide Basisfälle elegant zusammen, weil `fib(0) = 0` und `fib(1) = 1` gerade den Argumenten entsprechen. Wer lieber explizit ist, schreibt:\n\n```python\nif n == 0:\n    return 0\nelif n == 1:\n    return 1\n```\n\nVorsicht bei der Zählung: Manche Bücher starten mit `fib(1) = 1, fib(2) = 1`. In der Klausur immer die **angegebene** Definition verwenden - hier `fib(0) = 0`.\n\nDiese Implementierung ist zwar korrekt, aber sehr ineffizient (exponentiell viele Aufrufe, siehe Aufgabe zur Aufrufreihenfolge). Der Professor nennt als Gegenmittel die **Memoisation**.\n\n**Merkregel:** *Zwei Vorgänger im Schritt bedeuten zwei Basisfälle.*",
+   "hints": [
+    "Wie viele Startwerte braucht die Folge, bevor man rechnen kann?",
+    "Für n = 0 und n = 1 ist das Ergebnis zufällig gleich n - das spart einen Zweig.",
+    "Der rekursive Schritt ist die Definition selbst: die beiden Vorgänger addieren."
+   ],
+   "pitfalls": [
+    "Nur einen Basisfall abfangen - fib(1) läuft dann in die Endlosrekursion.",
+    "fib(n - 1) + fib(n - 1) schreiben (zweimal derselbe Vorgänger) - das berechnet 2^n statt Fibonacci.",
+    "Mit fib(1) = 1, fib(2) = 1 zählen und deshalb 89 statt 55 erwarten."
+   ],
+   "sources": [
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "def fibbonaci(...) - Fibonacci-Beispiel der Vorlesung"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 3,
+     "label": "Optional: Beispiele zur Rekursion"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "luecken",
+    "fibonacci",
+    "basisfall",
+    "baumrekursion"
+   ]
+  },
+  {
+   "id": "py-recursion-022",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Rekursion vs. Schleife - Vor- und Nachteile",
+   "prompt": "Welche der folgenden Aussagen zum Vergleich **Rekursion gegen Schleife** sind richtig? Kreuzen Sie **alle** zutreffenden an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Rekursion kann oft die Mutation von Variablen verhindern und ist deshalb für die funktionale Programmierung interessant.",
+     "correct": true,
+     "why": "Steht wörtlich auf der Folie 'Warum nicht Rekursion?'. Statt eine Zählvariable zu überschreiben, reicht man den neuen Wert als Argument weiter."
+    },
+    {
+     "id": "b",
+     "text": "Rekursive Programme sind grundsätzlich schneller als Schleifen, weil keine Zählvariable verwaltet werden muss.",
+     "correct": false,
+     "why": "Falsch - das Gegenteil steht auf der Folie: Rekursion ist *oft weniger laufzeiteffizient*, weil Funktionsaufrufe teurer sind als ein Schleifendurchlauf."
+    },
+    {
+     "id": "c",
+     "text": "Einige Probleme lassen sich rekursiv einfacher, eleganter und mit weniger Code lösen; kürzerer Code vermeidet Fehler und ist leichter zu pflegen.",
+     "correct": true,
+     "why": "Genau die beiden ersten Vorteile der Vorlesungsfolie (z. B. Türme von Hanoi oder verschachtelte Listen)."
+    },
+    {
+     "id": "d",
+     "text": "Rekursion ist oft speicherhungriger, weil die Daten aller rekursiven Aufrufe auf dem Stack gespeichert werden müssen.",
+     "correct": true,
+     "why": "Zweiter Nachteil der Folie. Jeder offene Aufruf belegt Speicher für Parameter und lokale Variablen."
+    },
+    {
+     "id": "e",
+     "text": "Eine rekursive Funktion braucht keine Abbruchbedingung, solange die Eingabe endlich ist.",
+     "correct": false,
+     "why": "Falsch. Ohne Abbruchbedingung terminiert die Rekursion nie - Python bricht mit RecursionError ab. Die Abbruchbedingung ist laut Vorlesung zwingend."
+    },
+    {
+     "id": "f",
+     "text": "Rekursion ist oft eine Alternative zu Schleifen (for oder while) - viele Probleme lassen sich mit beiden Techniken lösen.",
+     "correct": true,
+     "why": "Erster Satz der Folie 'Warum nicht Rekursion?'. In Klausuraufgabe 4 ist genau deshalb die Schleifenvariante verboten."
+    }
+   ],
+   "solution": "Richtig sind **a, c, d und f**.\n\n**Vorteile der Rekursion (Vorlesungsfolie):**\n\n- Einige Programme sind rekursiv einfacher, eleganter und kürzer.\n- Leichterer und kürzerer Code vermeidet Fehler und ist einfacher zu pflegen.\n- Rekursion kann die Mutation von Variablen verhindern -> ideal für funktionale Programmierung.\n\n**Nachteile:**\n\n- Oft weniger laufzeiteffizient (Funktionsaufrufe sind teurer, Stack an Aufrufen).\n- Oft speicherhungriger, weil alle offenen Aufrufe auf dem Stack liegen.",
+   "explanation": "Diese Aufzählung stammt direkt von der Folie *\"Warum nicht Rekursion?\"* und ist typischer Stoff für die Kurzfragen (Aufgabe 1) der Klausur.\n\nDer wichtigste inhaltliche Punkt ist der Zusammenhang zwischen Rekursion und **Mutation**: Eine `while`-Schleife braucht fast immer eine veränderliche Variable (`summe = summe + x`). Rekursion ersetzt diese Zuweisung durch ein **Argument** des nächsten Aufrufs - dadurch bleiben alle Werte unverändert und die Funktion kann pure sein. Deshalb steht Rekursion auf der Liste der Merkmale funktionaler Programmierung.\n\nDer Preis dafür ist der Call Stack: Jeder offene Aufruf kostet Speicher, und Funktionsaufrufe sind langsamer als ein Schleifendurchlauf. In Python kommt hinzu, dass die Rekursionstiefe standardmäßig auf ca. 1000 begrenzt ist - eine Schleife über eine Million Elemente ist kein Problem, eine Rekursion darüber schon.\n\n**Merkregel:** *Rekursion kauft Eleganz und Immutabilität - bezahlt wird mit Laufzeit und Stack-Speicher.*",
+   "hints": [
+    "Erinnern Sie sich an die Folie 'Warum nicht Rekursion?' - dort stehen drei Vorteile und zwei Nachteile.",
+    "Überlegen Sie bei jeder Aussage: Betrifft sie Eleganz/Code (Vorteil) oder Laufzeit/Speicher (Nachteil)?",
+    "Zwei der Aussagen widersprechen der Vorlesung direkt - eine zur Geschwindigkeit, eine zur Abbruchbedingung."
+   ],
+   "pitfalls": [
+    "Aussage b) ankreuzen, weil rekursiver Code kürzer aussieht - kürzer heißt nicht schneller.",
+    "Aussage d) für falsch halten, weil man den Stack im Code nicht sieht.",
+    "Nur die Vorteile ankreuzen und die Nachteile übersehen - gefragt sind alle richtigen Aussagen."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 8,
+     "label": "Warum nicht Rekursion? - Vorteile und Nachteile"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Rekursion als Merkmal funktionaler Programmierung"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "schleife",
+    "vorteile",
+    "nachteile",
+    "theorie",
+    "kurzfrage"
+   ]
+  },
+  {
+   "id": "py-recursion-023",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": false,
+   "title": "Was passiert ohne Abbruchbedingung?",
+   "prompt": "Was passiert, wenn folgender Code ausgeführt wird?\n\n```python\ndef summe(n):\n    return n + summe(n - 1)\n\nprint(summe(5))\n```",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Es wird 15 ausgegeben.",
+     "correct": false,
+     "why": "Dazu müsste die Rekursion bei n = 0 stoppen - es gibt aber keinen Basisfall, der das tut."
+    },
+    {
+     "id": "b",
+     "text": "Das Programm bricht mit einem RecursionError ab (maximum recursion depth exceeded).",
+     "correct": true,
+     "why": "Richtig. Die Funktion ruft sich unendlich oft mit immer kleineren (irgendwann negativen) Werten auf. Python begrenzt die Rekursionstiefe standardmäßig auf etwa 1000 Aufrufe und wirft dann diesen Fehler."
+    },
+    {
+     "id": "c",
+     "text": "Das Programm läuft unendlich lange weiter und muss abgebrochen werden.",
+     "correct": false,
+     "why": "Nicht in Python: Der eingebaute Rekursionslimit-Schutz beendet das Programm nach ca. 1000 Aufrufen mit einer Exception. Eine echte Endlosschleife (while True) würde dagegen tatsächlich ewig laufen."
+    },
+    {
+     "id": "d",
+     "text": "Es gibt einen SyntaxError, weil eine Funktion sich nicht selbst aufrufen darf.",
+     "correct": false,
+     "why": "Falsch - Selbstaufrufe sind völlig legal; genau das ist Rekursion. Der Code ist syntaktisch einwandfrei, der Fehler passiert erst zur Laufzeit."
+    }
+   ],
+   "solution": "**b)** `RecursionError: maximum recursion depth exceeded`\n\nKorrekt wäre:\n\n```python\ndef summe(n):\n    if n <= 0:\n        return 0\n    else:\n        return n + summe(n - 1)\n\nprint(summe(5))   # 15\n```",
+   "explanation": "Der Code enthält den Rekursionsschritt, aber **keinen Basisfall**. `summe(5)` ruft `summe(4)`, `summe(3)`, ... `summe(0)`, `summe(-1)`, `summe(-2)` - es gibt nichts, was die Kette stoppt.\n\nJeder dieser Aufrufe legt einen Eintrag auf den Call Stack. Damit der Stack nicht den gesamten Speicher auffrisst, hat Python ein **Rekursionslimit** (`sys.getrecursionlimit()`, standardmäßig 1000). Wird es überschritten, gibt es eine ganz normale Exception: `RecursionError`. Deshalb ist Antwort c) falsch - das Programm hängt nicht, es stürzt kontrolliert ab.\n\nDer Unterschied zur Endlosschleife ist lehrreich: `while True: pass` läuft wirklich ewig, weil dabei kein Speicher verbraucht wird. Eine Endlosrekursion frisst dagegen Stack - und wird deshalb bemerkt.\n\nDas ist die praktische Konsequenz des Satzes aus der Vorlesung: *\"Wichtig ist, dass bei der Rekursion stets auf eine geeignete Abbruchbedingung geachtet wird, damit die Rekursion immer terminiert!\"*\n\n**Merkregel:** *Kein Basisfall = RecursionError, nicht Endlosschleife.*",
+   "hints": [
+    "Suchen Sie im Code nach einem if - gibt es einen Fall, in dem sich die Funktion NICHT selbst aufruft?",
+    "Überlegen Sie, was mit n passiert, wenn es unter 0 fällt.",
+    "Python schützt sich selbst vor zu tiefen Aufrufketten - mit welcher Meldung?"
+   ],
+   "pitfalls": [
+    "15 antworten, weil man den Basisfall unbewusst mitdenkt - der steht aber nicht im Code.",
+    "'Endlosschleife' antworten - in Python greift vorher das Rekursionslimit.",
+    "Einen SyntaxError vermuten - Selbstaufrufe sind syntaktisch völlig korrekt."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 6,
+     "label": "Geeignete Abbruchbedingung, damit die Rekursion terminiert"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 7,
+     "label": "stack von Funktionsaufrufen"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "abbruchbedingung",
+    "recursionerror",
+    "call-stack",
+    "fehler"
+   ]
+  },
+  {
+   "id": "py-recursion-024",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": false,
+   "title": "Rekursion trifft mutable default argument",
+   "prompt": "Was gibt der folgende Code aus? Begründen Sie insbesondere die **zweite** Zeile der Ausgabe.\n\n*Hinweis:* Die Funktion nutzt - wie das Fibonacci-Beispiel der Vorlesung - eine Liste als Standardwert eines Parameters.",
+   "code": "def sammle(n, liste=[]):\n    if n == 0:\n        return liste\n    liste.append(n)\n    return sammle(n - 1, liste)\n\nprint(sammle(3))\nprint(sammle(2))",
+   "expectedOutput": "[3, 2, 1]\n[3, 2, 1, 2, 1]",
+   "solution": "```\n[3, 2, 1]\n[3, 2, 1, 2, 1]\n```\n\n**Begründung:** Der Standardwert `liste=[]` wird **einmal** bei der Definition der Funktion erzeugt, nicht bei jedem Aufruf. Beim ersten Aufruf wird genau dieses Listenobjekt mit `append` mutiert (`[3, 2, 1]`). Der zweite Aufruf ohne zweites Argument bekommt **dasselbe, bereits gefüllte** Objekt und hängt `2` und `1` daran an.\n\nSaubere Variante ohne Mutation:\n\n```python\ndef sammle(n):\n    if n == 0:\n        return []\n    return [n] + sammle(n - 1)\n```",
+   "explanation": "Diese Aufgabe kombiniert zwei Themen der Vorlesung: **Rekursion** und **mutable Datentypen**. Genau dieses Muster steht im Fibonacci-Beispiel des Professors (`def fibbonaci(..., liste=[])`) - und er ruft es im Notebook bewusst mit `fibbonaci(liste=[], bis_wohin=300)` auf, um die Liste jedes Mal zurücksetzen zu können.\n\nDer Kern: Standardwerte werden **einmal zum Definitionszeitpunkt** ausgewertet und dann an der Funktion gespeichert. Ist der Standardwert **mutable** (Liste, Dictionary, Set), teilen sich alle Aufrufe, die das Argument weglassen, dasselbe Objekt. `liste.append(n)` verändert dieses gemeinsame Objekt dauerhaft - die Funktion ist damit **nicht pure**: Sie hängt von einem versteckten Zustand ab und hat einen Nebeneffekt.\n\nInnerhalb **eines** Aufrufs ist die Rekursion völlig korrekt: `sammle(3)` hängt 3, 2, 1 an und gibt die Liste bei `n == 0` zurück. Das Problem entsteht erst beim zweiten Aufruf.\n\nZwei saubere Lösungen: Entweder `liste=None` als Standardwert und `if liste is None: liste = []`, oder - funktional viel schöner - gar keine Sammelliste, sondern `[n] + sammle(n - 1)`. Diese Variante mutiert nichts und ist pure.\n\n**Merkregel:** *Niemals eine mutable Struktur als Standardwert - sie überlebt den Aufruf.*",
+   "hints": [
+    "Wann genau wird der Ausdruck [] für den Standardwert ausgewertet: bei jedem Aufruf oder einmalig?",
+    "append verändert die Liste an Ort und Stelle - es entsteht keine Kopie.",
+    "Fragen Sie sich, welches Listenobjekt der zweite Aufruf sammle(2) als Standardwert bekommt."
+   ],
+   "pitfalls": [
+    "Zweimal dieselbe Ausgabe erwarten, weil 'liste' ja jedes Mal neu initialisiert zu werden scheint.",
+    "[1, 2, 3] statt [3, 2, 1] notieren - angehängt wird beim Hinabsteigen, also 3 zuerst.",
+    "Die Funktion für pure halten: Sie verändert ein Objekt außerhalb ihres eigenen Aufrufs."
+   ],
+   "sources": [
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "def fibbonaci(..., liste=[]) - Aufruf mit fibbonaci(liste=[], ...)"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Mutable vs. immutable Datenstrukturen"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2 - Code-Analyse Geltungsbereiche und Mutability"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "mutable",
+    "default-argument",
+    "pure-function",
+    "ausgabe"
+   ]
+  },
+  {
+   "id": "py-recursion-025",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": false,
+   "title": "Die richtige Abbruchbedingung beim Baumfällen",
+   "prompt": "Aus der Vorlesung: *\"Wie fällt man einen Baum der Dicke a? Wiederhole HACK (und subtrahiere 1 von der Dicke), bis die Dicke auf 0 ist. Rufe: Baum fällt!\"*\n\n```python\ndef faelle_baum(dicke):\n    ## Abbruchbedingung ##\n        print(\"Baum faellt!\")\n    else:\n        print(\"Hack!\")\n        faelle_baum(dicke - 1)\n```\n\nWelche Zeile gehört an die markierte Stelle, damit die Funktion für **jeden** ganzzahligen Startwert terminiert?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "if dicke <= 0:",
+     "correct": true,
+     "why": "Richtig. Der Basisfall wird auch dann erreicht, wenn die Funktion mit 0 oder einer negativen Zahl aufgerufen wird - genau so steht es im Notebook der Vorlesung."
+    },
+    {
+     "id": "b",
+     "text": "if dicke == 0:",
+     "correct": false,
+     "why": "Funktioniert nur für positive Startwerte. Bei faelle_baum(-2) wird dicke immer kleiner und trifft die 0 nie -> RecursionError."
+    },
+    {
+     "id": "c",
+     "text": "while dicke > 0:",
+     "correct": false,
+     "why": "Eine Schleife ist keine Abbruchbedingung für eine Rekursion - und in Klausuraufgabe 4 sind Schleifen ohnehin verboten. Außerdem passt das else syntaktisch nicht zur gewünschten Logik."
+    },
+    {
+     "id": "d",
+     "text": "if dicke > 0:",
+     "correct": false,
+     "why": "Die Fälle sind vertauscht: Solange noch Dicke übrig ist, würde 'Baum fällt!' gedruckt und nie weitergehackt - und bei dicke <= 0 gäbe es Endlosrekursion nach unten."
+    }
+   ],
+   "solution": "**a)** `if dicke <= 0:`\n\n```python\ndef faelle_baum(dicke):\n    if dicke <= 0:\n        print(\"Baum faellt!\")\n    else:\n        print(\"Hack!\")\n        faelle_baum(dicke - 1)\n\nfaelle_baum(3)\n```\n\nAusgabe:\n\n```\nHack!\nHack!\nHack!\nBaum faellt!\n```",
+   "explanation": "Der Baum aus der Vorlesung ist das Bild für den Basisfall: Solange noch Holz da ist, wird gehackt (Rekursionsschritt); ist nichts mehr da, fällt der Baum (Abbruch).\n\nDer Unterschied zwischen `== 0` und `<= 0` ist genau der Punkt, den die Vorlesung mit *\"geeignete Abbruchbedingung\"* meint: Der Basisfall muss von **jedem** möglichen Startwert aus erreichbar sein. Mit `== 0` gilt das nur für positive ganze Zahlen; mit `<= 0` fängt man auch negative Eingaben ab. Der Professor schreibt aus demselben Grund `if x <= 0: return 1` bei der Fakultät.\n\nAntwort d) illustriert einen weiteren typischen Fehler: vertauschte Zweige. Die Bedingung muss den **Abbruch** beschreiben, nicht die Fortsetzung.\n\nBeachten Sie außerdem: `faelle_baum` gibt nichts zurück (`None`) - deshalb druckt `print(faelle_baum(6))` im Vorlesungsnotebook am Ende zusätzlich `None`.\n\n**Merkregel:** *Die Abbruchbedingung beschreibt den Fall OHNE rekursiven Aufruf - und muss von allen Startwerten erreichbar sein.*",
+   "hints": [
+    "Überlegen Sie, was bei faelle_baum(-1) passiert - wird die 0 dann noch getroffen?",
+    "Die Bedingung muss den Fall beschreiben, in dem NICHT weitergehackt wird.",
+    "In der Vorlesung steht bei der Fakultät aus demselben Grund x <= 0 und nicht x == 0."
+   ],
+   "pitfalls": [
+    "if dicke == 0 wählen, weil das Beispiel mit dicke = 6 zufällig funktioniert.",
+    "Bedingung und Gegenbedingung vertauschen (Antwort d).",
+    "Eine Schleife als 'Abbruchbedingung' ansehen."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 6,
+     "label": "Wie fällt man einen Baum der Dicke a? - Abbruchbedingung"
+    },
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "def faelle_baum(dicke) mit if dicke <= 0"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "abbruchbedingung",
+    "basisfall",
+    "theorie"
+   ]
+  },
+  {
+   "id": "py-recursion-026",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler in verschachtelte_summe",
+   "prompt": "Die Funktion soll alle Zahlen einer beliebig tief verschachtelten Liste aufsummieren; für `[1, 2, [3, 4], 5]` also `15` liefern. Der Code enthält **3 Fehler**. In welchen Zeilen stecken sie, und wie lauten die Korrekturen?",
+   "code": "1  def verschachtelte_summe(liste):\n2      if liste == []:\n3          return []\n4      elif isinstance(liste[0], int):\n5          return verschachtelte_summe(liste[0]) + verschachtelte_summe(liste[1:])\n6      else:\n7          return liste[0] + verschachtelte_summe(liste)\n8\n9  print(verschachtelte_summe([1, 2, [3, 4], 5]))",
+   "errors": [
+    {
+     "line": 3,
+     "wrong": "return []",
+     "fix": "return 0",
+     "why": "Die Funktion soll eine **Zahl** zurückgeben. Der Basisfall muss deshalb das neutrale Element der Addition liefern, also `0`. Mit `[]` gibt es spätestens beim Addieren `TypeError: unsupported operand type(s) for +: 'int' and 'list'`."
+    },
+    {
+     "line": 4,
+     "wrong": "isinstance(liste[0], int)",
+     "fix": "isinstance(liste[0], list)",
+     "why": "Die Fälle sind vertauscht. Gefragt ist, ob der Kopf **eine Liste** ist - nur dann darf man in ihn hineinsteigen. So wie es dasteht, wird bei einer Zahl `verschachtelte_summe(liste[0])` aufgerufen, also die Funktion auf eine Zahl angewendet -> `TypeError: 'int' object is not subscriptable`."
+    },
+    {
+     "line": 7,
+     "wrong": "verschachtelte_summe(liste)",
+     "fix": "verschachtelte_summe(liste[1:])",
+     "why": "Das Argument wird nicht verkleinert - dieselbe Liste wird erneut übergeben. Der Basisfall ist unerreichbar, es kommt zum `RecursionError`."
+    }
+   ],
+   "solution": "```python\ndef verschachtelte_summe(liste):\n    if liste == []:\n        return 0\n    elif isinstance(liste[0], list):\n        return verschachtelte_summe(liste[0]) + verschachtelte_summe(liste[1:])\n    else:\n        return liste[0] + verschachtelte_summe(liste[1:])\n\nprint(verschachtelte_summe([1, 2, [3, 4], 5]))\n```\n\nAusgabe des korrigierten Codes:\n\n```\n15\n```\n\n**Die 3 Fehler:** Zeile 3 (`[]` statt `0`), Zeile 4 (`int` statt `list` - die beiden Zweige sind vertauscht), Zeile 7 (`liste` statt `liste[1:]`).",
+   "explanation": "Die Struktur des Codes ist bereits richtig - drei Fälle, zwei rekursive Aufrufe im Listen-Zweig. Kaputt sind die Details, und zwar genau die drei, die in der Klausur Punkte kosten:\n\n1. **Falscher Typ im Basisfall.** Eine Summenfunktion muss eine Zahl liefern. `[]` wäre der Basisfall einer Funktion, die eine *Liste* aufbaut (wie beim rekursiven Filtern).\n2. **Vertauschte Fälle bei `isinstance`.** Merken Sie sich die Frage: *\"Muss ich in dieses Element hineinsteigen?\"* - das gilt genau dann, wenn es eine **Liste** ist. Der Hinweis in der Klausur lautet wörtlich `isinstance(x, list)`.\n3. **Keine Verkleinerung.** Der Zahl-Zweig muss mit `liste[1:]` weitermachen, sonst dreht sich die Rekursion im Kreis.\n\nZur Fehlersuche hilft ein Minimalbeispiel: `verschachtelte_summe([1])` sollte `1` ergeben. Man sieht dann sofort, dass Zeile 4 in den falschen Zweig springt.\n\n**Merkregel:** *Summe -> Basisfall 0; `isinstance(..., list)` fragt nach dem Hineinsteigen; jeder Zweig muss den Rest verkleinern.*",
+   "hints": [
+    "Welchen Datentyp gibt die Funktion zurück - und passt der Basisfall dazu?",
+    "Führen Sie verschachtelte_summe([1]) im Kopf aus: In welchen Zweig springt der Code, und ergibt das Sinn?",
+    "Vergleichen Sie beide rekursiven Aufrufe: Wird das Argument in jedem Zweig kleiner?"
+   ],
+   "pitfalls": [
+    "Nur den isinstance-Fehler finden und den Basisfall-Typ übersehen.",
+    "Statt die Zweige zu vertauschen den Code komplett neu schreiben - gefragt sind Zeile, Fehler und Korrektur.",
+    "isinstance(liste, list) als Korrektur angeben - geprüft werden muss liste[0]."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 4b) verschachtelte_summe mit isinstance(x, list)"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabenformat: genau 3 Fehler benennen und korrigieren"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "fehlersuche",
+    "isinstance",
+    "listen",
+    "basisfall"
+   ]
+  },
+  {
+   "id": "py-recursion-027",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Spielregeln eines rekursiv implementierten Spiels erklären",
+   "prompt": "**Erklären Sie die Spielregeln des folgenden funktional implementierten Spiels** und beantworten Sie zusätzlich: (1) Was ist die Abbruchbedingung der Rekursion? (2) Warum terminiert das Programm mit an Sicherheit grenzender Wahrscheinlichkeit? (3) Ist `spieler_wurf` eine pure function? **(5 P)**\n\n```python\nimport random\n\nallgemeine_strategie = lambda x, aufhoerzahl: x < aufhoerzahl\nstrategie_aufhoeren_bei_20 = lambda x: allgemeine_strategie(x, 20)\n\ndef spieler_wurf(strategie, aktuelle_punkte=0):\n    if strategie(aktuelle_punkte):\n        wurf = random.randint(1, 6)\n        if wurf == 6:\n            return 0\n        else:\n            return spieler_wurf(strategie, aktuelle_punkte + wurf)\n    else:\n        return aktuelle_punkte\n\nprint(spieler_wurf(strategie_aufhoeren_bei_20))\n```",
+   "solution": "**Musterlösung**\n\n**Spielregeln.** Ein Spieler würfelt wiederholt mit einem sechsseitigen Würfel und sammelt Punkte. Die Strategie entscheidet vor jedem Wurf, ob überhaupt noch gewürfelt wird: `strategie_aufhoeren_bei_20` würfelt weiter, solange die Punktzahl **kleiner als 20** ist. Fällt eine **6**, ist die gesamte Runde verloren - der Rückgabewert ist `0` (\"push your luck\"). Bei jeder anderen Augenzahl wird sie zu den Punkten addiert und erneut gefragt. Hört der Spieler auf (Punktestand >= 20), behält er seine gesammelten Punkte. Ausgegeben wird das Ergebnis einer Runde: entweder `0` oder ein Wert zwischen 20 und 25.\n\n**(1) Abbruchbedingung.** Es gibt **zwei** Fälle ohne rekursiven Aufruf: (a) `wurf == 6` -> `return 0`, und (b) `strategie(aktuelle_punkte)` ist `False`, d. h. das Ziel ist erreicht -> `return aktuelle_punkte`.\n\n**(2) Terminierung.** Bei jedem Wurf außer der 6 wächst `aktuelle_punkte` um mindestens 1, nähert sich also der Aufhörzahl 20; spätestens nach 20 Würfen ist sie erreicht. Fällt eine 6, endet die Rekursion sofort. Das Programm terminiert also immer nach höchstens ca. 20 Aufrufen - der Zufall beeinflusst nur, welcher der beiden Abbruchfälle zuerst eintritt.\n\n**(3) Pure?** **Nein.** `spieler_wurf` ruft `random.randint(1, 6)` auf und hängt damit nicht nur von den Eingabeargumenten ab: Zwei Aufrufe mit denselben Argumenten können verschiedene Ergebnisse liefern. (Nebeneffekte im engeren Sinn hat sie nicht - sie verändert nichts und druckt nichts; unrein ist sie wegen des versteckten Zustands des Zufallsgenerators. Pure bekäme man sie z. B. mit einem `seed` als zusätzlichem Argument, wie im Goofspiel: `ziehe_karte(kartenspiel, seed)`.)\n\n**Bewertungsrubrik (5 P)**\n\n- 2 P Spielregeln: würfeln und addieren, bei 6 alles verloren (0), Aufhören gemäß Strategie ab 20 Punkten.\n- 1 P beide Abbruchfälle genannt.\n- 1 P Terminierungsargument (Punkte wachsen streng, Aufhörzahl wird erreicht / 6 beendet sofort).\n- 1 P nicht pure, mit Begründung über `random`.\n",
+   "explanation": "Der Professor stellt in der Klausur gerne Aufgaben vom Typ *\"Erklären Sie die Spielregeln des folgenden funktional implementierten Spiels\"* - hier an seinem eigenen Beispiel `neues_spiel.py`, dem Push-Your-Luck-Prinzip (identisch zu Pig bzw. \"Runterzählen von 101\" aus den Klausur-Übungstipps).\n\nDrei Konzepte stecken in wenigen Zeilen:\n\n1. **Strategie als Funktion (higher order function).** `spieler_wurf` bekommt die Strategie als Argument. Durch **Currying** aus `allgemeine_strategie` entstehen beliebige Varianten (`strategie_aufhoeren_bei_15`, `..._bei_20`), ohne die Spiellogik anzufassen.\n2. **Rekursion statt while-Schleife.** Der Punktestand wird nicht mutiert, sondern als Argument `aktuelle_punkte + wurf` weitergereicht. Genau das ist die funktionale Alternative zur imperativen Variante mit `aktuelle_Punkte += wurf`, die im selben Skript darüber steht.\n3. **Mehrere Abbruchfälle.** Eine Rekursion darf beliebig viele Basisfälle haben - hier einen für \"verloren\" und einen für \"aufgehört\".\n\nDie Pure-Frage ist ein Klassiker der Klausur: Sobald `random` (oder `input`, `print`, eine globale Variable) im Spiel ist, ist die Funktion nicht mehr pure. Die Lösung des Professors im Goofspiel: den `seed` explizit als Argument durchreichen und mit `random.Random(seed)` arbeiten - dann hängt das Ergebnis wieder nur von den Argumenten ab.\n\n**Merkregel:** *Erst Regeln in Worte fassen, dann Basisfälle zählen, dann prüfen, was außer den Argumenten noch Einfluss hat.*",
+   "hints": [
+    "Lesen Sie zuerst die beiden lambda-Ausdrücke: Was bedeutet strategie(x) inhaltlich?",
+    "Suchen Sie alle return-Anweisungen ohne rekursiven Aufruf - das sind die Abbruchfälle.",
+    "Für die Terminierung: Wie verändert sich aktuelle_punkte bei jedem Aufruf, und wo liegt die Grenze?",
+    "Für die Pure-Frage: Hängt das Ergebnis wirklich nur von strategie und aktuelle_punkte ab?"
+   ],
+   "pitfalls": [
+    "Übersehen, dass bei einer 6 die gesamten Punkte verloren sind (return 0) - das ist der Kern des Spiels.",
+    "Nur einen Abbruchfall nennen; die Funktion hat zwei.",
+    "Die Funktion für pure halten, weil sie 'nur' etwas zurückgibt - random macht sie von einem versteckten Zustand abhängig."
+   ],
+   "sources": [
+    {
+     "file": "neues_spiel.py",
+     "page": 1,
+     "label": "def spieler_wurf(strategie, aktuelle_Punkte=0) - rekursives Push-Your-Luck"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Klausur-Übungstipps: Runterzählen von 101, Push Your Luck"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "ziehe_karte(kartenspiel, seed) - seed als Argument macht Zufall pure"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "spiel",
+    "strategie",
+    "pure-function",
+    "higher-order-function",
+    "erklaeren"
+   ]
+  },
+  {
+   "id": "py-recursion-028",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": false,
+   "title": "Rekursives Sortieren (Mergesort) ohne jede Schleife",
+   "prompt": "Schreiben Sie eine Funktion `sortiere(liste)`, die eine Liste von Zahlen aufsteigend sortiert zurückgibt - **komplett ohne Schleifen** und ohne `sorted()` oder `.sort()`.\n\nIdee (Mergesort):\n\n1. Listen mit höchstens einem Element sind bereits sortiert.\n2. Sonst die Liste in zwei Hälften teilen, **beide rekursiv sortieren** und die sortierten Hälften anschließend **rekursiv verschmelzen**.\n\nSchreiben Sie dafür eine Hilfsfunktion `verschmelze(a, b)`, die zwei bereits sortierte Listen zu einer sortierten Liste zusammenfügt.\n\nBeispiel: `sortiere([5, 3, 8, 1])` -> `[1, 3, 5, 8]`",
+   "starterCode": "def verschmelze(a, b):\n    # a und b sind bereits sortiert - welcher der beiden Köpfe gehört nach vorne?\n    pass\n\ndef sortiere(liste):\n    # Basisfall: höchstens ein Element\n    # sonst: mitte = len(liste) // 2\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein sorted() und kein .sort()",
+    "zwei Funktionen: verschmelze und sortiere"
+   ],
+   "tests": [
+    {
+     "name": "verschmelze zwei sortierte Listen",
+     "call": "verschmelze([1, 4], [2, 3])",
+     "expected": "[1, 2, 3, 4]"
+    },
+    {
+     "name": "verschmelze mit leerer Liste",
+     "call": "verschmelze([], [2, 3])",
+     "expected": "[2, 3]"
+    },
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "sortiere([5, 3, 8, 1])",
+     "expected": "[1, 3, 5, 8]"
+    },
+    {
+     "name": "leere Liste",
+     "call": "sortiere([])",
+     "expected": "[]"
+    },
+    {
+     "name": "ein Element",
+     "call": "sortiere([2])",
+     "expected": "[2]"
+    },
+    {
+     "name": "Duplikate bleiben erhalten",
+     "call": "sortiere([4, 4, 2, 2])",
+     "expected": "[2, 2, 4, 4]"
+    },
+    {
+     "name": "absteigend sortierte Eingabe",
+     "call": "sortiere([9, 8, 7, 6, 5, 4, 3, 2, 1])",
+     "expected": "[1, 2, 3, 4, 5, 6, 7, 8, 9]"
+    },
+    {
+     "name": "negative Zahlen",
+     "call": "sortiere([3, -1, 0, -7, 2])",
+     "expected": "[-7, -1, 0, 2, 3]"
+    },
+    {
+     "name": "Original bleibt unverändert (pure)",
+     "call": "(lambda l: (sortiere(l), l))([3, 1, 2])",
+     "expected": "([1, 2, 3], [3, 1, 2])"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "sorted(",
+    ".sort("
+   ],
+   "required": [
+    "sortiere(",
+    "verschmelze("
+   ],
+   "solution": "def verschmelze(a, b):\n    if a == []:\n        return b\n    elif b == []:\n        return a\n    elif a[0] <= b[0]:\n        return [a[0]] + verschmelze(a[1:], b)\n    else:\n        return [b[0]] + verschmelze(a, b[1:])\n\n\ndef sortiere(liste):\n    if len(liste) <= 1:\n        return liste\n    else:\n        mitte = len(liste) // 2\n        return verschmelze(sortiere(liste[:mitte]), sortiere(liste[mitte:]))",
+   "explanation": "Mergesort ist der Härtetest für Rekursion: **zwei** rekursive Funktionen, die ineinandergreifen.\n\n`verschmelze(a, b)` arbeitet nach dem Listenrekursionsmuster, nur mit zwei Listen gleichzeitig: Der kleinere der beiden Köpfe gehört nach vorne, danach wird mit der **um dieses Element verkürzten** Liste weitergemacht. Basisfälle sind die beiden leeren Listen - ist eine Liste leer, ist der Rest der anderen bereits fertig sortiert.\n\n`sortiere(liste)` teilt bei `mitte = len(liste) // 2`. Wichtig: Die Teilung muss **echt** sein. Bei `len(liste) <= 1` abzubrechen ist zwingend - mit `len(liste) == 0` würde eine einelementige Liste in `[]` und `[x]` geteilt, und der Aufruf `sortiere([x])` liefe endlos.\n\n`a[0] <= b[0]` (statt `<`) sorgt dafür, dass gleiche Elemente ihre ursprüngliche Reihenfolge behalten - man nennt das ein **stabiles** Sortierverfahren.\n\nAlles bleibt pure: Slicing und `+` erzeugen neue Listen, die Eingabe wird nie verändert (letzter Test).\n\nZur Rekursionstiefe: `sortiere` halbiert (Tiefe `log2(n)`), `verschmelze` läuft dagegen linear durch - bei einigen hundert Elementen nähert man sich Pythons Limit von ca. 1000.\n\n**Merkregel:** *Teile, sortiere beide Hälften, verschmelze - und verschmelzen ist selbst wieder Rekursion.*",
+   "hints": [
+    "Beginnen Sie mit verschmelze: Wenn beide Listen sortiert sind, welches Element muss ganz vorne stehen?",
+    "verschmelze hat zwei Basisfälle - je einen für 'a ist leer' und 'b ist leer'.",
+    "In sortiere brauchen Sie zwei rekursive Aufrufe (linke und rechte Hälfte), deren Ergebnisse Sie verschmelzen.",
+    "Der Basisfall von sortiere muss len(liste) <= 1 sein, sonst terminiert die Teilung nicht."
+   ],
+   "pitfalls": [
+    "In verschmelze das kleinere Element entnehmen, aber die falsche Liste verkürzen - dann verschwinden oder verdoppeln sich Elemente.",
+    "sortiere mit len(liste) == 0 abbrechen -> Endlosrekursion bei einelementigen Listen.",
+    "Die Hälften mit liste[:mitte] und liste[mitte + 1:] bilden - dabei geht das mittlere Element verloren (anders als bei der binären Suche wird hier nichts geprüft und nichts weggeworfen)."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 4,
+     "label": "Optional: Beispiele zur Rekursion"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 8,
+     "label": "Vorteile/Nachteile: eleganter Code vs. Stackverbrauch"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "sortieren",
+    "mergesort",
+    "listen",
+    "haertetest"
+   ]
+  },
+  {
+   "id": "py-recursion-029",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "code",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": false,
+   "title": "reduce selbst gebaut - rekursiv falten",
+   "prompt": "Der Befehl `reduce` aus der Vorlesung erfüllt\n\n```\nreduce(f, [x1, x2, ..., xn], start) = f(...f(f(start, x1), x2)..., xn)\n```\n\nBauen Sie ihn **rekursiv** nach: `rek_reduce(f, tup, start)` bekommt eine zweistellige Funktion `f`, ein Tupel `tup` und einen Startwert `start`.\n\nBeispiel: `rek_reduce(lambda a, b: a + b, (1, 2, 3, 4), 0)` -> `10`\n\n**Keine Schleifen**, und `functools.reduce` darf nicht importiert werden.",
+   "starterCode": "def rek_reduce(f, tup, start):\n    # Verrechnen Sie start mit dem Kopf tup[0] und machen Sie mit dem Rest weiter\n    pass",
+   "constraints": [
+    "keine Schleifen (kein for, kein while)",
+    "kein import von functools",
+    "f ist eine zweistellige Funktion"
+   ],
+   "tests": [
+    {
+     "name": "Summe",
+     "call": "rek_reduce(lambda a, b: a + b, (1, 2, 3, 4), 0)",
+     "expected": "10"
+    },
+    {
+     "name": "Produkt (Fakultät 5!)",
+     "call": "rek_reduce(lambda a, b: a * b, (1, 2, 3, 4, 5), 1)",
+     "expected": "120"
+    },
+    {
+     "name": "Maximum ohne max()",
+     "call": "rek_reduce(lambda a, b: a if a > b else b, (3, 9, 2), 0)",
+     "expected": "9"
+    },
+    {
+     "name": "leeres Tupel liefert den Startwert",
+     "call": "rek_reduce(lambda a, b: a + b, (), 42)",
+     "expected": "42"
+    },
+    {
+     "name": "Strings verketten",
+     "call": "rek_reduce(lambda a, b: a + b, ('a', 'b', 'c'), '')",
+     "expected": "'abc'"
+    },
+    {
+     "name": "Spieldokumentation zusammenbauen",
+     "call": "rek_reduce(lambda doku, state: doku + state['runden_doku'], ({'runden_doku': 'Runde 1\\n'}, {'runden_doku': 'Runde 2\\n'}), '')",
+     "expected": "'Runde 1\\nRunde 2\\n'"
+    },
+    {
+     "name": "Reihenfolge zählt: links falten",
+     "call": "rek_reduce(lambda a, b: a - b, (1, 2, 3), 10)",
+     "expected": "4"
+    },
+    {
+     "name": "funktioniert auch mit einer Liste",
+     "call": "rek_reduce(lambda a, b: a + b, [1, 2, 3], 100)",
+     "expected": "106"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "functools",
+    "import "
+   ],
+   "required": [
+    "rek_reduce("
+   ],
+   "solution": "def rek_reduce(f, tup, start):\n    if len(tup) == 0:\n        return start\n    else:\n        return rek_reduce(f, tup[1:], f(start, tup[0]))",
+   "explanation": "`reduce` ist die dritte große higher order function der Vorlesung - und lässt sich mit dem bekannten Kopf-Rest-Muster in vier Zeilen rekursiv nachbauen.\n\nDer Kniff steckt im **Akkumulator**: Statt das Ergebnis wie bei der Summe *nach* dem rekursiven Aufruf zusammenzusetzen, wird der Zwischenstand `f(start, tup[0])` **als Argument** in den nächsten Aufruf hineingegeben. Man nennt das *endrekursiv* (tail recursion) - die Rekursion entspricht damit exakt der Schleife\n\n```python\nfor x in tup:\n    start = f(start, x)\n```\n\nnur ohne die Mutation von `start`.\n\nDie Reihenfolge ist wichtig: `f(start, tup[0])` - erst der Akkumulator, dann das Element. Bei `+` fällt das nicht auf, bei `-` sehr wohl (siehe Test: `((10-1)-2)-3 = 4`, während die andere Reihenfolge etwas anderes ergäbe).\n\nDer Basisfall gibt einfach `start` zurück: Ein leeres Tupel ändert nichts am Zwischenergebnis. Genau deshalb kann `rek_reduce` - anders als `reduce` **ohne** Startwert - auch mit leeren Sequenzen umgehen.\n\nDer vorletzte Test zeigt die Vorlesungsanwendung: Aus dem Tupel aller `states` des Goofspiels wird per `reduce` die gesamte Spieldokumentation zusammengesetzt.\n\n**Merkregel:** *Akkumulator ins Argument - dann ist die Rekursion nichts anderes als die Schleife.*",
+   "hints": [
+    "Was soll herauskommen, wenn das Tupel leer ist? Das ist Ihr Basisfall.",
+    "Verrechnen Sie den Startwert mit dem ersten Element - das Ergebnis ist der neue Startwert.",
+    "Der rekursive Aufruf bekommt dieselbe Funktion f, aber das verkürzte Tupel und den neuen Startwert."
+   ],
+   "pitfalls": [
+    "f(tup[0], start) statt f(start, tup[0]) schreiben - bei nicht-kommutativen Funktionen wie - oder String-Konkatenation kommt Falsches heraus.",
+    "Das Ergebnis nach dem rekursiven Aufruf verrechnen (f(tup[0], rek_reduce(...))) - das ist eine Rechts-Faltung und liefert bei - ein anderes Ergebnis.",
+    "Den Startwert im rekursiven Aufruf unverändert weiterreichen - dann geht jedes Zwischenergebnis verloren."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce(f, [x1..xn]) = f(...f(f(x1,x2),x3)...) und Startwert"
+    },
+    {
+     "file": "goofspiel26-4.py",
+     "page": 1,
+     "label": "reduce(lambda gesamte_doku, state: gesamte_doku + state['runden_doku'], states, '')"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "reduce",
+    "higher-order-function",
+    "akkumulator",
+    "tupel"
+   ]
+  },
+  {
+   "id": "py-recursion-030",
+   "lang": "python",
+   "topicId": "py-recursion",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Lücken: Spielverlauf rekursiv als Tupel von states",
+   "prompt": "Vervollständigen Sie den folgenden Code nach dem Goofspiel-Muster der Vorlesung: Alle Zustände des Spiels werden in einem **Tupel `states`** gesammelt, und die Runden werden **rekursiv** gespielt (keine Schleife, keine Mutation).\n\nIn diesem Mini-Spiel wird pro Runde die vorderste Preiskarte aufgedeckt und ihr Wert den Punkten gutgeschrieben. Das Spiel endet, wenn keine Preiskarten mehr da sind.\n\nDas Programm soll `6 4` ausgeben (Endpunktzahl und Anzahl der gespeicherten Zustände).",
+   "code": "anfangs_states = ({'preiskarten': (1, 2, 3), 'punkte': 0}, )\n\ndef naechste_runde(state):\n    return {'preiskarten': state['preiskarten'][1:],\n            'punkte': state['punkte'] + state['preiskarten'][0]}\n\ndef rungame(states):\n    if ## Lücke 1 ##:\n        return ## Lücke 2 ##\n    else:\n        return rungame(## Lücke 3 ##)\n\nalle_states = rungame(anfangs_states)\nprint(alle_states[-1]['punkte'], len(alle_states))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "len(states[-1]['preiskarten']) == 0",
+      "not states[-1]['preiskarten']",
+      "states[-1]['preiskarten'] == ()",
+      "len(states[-1]['preiskarten'])==0",
+      "len(states[-1][\"preiskarten\"]) == 0"
+     ],
+     "explanation": "Abbruchbedingung: Der **aktuellste** Zustand ist `states[-1]`; das Spiel endet, wenn dessen Preiskarten-Tupel leer ist. Im Original steht `while (len(states[-1]['preiskarten']) > 0)` - die Rekursion braucht die verneinte Bedingung."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "states"
+     ],
+     "explanation": "Am Ende wird das **gesamte** Tupel aller Zustände zurückgegeben - daraus entsteht später per `map`/`reduce` die Spieldokumentation. Nur `states[-1]` zurückzugeben würde den Spielverlauf verlieren."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "states + (naechste_runde(states[-1]),)",
+      "states+(naechste_runde(states[-1]),)"
+     ],
+     "explanation": "Der neue Zustand wird aus dem letzten berechnet und als **einelementiges Tupel** angehängt: `states + (neuer_state,)`. Das Komma ist Pflicht, sonst gibt es einen TypeError."
+    }
+   ],
+   "solution": "```python\nanfangs_states = ({'preiskarten': (1, 2, 3), 'punkte': 0}, )\n\ndef naechste_runde(state):\n    return {'preiskarten': state['preiskarten'][1:],\n            'punkte': state['punkte'] + state['preiskarten'][0]}\n\ndef rungame(states):\n    if len(states[-1]['preiskarten']) == 0:\n        return states\n    else:\n        return rungame(states + (naechste_runde(states[-1]),))\n\nalle_states = rungame(anfangs_states)\nprint(alle_states[-1]['punkte'], len(alle_states))\n# 6 4\n```\n\nDie vier gespeicherten Zustände sind: `{(1,2,3), 0}`, `{(2,3), 1}`, `{(3,), 3}`, `{(), 6}`.",
+   "explanation": "Das ist exakt das Muster, mit dem der Professor das Goofspiel \"noch funktionaler\" macht:\n\n```python\n# vorher (imperativ, mit Schleife):\nwhile (len(states[-1]['preiskarten']) > 0):\n    states += (helper.spielrunde(states[-1]),)\n```\n\nDrei Ideen stecken darin:\n\n1. **State als Dictionary.** Alles, was für den Spielverlauf wichtig ist, steht in einem `dict` - hier Preiskarten und Punkte.\n2. **Alle states als Tupel.** Statt den Zustand zu überschreiben, wird jede Runde **angehängt**. So bleibt die komplette Historie erhalten, und der einzige Nebeneffekt (`print`) kann ans Ende geschoben werden.\n3. **Rekursion statt while.** `rungame` reicht das gewachsene Tupel an sich selbst weiter. Nichts wird mutiert: `states + (...,)` erzeugt ein neues Tupel, `naechste_runde` ist eine pure function, die aus dem alten state einen neuen berechnet.\n\nDie Anzahl der Zustände ist immer **Rundenzahl + 1**, weil der Anfangszustand mitgezählt wird - hier 3 Runden plus Startzustand = 4.\n\nAchten Sie auf `states[-1]`: Die Abbruchbedingung und `naechste_runde` interessieren sich nur für den **letzten** Zustand, zurückgegeben wird aber das ganze Tupel.\n\n**Merkregel:** *states[-1] für die Logik, states für die Historie - angehängt wird mit `+ (neuer_state,)`.*",
+   "hints": [
+    "Der aktuelle Spielzustand ist immer states[-1] - das letzte Element des Tupels.",
+    "Die Abbruchbedingung ist die Verneinung der while-Bedingung aus dem Original: len(...) > 0 wird zu len(...) == 0.",
+    "Zum Anhängen an ein Tupel brauchen Sie states + (neuer_eintrag,) mit Komma vor der schließenden Klammer.",
+    "Der neue Eintrag entsteht durch naechste_runde(states[-1])."
+   ],
+   "pitfalls": [
+    "In Lücke 2 states[-1] statt states zurückgeben - dann geht der gesamte Spielverlauf verloren.",
+    "In Lücke 3 das Komma vergessen: states + (naechste_runde(states[-1])) ist kein Tupel -> TypeError.",
+    "naechste_runde(states) statt naechste_runde(states[-1]) aufrufen - die Funktion erwartet einen einzelnen state, kein Tupel."
+   ],
+   "sources": [
+    {
+     "file": "goofspiel26-3.py",
+     "page": 1,
+     "label": "while (len(states[-1]['preiskarten'])>0): states += (helper.spielrunde(states[-1]),)"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 4,
+     "label": "Alle states in einem Tupel merken"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 10,
+     "label": "Rekursion - Goofspiel"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "def spiel_rekursiv(abbruchbedingung, spielrunde, states)"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "luecken",
+    "goofspiel",
+    "states",
+    "tupel",
+    "dictionary"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1260 @@
+{
+ "topicId": "java-io-threads",
+ "exercises": [
+  {
+   "type": "mc",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Rückgabewert von read() am Stromende",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nDas folgende Programm liest Bytes vom Standard-Eingabestrom, bis das Ende der Eingabe (EOF) erreicht ist:\n\n```java\nimport java.io.*;\n\nclass Count {\n  public static void main(String[] args) throws IOException {\n    int count = 0;\n    int c;\n    while ( (c = System.in.read()) != /* ??? */ ) count++;\n    System.out.println(\"Eingabe hatte \" + count + \" Bytes\");\n  }\n}\n```\n\nWelchen Wert liefert `read()` eines `InputStream`, wenn das Stromende erreicht ist?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`0`",
+     "correct": false,
+     "why": "`0` ist ein völlig normales Byte (das NUL-Zeichen) und kann echter Bestandteil der Daten sein. Wäre `0` das Ende-Signal, könnte man Binärdateien nicht lesen."
+    },
+    {
+     "id": "b",
+     "text": "`-1`",
+     "correct": true,
+     "why": "Genau deshalb hat `read()` den Rückgabetyp `int` und nicht `byte`: die 256 möglichen Bytewerte 0...255 sind alle gültige Daten, `-1` liegt außerhalb dieses Bereichs und ist damit als EOF-Marke frei."
+    },
+    {
+     "id": "c",
+     "text": "`null`",
+     "correct": false,
+     "why": "`read()` liefert einen `int`, also einen primitiven Typ - `null` ist dort gar nicht zuweisbar. `null` liefert dagegen `BufferedReader.readLine()` am Dateiende, denn das ist ein `String`."
+    },
+    {
+     "id": "d",
+     "text": "Es wird eine `EOFException` geworfen.",
+     "correct": false,
+     "why": "Eine `EOFException` werfen die Methoden der Schnittstelle `DataInput` (z.B. `readInt()`, `readDouble()`), weil diese eine feste Byteanzahl brauchen. Das einfache `read()` signalisiert das Ende dagegen über den Rückgabewert."
+    }
+   ],
+   "solution": "b) `-1`\n\nDie Bedingung lautet also: `while ( (c = System.in.read()) != -1 ) count++;`",
+   "explanation": "`InputStream.read()` liest **ein Byte** und liefert es als Zahl im Bereich `0 ... 255` zurück. Damit man Nutzdaten und Stromende sicher unterscheiden kann, ist der Rückgabetyp `int` (nicht `byte`) und der Sonderwert **`-1`** bedeutet: *keine Daten mehr, EOF*.\n\nDer typische Denkfehler ist die Verwechslung der beiden Ende-Signale in `java.io`:\n\n| Methode | Typ | Signal am Ende |\n|---|---|---|\n| `InputStream.read()` | `int` | `-1` |\n| `InputStream.read(byte[] buf)` | `int` | `-1` (sonst: Zahl der gelesenen Bytes) |\n| `BufferedReader.readLine()` | `String` | `null` |\n| `DataInput.readInt()` / `readDouble()` | `int` / `double` | `EOFException` |\n\nMerkregel: *Wer eine Zahl liefert, meldet das Ende mit `-1`; wer ein Objekt liefert, meldet es mit `null`; wer eine feste Byteanzahl braucht, wirft eine Exception.*",
+   "hints": [
+    "Überlegen Sie zuerst, welchen **Typ** `read()` zurückgibt - daran scheiden schon zwei Antworten aus.",
+    "Ein Byte kann die Werte 0 bis 255 annehmen. Welcher Wert bleibt dann noch übrig, um 'nichts mehr da' zu melden?",
+    "Vergleichen Sie mit `readLine()`: das gibt einen `String` zurück und meldet das Ende mit `null`."
+   ],
+   "pitfalls": [
+    "`-1` und `null` verwechseln: `readLine()` liefert `null`, `read()` liefert `-1`.",
+    "Glauben, `read()` liefere ein `byte`. Dann wäre `-1` ein gültiges Datenbyte und die Abbruchbedingung nicht mehr eindeutig.",
+    "`while (System.in.read() != -1) count++;` liest das Byte, wirft es aber weg - man braucht die Zuweisung `c = System.in.read()` in der Bedingung, wenn man den Wert noch benötigt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 285,
+     "label": "9.3. Ein- und Ausgabe mit Strömen - Operationen der Klasse InputStream"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 286,
+     "label": "9.3. Beispiel Count.java: Bytes im Eingabestrom zählen"
+    },
+    {
+     "file": "09_Serialisierung/Count.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "streams",
+    "inputstream",
+    "eof",
+    "theorie",
+    "mc",
+    "low-priority"
+   ],
+   "id": "java-io-threads-001",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Was ist Serializable?",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\n```java\nimport java.io.*;\n\nclass Name implements Serializable {\n  String name;\n  String vorname;\n  public Name(String n, String vn) { name = n; vorname = vn; }\n}\n\nclass Student implements Serializable {\n  Name name;\n  int matrNr;\n  double note;\n}\n```\n\nWelche Aussage über die Schnittstelle `java.io.Serializable` trifft zu?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`Serializable` schreibt die Methoden `writeObject()` und `readObject()` vor, die jede serialisierbare Klasse selbst implementieren muss.",
+     "correct": false,
+     "why": "`writeObject()` und `readObject()` sind Methoden der **Ströme** `ObjectOutputStream` bzw. `ObjectInputStream`, nicht der Schnittstelle `Serializable`. Müsste man sie selbst schreiben, wäre die ganze Automatik sinnlos."
+    },
+    {
+     "id": "b",
+     "text": "`Serializable` besitzt weder Methoden noch Attribute; die Schnittstelle markiert eine Klasse lediglich als serialisierbar (Marker-Interface).",
+     "correct": true,
+     "why": "Genau so steht es im Skript: `Serializable` ist ein reines Marker-Interface. Der Compiler und die Laufzeitumgebung prüfen nur, *ob* eine Klasse diesen Typ hat."
+    },
+    {
+     "id": "c",
+     "text": "`Serializable` ist eine abstrakte Klasse; serialisierbare Klassen müssen mit `extends` von ihr erben.",
+     "correct": false,
+     "why": "Es ist ein **Interface** in `java.io` - deshalb steht im Beispiel auch `implements Serializable`. Wäre es eine Klasse, könnte eine Klasse nicht gleichzeitig von einer fachlichen Oberklasse erben (Java kennt keine Mehrfachvererbung von Klassen)."
+    },
+    {
+     "id": "d",
+     "text": "Eine Klasse wird automatisch serialisierbar, sobald ihre Objekte an `ObjectOutputStream.writeObject()` übergeben werden.",
+     "correct": false,
+     "why": "Ohne `implements Serializable` bricht `writeObject()` zur Laufzeit mit einer `NotSerializableException` ab. Die Markierung ist eine bewusste Entscheidung des Klassenautors, keine Automatik."
+    }
+   ],
+   "solution": "b) `Serializable` ist ein Marker-Interface ohne Methoden und ohne Attribute.",
+   "explanation": "Das Skript nennt zwei **Voraussetzungen für die Serialisierbarkeit** (S. 295):\n\n1. Die Klasse muss die Schnittstelle `Serializable` implementieren. Diese Schnittstelle besitzt *weder Methoden noch Attribute* - sie dient nur der **Markierung** einer Klasse (daher der Name *Marker-Interface*).\n2. Zusätzlich müssen **alle Referenzen** im Objekt wieder auf serialisierbare Objekte zeigen. Im Beispiel oben genügt deshalb nicht, dass `Student` markiert ist - auch `Name` muss `Serializable` sein (`String` ist es bereits von Hause aus).\n\nDie eigentliche Arbeit erledigt der Strom: `ObjectOutputStream.writeObject(obj)` schreibt Seriennummer, Klasseninformation und alle Attributwerte in den Byte-Strom. Der typische Denkfehler ist, `Serializable` für eine Klasse mit vorgeschriebenen Methoden zu halten. Merkregel: *`Serializable` ist ein Stempel, kein Vertrag.*",
+   "hints": [
+    "Achten Sie im Beispielcode auf das Schlüsselwort vor `Serializable` - `implements` oder `extends`?",
+    "Überlegen Sie: welche Methoden müssten Sie in `Name` und `Student` zusätzlich schreiben? Im Beispiel steht keine.",
+    "Suchen Sie den Begriff, den das Skript für eine Schnittstelle ohne Methoden benutzt."
+   ],
+   "pitfalls": [
+    "`Serializable` mit `extends` einbinden zu wollen - es ist ein Interface, also `implements`.",
+    "Nur die äußere Klasse markieren und die Klasse eines Referenz-Attributs vergessen - zur Laufzeit gibt es dann eine `NotSerializableException`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 295,
+     "label": "9.4. Voraussetzung für die Serialisierbarkeit von Objekten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 300,
+     "label": "9.4. Beispiel Studentendatei (1/3)"
+    },
+    {
+     "file": "09_Serialisierung/StudentenDatei.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "serialisierung",
+    "serializable",
+    "interface",
+    "theorie",
+    "mc",
+    "low-priority"
+   ],
+   "id": "java-io-threads-002",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": false,
+   "title": "Gemeinsamer Zaehler mit synchronized und join()",
+   "prompt": "Vervollständigen Sie das folgende Programm, sodass es **immer** `Endstand: 3000` ausgibt.\n\na) Die Methode `erhoehe()` der Klasse `Zaehlwerk` soll den Zaehler `stand` um 1 erhöhen. Sie muss so geschützt werden, dass sie nicht von zwei Threads gleichzeitig ausgeführt werden kann (wechselseitiger Ausschluss).\n\nb) Die Methode `run()` der Klasse `ZaehlThread` soll 1000-mal `erhoehe()` auf dem gemeinsamen `Zaehlwerk`-Objekt aufrufen.\n\nc) In `main` sollen drei `ZaehlThread`-Objekte erzeugt und **gleichzeitig** gestartet werden.\n\nd) Vor der Ausgabe muss `main` auf das Ende aller drei Threads warten.",
+   "starterCode": "class Zaehlwerk {\n  private int stand = 0;\n  // a) Methode erhoehe(), die stand um 1 erhöht - wechselseitig ausgeschlossen:\n\n  public int getStand() { return stand; }\n}\n\nclass ZaehlThread extends Thread {\n  private Zaehlwerk z;\n  public ZaehlThread(Zaehlwerk z) { this.z = z; }\n  // b) run(): 1000-mal erhoehe() auf dem gemeinsamen Zaehlwerk aufrufen\n\n}\n\nclass SyncZaehler {\n  public static void main(String[] args) throws InterruptedException {\n    Zaehlwerk z = new Zaehlwerk();\n    ZaehlThread[] t = new ZaehlThread[3];\n    // c) drei Threads erzeugen und starten\n\n    // d) auf das Ende aller drei Threads warten\n\n    System.out.println(\"Endstand: \" + z.getStand());\n  }\n}",
+   "constraints": [
+    "Das Zaehlwerk-Objekt wird von allen drei Threads gemeinsam benutzt (nur ein `new Zaehlwerk()`).",
+    "Kein `Thread.sleep()` als Ersatz für `join()`.",
+    "Die Ausgabe muss bei jedem Programmlauf gleich sein."
+   ],
+   "required": [
+    "synchronized",
+    "join",
+    "start"
+   ],
+   "expectedOutput": "Endstand: 3000",
+   "solution": "class Zaehlwerk {\n  private int stand = 0;\n  public synchronized void erhoehe() { stand++; }\n  public int getStand() { return stand; }\n}\n\nclass ZaehlThread extends Thread {\n  private Zaehlwerk z;\n  public ZaehlThread(Zaehlwerk z) { this.z = z; }\n  public void run() {\n    for (int i = 0; i < 1000; i++) z.erhoehe();\n  }\n}\n\nclass SyncZaehler {\n  public static void main(String[] args) throws InterruptedException {\n    Zaehlwerk z = new Zaehlwerk();\n    ZaehlThread[] t = new ZaehlThread[3];\n    for (int i = 0; i < 3; i++) {\n      t[i] = new ZaehlThread(z);\n      t[i].start();\n    }\n    for (int i = 0; i < 3; i++) {\n      t[i].join();\n    }\n    System.out.println(\"Endstand: \" + z.getStand());\n  }\n}",
+   "explanation": "Zwei Konzepte greifen hier ineinander.\n\n**1. `synchronized` gegen die Race Condition.** `stand++` sieht wie eine einzige Anweisung aus, ist aber *nicht atomar*: lesen, um 1 erhöhen, zurückschreiben. Wird ein Thread zwischen Lesen und Zurückschreiben unterbrochen, überschreibt er anschließend die Erhöhung des anderen Threads - Inkremente können verloren gehen, sodass das Ergebnis kleiner als 3000 ausfällt und von Lauf zu Lauf schwankt. Ohne `synchronized` ist eben *nichts* garantiert; manchmal kommt zufällig doch 3000 heraus, was solche Fehler besonders tückisch macht. `public synchronized void erhoehe()` macht die Methode zu einem **Monitor**: die Sperre wird auf `this`, also auf dem `Zaehlwerk`-Objekt, gesetzt. Nur ein Thread darf gleichzeitig darin sein.\n\n**2. `join()` gegen die zu frühe Ausgabe.** `start()` kehrt *sofort* zum Aufrufer zurück; der neue Thread läuft nebenläufig weiter. Ohne `join()` würde `main` den Zählerstand ausgeben, während die Threads noch rechnen - typischerweise `Endstand: 0` oder irgendeinen Zwischenwert. `t[i].join()` blockiert `main`, bis Thread `i` seine `run()`-Methode beendet hat.\n\nWichtig ist die **Reihenfolge der beiden Schleifen**: erst *alle* starten, dann *alle* einsammeln. Wer `start()` und `join()` in dieselbe Schleife schreibt, serialisiert die Threads - das Ergebnis stimmt zwar, aber es läuft nichts mehr parallel.\n\nMerkregel: *`synchronized` macht das Ergebnis richtig, `join()` macht den Zeitpunkt richtig.*",
+   "hints": [
+    "Was genau passiert bei `stand++`? Zerlegen Sie die Anweisung in ihre drei Maschinenschritte.",
+    "Das Skript zeigt zwei Formen des wechselseitigen Ausschlusses: `public synchronized void m()` und `synchronized (einObjekt) { ... }`. Für eine ganze Methode genügt die erste.",
+    "Denken Sie an zwei getrennte Schleifen: eine mit `start()`, danach eine mit `join()`."
+   ],
+   "pitfalls": [
+    "`start()` und `join()` in derselben Schleife aufrufen - dann läuft immer nur ein Thread und der Nebenläufigkeitseffekt ist weg.",
+    "`run()` statt `start()` aufrufen - dann läuft alles nacheinander im main-Thread. Das Ergebnis ist zwar 3000, aber es wurde nie ein Thread gestartet.",
+    "`join()` wirft `InterruptedException` - diese muss gefangen oder mit `throws` deklariert werden."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 313,
+     "label": "10.1. Synchronisation von Threads - join()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 319,
+     "label": "10.1. Synchronisation mit Monitor - Schlüsselwort synchronized"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 325,
+     "label": "10.1. Beispiel SlowListing: nextNumber() als synchronized"
+    },
+    {
+     "file": "10_ThreadsSockets/WorkerThreadJoin.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "threads",
+    "synchronized",
+    "join",
+    "race-condition",
+    "code",
+    "low-priority"
+   ],
+   "id": "java-io-threads-003",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Thread-Klasse oder Runnable-Interface?",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nIn Java gibt es zwei Wege, den Code für einen neuen Thread bereitzustellen:\n\n```java\n// Weg 1\nclass Arbeiter extends Thread {\n  public void run() { /* ... */ }\n}\n\n// Weg 2\nclass Aufgabe implements Runnable {\n  public void run() { /* ... */ }\n}\n```\n\nWelche Aussage über diese beiden Wege trifft zu?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Nur `extends Thread` ist möglich; `Runnable` ist eine Schnittstelle für die Ereignisbehandlung in Bedienoberflächen.",
+     "correct": false,
+     "why": "`Runnable` deklariert genau eine Methode - `void run()` - und ist die Schnittstelle für nebenläufig ausführbaren Code. `Thread` selbst implementiert `Runnable`."
+    },
+    {
+     "id": "b",
+     "text": "Bei beiden Wegen steht der nebenläufige Code in `run()`; gestartet wird der Thread aber in beiden Fällen über `start()` eines `Thread`-Objekts - bei Weg 2 also z.B. mit `new Thread(new Aufgabe()).start()`.",
+     "correct": true,
+     "why": "Richtig. `run()` enthält nur *was* getan wird; *dass* daraus ein eigener Kontrollfluss entsteht, bewirkt allein `Thread.start()`."
+    },
+    {
+     "id": "c",
+     "text": "Wer `Runnable` implementiert, startet den Thread direkt mit `new Aufgabe().start()`.",
+     "correct": false,
+     "why": "`Runnable` kennt nur `run()`. Ein `Runnable`-Objekt hat gar keine Methode `start()` - das wäre ein Compiler-Fehler. Man muss das `Runnable` an einen `Thread` übergeben."
+    },
+    {
+     "id": "d",
+     "text": "Der Unterschied ist, dass man bei `implements Runnable` die Methode `run()` überschreiben muss, bei `extends Thread` dagegen `start()`.",
+     "correct": false,
+     "why": "Umgekehrt gedacht: `start()` wird **nie** überschrieben, sondern von `Thread` geerbt und benutzt. Überschrieben wird immer `run()`."
+    }
+   ],
+   "solution": "b)\n\n```java\n// Weg 1\nArbeiter a = new Arbeiter();\na.start();\n\n// Weg 2\nThread t = new Thread(new Aufgabe());\nt.start();\n```",
+   "explanation": "Das Skript zeigt Weg 1: *\"Für weitere Threads steht die Klasse `Thread` zur Verfügung, von dieser Klasse muss eine Unterklasse definiert werden\"* (S. 311). Die beiden wichtigen Operationen sind dabei:\n\n- `void run()` - wird beim Start des Threads ausgeführt, **muss in der Unterklasse überschrieben werden**; der Thread endet, wenn `run()` zurückkehrt.\n- `void start()` - startet den Thread, kehrt **sofort** zum Aufrufer zurück; der Thread führt nebenläufig seine `run()`-Methode aus.\n\n`Thread` implementiert selbst die Schnittstelle `Runnable` - deshalb funktionieren beide Wege identisch, sobald `start()` gerufen wird. Der praktische Unterschied: Java kennt nur *Einfachvererbung*. Wer `extends Thread` benutzt, verbraucht den einzigen Vererbungsplatz seiner Klasse; `implements Runnable` lässt ihn frei. Deshalb ist Weg 2 in größeren Programmen die flexiblere Lösung.\n\nMerkregel: *`run()` sagt **was**, `start()` sagt **nebenläufig**.*",
+   "hints": [
+    "Welche Methoden deklariert `Runnable` überhaupt? Es ist genau eine.",
+    "Überlegen Sie, welche der beiden Methoden Sie schreiben und welche Sie aufrufen.",
+    "Java erlaubt nur eine Oberklasse, aber beliebig viele Schnittstellen - das ist das eigentliche Argument für den zweiten Weg."
+   ],
+   "pitfalls": [
+    "Glauben, ein `Runnable`-Objekt habe eine Methode `start()`.",
+    "`start()` überschreiben statt `run()` - dann startet nie ein Thread."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 311,
+     "label": "10.1. Threads in Java - Operationen run() und start()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 312,
+     "label": "10.1. Beispiel WorkerThread"
+    },
+    {
+     "file": "10_ThreadsSockets/WorkerThread.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "threads",
+    "runnable",
+    "start",
+    "run",
+    "theorie",
+    "mc",
+    "low-priority"
+   ],
+   "id": "java-io-threads-004",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Aussagen zur Serialisierung mit ObjectOutputStream / ObjectInputStream",
+   "prompt": "**Multiple Choice (Mehrfachauswahl).** Kreuzen Sie **alle** richtigen Aussagen an.\n\nGegeben ist der bekannte Ausschnitt aus `StudentenDatei.java`:\n\n```java\nObjectOutputStream oos = new ObjectOutputStream( new FileOutputStream(\"out.ser\") );\noos.writeObject(s);\ns.setNote(3.7);\noos.reset();\noos.writeObject(s);\noos.close();\n// ...\nObjectInputStream ois = new ObjectInputStream( new FileInputStream(\"out.ser\") );\nStudent s1 = (Student) ois.readObject();\n```",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`writeObject(obj)` serialisiert nicht nur `obj` selbst, sondern alle von `obj` aus erreichbaren Objekte - es wird immer ein ganzer Objekt-Graph geschrieben.",
+     "correct": true,
+     "why": "Genau das steht auf S. 297. `obj` heißt dabei *Wurzelobjekt* des Objekt-Graphen; die Referenzen werden beim Einlesen automatisch wiederhergestellt."
+    },
+    {
+     "id": "b",
+     "text": "`readObject()` liefert ein `Object`, deshalb ist in der Regel eine explizite Typkonversion nötig - im Beispiel `(Student)`.",
+     "correct": true,
+     "why": "Der statische Rückgabetyp ist `Object`. Ohne den Cast würde der Compiler die Zuweisung an `Student s1` ablehnen."
+    },
+    {
+     "id": "c",
+     "text": "Wird dasselbe Objekt zweimal mit `writeObject()` geschrieben, ohne dass vorher `reset()` aufgerufen wurde, landet beim zweiten Mal nur ein Verweis (die Seriennummer) im Strom.",
+     "correct": true,
+     "why": "Deshalb steht im Beispiel der Kommentar *'sonst wird nur eine weitere Referenz geschrieben'*. `reset()` löscht die Information darüber, welche Objekte schon geschrieben wurden."
+    },
+    {
+     "id": "d",
+     "text": "Für die Serialisierbarkeit genügt es, dass die Klasse des Objekts `Serializable` implementiert; die Klassen der Referenz-Attribute spielen keine Rolle.",
+     "correct": false,
+     "why": "Falsch - das Skript nennt ausdrücklich zwei Bedingungen (S. 295). Auch alle referenzierten Objekte müssen serialisierbar sein, sonst bricht `writeObject()` ab."
+    },
+    {
+     "id": "e",
+     "text": "Der Konstruktor `ObjectOutputStream(OutputStream out)` erwartet einen bereits vorhandenen Ausgabestrom - hier den `FileOutputStream` auf die Datei `out.ser`.",
+     "correct": true,
+     "why": "`ObjectOutputStream` ist ein Filterstrom: er setzt auf einem anderen Strom auf und wandelt Objekte in Bytes um. Das Schachteln von Strömen ist das Grundmuster von `java.io`."
+    },
+    {
+     "id": "f",
+     "text": "`readObject()` sucht sich anhand des Zieltyps das passende Objekt aus der Datei heraus; die Lesereihenfolge ist deshalb egal.",
+     "correct": false,
+     "why": "Ein Strom ist eine *geordnete Folge* von Daten. `readObject()` liefert immer das nächste Objekt in Schreibreihenfolge - wer in falscher Reihenfolge liest, bekommt eine `ClassCastException`."
+    }
+   ],
+   "solution": "Richtig sind **a, b, c und e**. Falsch sind d und f.",
+   "explanation": "Serialisierung ist die *Umwandlung des Zustands eines Objekts in einen Byte-Strom* (und umgekehrt: Deserialisierung). Vier Punkte muss man dabei sicher beherrschen:\n\n1. **Objekt-Graph statt Einzelobjekt.** `writeObject(s)` schreibt `s` und alles, was von `s` aus erreichbar ist. Im Beispiel wird mit dem `Student` automatisch auch sein `Name`-Objekt gespeichert.\n2. **Seriennummern.** Jedes Objekt bekommt beim ersten Schreiben eine Seriennummer. Taucht es erneut auf, wird nur diese Nummer geschrieben - so werden zyklische Referenzen und gemeinsam benutzte Objekte korrekt abgebildet.\n3. **`reset()`** löscht dieses Gedächtnis. Ohne `reset()` hätte die Änderung `s.setNote(3.7)` keine Wirkung auf die Datei, denn das zweite `writeObject(s)` schriebe nur den Verweis.\n4. **Cast beim Lesen.** `readObject()` liefert `Object`; der Compiler kennt den echten Typ nicht.\n\nMerkregel: *Der Strom ist ein Tagebuch, kein Karteikasten - er wird in genau der Reihenfolge gelesen, in der geschrieben wurde.*",
+   "hints": [
+    "Zwei Aussagen sind falsch. Suchen Sie gezielt nach Aussagen, die eine Bedingung des Skripts weglassen.",
+    "Was bedeutet 'Strom' laut Skript? Eine geordnete Folge von Daten mit Quelle und Senke.",
+    "Zum Cast: welchen statischen Rückgabetyp hat `readObject()`?"
+   ],
+   "pitfalls": [
+    "`reset()` für eine Art `flush()` halten - es leert keinen Puffer, sondern das Gedächtnis über bereits geschriebene Objekte.",
+    "Vergessen, dass auch die Klassen aller Referenz-Attribute `Serializable` sein müssen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 295,
+     "label": "9.4. Voraussetzung für die Serialisierbarkeit"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 296,
+     "label": "9.4. Die Klasse ObjectOutputStream - writeObject, reset"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 297,
+     "label": "9.4. Was schreibt writeObject(obj) in den Ausgabestrom?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 298,
+     "label": "9.4. Die Klasse ObjectInputStream - readObject"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 301,
+     "label": "9.4. Beispiel Studentendatei (2/3)"
+    }
+   ],
+   "tags": [
+    "serialisierung",
+    "objectoutputstream",
+    "objectinputstream",
+    "reset",
+    "theorie",
+    "multi-mc",
+    "low-priority"
+   ],
+   "id": "java-io-threads-005",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "synchronized, wait und notify",
+   "prompt": "**Multiple Choice (Mehrfachauswahl).** Kreuzen Sie **alle** richtigen Aussagen an.\n\nZur Erinnerung der Konsument aus `ProdConListing.java`:\n\n```java\npublic void run() {\n  while (true) {\n    synchronized (v) {\n      if (v.size() < 1)\n        try { v.wait(); }\n        catch (InterruptedException e) {  }\n      System.out.print(\"Konsument fand \" + (String) v.elementAt(0));\n      v.removeElementAt(0);\n    }\n    try { Thread.sleep((int)(1000*Math.random())); }\n    catch (InterruptedException e) {  }\n  }\n}\n```",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`public synchronized void m()` sperrt das Objekt, auf dem `m()` aufgerufen wird - es ist gleichbedeutend mit `public void m() { synchronized (this) { ... } }`.",
+     "correct": true,
+     "why": "Genau diese Äquivalenz zeigt das Skript auf S. 319: Schutz einer kompletten Methode durch Sperre mit dem this-Zeiger."
+    },
+    {
+     "id": "b",
+     "text": "`wait()` und `notify()` sind Synchronisationsprimitive der Klasse `Object` und dürfen nur innerhalb eines `synchronized`-Bereichs aufgerufen werden.",
+     "correct": true,
+     "why": "Deshalb steht `v.wait()` im Beispiel innerhalb von `synchronized (v)`. Außerhalb gibt es zur Laufzeit eine `IllegalMonitorStateException`."
+    },
+    {
+     "id": "c",
+     "text": "Der Aufruf von `wait()` nimmt die bereits gewährten Sperren zurück und stellt den aufrufenden Thread in die Warteliste des Objekts.",
+     "correct": true,
+     "why": "Sonst wäre das Muster unbrauchbar: der wartende Konsument würde die Sperre auf `v` behalten und der Produzent könnte den Puffer nie füllen - klassischer Deadlock."
+    },
+    {
+     "id": "d",
+     "text": "`notify()` weckt garantiert **alle** Threads, die auf dem Objekt warten.",
+     "correct": false,
+     "why": "`notify()` entfernt *einen (beliebigen)* Prozess aus der Warteliste. Alle weckt erst `notifyAll()`."
+    },
+    {
+     "id": "e",
+     "text": "Ein `synchronized`-Block kann auf ein beliebiges Objekt gesperrt werden - im Beispiel auf den gemeinsamen Puffer `v`.",
+     "correct": true,
+     "why": "`synchronized (einObjekt) { ... }` schützt einen Codeabschnitt über die Sperre des angegebenen Objekts. Wichtig ist nur, dass **alle** beteiligten Threads dasselbe Objekt als Sperre benutzen."
+    },
+    {
+     "id": "f",
+     "text": "`Thread.sleep(1000)` gibt die gehaltene Sperre frei, damit andere Threads während der Pause den kritischen Bereich betreten können.",
+     "correct": false,
+     "why": "`sleep()` legt nur den Thread schlafen, **behält** aber alle Sperren. Genau deshalb steht der `sleep()`-Aufruf im Beispiel *außerhalb* des `synchronized`-Blocks."
+    }
+   ],
+   "solution": "Richtig sind **a, b, c und e**. Falsch sind d und f.",
+   "explanation": "Das Skript trennt zwei Ebenen der Thread-Synchronisation:\n\n**Wechselseitiger Ausschluss (`synchronized`).** Ein *kritischer Bereich* ist ein Programmteil, den nur ein Thread zur gleichen Zeit durchlaufen darf. Ein *Monitor* kapselt ihn über eine **Sperre**: sie wird beim Betreten gesetzt und beim Verlassen zurückgegeben; ist sie schon gesetzt, muss der Thread warten. Es gibt zwei Schreibweisen - `synchronized` an der Methode (Sperre auf `this`) oder `synchronized (obj) { ... }` (Sperre auf `obj`).\n\n**Warten auf Ereignisse (`wait`/`notify`).** Diese Methoden gehören zu `Object`, nicht zu `Thread`. Jedes Objekt hat eine Warteliste. `wait()` gibt die Sperre frei und legt den Thread dort ab; `notify()` holt einen beliebigen Thread wieder heraus und stellt seine Sperren wieder her. Beide dürfen nur im `synchronized`-Bereich stehen.\n\nDer häufigste Denkfehler ist die Gleichsetzung von `wait()` und `sleep()`. Merkregel: ***`wait()` gibt die Sperre ab, `sleep()` nimmt sie mit ins Bett.***",
+   "hints": [
+    "Zwei Aussagen sind falsch. Fragen Sie sich bei jeder: Was passiert mit der **Sperre**?",
+    "Zu welcher Klasse gehören `wait()` und `notify()` - `Thread` oder `Object`?",
+    "Vergleichen Sie `notify()` und `notifyAll()`: nur eine der beiden weckt alle."
+   ],
+   "pitfalls": [
+    "`wait()` und `sleep()` verwechseln - nur `wait()` gibt die Sperre frei.",
+    "`wait()`/`notify()` außerhalb eines `synchronized`-Bereichs aufrufen - das kompiliert, wirft aber zur Laufzeit eine `IllegalMonitorStateException`.",
+    "Verschiedene Objekte als Sperre benutzen und sich wundern, dass der wechselseitige Ausschluss nicht wirkt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 318,
+     "label": "10.1. Synchronisation mit Monitor - kritischer Bereich, Sperre"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 319,
+     "label": "10.1. Nutzung des Monitors mit dem Schlüsselwort synchronized"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 326,
+     "label": "10.1. wait und notify"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 327,
+     "label": "10.1. Beispiel Producer/Consumer (1/3)"
+    },
+    {
+     "file": "10_ThreadsSockets/ProdConListing.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "threads",
+    "synchronized",
+    "wait-notify",
+    "producer-consumer",
+    "theorie",
+    "multi-mc",
+    "low-priority"
+   ],
+   "id": "java-io-threads-006",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 2,
+   "points": 4,
+   "examStyle": false,
+   "title": "Warum müssen Ströme geschlossen werden?",
+   "prompt": "Ein Studierender schreibt Daten in eine Datei und wundert sich, dass die Datei nach dem Programmende leer ist:\n\n```java\nPrintWriter pw = new PrintWriter( new FileWriter(\"out.txt\") );\npw.println(\"Hugo,Test,12345678,3.7\");\n// kein close(), kein flush()\n```\n\na) Erklären Sie in 2-3 Sätzen, **warum** ein Ausgabestrom nach der Benutzung geschlossen werden muss.\n\nb) Geben Sie die **zwei** Schreibweisen an, mit denen man das zuverlässig erreicht - auch dann, wenn zwischendurch eine Exception auftritt. Schreiben Sie beide als kurzen Codeausschnitt hin.",
+   "solution": "**a) Begründung (2 P.)**\n\nBeim Öffnen einer Datei wird ein **Dateipuffer** im Hauptspeicher eingerichtet, damit nicht jede einzelne Schreiboperation den langsamen Hintergrundspeicher ansprechen muss. Geschriebene Daten stehen deshalb zunächst nur im Puffer. `close()` schreibt den Puffer zurück (implizites `flush()`) und gibt außerdem die belegten Betriebssystem-Ressourcen wieder frei. Ohne `close()` droht **Datenverlust**; nach dem Schließen sind umgekehrt keine Operationen auf dem Strom mehr zulässig.\n\n**b) Die beiden Schreibweisen (je 1 P.)**\n\n*(1) `close()` im `finally`-Block* - so macht es das Skript in `Student.java`:\n\n```java\nPrintWriter pw = null;\ntry {\n  pw = new PrintWriter( new FileWriter(\"out.txt\") );\n  pw.println(\"Hugo,Test,12345678,3.7\");\n}\ncatch (IOException e) { /* Fehlerbehandlung */ }\nfinally {\n  if (pw != null) pw.close();   // wirft keine IOException\n}\n```\n\n*(2) try-with-resources* - der Strom wird in Klammern hinter `try` deklariert und am Ende des Blocks automatisch geschlossen (auch im Fehlerfall):\n\n```java\ntry ( PrintWriter pw = new PrintWriter( new FileWriter(\"out.txt\") ) ) {\n  pw.println(\"Hugo,Test,12345678,3.7\");\n}\ncatch (IOException e) { /* Fehlerbehandlung */ }\n```\n\n**Bewertungsrubrik (4 P.)**\n- 1 P.: Puffer / gepufferte Ausgabe erwähnt, Daten stehen noch nicht in der Datei\n- 1 P.: Datenverlust bzw. Ressourcenfreigabe als Folge genannt\n- 1 P.: `finally`-Variante mit `null`-Prüfung korrekt hingeschrieben\n- 1 P.: try-with-resources korrekt hingeschrieben\n- Abzug, wenn `close()` nur im `try`-Block steht (wird bei einer Exception übersprungen)",
+   "explanation": "Das Skript nennt bei den Grundoperationen auf Dateien ausdrücklich: *\"Dateien sollten nach Verwendung immer geschlossen werden - sonst evtl. Datenverlust: Zurückschreiben des Dateipuffers\"* (S. 277). Der Puffer ist eine reine Optimierung: er hält einen Teil der Datei im Hauptspeicher, damit nicht jede Operation sofort auf die langsame Platte geht.\n\nDaraus folgen drei Dinge:\n- `flush()` schreibt den Puffer zurück, lässt den Strom aber offen. Deshalb steht in `Student.writeToStream()` ein `pw.flush()` nach jedem `println()`.\n- `close()` macht implizit ein `flush()` und gibt zusätzlich die Ressourcen frei.\n- Nach `close()` sind keine Operationen mehr erlaubt.\n\nWarum reicht `close()` am Ende des `try`-Blocks nicht? Weil die Ausführung bei einer Exception sofort in den `catch`-Block springt und die restlichen Anweisungen des `try`-Blocks überspringt. Nur der `finally`-Block wird garantiert ausgeführt - und genau dieselbe Garantie gibt try-with-resources, nur kürzer und ohne `null`-Prüfung.\n\nMerkregel: *Was man öffnet, schließt man - und zwar dort, wo man auch im Fehlerfall hinkommt.*",
+   "hints": [
+    "Warum wird beim Öffnen einer Datei überhaupt ein Puffer eingerichtet? Die Antwort erklärt auch, warum die Datei leer bleibt.",
+    "Welcher Block eines `try`-Konstrukts wird garantiert ausgeführt, egal was passiert?",
+    "Die zweite Schreibweise kennen Sie aus `WebseiteAbruf.java`: dort steht die Deklaration des `BufferedReader` in runden Klammern direkt hinter `try`."
+   ],
+   "pitfalls": [
+    "`close()` ans Ende des `try`-Blocks schreiben - bei einer Exception wird es nie erreicht.",
+    "Im `finally` die `null`-Prüfung vergessen: schlägt schon der Konstruktor fehl, ist die Variable noch `null` und `pw.close()` wirft eine `NullPointerException`.",
+    "`flush()` und `close()` verwechseln - `flush()` leert nur den Puffer, der Strom bleibt offen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 277,
+     "label": "9.2. Grundoperationen auf Dateien - öffnen/schließen, Dateipuffer"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 278,
+     "label": "9.2. Grundoperationen auf Dateien - flush"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 287,
+     "label": "9.3. Operationen der Klasse OutputStream - flush, close"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 306,
+     "label": "9.5. Beispiel Student.java (3/4) - close() im finally"
+    },
+    {
+     "file": "09_Serialisierung/WebseiteAbruf.java",
+     "page": 0,
+     "label": "try-with-resources im Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "streams",
+    "close",
+    "flush",
+    "try-with-resources",
+    "finally",
+    "short-answer",
+    "low-priority"
+   ],
+   "id": "java-io-threads-007",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Race Condition am Bankkonto erklären",
+   "prompt": "Gegeben ist das Beispiel `Bankkonto.java` aus der Vorlesung:\n\n```java\nclass Konto {\n  private double saldo = 0.0;\n  public Konto(double saldo) { this.saldo = saldo; }\n  public double getSaldo() { return saldo; }\n  public boolean abheben(double betrag) {\n    double neuerSaldo = getSaldo() - betrag;\n    boolean ok = true;\n    if (neuerSaldo < 0)\n      ok = frageSchufa(neuerSaldo);   // Netzwerkanfrage, kann dauern ...\n    if (ok)\n      saldo = neuerSaldo;             // Buchung durchführen\n    return ok;\n  }\n}\n\nclass Banking extends Thread {\n  Konto konto; double betrag;\n  Banking(Konto k, double b) { konto = k; betrag = b; }\n  public void run() {\n    konto.abheben(betrag);\n    System.out.println(\"Kontostand: \" + konto.getSaldo());\n  }\n}\n\nclass Bankkonto {\n  public static void main(String args[]) {\n    Konto konto = new Konto(10);        // Konto mit 10 EUR\n    for (int i = 0; i < 3; i++) {       // dreimal 10 EUR abheben\n      Banking t = new Banking(konto, 10);\n      t.start();\n    }\n  }\n}\n```\n\nEine mögliche Ausgabe lautet:\n\n```\nKontostand: 0.0\nKontostand: -10.0\nKontostand: -10.0\n```\n\na) Warum erscheint **zweimal derselbe** Kontostand `-10.0`, obwohl dreimal 10 EUR abgehoben werden? Erklären Sie die zeitliche Verzahnung der drei Threads.\n\nb) Wie behebt man das Problem? Geben Sie die konkrete Code-Änderung an und begründen Sie, warum sie wirkt.",
+   "solution": "**a) Erklärung (4 P.)**\n\n`abheben()` ist **nicht atomar**: zwischen dem Lesen des Saldos (`getSaldo()`) und dem Zurückschreiben (`saldo = neuerSaldo`) liegt eine lange Pause - die Schufa-Anfrage. In dieser Pause darf der Scheduler auf einen anderen Thread umschalten. Der Ablauf im Beispiel:\n\n| Zeit | Thread 1 | Thread 2 | Thread 3 |\n|---|---|---|---|\n| 1 | `getSaldo()` -> 10 | | |\n| 2 | `saldo = 0` | | |\n| 3 | | `getSaldo()` -> 0 | |\n| 4 | | ...frage Schufa... | `getSaldo()` -> 0 |\n| 5 | | | ...frage Schufa... |\n| 6 | | `saldo = -10` | |\n| 7 | | | `saldo = -10` |\n\nThread 2 und Thread 3 lesen **beide** den Wert 0, rechnen beide `0 - 10 = -10` und schreiben beide `-10` zurück. Die zweite Buchung überschreibt die erste, statt sie fortzuschreiben - eine Abhebung geht verloren. Korrekt wäre `-20`. Diese Situation heißt **Race Condition**: das Ergebnis hängt von der zufälligen zeitlichen Verzahnung ab.\n\n**b) Lösung (2 P.)**\n\nWechselseitiger Ausschluss für `abheben()`, d.h. die Methode wird zum **Monitor**:\n\n```java\npublic synchronized boolean abheben(double betrag) { /* unverändert */ }\n```\n\nAlternativ mit einem Block: `synchronized (this) { ... }` um den gesamten Rumpf.\n\nBegründung: Die Sperre wird auf dem `Konto`-Objekt gesetzt, das sich alle drei Threads teilen. Ein zweiter Thread, der `abheben()` betreten will, muss warten, bis der erste die Methode verlassen hat. Lesen, Rechnen und Schreiben werden dadurch zu einem *atomaren* Programmfragment - eine Unterbrechung mitten im kritischen Bereich ist nicht mehr möglich.\n\n**Bewertungsrubrik (6 P.)**\n- 1 P.: erkannt, dass alle drei Threads dasselbe `Konto`-Objekt benutzen\n- 2 P.: Lese-/Schreib-Verzahnung konkret beschrieben (zwei Threads lesen denselben Wert)\n- 1 P.: Begriff *Race Condition* / nicht-atomare Operation genannt\n- 1 P.: `synchronized` an `abheben()` (oder `synchronized`-Block) als Lösung angegeben\n- 1 P.: begründet, dass die Sperre auf dem gemeinsamen Objekt liegt und den Bereich atomar macht\n- Kein Punkt für 'Thread.sleep() einbauen' oder 'nur einen Thread starten'",
+   "explanation": "Dieses Beispiel ist das Standard-Lehrstück für nebenläufige Fehler. Der entscheidende Satz im Skript lautet: *\"Problem: zeitliche Verzahnung in `abheben()`\"* mit der Lösung *\"wechselseitiger Ausschluss für `abheben()`\"* (S. 317).\n\nWichtig ist zu verstehen, dass der Fehler **nicht** an der Schufa-Anfrage liegt - sie macht das Zeitfenster nur groß genug, damit man den Fehler zuverlässig sieht. Auch ohne sie wäre `saldo = getSaldo() - betrag` ein Lese-Ändern-Schreib-Zyklus, der jederzeit unterbrochen werden kann. Genau dasselbe Muster zeigt `Listing.java` mit `cnt++` und `SlowListing.java` mit `nextNumber()`: dort erscheinen doppelte Zählerstände.\n\nDrei Voraussetzungen müssen zusammenkommen, damit eine Race Condition entsteht:\n1. mehrere Threads,\n2. gemeinsam benutzte, veränderliche Daten,\n3. eine nicht-atomare Lese-Ändern-Schreib-Folge.\n\nFällt eine davon weg, ist der Code sicher. `synchronized` beseitigt Punkt 3. Merkregel: *Wer denselben Zustand liest und danach schreibt, muss beides in derselben Sperre tun.*",
+   "hints": [
+    "Zeichnen Sie eine Zeitachse mit drei Spalten und tragen Sie ein, wann jeder Thread `getSaldo()` liest und wann er `saldo` schreibt.",
+    "Wie viele `Konto`-Objekte gibt es in diesem Programm? Schauen Sie genau in die Schleife in `main`.",
+    "Die Lösung ist ein einziges Schlüsselwort in der Signatur von `abheben()`."
+   ],
+   "pitfalls": [
+    "Glauben, der Fehler liege an der Schufa-Anfrage. Sie vergrößert nur das Zeitfenster; das Problem ist der Lese-Ändern-Schreib-Zyklus.",
+    "`getSaldo()` synchronisieren statt `abheben()` - der kritische Bereich umfasst Lesen **und** Schreiben, nicht nur das Lesen.",
+    "Die Ausgabe `0.0, -10.0, -10.0` für die einzig mögliche halten - sie ist nicht deterministisch und kann bei jedem Lauf anders aussehen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 315,
+     "label": "10.1. Beispiel Bankkonto (1/2)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 316,
+     "label": "10.1. Beispiel Bankkonto (2/2)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 317,
+     "label": "10.1. Beispiel Bankkonto Ausgabe - zeitliche Verzahnung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 318,
+     "label": "10.1. Synchronisation mit Monitor"
+    },
+    {
+     "file": "10_ThreadsSockets/Bankkonto.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "threads",
+    "race-condition",
+    "synchronized",
+    "bankkonto",
+    "short-answer",
+    "low-priority"
+   ],
+   "id": "java-io-threads-008",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": false,
+   "title": "Sockets und InetAddress - Kurzfragen",
+   "prompt": "Beantworten Sie die folgenden vier Kurzfragen zur Netzwerkprogrammierung in Java (je 1-2 Sätze, Paket `java.net`).\n\na) Worin unterscheiden sich `ServerSocket` und `Socket`?\n\nb) Was macht der Aufruf `accept()` und was liefert er zurück?\n\nc) Wie kommt man von einem verbundenen `Socket` an die Daten - welche zwei Methoden gibt es und was liefern sie?\n\nd) Mit welcher Klasse und welchen Methoden ermittelt man zu einem Hostnamen wie `www.example.com` die IP-Adresse? Welche Ausnahme kann dabei auftreten?",
+   "solution": "**a) ServerSocket vs. Socket (1,5 P.)**\n\n`ServerSocket` ist die *Annahmestelle* auf der Serverseite: Der Konstruktor `ServerSocket(int port)` bindet die Anwendung an einen Port und wartet dort auf eingehende Verbindungswünsche. `Socket` ist dagegen der *Endpunkt einer bestehenden Verbindung*, über den tatsächlich Daten fließen. Der Client erzeugt seinen `Socket` direkt mit `new Socket(String host, int port)` bzw. `new Socket(InetAddress address, int port)`.\n\n**b) accept() (1,5 P.)**\n\n`public Socket accept() throws IOException` wartet auf einen eingehenden Verbindungswunsch. Der Aufruf **blockiert** so lange, bis sich ein Client anmeldet. Bei erfolgreichem Verbindungsaufbau liefert er ein `Socket`-Objekt, über das die Kommunikation mit genau diesem Client läuft - der `ServerSocket` bleibt frei für weitere `accept()`-Aufrufe.\n\n**c) Datenströme aus dem Socket (1,5 P.)**\n\n```java\nInputStream  in  = socket.getInputStream();   // Daten empfangen\nOutputStream out = socket.getOutputStream();  // Daten senden\n```\n\nBeide werfen `IOException`. Man kann sie direkt benutzen oder mit Filterströmen in einen bequemeren Typ schachteln, z.B. `new BufferedReader(new InputStreamReader(in))`. Nach Ende der Kommunikation werden Ein-/Ausgabestrom **und** der Socket mit `close()` geschlossen.\n\n**d) Namensauflösung (1,5 P.)**\n\nDie Klasse `InetAddress`. Ein Objekt entsteht über die statischen Methoden `InetAddress.getByName(String host)` oder `InetAddress.getLocalHost()`. Abfragen kann man es mit:\n\n- `String getHostName()` - symbolischer Name (z.B. `www.example.com`)\n- `String getHostAddress()` - IP-Adresse als String (z.B. `192.0.2.1`)\n- `byte[] getAddress()` - IP-Adresse als Byte-Array (4 Bytes bei IPv4, 16 bei IPv6)\n\nKann die Adresse nicht ermittelt werden (z.B. kein DNS-Server erreichbar), wird eine **`UnknownHostException`** geworfen.\n\n**Bewertungsrubrik (6 P.)** - je 1,5 P. pro Teilaufgabe:\n- a) Server wartet / Client verbindet, Port im Konstruktor: 1,5 P.\n- b) blockiert **und** liefert `Socket`: je 0,75 P.\n- c) beide Methodennamen korrekt: 1,5 P. (nur eine: 0,75 P.)\n- d) `InetAddress` + `getByName` + `UnknownHostException`: je 0,5 P.",
+   "explanation": "Das Skript beschreibt eine Socket-Verbindung als etwas, das *dem Zugriff auf eine Datei ähnelt*: Verbindung aufbauen, Daten lesen und/oder schreiben, Verbindung abbauen. Genau deshalb liefert ein Socket ganz normale `InputStream`/`OutputStream`-Objekte - alles, was Sie über `java.io` gelernt haben, gilt hier unverändert weiter.\n\nDie Rollenverteilung ist der Kern:\n\n```java\n// Server                              // Client\nServerSocket echod = new ServerSocket(7);   Socket sock = new Socket(host, 7);\nSocket socket = echod.accept();             InputStream in = sock.getInputStream();\nInputStream in = socket.getInputStream();   OutputStream out = sock.getOutputStream();\n```\n\nBeim `EchoServer` des Skripts steckt der `accept()`-Aufruf in einer Endlosschleife, und für jeden angenommenen Client wird ein eigener `EchoClientThread` gestartet - so kann der Server mehrere Clients gleichzeitig bedienen, während `accept()` schon auf den nächsten wartet. Hier greifen Kapitel 9 und 10 ineinander.\n\nPortnummern aus den Beispielen: 7 = Echo, 13 = Daytime, 43 = WHOIS. Merkregel: *Der `ServerSocket` ist die Türklingel, der `Socket` ist das Gespräch.*",
+   "hints": [
+    "Überlegen Sie für a): welches der beiden Objekte gibt es auf **beiden** Seiten der Verbindung?",
+    "Zu b): Was tut ein Programm, während es auf eine Verbindung wartet - rechnet es weiter?",
+    "Zu d): Schauen Sie sich `Lookup.java` an. Dort stehen genau die gesuchte Klasse, zwei Abfragemethoden und der `catch`-Block mit der Ausnahme."
+   ],
+   "pitfalls": [
+    "`ServerSocket` und `Socket` verwechseln - `accept()` gibt es nur beim `ServerSocket`, `getInputStream()` nur beim `Socket`.",
+    "Vergessen, dass `accept()` blockiert: der Aufruf gehört deshalb in eine Schleife bzw. der weitere Ablauf in einen eigenen Thread.",
+    "`getHostName()` und `getHostAddress()` vertauschen: der Name ist symbolisch, die Address-Methode liefert die IP."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 330,
+     "label": "10.2. Sockets - Adressierung mit InetAddress"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 331,
+     "label": "10.2. Sockets - getByName, getLocalHost, UnknownHostException"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 333,
+     "label": "10.2. Aufbau einer einfachen Socket-Verbindung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 334,
+     "label": "10.2. getInputStream / getOutputStream"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 341,
+     "label": "10.2. Server Sockets - ServerSocket(int port), accept()"
+    },
+    {
+     "file": "10_ThreadsSockets/Lookup.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    },
+    {
+     "file": "10_ThreadsSockets/EchoServer.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "sockets",
+    "serversocket",
+    "inetaddress",
+    "netzwerk",
+    "short-answer",
+    "low-priority"
+   ],
+   "id": "java-io-threads-009",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Textdatei schreiben und wieder einlesen",
+   "prompt": "**Code-Lücken ausfüllen (6 Lücken, je 2 P.).**\n\nDas folgende Programm schreibt zwei Zeilen im CSV-Format in die Datei `noten.txt` und liest sie anschließend wieder ein. Ergänzen Sie die Lücken `____(n)____`, sodass eine lauffähige Klasse entsteht und die Ausgabe\n\n```\nMeier hat 2.3\nSchulz hat 1.7\nZeilen: 2\n```\n\nentsteht. Setzen Sie in jede Lücke nur einen Namen bzw. ein Schlüsselwort - keine ganzen Anweisungen.",
+   "code": "import java.io.*;\n\nclass NotenDatei {\n  public static void main(String[] args) {\n    PrintWriter pw = null;\n    try {\n      pw = new PrintWriter( new ____(1)____(\"noten.txt\") );   // Text in Datei schreiben\n      pw.println(\"Meier,2.3\");\n      pw.println(\"Schulz,1.7\");\n    }\n    catch (IOException e) {\n      System.out.println(\"Schreibfehler\");\n    }\n    finally {\n      if (pw != null) pw.____(2)____();          // Puffer leeren, Ressourcen freigeben\n    }\n\n    try ( BufferedReader reader = new BufferedReader( new ____(3)____(\"noten.txt\") ) ) {\n      String zeile;\n      int anzahl = 0;\n      while ( (zeile = reader.____(4)____()) != ____(5)____ ) {\n        String[] felder = zeile.____(6)____(\",\");\n        System.out.println(felder[0] + \" hat \" + felder[1]);\n        anzahl++;\n      }\n      System.out.println(\"Zeilen: \" + anzahl);\n    }\n    catch (IOException e) {\n      System.out.println(\"Lesefehler\");\n    }\n  }\n}",
+   "expectedOutput": "Meier hat 2.3\nSchulz hat 1.7\nZeilen: 2",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "FileWriter"
+     ],
+     "explanation": "`PrintWriter` ist ein Filterstrom für *formatierte Text-Ausgabe*; die Verbindung zur Datei stellt ein `FileWriter` her. Das Skript benutzt in `Student.java` genau diese Schachtelung: `new PrintWriter(new FileWriter(\"out.txt\"))`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "close"
+     ],
+     "explanation": "`close()` schreibt den Dateipuffer zurück (implizites `flush()`) und gibt die Ressourcen frei. `PrintWriter.close()` wirft **keine** `IOException`, deshalb genügt hier die `null`-Prüfung ohne inneres try."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "FileReader"
+     ],
+     "explanation": "Gegenstück zu `FileWriter`: `FileReader` liest zeichenweise aus einer Datei, `BufferedReader` macht daraus zeilenweises Lesen. Ein `FileInputStream` wäre hier ein Compiler-Fehler, denn `BufferedReader` erwartet einen `Reader`."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "readLine"
+     ],
+     "explanation": "`readLine()` liest eine ganze Zeile ohne Zeilenendezeichen und liefert sie als `String`. `read()` würde einen einzelnen `int` liefern und nicht zu `String zeile` passen."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "null"
+     ],
+     "explanation": "`readLine()` gibt am Dateiende `null` zurück - nicht `-1`. Das `-1` gilt nur für die byte-orientierten `read()`-Methoden."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "split"
+     ],
+     "explanation": "`split(\",\")` zerlegt die Zeile am Komma in ein `String[]`. Genau so macht es der Konstruktor `Student(BufferedReader reader)` im Skript."
+    }
+   ],
+   "solution": "import java.io.*;\n\nclass NotenDatei {\n  public static void main(String[] args) {\n    PrintWriter pw = null;\n    try {\n      pw = new PrintWriter( new FileWriter(\"noten.txt\") );\n      pw.println(\"Meier,2.3\");\n      pw.println(\"Schulz,1.7\");\n    }\n    catch (IOException e) {\n      System.out.println(\"Schreibfehler\");\n    }\n    finally {\n      if (pw != null) pw.close();\n    }\n\n    try ( BufferedReader reader = new BufferedReader( new FileReader(\"noten.txt\") ) ) {\n      String zeile;\n      int anzahl = 0;\n      while ( (zeile = reader.readLine()) != null ) {\n        String[] felder = zeile.split(\",\");\n        System.out.println(felder[0] + \" hat \" + felder[1]);\n        anzahl++;\n      }\n      System.out.println(\"Zeilen: \" + anzahl);\n    }\n    catch (IOException e) {\n      System.out.println(\"Lesefehler\");\n    }\n  }\n}",
+   "explanation": "Die Aufgabe übt das **Schachteln von Strömen**, das Grundmuster von `java.io`. Java-Ströme arbeiten byte-orientiert; für Text stellt Java zusätzlich die Klassen `Reader` und `Writer` bereit. Daraus ergibt sich eine sehr regelmäßige Tabelle:\n\n| Richtung | Datei-Anschluss | bequemer Aufsatz |\n|---|---|---|\n| schreiben | `FileWriter` | `PrintWriter` (`println`, `print`) |\n| lesen | `FileReader` | `BufferedReader` (`readLine`) |\n| schreiben (Bytes) | `FileOutputStream` | `ObjectOutputStream`, `DataOutputStream` |\n| lesen (Bytes) | `FileInputStream` | `ObjectInputStream`, `DataInputStream` |\n\nDie *innere* Klasse kennt die Datei, die *äußere* liefert die bequemen Methoden - deshalb steht der Dateiname immer im inneren Konstruktor.\n\nBeachten Sie außerdem die beiden unterschiedlichen Aufräum-Techniken im selben Programm: oben klassisch `close()` im `finally` (so wie im Skript in `Student.java`), unten try-with-resources, bei dem der `BufferedReader` automatisch geschlossen wird. Beide sind korrekt; try-with-resources spart die `null`-Prüfung.\n\nMerkregel: *Wer `readLine()` benutzt, prüft gegen `null`; wer `read()` benutzt, prüft gegen `-1`.*",
+   "hints": [
+    "Lücken 1 und 3 sind ein Paar: die eine Klasse schreibt Zeichen in eine Datei, die andere liest Zeichen aus einer Datei.",
+    "Für Lücke 4/5: Welchen Typ hat `zeile`? Der Rückgabetyp der gesuchten Methode muss dazu passen - und daraus folgt auch, womit man auf das Dateiende prüft.",
+    "Lücke 6 ist eine `String`-Methode, die ein `String[]` liefert. Sie steht im Skript im Konstruktor `Student(BufferedReader)`."
+   ],
+   "pitfalls": [
+    "In Lücke 3 `FileInputStream` einsetzen - das ist ein Byte-Strom und passt nicht in den Konstruktor von `BufferedReader` (Compiler-Fehler).",
+    "In Lücke 5 `-1` statt `null` schreiben - `-1` gilt nur für `read()`, nicht für `readLine()`.",
+    "`pw.close()` weglassen: die Datei bleibt dann leer, weil der Puffer nie zurückgeschrieben wird."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 303,
+     "label": "9.5. Formatierte Text-Ein-/Ausgabe - Reader und Writer"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 305,
+     "label": "9.5. Beispiel Student.java (2/4) - writeToStream mit PrintWriter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 306,
+     "label": "9.5. Beispiel Student.java (3/4) - PrintWriter(new FileWriter(...))"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 307,
+     "label": "9.5. Beispiel Student.java (4/4) - BufferedReader(new FileReader(...))"
+    },
+    {
+     "file": "09_Serialisierung/Student.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "streams",
+    "filewriter",
+    "filereader",
+    "bufferedreader",
+    "printwriter",
+    "fill-gaps",
+    "low-priority"
+   ],
+   "id": "java-io-threads-010",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Drei Threads rechnen, main sammelt mit join() ein",
+   "prompt": "**Code-Lücken ausfüllen (6 Lücken, je 2 P.).**\n\nDrei Threads berechnen jeweils die Summe eines Zahlenbereichs (1-10, 11-20, 21-30). Die `main`-Methode wartet auf das Ende aller Threads und addiert die Teilergebnisse. Ergänzen Sie die Lücken `____(n)____`, sodass das Programm läuft und `Gesamtsumme: 465` ausgibt.",
+   "code": "class SummenThread extends ____(1)____ {\n  private int von, bis;\n  private int summe = 0;\n  public SummenThread(int von, int bis) { this.von = von; this.bis = bis; }\n\n  public void ____(2)____() {                 // nebenläufig ausgeführter Code\n    for (int i = von; i <= bis; i++) summe += i;\n  }\n\n  public int getSumme() { return summe; }\n}\n\nclass ThreadSumme {\n  public static void main(String[] args) throws ____(5)____ {\n    SummenThread[] t = new SummenThread[3];\n    for (int i = 0; i < 3; i++) {\n      t[i] = new SummenThread(i*10 + 1, i*10 + 10);\n      t[i].____(3)____();                     // Thread nebenläufig starten\n    }\n    int gesamt = 0;\n    for (int i = 0; i < 3; i++) {\n      t[i].____(4)____();                     // auf das Ende dieses Threads warten\n      gesamt += t[i].____(6)____;\n    }\n    System.out.println(\"Gesamtsumme: \" + gesamt);\n  }\n}",
+   "expectedOutput": "Gesamtsumme: 465",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "Thread",
+      "java.lang.Thread"
+     ],
+     "explanation": "Für eigene Threads muss laut Skript eine **Unterklasse von `Thread`** definiert werden. Alternativ ginge `implements Runnable` - dann müsste man die Objekte aber noch in ein `Thread`-Objekt einpacken."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "run"
+     ],
+     "explanation": "`run()` enthält den Code, den der Thread ausführen soll, und **muss** in der Unterklasse überschrieben werden. Der Thread endet, wenn `run()` zurückkehrt."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "start"
+     ],
+     "explanation": "`start()` startet den Thread und kehrt **sofort** zum Aufrufer zurück; die `run()`-Methode läuft nebenläufig. Ein direkter Aufruf von `run()` würde alles im main-Thread nacheinander abarbeiten."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "join"
+     ],
+     "explanation": "`join()` blockiert den aufrufenden Thread (hier `main`), bis der Zielthread fertig ist. Ohne `join()` liest `main` die Teilsummen, während die Threads noch rechnen - typischerweise käme `Gesamtsumme: 0` heraus."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "InterruptedException",
+      "Exception"
+     ],
+     "explanation": "`join()` ist als `throws InterruptedException` deklariert. Diese geprüfte Ausnahme muss gefangen oder - wie hier - mit `throws` weitergereicht werden. `Exception` wäre ebenfalls compilierbar, aber unnötig unspezifisch."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "getSumme()",
+      "getSumme ()"
+     ],
+     "explanation": "Das Ergebnis eines Threads muss laut Skript *in Attributen des Thread-Objekts gespeichert* werden - `run()` selbst kann nichts zurückgeben, denn sein Rückgabetyp ist `void`. Deshalb die get-Methode."
+    }
+   ],
+   "solution": "class SummenThread extends Thread {\n  private int von, bis;\n  private int summe = 0;\n  public SummenThread(int von, int bis) { this.von = von; this.bis = bis; }\n\n  public void run() {\n    for (int i = von; i <= bis; i++) summe += i;\n  }\n\n  public int getSumme() { return summe; }\n}\n\nclass ThreadSumme {\n  public static void main(String[] args) throws InterruptedException {\n    SummenThread[] t = new SummenThread[3];\n    for (int i = 0; i < 3; i++) {\n      t[i] = new SummenThread(i*10 + 1, i*10 + 10);\n      t[i].start();\n    }\n    int gesamt = 0;\n    for (int i = 0; i < 3; i++) {\n      t[i].join();\n      gesamt += t[i].getSumme();\n    }\n    System.out.println(\"Gesamtsumme: \" + gesamt);\n  }\n}",
+   "explanation": "Die Aufgabe zeigt das vollständige Muster *\"Arbeit verteilen - warten - Ergebnisse einsammeln\"*.\n\nRechnerisch: 1+...+10 = 55, 11+...+20 = 155, 21+...+30 = 255, zusammen **465**.\n\nEntscheidend sind zwei Details:\n\n1. **Zwei getrennte Schleifen.** Erst werden alle drei Threads gestartet, danach wird auf sie gewartet. Wer `start()` und `join()` in dieselbe Schleife schreibt, bekommt zwar dasselbe Ergebnis, aber die Threads laufen streng nacheinander - der Nebenläufigkeitsgewinn ist weg.\n\n2. **Ergebnisrückgabe über Attribute.** `run()` hat den Rückgabetyp `void`. Das Skript sagt dazu: das Ergebnis *\"kann / muss in Attributen des Thread-Objekts gespeichert werden\"*. Deshalb schreibt `run()` in das Attribut `summe`, und `main` holt es sich nach `join()` mit `getSumme()` ab. Ohne `join()` wäre dieser Zugriff ein Lesen halbfertiger Daten.\n\nHier gibt es übrigens **keine** Race Condition: jeder Thread schreibt nur in sein eigenes `summe`-Attribut, es gibt keinen gemeinsam veränderten Zustand. Deshalb wird auch kein `synchronized` gebraucht.\n\nMerkregel: *`start()` verteilt, `join()` sammelt ein.*",
+   "hints": [
+    "Lücken 1 und 2 legen fest, wovon die Klasse erbt und welche Methode überschrieben wird - beides steht auf der Skript-Folie 'Threads in Java'.",
+    "Lücken 3 und 4 sind die beiden Aufrufe aus `main`. Eine kehrt sofort zurück, die andere blockiert - welche steht in welcher Schleife?",
+    "Lücke 5 folgt zwingend aus Lücke 4: schauen Sie in die Signatur der dort gesuchten Methode."
+   ],
+   "pitfalls": [
+    "In Lücke 3 `run` statt `start` einsetzen - das kompiliert und liefert sogar 465, startet aber keinen einzigen Thread.",
+    "`throws InterruptedException` vergessen - `join()` ist eine geprüfte Ausnahme, das ist ein Compiler-Fehler.",
+    "In Lücke 6 `summe` schreiben - das Attribut ist `private`, ein direkter Zugriff von außen ist nicht erlaubt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 311,
+     "label": "10.1. Threads in Java - run() und start()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 313,
+     "label": "10.1. Synchronisation von Threads - join(), Ergebnis in Attributen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 314,
+     "label": "10.1. Beispiel WorkerThreadJoin"
+    },
+    {
+     "file": "10_ThreadsSockets/WorkerThreadJoin.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "threads",
+    "start",
+    "join",
+    "runnable",
+    "fill-gaps",
+    "low-priority"
+   ],
+   "id": "java-io-threads-011",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": false,
+   "title": "Mini-Echo: Server und Client im selben Programm",
+   "prompt": "**Code-Lücken ausfüllen (6 Lücken, je 2 P.).**\n\nDamit man das Echo-Beispiel des Skripts ohne zweite Konsole ausprobieren kann, laufen hier Server und Client im selben Programm: Der `EchoDienst`-Thread nimmt eine Verbindung an und schickt jedes empfangene Byte zurück, `main` verbindet sich als Client und schickt `OFP`.\n\nErgänzen Sie die Lücken, sodass das Programm folgende Ausgabe erzeugt:\n\n```\nEcho: OFP\nAdresse: 127.0.0.1\n```",
+   "code": "import java.io.*;\nimport java.net.*;\n\nclass EchoDienst extends Thread {\n  private ServerSocket server;\n  public EchoDienst(ServerSocket server) { this.server = server; }\n  public void run() {\n    try {\n      Socket verbindung = server.____(1)____();       // wartet auf einen Client\n      InputStream  in  = verbindung.____(2)____();    // Daten vom Client empfangen\n      OutputStream out = verbindung.____(3)____();    // Daten an den Client senden\n      int c;\n      while ( (c = in.read()) != ____(4)____ ) out.write(c);   // Echo zurückschicken\n      verbindung.close();\n    }\n    catch (IOException e) { System.out.println(\"Server: \" + e.toString()); }\n  }\n}\n\nclass MiniEcho {\n  public static void main(String[] args) throws Exception {\n    ServerSocket server = new ServerSocket(0);   // 0 = freien Port vom System wählen lassen\n    int port = server.getLocalPort();\n    EchoDienst dienst = new EchoDienst(server);\n    dienst.start();\n\n    Socket client = new ____(5)____(\"localhost\", port);\n    OutputStream out = client.getOutputStream();\n    BufferedReader in = new BufferedReader( new InputStreamReader(client.getInputStream()) );\n    out.write(\"OFP\\r\\n\".getBytes());\n    out.flush();\n    System.out.println(\"Echo: \" + in.readLine());\n    client.close();\n    dienst.join();\n    server.close();\n\n    InetAddress addr = InetAddress.getByName(\"localhost\");\n    System.out.println(\"Adresse: \" + addr.____(6)____());\n  }\n}",
+   "expectedOutput": "Echo: OFP\nAdresse: 127.0.0.1",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "accept"
+     ],
+     "explanation": "`public Socket accept() throws IOException` wartet auf einen eingehenden Verbindungswunsch und **blockiert**, bis sich ein Client anmeldet. Genau deshalb steht der Aufruf hier in einem eigenen Thread - sonst würde `main` an dieser Stelle stehenbleiben und sich nie selbst verbinden können."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "getInputStream"
+     ],
+     "explanation": "Liefert den `InputStream` der bestehenden Verbindung, also den Kanal, über den Daten vom Client hereinkommen."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "getOutputStream"
+     ],
+     "explanation": "Liefert den `OutputStream` derselben Verbindung. Ein Socket ist bidirektional, liefert die beiden Richtungen aber als zwei getrennte, unidirektionale Ströme."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "-1"
+     ],
+     "explanation": "`in.read()` liefert am Stromende `-1`. Hier tritt dieser Fall ein, sobald der Client seine Verbindung mit `close()` beendet."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "Socket"
+     ],
+     "explanation": "Der Client baut die Verbindung mit `new Socket(String host, int port)` auf. Ein `ServerSocket` wäre falsch - der wartet auf Verbindungen, statt eine aufzubauen."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "getHostAddress"
+     ],
+     "explanation": "`getHostAddress()` liefert die IP-Adresse als String (hier `127.0.0.1`). `getHostName()` hätte den symbolischen Namen `localhost` geliefert, `getAddress()` ein `byte[]`."
+    }
+   ],
+   "solution": "import java.io.*;\nimport java.net.*;\n\nclass EchoDienst extends Thread {\n  private ServerSocket server;\n  public EchoDienst(ServerSocket server) { this.server = server; }\n  public void run() {\n    try {\n      Socket verbindung = server.accept();\n      InputStream  in  = verbindung.getInputStream();\n      OutputStream out = verbindung.getOutputStream();\n      int c;\n      while ( (c = in.read()) != -1 ) out.write(c);\n      verbindung.close();\n    }\n    catch (IOException e) { System.out.println(\"Server: \" + e.toString()); }\n  }\n}\n\nclass MiniEcho {\n  public static void main(String[] args) throws Exception {\n    ServerSocket server = new ServerSocket(0);\n    int port = server.getLocalPort();\n    EchoDienst dienst = new EchoDienst(server);\n    dienst.start();\n\n    Socket client = new Socket(\"localhost\", port);\n    OutputStream out = client.getOutputStream();\n    BufferedReader in = new BufferedReader( new InputStreamReader(client.getInputStream()) );\n    out.write(\"OFP\\r\\n\".getBytes());\n    out.flush();\n    System.out.println(\"Echo: \" + in.readLine());\n    client.close();\n    dienst.join();\n    server.close();\n\n    InetAddress addr = InetAddress.getByName(\"localhost\");\n    System.out.println(\"Adresse: \" + addr.getHostAddress());\n  }\n}",
+   "explanation": "Das Programm vereint die drei Bausteine aus Kapitel 10.2:\n\n**Server:** `new ServerSocket(port)` bindet an einen Port, `accept()` wartet blockierend auf einen Client und liefert bei Erfolg einen `Socket` für genau diese Verbindung. Weil `accept()` blockiert, läuft der Server - wie im `EchoServer.java` des Skripts - in einem eigenen Thread.\n\n**Client:** `new Socket(\"localhost\", port)` baut die Verbindung auf. Danach ist die Kommunikation reine `java.io`-Arbeit: `getInputStream()` / `getOutputStream()`, bei Bedarf mit Filterströmen geschachtelt (hier `new BufferedReader(new InputStreamReader(...))`, damit man `readLine()` benutzen kann).\n\n**Adressierung:** `InetAddress.getByName(\"localhost\")` macht die Namensauflösung; `getHostAddress()` liefert die IP als String.\n\nZwei Feinheiten lohnen einen zweiten Blick. `new ServerSocket(0)` bedeutet *\"nimm irgendeinen freien Port\"* - im Skript stehen feste Portnummern (7 für Echo, 13 für Daytime, 43 für WHOIS), die aber schon belegt sein können. Und `out.flush()` ist nötig, weil die Bytes sonst im Puffer hängen bleiben und der Server nichts zu spiegeln bekäme - dieselbe Pufferlogik wie bei Dateien.\n\nMerkregel: *`ServerSocket` wartet, `Socket` spricht - und ab da ist alles wieder `java.io`.*",
+   "hints": [
+    "Lücke 1: Welche Methode des `ServerSocket` blockiert, bis sich ein Client meldet?",
+    "Lücken 2 und 3 heißen fast gleich und unterscheiden sich nur in der Richtung. Überlegen Sie, welcher Strom zum Lesen und welcher zum Schreiben dient.",
+    "Lücke 6: Gesucht ist die Methode, die `127.0.0.1` liefert - nicht die, die `localhost` liefert."
+   ],
+   "pitfalls": [
+    "In Lücke 5 `ServerSocket` einsetzen: der Client baut die Verbindung auf, er wartet nicht darauf.",
+    "In Lücke 4 `null` statt `-1` schreiben - `read()` liefert einen `int`, kein Objekt.",
+    "`out.flush()` für überflüssig halten. Ohne das Leeren des Puffers erreicht die Nachricht den Server unter Umständen gar nicht und das Programm blockiert in `readLine()`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 333,
+     "label": "10.2. Aufbau einer einfachen Socket-Verbindung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 334,
+     "label": "10.2. getInputStream / getOutputStream / close"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 341,
+     "label": "10.2. Server Sockets - ServerSocket(int port), accept()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 344,
+     "label": "10.2. Beispiel EchoServer (1/3)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 332,
+     "label": "10.2. Beispiel Lookup mit InetAddress"
+    },
+    {
+     "file": "10_ThreadsSockets/EchoServer.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "sockets",
+    "serversocket",
+    "accept",
+    "inetaddress",
+    "threads",
+    "fill-gaps",
+    "low-priority"
+   ],
+   "id": "java-io-threads-012",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: Zeilen aus einer Datei kopieren",
+   "prompt": "**Fehlersuche (6 P.).** Der folgende Code enthält genau **3 Compiler-Fehler**. Benennen Sie sie (mit Zeilennummer) und geben Sie jeweils die Korrektur an.\n\nDas Programm soll die zwei Zeilen der Datei `log.txt` in die Datei `kopie.txt` kopieren und danach `Kopierte Zeilen: 2` ausgeben.",
+   "code": "import java.io.*;\n\nclass LogLeser {\n  public static void main(String[] args) throws IOException {\n    PrintWriter erzeuger = new PrintWriter( new FileWriter(\"log.txt\") );\n    erzeuger.println(\"start\");\n    erzeuger.println(\"stop\");\n    erzeuger.close();\n\n    BufferedReader reader = new BufferedReader( new FileInputStream(\"log.txt\") );\n    PrintWriter pw = new PrintWriter( new FileWriter(\"kopie.txt\") );\n    int anzahl = 0;\n    String zeile = reader.readLine();\n    while (zeile != null) {\n      pw.printLine(zeile);\n      anzahl++;\n      zeile = reader.read();\n    }\n    reader.close();\n    pw.close();\n    System.out.println(\"Kopierte Zeilen: \" + anzahl);\n  }\n}",
+   "errors": [
+    {
+     "line": 10,
+     "wrong": "BufferedReader reader = new BufferedReader( new FileInputStream(\"log.txt\") );",
+     "fix": "BufferedReader reader = new BufferedReader( new FileReader(\"log.txt\") );",
+     "why": "`incompatible types: FileInputStream cannot be converted to Reader`. `BufferedReader` ist ein **zeichen**-orientierter Strom und erwartet im Konstruktor einen `Reader`. `FileInputStream` ist dagegen ein **byte**-orientierter `InputStream`. Passend ist `FileReader`; einen echten Byte-Strom müsste man erst mit `new InputStreamReader(...)` umwickeln."
+    },
+    {
+     "line": 15,
+     "wrong": "pw.printLine(zeile);",
+     "fix": "pw.println(zeile);",
+     "why": "`cannot find symbol: method printLine(String)`. Die Methode von `PrintWriter` heißt `println` (wie bei `System.out`), nicht `printLine`."
+    },
+    {
+     "line": 17,
+     "wrong": "zeile = reader.read();",
+     "fix": "zeile = reader.readLine();",
+     "why": "`incompatible types: int cannot be converted to String`. `read()` liefert ein einzelnes Zeichen als `int` (bzw. `-1` am Ende), `zeile` ist aber ein `String`. Gesucht ist `readLine()` - dieselbe Methode wie in Zeile 13."
+    }
+   ],
+   "expectedOutput": "Kopierte Zeilen: 2",
+   "solution": "import java.io.*;\n\nclass LogLeser {\n  public static void main(String[] args) throws IOException {\n    PrintWriter erzeuger = new PrintWriter( new FileWriter(\"log.txt\") );\n    erzeuger.println(\"start\");\n    erzeuger.println(\"stop\");\n    erzeuger.close();\n\n    BufferedReader reader = new BufferedReader( new FileReader(\"log.txt\") );\n    PrintWriter pw = new PrintWriter( new FileWriter(\"kopie.txt\") );\n    int anzahl = 0;\n    String zeile = reader.readLine();\n    while (zeile != null) {\n      pw.println(zeile);\n      anzahl++;\n      zeile = reader.readLine();\n    }\n    reader.close();\n    pw.close();\n    System.out.println(\"Kopierte Zeilen: \" + anzahl);\n  }\n}",
+   "explanation": "Alle drei Fehler drehen sich um die wichtigste Unterscheidung in `java.io`: **Byte-Ströme gegen Zeichen-Ströme**.\n\nJava-Ströme arbeiten grundsätzlich byte-orientiert (`InputStream`/`OutputStream`, `FileInputStream`/`FileOutputStream`). Für Text stellt Java zusätzlich `Reader`/`Writer` bereit (`FileReader`/`FileWriter`, `BufferedReader`/`PrintWriter`). Die beiden Welten lassen sich nicht direkt zusammenstecken - der Compiler fängt das in Zeile 10 ab. Die Brücke zwischen ihnen ist `InputStreamReader`, den das Skript z.B. für die Tastatureingabe benutzt: `new BufferedReader(new InputStreamReader(System.in))`.\n\nFehler 3 ist derselbe Konflikt auf Methodenebene: `read()` gehört zur zeichen-/byte-weisen Sicht und liefert `int`, `readLine()` zur zeilenweisen Sicht und liefert `String`. Weil `zeile` als `String` deklariert ist, meldet der Compiler `int cannot be converted to String`.\n\nFehler 2 ist der klassische Flüchtigkeitsfehler: Bei `PrintWriter` heißen die Methoden `print`, `println` und `printf` - `printLine` gibt es nicht.\n\nMerkregel: *Reader zu Reader, Stream zu Stream - und `readLine()` liefert Zeilen, `read()` liefert Zahlen.*",
+   "hints": [
+    "Gehen Sie die Konstruktoren durch: Welchen Parametertyp erwartet `BufferedReader` laut Skript?",
+    "Zwei der drei Fehler sind Typfehler, einer ist ein falscher Methodenname.",
+    "Vergleichen Sie Zeile 13 und Zeile 17 - dort steht fast dasselbe, aber nur eine Variante passt zum Typ von `zeile`."
+   ],
+   "pitfalls": [
+    "`erzeuger.close()` in Zeile 8 für einen Fehler halten - das ist völlig korrekt, `PrintWriter.close()` wirft keine geprüften Ausnahmen.",
+    "`throws IOException` an `main` für einen Fehler halten - so darf man geprüfte Ausnahmen durchaus weiterreichen.",
+    "Bei Fehler 1 nur 'falscher Stream' schreiben, ohne den korrekten Typ `FileReader` zu nennen - die Korrektur gehört zur Antwort dazu."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 281,
+     "label": "9.3. Wichtige Strom-Klassen im Paket java.io"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 303,
+     "label": "9.5. Java-Ströme arbeiten byte-orientiert, nicht zeichen-orientiert"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 305,
+     "label": "9.5. Beispiel Student.java - writeToStream mit println"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 307,
+     "label": "9.5. Beispiel Student.java - BufferedReader / readLine"
+    }
+   ],
+   "tags": [
+    "streams",
+    "bufferedreader",
+    "printwriter",
+    "compilerfehler",
+    "find-errors",
+    "low-priority"
+   ],
+   "id": "java-io-threads-013",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: Thread-Unterklasse mit Ergebnisrückgabe",
+   "prompt": "**Fehlersuche (6 P.).** Der folgende Code enthält genau **3 Compiler-Fehler**. Benennen Sie sie (mit Zeilennummer) und geben Sie jeweils die Korrektur an.\n\nBeabsichtigt ist: Jeder `Rechner`-Thread verdoppelt seinen Wert; `main` startet zwei solche Threads, wartet mit `join()` auf sie und gibt die Ergebnisse `10` und `14` aus.",
+   "code": "class Rechner extends Thread {\n  private int wert;\n  public Rechner(int wert) { this.wert = wert; }\n  public int getWert() { return wert; }\n  public int run() { wert = wert * 2; return wert; }\n}\n\nclass ThreadTest {\n  public static void main(String[] args) throws InterruptedException {\n    Thread t = new Rechner(5);\n    t.start();\n    t.join();\n    System.out.println( t.getWert() );\n    Rechner r2 = new Rechner(7);\n    r2.Start();\n    r2.join();\n    System.out.println( r2.getWert() );\n  }\n}",
+   "errors": [
+    {
+     "line": 5,
+     "wrong": "public int run() { wert = wert * 2; return wert; }",
+     "fix": "public void run() { wert = wert * 2; }",
+     "why": "`run() in Rechner cannot implement run() in Runnable - return type int is not compatible with void`. `run()` ist in `Thread`/`Runnable` als `void run()` festgelegt und muss beim Überschreiben genau diese Signatur haben. Ein Thread kann kein Ergebnis zurückgeben - das Ergebnis wird in einem Attribut abgelegt und später mit einer get-Methode geholt."
+    },
+    {
+     "line": 13,
+     "wrong": "System.out.println( t.getWert() );",
+     "fix": "Zeile 10 aendern in `Rechner t = new Rechner(5);` (oder hier casten: `((Rechner) t).getWert()`)",
+     "why": "`cannot find symbol: method getWert(), location: variable t of type Thread`. Der Compiler prüft über den **statischen** Typ der Variablen. `t` ist als `Thread` deklariert, und `Thread` kennt `getWert()` nicht - auch wenn das Objekt tatsächlich ein `Rechner` ist."
+    },
+    {
+     "line": 15,
+     "wrong": "r2.Start();",
+     "fix": "r2.start();",
+     "why": "`cannot find symbol: method Start()`. Java unterscheidet Groß- und Kleinschreibung; die Methode heißt `start()`."
+    }
+   ],
+   "expectedOutput": "10\n14",
+   "solution": "class Rechner extends Thread {\n  private int wert;\n  public Rechner(int wert) { this.wert = wert; }\n  public int getWert() { return wert; }\n  public void run() { wert = wert * 2; }\n}\n\nclass ThreadTest {\n  public static void main(String[] args) throws InterruptedException {\n    Rechner t = new Rechner(5);\n    t.start();\n    t.join();\n    System.out.println( t.getWert() );\n    Rechner r2 = new Rechner(7);\n    r2.start();\n    r2.join();\n    System.out.println( r2.getWert() );\n  }\n}",
+   "explanation": "Die drei Fehler treffen genau die drei Punkte, an denen Studierende bei Threads regelmäßig stolpern.\n\n**1. Die Signatur von `run()` ist unveränderlich.** `Thread` implementiert `Runnable`, und dort steht `void run()`. Beim Überschreiben darf man den Rückgabetyp nicht ändern - der Compiler meldet *'cannot implement run() in Runnable'*. Fachlich dahinter steckt: wer sollte den Rückgabewert entgegennehmen? `start()` kehrt sofort zurück, lange bevor `run()` fertig ist. Deshalb sagt das Skript: das Ergebnis *\"kann / muss in Attributen des Thread-Objekts gespeichert werden\"* und wird nach `join()` abgeholt.\n\n**2. Der statische Typ entscheidet, was der Compiler erlaubt.** Das ist reine Polymorphie aus Kapitel 7: `Thread t = new Rechner(5);` ist erlaubt (Aufwärtskonversion), aber über `t` sind nur die Methoden von `Thread` erreichbar. `t.start()` und `t.join()` gehen deshalb, `t.getWert()` nicht. Zwei Korrekturen sind möglich - die Variable stärker typisieren oder beim Zugriff casten.\n\n**3. Groß-/Kleinschreibung.** `Start()` ist nicht `start()`.\n\nNach der Korrektur ist die Ausgabe dank `join()` **deterministisch**: `10` und `14`. Ohne die `join()`-Aufrufe könnte `getWert()` den noch unveränderten Wert `5` bzw. `7` liefern.\n\nMerkregel: *`run()` ist `void` - Ergebnisse holt man sich nach `join()` aus dem Objekt.*",
+   "hints": [
+    "Schlagen Sie die Signatur von `run()` nach. Darf man beim Überschreiben den Rückgabetyp ändern?",
+    "Schauen Sie in Zeile 10 genau hin: Welchen Typ hat die Variable `t` - und welche Methoden kennt dieser Typ?",
+    "Der dritte Fehler ist rein orthografisch und fällt beim lauten Vorlesen sofort auf."
+   ],
+   "pitfalls": [
+    "`Thread t = new Rechner(5);` selbst für einen Fehler halten - die Zuweisung ist völlig korrekte Polymorphie; erst der Methodenaufruf in Zeile 13 scheitert.",
+    "Glauben, `run()` könne ein Ergebnis zurückgeben, wenn man nur den Typ passend wählt.",
+    "Bei Fehler 2 die Zeilennummer 10 statt 13 angeben - der Compiler meldet die Stelle des **Aufrufs**, nicht die der Deklaration."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 311,
+     "label": "10.1. Threads in Java - void run(), void start()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 313,
+     "label": "10.1. Synchronisation von Threads - join(), Ergebnis in Attributen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 312,
+     "label": "10.1. Beispiel WorkerThread"
+    },
+    {
+     "file": "10_ThreadsSockets/WorkerThreadJoin.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "threads",
+    "run",
+    "start",
+    "join",
+    "polymorphie",
+    "compilerfehler",
+    "find-errors",
+    "low-priority"
+   ],
+   "id": "java-io-threads-014",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ausgabe vorhersagen: run() statt start()",
+   "prompt": "**Ausgabe vorhersagen (4 P.).**\n\nWas gibt der folgende Code auf der Konsole aus? Die Methode `Thread.currentThread().getName()` liefert den Namen des Threads, der die Anweisung gerade ausführt - der Ausgangsthread eines Java-Programms heißt `main`.\n\nBegründen Sie zusätzlich, warum die Ausgabe bei jedem Programmlauf **exakt gleich** ist.",
+   "code": "class Zaehler extends Thread {\n  private String name;\n  public Zaehler(String name) { this.name = name; }\n  public void run() {\n    for (int i = 1; i <= 2; i++)\n      System.out.println(name + \": \" + i + \" in \" + Thread.currentThread().getName());\n  }\n}\n\nclass DirektAufruf {\n  public static void main(String[] args) {\n    Zaehler a = new Zaehler(\"A\");\n    Zaehler b = new Zaehler(\"B\");\n    a.run();\n    b.run();\n    System.out.println(\"main fertig\");\n  }\n}",
+   "expectedOutput": "A: 1 in main\nA: 2 in main\nB: 1 in main\nB: 2 in main\nmain fertig",
+   "solution": "```\nA: 1 in main\nA: 2 in main\nB: 1 in main\nB: 2 in main\nmain fertig\n```\n\n**Begründung:** Hier wird kein einziger Thread gestartet. `a.run()` und `b.run()` sind ganz normale Methodenaufrufe - der main-Thread arbeitet sie streng nacheinander ab, wie bei jedem anderen Objekt auch. Deshalb ist die Reihenfolge deterministisch und `getName()` liefert überall `main`.",
+   "explanation": "Das ist die wichtigste Falle des ganzen Thread-Kapitels und ein Klassiker in Klausuren.\n\nDas Skript trennt die beiden Methoden sauber:\n- **`void run()`** - *\"wird beim Start des Threads ausgeführt, muss in der Unterklasse überschrieben werden mit dem Code, den der Thread ausführen soll\"*. `run()` ist eine ganz gewöhnliche Methode, die man wie jede andere aufrufen kann.\n- **`void start()`** - *\"startet den Thread; `start()` kehrt sofort zum Aufrufer zurück; der Thread führt nebenläufig seine `run()`-Methode aus\"*. Nur `start()` erzeugt einen neuen Kontrollfluss in der JVM.\n\n`a.run()` bedeutet also: *führe den Rumpf dieser Methode hier und jetzt, im aufrufenden Thread, aus*. Es entsteht kein neuer Thread, es gibt keine Nebenläufigkeit, keine Verzahnung und damit auch keine Race Condition - das Programm ist ein normales sequentielles Programm.\n\nZum Vergleich: Hätte man `a.start(); b.start();` geschrieben, wäre `main fertig` möglicherweise **vor**, zwischen oder nach den Zählausgaben erschienen, und statt `main` stände dort `Thread-0` bzw. `Thread-1`. Eine feste Ausgabe könnte man dann nicht mehr angeben - genau deshalb ist die Frage hier bewusst mit `run()` gestellt.\n\nMerkregel: ***`run()` ruft man auf, `start()` startet man.*** Wer `run()` aufruft, hat einen Methodenaufruf; wer `start()` aufruft, hat einen Thread.",
+   "hints": [
+    "Zählen Sie zuerst, wie viele Threads dieses Programm überhaupt erzeugt - und wie viele es startet.",
+    "Was genau bewirkt `start()`, das ein normaler Methodenaufruf nicht bewirkt?",
+    "Wenn kein neuer Thread läuft: In welcher Reihenfolge arbeitet ein sequentielles Programm seine Anweisungen ab?"
+   ],
+   "pitfalls": [
+    "`run()` für gleichwertig mit `start()` halten und eine verzahnte Ausgabe wie `A: 1 / B: 1 / A: 2 / B: 2` erwarten.",
+    "`Thread-0` statt `main` als Threadnamen angeben - es wurde ja gar kein neuer Thread erzeugt.",
+    "`main fertig` an den Anfang setzen: `main` erreicht diese Zeile erst, nachdem beide `run()`-Aufrufe vollständig abgearbeitet sind."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 311,
+     "label": "10.1. Threads in Java - run() vs. start()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 312,
+     "label": "10.1. Beispiel WorkerThread"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 320,
+     "label": "10.1. Beispiel Listing - nicht-deterministische Ausgabe bei echten Threads"
+    },
+    {
+     "file": "10_ThreadsSockets/Listing.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "threads",
+    "start",
+    "run",
+    "ausgabe",
+    "predict-output",
+    "low-priority"
+   ],
+   "id": "java-io-threads-015",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ausgabe vorhersagen: Serialisierung ohne reset() und mit transient",
+   "prompt": "**Ausgabe vorhersagen (4 P.).**\n\nWas gibt der folgende Code auf der Konsole aus? Begründen Sie jede der vier Zeilen.\n\n*Hinweis:* Ein mit `transient` markiertes Attribut wird bei der Serialisierung übersprungen.",
+   "code": "import java.io.*;\n\nclass Konto implements Serializable {\n  String inhaber;\n  double saldo;\n  transient double zinsen;          // transient = wird NICHT serialisiert\n  public Konto(String inhaber, double saldo) {\n    this.inhaber = inhaber;\n    this.saldo   = saldo;\n    this.zinsen  = 99.9;\n  }\n}\n\nclass SerTest {\n  public static void main(String[] args) throws Exception {\n    Konto k = new Konto(\"Meier\", 100.0);\n    ObjectOutputStream oos = new ObjectOutputStream( new FileOutputStream(\"konto.ser\") );\n    oos.writeObject(k);\n    k.saldo = 500.0;\n    oos.writeObject(k);             // Achtung: kein reset() dazwischen!\n    oos.close();\n\n    ObjectInputStream ois = new ObjectInputStream( new FileInputStream(\"konto.ser\") );\n    Konto k1 = (Konto) ois.readObject();\n    Konto k2 = (Konto) ois.readObject();\n    ois.close();\n\n    System.out.println(k1.saldo);\n    System.out.println(k2.saldo);\n    System.out.println(k1 == k2);\n    System.out.println(k1.zinsen);\n  }\n}",
+   "expectedOutput": "100.0\n100.0\ntrue\n0.0",
+   "solution": "```\n100.0\n100.0\ntrue\n0.0\n```\n\n**Zeile 1 - `100.0`:** Beim ersten `writeObject(k)` hatte `saldo` den Wert 100.0. Genau dieser Zustand steht in der Datei.\n\n**Zeile 2 - `100.0`:** Das zweite `writeObject(k)` schreibt **keinen neuen Zustand**. Da das Objekt in diesem Strom bereits eine Seriennummer besitzt und kein `reset()` aufgerufen wurde, landet nur ein Verweis auf das bereits geschriebene Objekt im Strom. Die Änderung `k.saldo = 500.0` geht damit verloren.\n\n**Zeile 3 - `true`:** Weil der zweite Eintrag nur ein Verweis ist, liefert das zweite `readObject()` eine Referenz auf das *bereits eingelesene* Objekt. `k1` und `k2` zeigen also auf **dasselbe** Objekt, und `==` (Referenzvergleich) ist `true`.\n\n**Zeile 4 - `0.0`:** `zinsen` ist `transient` und wurde nie in den Strom geschrieben. Beim Deserialisieren wird das Attribut deshalb mit dem Standardwert seines Typs belegt - bei `double` ist das `0.0` (nicht 99.9 und nicht `null`).",
+   "explanation": "Diese Aufgabe kombiniert die zwei subtilsten Punkte der Serialisierung.\n\n**1. Seriennummern und `reset()`.** Das Skript beschreibt genau, was `writeObject(obj)` tut (S. 297): *\"Falls `obj` bereits in den Strom geschrieben wurde (und kein `reset()` ausgeführt wurde), wird nur ein 'Verweis' (Seriennummer) auf das schon im Strom befindliche Objekt geschrieben.\"* Der Strom merkt sich also, welche Objekte er schon kennt. Das ist kein Fehler, sondern nötig: nur so bleiben gemeinsam benutzte Objekte und zyklische Referenzen beim Einlesen korrekt erhalten (siehe das `Staff`-Beispiel, in dem sich zwei Manager dieselbe `secretary` teilen). Wer denselben Zustand *erneut* speichern will, muss vorher `reset()` rufen - genau deshalb steht in `StudentenDatei.java` der Kommentar *'sonst wird nur eine weitere Referenz geschrieben'*.\n\nDie Gegenprobe: **mit** `oos.reset();` vor dem zweiten `writeObject(k)` wäre die Ausgabe `100.0 / 500.0 / false / 0.0`.\n\n**2. `transient`.** Attribute mit diesem Modifikator werden bewusst ausgelassen - typisch für Passwörter, Caches oder abgeleitete Werte. Beim Deserialisieren wird **kein Konstruktor aufgerufen**; das Objekt wird direkt aus den Stromdaten aufgebaut. Deshalb greift auch die Initialisierung `this.zinsen = 99.9` aus dem Konstruktor nicht, und das Attribut behält den Standardwert `0.0`.\n\nMerkregel: *Der Strom hat ein Gedächtnis - `reset()` löscht es. Und `transient` heißt: kommt zurück als `0`, `false` oder `null`.*",
+   "hints": [
+    "Fragen Sie sich für Zeile 2: Wie viele **Objekte** stehen überhaupt in der Datei? Der Kommentar im Code ist ein deutlicher Hinweis.",
+    "Zeile 3 vergleicht mit `==`, nicht mit `equals()`. Was vergleicht `==` bei Objekten?",
+    "Zeile 4: Beim Deserialisieren wird kein Konstruktor ausgeführt. Welchen Wert hat ein `double`-Attribut, dem nie etwas zugewiesen wurde?"
+   ],
+   "pitfalls": [
+    "`500.0` in Zeile 2 erwarten - der Zustand wurde nach der Änderung nicht neu geschrieben, weil `reset()` fehlt.",
+    "`false` in Zeile 3 erwarten, weil man annimmt, Deserialisieren erzeuge immer neue Objekte.",
+    "`99.9` in Zeile 4 erwarten - der Konstruktor läuft beim Deserialisieren nicht.",
+    "`0` statt `0.0` schreiben: `saldo` und `zinsen` sind `double`, `println` gibt daher immer eine Nachkommastelle aus."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 292,
+     "label": "9.4. Was geschieht bei der Serialisierung eines Objekts / Arrays?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 293,
+     "label": "9.4. Beispiel Objekt-Graph mit gemeinsam benutztem Objekt"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 296,
+     "label": "9.4. ObjectOutputStream - writeObject, reset"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 297,
+     "label": "9.4. Was schreibt writeObject(obj) in den Ausgabestrom?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 301,
+     "label": "9.4. Beispiel Studentendatei (2/3) - oos.reset()"
+    },
+    {
+     "file": "09_Serialisierung/StudentenDatei.java",
+     "page": 0,
+     "label": "Beispielcode des Profs"
+    }
+   ],
+   "tags": [
+    "serialisierung",
+    "reset",
+    "transient",
+    "objektidentitaet",
+    "ausgabe",
+    "predict-output",
+    "low-priority"
+   ],
+   "id": "java-io-threads-016",
+   "lang": "java",
+   "topicId": "java-io-threads"
+  }
+ ]
+}

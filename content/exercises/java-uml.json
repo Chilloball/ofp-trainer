@@ -1,0 +1,1540 @@
+{
+ "topicId": "java-uml",
+ "exercises": [
+  {
+   "id": "java-uml-001",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Sichtbarkeiten im Klassendiagramm: was bedeutet #?",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nIn einem UML-Klassendiagramm steht vor einem Attribut das Zeichen `#`:\n\n```mermaid\nclassDiagram\n  class Konto {\n    +inhaber : String\n    #stand : double\n    -pin : int\n    ~waehrung : String\n  }\n```\n\nWelcher Java-Modifikator ist mit `#` gemeint?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "public",
+     "correct": false,
+     "why": "Falsch. `public` ist das Pluszeichen `+` - im Diagramm oben also `inhaber`."
+    },
+    {
+     "id": "b",
+     "text": "private",
+     "correct": false,
+     "why": "Falsch. `private` ist das Minuszeichen `-` - im Diagramm oben also `pin`."
+    },
+    {
+     "id": "c",
+     "text": "protected",
+     "correct": true,
+     "why": "Richtig. `#` = protected: sichtbar in der eigenen Klasse, in ihren Unterklassen und (in Java) im selben Paket."
+    },
+    {
+     "id": "d",
+     "text": "package (default, kein Modifikator)",
+     "correct": false,
+     "why": "Falsch. Paket-Sichtbarkeit ist die Tilde `~` - im Diagramm oben also `waehrung`."
+    }
+   ],
+   "solution": "c) protected",
+   "explanation": "UML kennt genau vier Sichtbarkeits-Zeichen; sie stehen **vor** dem Namen des Attributs oder der Operation:\n\n| UML | Java | sichtbar für |\n|---|---|---|\n| `+` | `public` | alle Klassen |\n| `#` | `protected` | eigene Klasse **und Unterklassen** |\n| `-` | `private` | nur die eigene Klasse |\n| `~` | (kein Modifikator, *package*) | alle Klassen desselben Pakets |\n\nIm Skript (S. 192) sind nur `+`, `#` und `-` aufgeführt, weil das die drei Fälle sind, die in der Klausur vorkommen; `~` ist die vierte, seltenere Möglichkeit und entspricht genau der Java-Voreinstellung, wenn man **gar keinen** Modifikator schreibt.\n\nTypischer Denkfehler: `#` mit *private* zu verwechseln, weil beide 'geschützt' klingen. Merken Sie sich die Raute als 'Gartenzaun um die Familie': die Klasse **und ihre Kinder** dürfen hinein, Fremde nicht.\n\nMerkregel: **Plus = offen für alle, Minus = zu für alle, Raute = Familie, Tilde = Nachbarn (Paket).**",
+   "hints": [
+    "Es gibt genau vier Zeichen: `+`, `#`, `-`, `~` - ordnen Sie sie zuerst den vier Java-Modifikatoren zu.",
+    "Welcher Modifikator erlaubt den Zugriff aus einer *Unterklasse*, aber nicht von beliebigen Klassen?"
+   ],
+   "pitfalls": [
+    "`#` mit `private` verwechseln.",
+    "Vergessen, dass es mit `~` noch ein viertes Zeichen für die Paket-Sichtbarkeit gibt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 192,
+     "label": "6.5 Einführung in UML: Sichtbarkeit"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 364,
+     "label": "Überblick 6: UML Klassendiagramm"
+    }
+   ],
+   "tags": [
+    "uml",
+    "klassendiagramm",
+    "sichtbarkeit",
+    "protected"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-002",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Wie kennzeichnet UML Klassenattribute und Klassenoperationen?",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nDie Klasse `Aushilfe` hat ein Attribut `stundenlohn`, das es **nur einmal für alle Objekte** gibt (in Java: `static double stundenlohn;`).\n\nWie wird ein solches **Klassenattribut** in einem UML-Klassendiagramm dargestellt?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Der Attributname wird kursiv geschrieben.",
+     "correct": false,
+     "why": "Falsch. Kursivschrift kennzeichnet **abstrakte** Klassen bzw. abstrakte Operationen (S. 202/203), nicht statische."
+    },
+    {
+     "id": "b",
+     "text": "Der Attributname wird unterstrichen.",
+     "correct": true,
+     "why": "Richtig. Klassenattribute und Klassenoperationen werden unterstrichen (S. 168 und S. 173)."
+    },
+    {
+     "id": "c",
+     "text": "Über den Klassennamen wird das Stereotyp `<<static>>` geschrieben.",
+     "correct": false,
+     "why": "Falsch. Stereotype wie `<<interface>>` beschreiben die ganze Klasse, nicht ein einzelnes Element - und `<<static>>` gibt es in UML nicht."
+    },
+    {
+     "id": "d",
+     "text": "Vor den Namen wird ein `$` gesetzt.",
+     "correct": false,
+     "why": "Falsch in UML. Das `$` ist nur ein Behelf des Zeichenwerkzeugs *Mermaid*, weil man dort nicht unterstreichen kann. Auf Papier wird unterstrichen."
+    }
+   ],
+   "solution": "b) Der Attributname wird unterstrichen.",
+   "explanation": "UML hat für die drei Sonderfälle drei verschiedene Schriftauszeichnungen - die werden gern verwechselt:\n\n| Bedeutung | Darstellung | Java |\n|---|---|---|\n| Klassenattribut / Klassenoperation | **unterstrichen** | `static` |\n| abstrakte Klasse / abstrakte Operation | *kursiv* (oder Zusatz `{abstract}`) | `abstract` |\n| Schnittstelle | Stereotyp `<<interface>>` | `interface` |\n\nEin Klassenattribut existiert **auch dann, wenn es noch gar kein Objekt der Klasse gibt** (S. 168) - deshalb gehört es der Klasse und wird im Diagramm der Klasse zugeordnet.\n\nWeil man in Werkzeugen wie Mermaid nicht unterstreichen kann, hängt man dort ersatzweise ein `$` an (`-anzahl : int$`). Das ist **keine** UML-Notation - in der handschriftlichen Klausur unterstreichen Sie.\n\nMerkregel: **unterstrichen = static, kursiv = abstract.**",
+   "hints": [
+    "Es gibt drei Auszeichnungen: unterstrichen, kursiv, Stereotyp. Ordnen Sie sie static, abstract und interface zu.",
+    "Welche Auszeichnung wird bei einer abstrakten Klasse benutzt? Dann bleibt für static nur noch eine übrig."
+   ],
+   "pitfalls": [
+    "Unterstreichen und Kursivschrift vertauschen (static vs. abstract).",
+    "Das Wort `static` einfach ins Diagramm schreiben - UML kennt dieses Schlüsselwort nicht."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 168,
+     "label": "6.5 UML: Klassenattribute werden unterstrichen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 173,
+     "label": "6.5 UML: Klassenoperationen werden unterstrichen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 202,
+     "label": "7.1 abstrakte Klassen: kursiv bzw. {abstract}"
+    }
+   ],
+   "tags": [
+    "uml",
+    "klassenattribut",
+    "static",
+    "notation"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-003",
+   "type": "uml",
+   "difficulty": 2,
+   "points": 4,
+   "title": "Java-Klasse in ein Klassendiagramm übersetzen (Einstieg)",
+   "prompt": "Zeichnen Sie zu der folgenden Java-Klasse das **UML-Klassendiagramm**.\n\nAchten Sie auf die drei Fächer (Klassenname / Attribute / Operationen), die Sichtbarkeits-Zeichen und die UML-Schreibweise `name: Typ`.",
+   "code": "class Video {\n  private String autor;\n  private double laenge = 0.0;\n  private String ytlink;\n\n  public Video(String autor, double laenge, String ytlink) {\n    this.autor = autor;\n    this.laenge = laenge;\n    this.ytlink = ytlink;\n  }\n  public void abspielen() { /* ... */ }\n  public double getLaenge() { return laenge; }\n  protected void setLaenge(double l) { laenge = l; }\n}",
+   "solution": "```mermaid\nclassDiagram\n  class Video {\n    -autor : String\n    -laenge : double = 0.0\n    -ytlink : String\n    +Video(autor: String, laenge: double, ytlink: String)\n    +abspielen()\n    +getLaenge() double\n    #setLaenge(l: double)\n  }\n```\n\n**So sieht es handschriftlich in der Klausur aus:**\n\n```text\n+---------------------------------------------------+\n|                      Video                        |\n+---------------------------------------------------+\n| - autor: String                                   |\n| - laenge: double = 0.0                            |\n| - ytlink: String                                  |\n+---------------------------------------------------+\n| + Video(autor: String, laenge: double, ytlink: String) |\n| + abspielen()                                     |\n| + getLaenge(): double                             |\n| # setLaenge(l: double)                            |\n+---------------------------------------------------+\n```\n\n**Bewertungsrubrik (4 Punkte)**\n- 1 P. Kasten mit drei Fächern, Klassenname `Video` groß geschrieben.\n- 1 P. Alle drei Attribute mit `-` und in der Form `name: Typ` (Initialwert `= 0.0` darf mit).\n- 1 P. Konstruktor und Operationen im dritten Fach, Rückgabetyp hinten (`getLaenge(): double`).\n- 1 P. `setLaenge` mit `#` statt `+`.",
+   "explanation": "Der Übergang Java -> UML ist rein mechanisch, muss aber sitzen:\n\n1. **Klassenname** ins oberste Fach - genauso geschrieben wie in Java (groß).\n2. **Attribute** ins mittlere Fach, mit Sichtbarkeitszeichen und in der Reihenfolge `name: Typ`. Achtung: das ist **genau umgekehrt** zu Java (`String autor` wird zu `autor: String`). Ein Initialwert darf mit `= 0.0` angehängt werden (S. 161).\n3. **Operationen** ins untere Fach. Parameter dürfen weggelassen werden; wenn man sie angibt, müssen mindestens die Namen dastehen (S. 171). Der Rückgabetyp kommt **hinter** die Klammer: `getLaenge(): double`.\n4. Der **Konstruktor** ist eine Operation und steht im Operationen-Fach - ohne Rückgabetyp, weil er keinen hat.\n\n`void` schreibt man in UML üblicherweise gar nicht hin: bei `abspielen()` steht einfach nichts hinter der Klammer.\n\nMerkregel: **In Java steht der Typ vorn, in UML hinten - getrennt durch einen Doppelpunkt.**",
+   "hints": [
+    "Zeichnen Sie zuerst den leeren Kasten mit drei Fächern und schreiben Sie den Klassennamen hinein.",
+    "Übersetzen Sie jede Java-Deklaration Zeile für Zeile: erst das Sichtbarkeitszeichen, dann der Name, dann `: Typ`.",
+    "Der Konstruktor gehört nach unten zu den Operationen - und bekommt keinen Rückgabetyp."
+   ],
+   "pitfalls": [
+    "Die Java-Reihenfolge `String autor` beibehalten statt `autor: String` zu schreiben.",
+    "Den Konstruktor vergessen oder ihm `void` als Rückgabetyp geben.",
+    "`protected` mit `-` statt `#` abkürzen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 161,
+     "label": "6.5 UML: Klassen - Design vs. Implementierung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 171,
+     "label": "6.5 UML: Operationen und Parameter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 192,
+     "label": "6.5 UML: Sichtbarkeit"
+    }
+   ],
+   "tags": [
+    "uml",
+    "klassendiagramm",
+    "code2uml",
+    "sichtbarkeit"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-004",
+   "type": "short-answer",
+   "difficulty": 2,
+   "points": 4,
+   "title": "Klassendiagramm oder Objektdiagramm - und was heißt 'gleich'?",
+   "prompt": "Beantworten Sie kurz (Stichworte genügen):\n\n**a)** Worin unterscheidet sich ein **Objektdiagramm** von einem **Klassendiagramm**? Nennen Sie zwei Unterschiede in der *Notation* und einen im *Inhalt*.\n\n**b)** Gegeben ist dieses Objektdiagramm:\n\n```mermaid\nclassDiagram\n  class k1[\"k1 : Kreis\"] {\n    radius = 20\n    mittelpunkt = (2,2)\n  }\n  class k2[\"k2 : Kreis\"] {\n    radius = 20\n    mittelpunkt = (2,2)\n  }\n  class k3[\"k3 : Kreis\"] {\n    radius = 17\n    mittelpunkt = (2,4)\n  }\n```\n\nWelche dieser Objekte sind **gleich**, welche sind **identisch**? Begründen Sie.",
+   "solution": "**a) Unterschiede**\n\n*Notation:*\n1. Im Objektdiagramm steht in der Kopfzeile `objektname : Klasse` und diese Zeile wird **unterstrichen**; im Klassendiagramm steht dort nur der Klassenname (nicht unterstrichen).\n2. Im Objektdiagramm stehen **konkrete Attributwerte** (`radius = 20`); im Klassendiagramm stehen Attribut**namen mit Typ** (`radius: int`).\n3. Ein Objektdiagramm hat **kein Operationen-Fach** - die Operationen sind für alle Objekte einer Klasse identisch und stehen deshalb nur im Klassendiagramm (S. 162).\n\n*Inhalt:*\nDas Klassendiagramm beschreibt den **Bauplan** (was es geben kann, mit Multiplizitaeten); das Objektdiagramm ist eine **Momentaufnahme zur Laufzeit** - es zeigt konkrete Objekte und die tatsächlich bestehenden Links (Objektbeziehungen). Eine Objektbeziehung ist die *Instanz* einer Assoziation.\n\n**b) Gleichheit und Identität**\n\n- `k1` und `k2` sind **gleich**, weil sie in allen Attributwerten übereinstimmen (`radius = 20`, `mittelpunkt = (2,2)`).\n- **Identisch ist keines der Objekte** mit einem anderen: Identität heißt 'dasselbe Objekt'. Da im Diagramm drei getrennte Kästen mit drei verschiedenen Objektnamen stehen, gibt es drei verschiedene Objekte an drei verschiedenen Speicheradressen. Jedes Objekt ist nur mit **sich selbst** identisch.\n- `k3` ist zu keinem der beiden gleich (andere Werte).\n\nIn Java: `k1.equals(k2)` wäre (bei geeignetem `equals`) `true`, `k1 == k2` ist `false`.\n\n**Bewertungsrubrik (4 Punkte)**\n- 1 P. Kopfzeile `objektname : Klasse`, unterstrichen.\n- 1 P. Konkrete Werte statt Typen / kein Operationen-Fach.\n- 1 P. Momentaufnahme zur Laufzeit vs. Bauplan.\n- 1 P. k1 und k2 gleich, aber nicht identisch (Begründung über Attributwerte vs. Speicheradresse).",
+   "explanation": "Das Skript trennt die beiden Begriffe sehr sauber (S. 164/165):\n\n> *Zwei Objekte sind gleich, wenn sie dieselben Attributwerte besitzen.* > *Jedes Objekt ist per Definition, unabhängig von seinen konkreten Attributwerten, von allen anderen Objekten eindeutig zu unterscheiden.*\n\nGleichheit ist also eine Aussage über **Werte**, Identität eine Aussage über **Existenz**: zur Laufzeit wahrt die Speicheradresse die Identität. Deshalb ist in Java `==` bei Objekten ein Identitätsvergleich (zeigen beide Referenzen auf dasselbe Objekt?) und `equals` ein Gleichheitsvergleich.\n\nIm Objektdiagramm erkennt man Identität daran, dass **ein einziger Kasten** von mehreren Links getroffen wird; zwei Kästen mit demselben Inhalt sind zwei Objekte.\n\nTypischer Denkfehler: 'Die Kästen sehen gleich aus, also ist es dasselbe Objekt.' Nein - gleich aussehen und dasselbe sein ist zweierlei; genau das ist die Aussage der Folie *Gleich, aber nicht identisch*.\n\nMerkregel: **gleich = gleiche Werte (equals), identisch = dasselbe Objekt (==).**",
+   "hints": [
+    "Vergleichen Sie die Kopfzeile eines Objektkastens mit der eines Klassenkastens - was steht dort jeweils, und was ist ausgezeichnet?",
+    "Ein Objektdiagramm hat nur zwei Fächer. Welches Fach fehlt und warum?",
+    "Für b): Zählen Sie die Kästen. Wie viele Objekte gibt es also - egal, was drinsteht?"
+   ],
+   "pitfalls": [
+    "Im Objektdiagramm die Operationen mit aufführen.",
+    "'gleich' und 'identisch' synonym verwenden.",
+    "Den Klassennamen im Objektkasten klein oder den Objektnamen groß schreiben (Konvention: Objektname klein, Klassenname groß)."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 162,
+     "label": "6.5 UML: Objekte - allgemeines Schema"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 164,
+     "label": "6.5 UML: Identität und Gleichheit von Objekten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 165,
+     "label": "6.5 UML: Objektidentität"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 365,
+     "label": "Überblick 6: UML Objektdiagramm"
+    }
+   ],
+   "tags": [
+    "uml",
+    "objektdiagramm",
+    "identitaet",
+    "gleichheit"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-005",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Abstrakte Klassen, Schnittstellen und ihre Pfeile",
+   "prompt": "**Mehrfachauswahl.** Kreuzen Sie **alle** richtigen Aussagen zur UML-Notation an.\n\nBetrachten Sie dazu dieses Diagramm:\n\n```mermaid\nclassDiagram\n  class MyInterface {\n    <<interface>>\n    +op1(i: int) double\n    +op2(s: String)\n  }\n  class AbstrClass {\n    <<abstract>>\n    #attr : int\n    +op1(i: int) double\n    +op3()\n  }\n  class MyClass {\n    +op2(s: String)\n  }\n  MyInterface <|.. AbstrClass\n  AbstrClass <|-- MyClass\n```",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Der Name einer abstrakten Klasse wird kursiv geschrieben; handschriftlich schreibt man stattdessen `{abstract}` dazu.",
+     "correct": true,
+     "why": "Richtig - genau so steht es auf S. 202: Kursivschrift, oder für handschriftliche Diagramme der Zusatz `{abstract}`."
+    },
+    {
+     "id": "b",
+     "text": "Eine Schnittstelle wird durch das Stereotyp `<<interface>>` über dem Klassennamen gekennzeichnet.",
+     "correct": true,
+     "why": "Richtig (S. 204). Ihre Operationen sind immer abstrakt und öffentlich."
+    },
+    {
+     "id": "c",
+     "text": "Vererbung (`extends`) wird als durchgezogene Linie mit einer leeren (nicht ausgefüllten) Dreiecksspitze gezeichnet, die auf die Oberklasse zeigt.",
+     "correct": true,
+     "why": "Richtig. Die Spitze zeigt immer zur allgemeineren Klasse - 'der Pfeil zeigt nach oben'."
+    },
+    {
+     "id": "d",
+     "text": "Die Realisierung (`implements`) wird als **gestrichelte** Linie mit leerer Dreiecksspitze zur Schnittstelle gezeichnet.",
+     "correct": true,
+     "why": "Richtig (S. 208). Gestrichelt = Implementierungs-Beziehung, durchgezogen = Generalisierung."
+    },
+    {
+     "id": "e",
+     "text": "Der Name einer abstrakten Klasse wird unterstrichen.",
+     "correct": false,
+     "why": "Falsch. Unterstrichen werden Klassenattribute und Klassenoperationen (static), nicht abstrakte Klassen."
+    },
+    {
+     "id": "f",
+     "text": "Die Dreiecksspitze des Vererbungspfeils zeigt auf die Unterklasse.",
+     "correct": false,
+     "why": "Falsch, genau andersherum: sie zeigt auf die Basisklasse. `MyClass` erbt von `AbstrClass`, also zeigt die Spitze auf `AbstrClass`."
+    },
+    {
+     "id": "g",
+     "text": "Eine Klasse darf in UML nur genau eine Schnittstelle implementieren.",
+     "correct": false,
+     "why": "Falsch. Eine Klasse kann mehrere Schnittstellen implementieren - in UML und in Java (S. 209)."
+    }
+   ],
+   "solution": "a, b, c, d",
+   "explanation": "Vier Notations-Details werden in der Klausur gern gemischt abgefragt:\n\n| Konzept | Notation |\n|---|---|\n| abstrakte Klasse / Operation | Name *kursiv* oder Zusatz `{abstract}` |\n| Schnittstelle | Stereotyp `<<interface>>` |\n| `extends` (Generalisierung) | **durchgezogene** Linie, leere Dreiecksspitze zur Oberklasse |\n| `implements` (Realisierung) | **gestrichelte** Linie, leere Dreiecksspitze zur Schnittstelle |\n\nDie Pfeilrichtung ist der häufigste Fehler: Die Spitze zeigt immer zum **Allgemeineren**. Das ist logisch, denn die Unterklasse *kennt* ihre Oberklasse (`class MyClass extends AbstrClass`) - die Oberklasse weiß dagegen nichts von ihren Unterklassen.\n\nEselsbrücke für den Linienstil: **Erben ist verbindlich (durchgezogen), Versprechen sind gestrichelt.** Und: eine ausgefüllte Spitze ist gar kein Vererbungspfeil - das wäre eine gerichtete Assoziation (offene Pfeilspitze) bzw. eine Raute bei Aggregation/Komposition.\n\nZum Diagramm oben: `AbstrClass` bleibt abstrakt, weil sie `op2` nicht implementiert; erst `MyClass` liefert `op2` nach und ist damit konkret (S. 208).",
+   "hints": [
+    "Drei Auszeichnungen, drei Bedeutungen: unterstrichen, kursiv, Stereotyp. Welche gehört zu abstract?",
+    "Überlegen Sie bei den Pfeilen: Wer kennt wen? In `class B extends A` steht A im Quelltext von B.",
+    "Unterscheiden Sie Linienstil (durchgezogen/gestrichelt) und Spitzenform (leeres Dreieck / offener Pfeil / Raute)."
+   ],
+   "pitfalls": [
+    "Vererbungspfeil in die falsche Richtung zeichnen.",
+    "Realisierung mit durchgezogener statt gestrichelter Linie zeichnen.",
+    "Kursiv (abstract) und unterstrichen (static) vertauschen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 202,
+     "label": "7.1 Abstrakte Klassen: kursiv bzw. {abstract}"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 204,
+     "label": "7.1 Interfaces: Stereotyp <<interface>>"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 208,
+     "label": "7.1 Implementierungs-Beziehung implements"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 368,
+     "label": "Überblick 7: Schnittstellen und abstrakte Klassen"
+    }
+   ],
+   "tags": [
+    "uml",
+    "interface",
+    "abstract",
+    "vererbung",
+    "realisierung"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-006",
+   "type": "uml",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Java -> UML: Sichtbarkeiten, static und reflexive Assoziation",
+   "prompt": "*(Aufgabentyp aus dem Skript, Abschnitt 6.7 'Beispiel Java -> UML')*\n\nZeichnen Sie zu der folgenden Klasse das vollständige **UML-Klassendiagramm**.\n\nBerücksichtigen Sie dabei:\n- alle vier Sichtbarkeiten (auch die von `tiefe` - dort steht **kein** Modifikator!),\n- die Kennzeichnung von Klassenattributen und Klassenoperationen,\n- das Attribut `next`: stellen Sie es **nicht** als normales Attribut dar, sondern als Assoziation mit Rollenname und Multiplizität.",
+   "code": "class Knoten {\n  private String name;\n  protected int nr;\n  private static boolean markiert;\n  int tiefe;\n  public Knoten next;\n\n  public Knoten(String a, int b) {\n    name = a; nr = b; tiefe = 0;\n  }\n  public String getName() { return name; }\n  protected void setMarkiert(boolean m) { markiert = m; }\n  public static boolean istMarkiert() { return markiert; }\n  public static void main(String[] s) {\n    Knoten k = new Knoten(\"Start\", 1);\n    k.next = new Knoten(\"Ziel\", 2);\n  }\n}",
+   "solution": "```mermaid\nclassDiagram\n  class Knoten {\n    -name : String\n    #nr : int\n    -markiert : boolean$\n    ~tiefe : int\n    +Knoten(a: String, b: int)\n    +getName() String\n    #setMarkiert(m: boolean)\n    +istMarkiert() boolean$\n    +main(s: String[])$\n  }\n  Knoten --> \"0..1\" Knoten : next\n```\n\n*(In Mermaid bedeutet das angehängte `$` 'unterstrichen', also **static**. Auf Papier unterstreichen Sie `markiert`, `istMarkiert()` und `main(...)`.)*\n\n**Handschriftlich:**\n\n```text\n                          next   0..1\n             +-------------------------------+\n             |                               |\n             v                               |\n  +-----------------------------+            |\n  |           Knoten            |------------+\n  +-----------------------------+\n  | - name: String              |\n  | # nr: int                   |\n  | - markiert: boolean         |   <- unterstreichen (static)\n  | ~ tiefe: int                |\n  +-----------------------------+\n  | + Knoten(a: String, b: int) |\n  | + getName(): String         |\n  | # setMarkiert(m: boolean)   |\n  | + istMarkiert(): boolean    |   <- unterstreichen (static)\n  | + main(s: String[])         |   <- unterstreichen (static)\n  +-----------------------------+\n```\n\n**Bewertungsrubrik (6 Punkte)**\n- 1 P. `-name: String` und `#nr: int` korrekt.\n- 1 P. `~tiefe: int` - fehlender Modifikator = Paket-Sichtbarkeit `~`.\n- 1 P. `markiert` unterstrichen (Klassenattribut).\n- 1 P. `istMarkiert()` und `main(...)` unterstrichen (Klassenoperationen).\n- 1 P. Konstruktor und die übrigen Operationen mit richtiger Sichtbarkeit und Rückgabetyp hinten.\n- 1 P. `next` als **reflexive** Assoziation auf `Knoten` mit Rollenname `next` und Multiplizitaet `0..1`.",
+   "explanation": "Drei Dinge machen diese Aufgabe zur typischen Klausurfrage:\n\n**1. Die vierte Sichtbarkeit.** `int tiefe;` hat *keinen* Modifikator. Das ist in Java nicht 'public', sondern **package-private** - in UML die Tilde `~`. Wer hier `+` schreibt, hat den häufigsten Einzelfehler dieser Aufgabe gemacht.\n\n**2. static wird unterstrichen.** `markiert`, `istMarkiert()` und auch `main(...)` sind `static`, gehören also der **Klasse** und nicht den Objekten (S. 168/173). `main` ist keine Ausnahme - es ist eine ganz normale Klassenoperation.\n\n**3. Referenz auf eigene Klasse = reflexive Assoziation.** Ein Attribut, dessen Typ eine Klasse des Modells ist, zeichnet man nicht in das Attribut-Fach, sondern als **Assoziation** (S. 174/175). Zeigt sie auf dieselbe Klasse zurück, heißt sie *reflexiv*. Der Attributname `next` wird zum **Rollennamen** am Ziel-Ende. Die Multiplizität ist `0..1`, weil eine Referenzvariable entweder auf genau ein Objekt zeigt oder `null` ist - und `null` ist die '0' der Multiplizität (S. 189: `if (student.gruppe == null)`).\n\nPrimitive Typen und `String` bleiben dagegen ganz normale Attribute im mittleren Fach.\n\nMerkregel: **Klassentyp -> Linie, Basistyp -> Kasten. Kein Modifikator -> Tilde. static -> Strich drunter.**",
+   "hints": [
+    "Gehen Sie die Deklarationen der Reihe nach durch und notieren Sie zu jeder erst einmal nur das Sichtbarkeitszeichen.",
+    "Bei `int tiefe;` steht kein Modifikator - das ist ein eigener Fall und nicht `public`.",
+    "`next` hat als Typ die eigene Klasse. Attribute mit Klassentyp zeichnet man als Linie, nicht als Textzeile.",
+    "Kann `next` auch `null` sein? Dann ist die Untergrenze der Multiplizität 0."
+   ],
+   "pitfalls": [
+    "`int tiefe;` als `+ tiefe` zeichnen statt als `~ tiefe`.",
+    "`main` vergessen oder nicht unterstreichen - es ist eine Klassenoperation.",
+    "`next` als Attribut `+ next: Knoten` ins mittlere Fach schreiben, statt eine Assoziation zu zeichnen (beides ist zwar 'nicht falsch', gefragt ist hier aber ausdrücklich die Assoziation)."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 196,
+     "label": "6.7 Beispiel Java -> UML"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 175,
+     "label": "6.5 UML: Reflexive Assoziationen, Rollennamen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 168,
+     "label": "6.5 UML: Klassenattribute"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 192,
+     "label": "6.5 UML: Sichtbarkeit"
+    }
+   ],
+   "tags": [
+    "uml",
+    "code2uml",
+    "static",
+    "reflexiv",
+    "package"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-007",
+   "type": "uml",
+   "difficulty": 3,
+   "points": 7,
+   "examStyle": true,
+   "title": "UML -> Java: Assoziationen mit Multiplizitäten umsetzen",
+   "prompt": "Gegeben ist das folgende Klassendiagramm (nach dem Übungsgruppen-Beispiel der Vorlesung):\n\n```mermaid\nclassDiagram\n  class Uebung {\n    -thema : String\n  }\n  class Uebungsgruppe {\n    -uhrzeit : Date\n  }\n  class Student {\n    -name : String[1..3]\n    -matrikelNr : long\n    -email : String\n  }\n  class Raum {\n    -nummer : int\n    -anzahlPlaetze : int\n  }\n  Uebung --> \"1..10\" Uebungsgruppe : gruppen\n  Uebungsgruppe --> \"*\" Student : teilnehmer\n  Student --> \"0..1\" Uebungsgruppe : gruppe\n  Uebungsgruppe --> \"1\" Raum : raum\n```\n\nSchreiben Sie die **vier Java-Klassen** mit allen Attributen. Für die Assoziationen gilt: Der Pfeil gibt die Navigierbarkeit an - die Klasse am Pfeilanfang muss eine Referenz auf die Klasse am Pfeilende speichern. Methoden und Konstruktoren brauchen Sie nicht auszuschreiben.",
+   "solution": "```java\nimport java.util.Date;\n\nclass Uebung {\n  private String thema;\n  private Uebungsgruppe[] gruppen;   // 1..10  -> Feld\n}\n\nclass Uebungsgruppe {\n  private Date uhrzeit;\n  private Student[] teilnehmer;      // *      -> Feld\n  private Raum raum;                 // 1      -> einfache Referenz\n}\n\nclass Student {\n  private String[] name;             // Attribut-Multiplizitaet 1..3 -> Feld\n  private long matrikelNr;\n  private String email;\n  private Uebungsgruppe gruppe;      // 0..1   -> einfache Referenz, darf null sein\n}\n\nclass Raum {\n  private int nummer;\n  private int anzahlPlaetze;\n  // keine Referenz auf Uebungsgruppe: kein Pfeil in diese Richtung\n}\n```\n\n**Bewertungsrubrik (7 Punkte)**\n- 1 P. Alle vier Klassen mit ihren einfachen Attributen (`matrikelNr: long` -> `private long matrikelNr;`).\n- 1 P. `name: String[1..3]` wird zu einem **Feld** `private String[] name;` (Attribut-Multiplizitaet!).\n- 1 P. `Uebung` besitzt ein **Feld** `Uebungsgruppe[] gruppen`.\n- 1 P. `Uebungsgruppe` besitzt ein **Feld** `Student[] teilnehmer`.\n- 1 P. `Student` besitzt eine **einfache Referenz** `Uebungsgruppe gruppe` (kein Feld!).\n- 1 P. `Uebungsgruppe` besitzt eine einfache Referenz `Raum raum`.\n- 1 P. `Raum` bekommt **keine** Referenz zurück auf `Uebungsgruppe`.",
+   "explanation": "Die Umsetzung von Assoziationen in Java folgt einer einzigen Regel (S. 179 und S. 169):\n\n| Multiplizität am Pfeilende | Java |\n|---|---|\n| `1` | einfache Referenz, sollte immer gesetzt sein |\n| `0..1` | einfache Referenz, darf `null` sein |\n| `*`, `1..*`, `1..10`, `1..3` | **Feld (Array)** bzw. Collection |\n\n> *In Java erfolgt bei der Deklaration eines Feldes keine Angabe, wieviel Elemente es enthalten kann* (S. 169).\n\nDas heißt: Die **Obergrenze** `10` aus `1..10` verschwindet im Java-Code vollständig - man sieht sie höchstens noch bei `new Uebungsgruppe[10]` oder in einer Prüfung im Setter. Aus dem Java-Code allein kann man die Multiplizität also nicht mehr rekonstruieren; das ist genau der Informationsverlust, den ein Modell ausgleicht.\n\nDer zweite Punkt ist die **Navigierbarkeit** (S. 187-190): Ein Pfeil `A --> B` bedeutet *A-Objekte können auf B-Objekte zugreifen*, also speichert A eine Referenz auf B. Ohne Pfeil in die Gegenrichtung bekommt B **kein** Attribut. Zwischen `Uebungsgruppe` und `Student` gehen die Pfeile in beide Richtungen - deshalb kennt hier jede Seite die andere.\n\nDieselbe Regel gilt auch für **Attribut-Multiplizitäten**: `name: String[1..3]` heißt *dieses Attribut besteht aus 1 bis 3 String-Werten* (S. 167) und wird in Java zu `String[] name;` (S. 169). Voreinstellung ohne Klammern ist genau **ein** Wert.\n\nMerkregel: **Obergrenze > 1 -> Array. Pfeilanfang -> dort steht das Attribut.**",
+   "hints": [
+    "Übersetzen Sie zuerst nur die Attribute in den Kästen - das ist reine Fleißarbeit.",
+    "Für jede Assoziation: Schauen Sie auf die Multiplizität am **Pfeilende**. Kann es mehr als eines sein?",
+    "Mehr als eines -> Array. Höchstens eines -> einfache Referenz.",
+    "Prüfen Sie zum Schluss, welche Klasse **keinen** ausgehenden Pfeil hat - die bekommt keine Referenz.",
+    "Achtung bei `name: String[1..3]`: Die eckigen Klammern sind eine Multiplizität am **Attribut**, kein Assoziationsende."
+   ],
+   "pitfalls": [
+    "Aus `0..1` ein Array machen, weil da eine 0 steht - `0..1` heißt 'höchstens eines', also eine Referenz, die auch `null` sein darf.",
+    "Die Obergrenze `10` im Java-Typ unterbringen wollen (`Uebungsgruppe[10] gruppen;` ist syntaktisch falsch).",
+    "Beiden Klassen wechselseitig Referenzen geben, obwohl nur ein Pfeil gezeichnet ist.",
+    "`name: String[1..3]` als einfaches `String name;` übersetzen - die Multiplizität 1..3 verlangt ein Feld."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 179,
+     "label": "6.5 UML: Umsetzung von Assoziationen in Java"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 188,
+     "label": "6.5 UML: Assoziationen und Navigierbarkeit (Beispiel)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 167,
+     "label": "6.5 UML: Attribute mit Multiplizität"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 169,
+     "label": "6.5 UML: Attribute in Java (Felder, static)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 364,
+     "label": "Überblick 6: Klassendiagramm mit Multiplizitäten (name: String[1..3])"
+    }
+   ],
+   "tags": [
+    "uml",
+    "uml2code",
+    "assoziation",
+    "multiplizitaet",
+    "navigierbarkeit"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-008",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Klasse aus dem Klassendiagramm implementieren (Konto)",
+   "prompt": "Setzen Sie das folgende Klassendiagramm **1:1** in Java um. Die unterstrichenen Elemente (in Mermaid mit `$` markiert) sind Klassenattribute bzw. Klassenoperationen.\n\n```mermaid\nclassDiagram\n  class Konto {\n    -inhaber : String\n    -stand : double\n    -zinssatz : double$\n    -anzahlKonten : int$\n    +Konto(inhaber: String, stand: double)\n    +einzahlen(betrag: double)\n    +getStand() double\n    +getInhaber() String\n    +setZinssatz(z: double)$\n    +getZinssatz() double$\n    +getAnzahlKonten() int$\n  }\n```\n\nZusätzlich gilt:\n- `zinssatz` startet bei `0.0`, `anzahlKonten` bei `0`.\n- Der Konstruktor setzt die beiden Attribute und erhöht `anzahlKonten`.\n- `einzahlen(betrag)` erhöht `stand` **nur**, wenn `betrag > 0` ist; sonst passiert nichts.\n\nDie Klasse `KontoTest` mit `main` ist vorgegeben und darf **nicht** verändert werden.",
+   "starterCode": "class KontoTest {\n  public static void main(String[] s) {\n    Konto.setZinssatz(1.5);\n    Konto a = new Konto(\"Meier\", 100.0);\n    Konto b = new Konto(\"Schulz\", 250.0);\n    a.einzahlen(50.0);\n    b.einzahlen(-5.0);\n    System.out.println(a.getInhaber() + \": \" + a.getStand());\n    System.out.println(b.getInhaber() + \": \" + b.getStand());\n    System.out.println(\"Konten: \" + Konto.getAnzahlKonten());\n    System.out.println(\"Zinssatz: \" + Konto.getZinssatz());\n  }\n}\n\nclass Konto {\n  // TODO: Attribute laut Diagramm\n\n  // TODO: Konstruktor und Operationen laut Diagramm\n}",
+   "solution": "class KontoTest {\n  public static void main(String[] s) {\n    Konto.setZinssatz(1.5);\n    Konto a = new Konto(\"Meier\", 100.0);\n    Konto b = new Konto(\"Schulz\", 250.0);\n    a.einzahlen(50.0);\n    b.einzahlen(-5.0);\n    System.out.println(a.getInhaber() + \": \" + a.getStand());\n    System.out.println(b.getInhaber() + \": \" + b.getStand());\n    System.out.println(\"Konten: \" + Konto.getAnzahlKonten());\n    System.out.println(\"Zinssatz: \" + Konto.getZinssatz());\n  }\n}\n\nclass Konto {\n  private String inhaber;\n  private double stand;\n  private static double zinssatz = 0.0;\n  private static int anzahlKonten = 0;\n\n  public Konto(String inhaber, double stand) {\n    this.inhaber = inhaber;\n    this.stand = stand;\n    anzahlKonten++;\n  }\n  public void einzahlen(double betrag) {\n    if (betrag > 0) stand = stand + betrag;\n  }\n  public double getStand() { return stand; }\n  public String getInhaber() { return inhaber; }\n  public static void setZinssatz(double z) { zinssatz = z; }\n  public static double getZinssatz() { return zinssatz; }\n  public static int getAnzahlKonten() { return anzahlKonten; }\n}",
+   "expectedOutput": "Meier: 150.0\nSchulz: 250.0\nKonten: 2\nZinssatz: 1.5",
+   "required": [
+    "static"
+   ],
+   "explanation": "Diese Aufgabe ist die Standardrichtung 'Diagramm -> Code'. Drei Details entscheiden:\n\n**1. `$` bzw. Unterstreichung = `static`.** `zinssatz` und `anzahlKonten` existieren nur **einmal für alle Objekte** (S. 168). Deshalb kann `Konto.setZinssatz(1.5)` schon vor dem ersten `new` aufgerufen werden - ein Klassenattribut existiert auch, wenn es noch gar kein Objekt gibt.\n\n**2. Klassenoperationen dürfen nur auf Klassenattribute zugreifen.** `getAnzahlKonten()` ist `static` und liest `anzahlKonten` - das geht. Würde sie `stand` lesen wollen, gäbe es den Compilerfehler *non-static variable cannot be referenced from a static context*: es gibt ja kein Objekt, dessen `stand` gemeint sein könnte.\n\n**3. `private` + Getter.** Im Diagramm stehen die Attribute mit `-`; im Java-Code ist ein Attribut ohnehin immer `private` und der Zugriff läuft über Get-Methoden (S. 193). Deshalb kommt `main` ohne einen einzigen direkten Attributzugriff aus.\n\nDie Ausgabe zeigt außerdem zwei Klassiker: `b.einzahlen(-5.0)` ändert nichts (Wache `betrag > 0`), und `stand` wird als `double` mit `.0` gedruckt (`250.0`, nicht `250`).\n\nMerkregel: **Unterstrichen im Diagramm = `static` im Code = über den Klassennamen aufrufbar.**",
+   "hints": [
+    "Legen Sie zuerst die vier Attribute an - zwei davon mit `static`, weil sie im Diagramm unterstrichen sind.",
+    "Der Konstruktor hat dieselben Parameter wie im Diagramm; vergessen Sie das Hochzählen von `anzahlKonten` nicht.",
+    "Alle Operationen mit `$` im Diagramm werden `static` - inklusive `setZinssatz` und `getZinssatz`.",
+    "In `einzahlen` brauchen Sie eine `if`-Abfrage; bei negativem Betrag darf sich `stand` nicht ändern."
+   ],
+   "pitfalls": [
+    "`anzahlKonten` ohne `static` deklarieren - dann zählt jedes Objekt nur sich selbst und die Ausgabe wäre `Konten: 1`.",
+    "In einer `static`-Methode auf ein Objektattribut zugreifen wollen (Compilerfehler).",
+    "`einzahlen` ohne Prüfung schreiben - dann wäre `Schulz: 245.0` statt `250.0`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 168,
+     "label": "6.5 UML: Klassenattribute"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 173,
+     "label": "6.5 UML: Klassenoperationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 193,
+     "label": "6.5 UML: Hinweise zu Get- und Set-Methoden"
+    },
+    {
+     "file": "Aufgaben_Objekte_Klassen_UML.pdf",
+     "page": 5,
+     "label": "Aufgabe 5 - Statische Attribute & Methoden"
+    }
+   ],
+   "tags": [
+    "uml",
+    "uml2code",
+    "static",
+    "kapselung",
+    "klassendiagramm"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-009",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Code-Lücken: Klassendiagramm mit Vererbung umsetzen",
+   "prompt": "Der folgende Java-Code soll dieses Klassendiagramm umsetzen (`Person` ist **abstrakt**, `anzahl` und `getAnzahl()` sind **unterstrichen**):\n\n```mermaid\nclassDiagram\n  class Person {\n    <<abstract>>\n    #name : String\n    -anzahl : int$\n    +Person(name: String)\n    +getName() String\n    +beschreibung() String*\n    +getAnzahl() int$\n  }\n  class Student {\n    -matrNr : int\n    +Student(name: String, matrNr: int)\n    +beschreibung() String\n  }\n  Person <|-- Student\n```\n\nErgänzen Sie die **6 Lücken** `____(n)____`, sodass eine lauffähige Klasse entsteht (je 2 Punkte).",
+   "code": "class UmlPerson {\n  public static void main(String[] s) {\n    Person p = new Student(\"Anna\", 1234567);\n    System.out.println(p.beschreibung());\n    System.out.println(\"Anzahl: \" + Person.getAnzahl());\n  }\n}\n\n____(1)____ class Person {\n  ____(2)____ String name;             // im Diagramm: #\n  private ____(3)____ int anzahl = 0;  // im Diagramm: unterstrichen\n  public Person(String name) {\n    this.name = name;\n    anzahl++;\n  }\n  public String getName() { return name; }\n  public abstract String beschreibung();\n  public static int ____(4)____() { return anzahl; }\n}\n\nclass Student ____(5)____ Person {\n  private int matrNr;\n  public Student(String name, int matrNr) {\n    ____(6)____(name);\n    this.matrNr = matrNr;\n  }\n  public String beschreibung() {\n    return \"Student \" + getName() + \" (\" + matrNr + \")\";\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "abstract"
+     ],
+     "explanation": "Im Diagramm steht `<<abstract>>` (bzw. der Klassenname wäre kursiv). Außerdem hat `beschreibung()` keinen Rumpf - abstrakte Operationen dürfen nur in abstrakten Klassen stehen (S. 203)."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "protected"
+     ],
+     "explanation": "`#` = `protected`: `name` muss in der Unterklasse `Student` sichtbar sein. Mit `private` wäre `getName()` zwar noch benutzbar, das Diagramm fordert aber ausdrücklich `#`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "static"
+     ],
+     "explanation": "Unterstrichen = Klassenattribut = `static`. Nur so zählt `anzahl` über **alle** Personen und nicht pro Objekt."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "getAnzahl"
+     ],
+     "explanation": "Der Name steht im Diagramm: `+getAnzahl() int` (unterstrichen, also `static`). `main` ruft sie als `Person.getAnzahl()` auf."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "extends"
+     ],
+     "explanation": "Der durchgezogene Pfeil mit leerer Dreiecksspitze von `Student` zu `Person` ist Generalisierung - in Java `extends`. `implements` gilt nur für Schnittstellen."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "super"
+     ],
+     "explanation": "`super(name)` ruft den Konstruktor `Person(String)` auf und muss die **erste** Anweisung im Konstruktor sein. Nur so wird `name` gesetzt und `anzahl` erhöht."
+    }
+   ],
+   "solution": "class UmlPerson {\n  public static void main(String[] s) {\n    Person p = new Student(\"Anna\", 1234567);\n    System.out.println(p.beschreibung());\n    System.out.println(\"Anzahl: \" + Person.getAnzahl());\n  }\n}\n\nabstract class Person {\n  protected String name;             // im Diagramm: #\n  private static int anzahl = 0;  // im Diagramm: unterstrichen\n  public Person(String name) {\n    this.name = name;\n    anzahl++;\n  }\n  public String getName() { return name; }\n  public abstract String beschreibung();\n  public static int getAnzahl() { return anzahl; }\n}\n\nclass Student extends Person {\n  private int matrNr;\n  public Student(String name, int matrNr) {\n    super(name);\n    this.matrNr = matrNr;\n  }\n  public String beschreibung() {\n    return \"Student \" + getName() + \" (\" + matrNr + \")\";\n  }\n}",
+   "expectedOutput": "Student Anna (1234567)\nAnzahl: 1",
+   "explanation": "Jede Lücke entspricht genau einem Detail des Diagramms - das ist der Kern dieser Aufgabe:\n\n| Diagramm | Java |\n|---|---|\n| `<<abstract>>` / kursiver Name | `abstract class` |\n| `#name : String` | `protected String name;` |\n| `-anzahl : int` unterstrichen | `private static int anzahl` |\n| `+getAnzahl() int` unterstrichen | `public static int getAnzahl()` |\n| leere Dreiecksspitze, durchgezogen | `extends` |\n| Konstruktor der Unterklasse | `super(...)` als erste Anweisung |\n\nWarum ist die Ausgabe `Anzahl: 1`? Weil `anzahl` **einmal für alle** Objekte existiert und im Konstruktor von `Person` hochgezählt wird. Es wurde genau ein Objekt erzeugt (`new Student(...)`) - dabei läuft der Person-Konstruktor genau einmal, über `super(name)`.\n\nBeachten Sie außerdem die Zeile `Person p = new Student(...)`: die Variable hat den abstrakten Typ `Person`. Das ist erlaubt - man kann von einer abstrakten Klasse zwar kein Objekt erzeugen, aber sehr wohl eine **Referenz** darauf haben (S. 206). Beim Aufruf `p.beschreibung()` entscheidet dynamisch das tatsächliche Objekt, also `Student`.\n\nMerkregel: **abstract = kein `new`, aber Referenzen erlaubt; `super(...)` immer als erste Zeile.**",
+   "hints": [
+    "Lücke 1 und 3 sind Schlüsselwörter, die im Diagramm nur durch Schriftauszeichnungen sichtbar sind (kursiv bzw. unterstrichen).",
+    "Lücke 2: Welches Zeichen steht im Diagramm vor `name`? Übersetzen Sie es.",
+    "Lücke 5: Durchgezogene Linie mit leerer Dreiecksspitze zwischen zwei Klassen - welches Java-Schlüsselwort?",
+    "Lücke 6: `Person` hat keinen parameterlosen Konstruktor. Was muss in `Student` also als Erstes passieren?"
+   ],
+   "pitfalls": [
+    "In Lücke 3 `final` statt `static` einsetzen - dann ließe sich `anzahl` nicht mehr hochzählen.",
+    "In Lücke 5 `implements` schreiben - das gilt nur für Schnittstellen.",
+    "In Lücke 6 `this(name)` statt `super(name)` - das würde einen Konstruktor derselben Klasse suchen, den es nicht gibt."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3 - Code-Lücken ausfüllen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 202,
+     "label": "7.1 Abstrakte Klassen und Operationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 168,
+     "label": "6.5 UML: Klassenattribute"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 366,
+     "label": "Überblick 7: UML Klassendiagramm mit Vererbung"
+    }
+   ],
+   "tags": [
+    "uml",
+    "uml2code",
+    "abstract",
+    "static",
+    "extends",
+    "super"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-010",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Objektdiagramm im Kopf: gemeinsam genutztes Teil-Objekt",
+   "prompt": "Was gibt das folgende Programm auf der Konsole aus?\n\n*Tipp: Zeichnen Sie sich das Objektdiagramm nach Zeile 5 auf - wie viele `Motor`-Objekte gibt es wirklich?*",
+   "code": "class Aliasing {\n  public static void main(String[] s) {\n    Motor m = new Motor(90);\n    Auto a1 = new Auto(\"Polo\", m);\n    Auto a2 = new Auto(\"Golf\", m);\n    a1.motor.ps = 150;\n    System.out.println(a1.name + \": \" + a1.motor.ps);\n    System.out.println(a2.name + \": \" + a2.motor.ps);\n    System.out.println(a1.motor == a2.motor);\n    System.out.println(Motor.anzahl);\n  }\n}\n\nclass Motor {\n  static int anzahl = 0;\n  int ps;\n  Motor(int ps) { this.ps = ps; anzahl++; }\n}\n\nclass Auto {\n  String name;\n  Motor motor;\n  Auto(String name, Motor motor) { this.name = name; this.motor = motor; }\n}",
+   "expectedOutput": "Polo: 150\nGolf: 150\ntrue\n1",
+   "solution": "Polo: 150\nGolf: 150\ntrue\n1",
+   "explanation": "Das Objektdiagramm nach Zeile 5 sieht so aus:\n\n```mermaid\nclassDiagram\n  class a1[\"a1 : Auto\"] {\n    name = Polo\n  }\n  class a2[\"a2 : Auto\"] {\n    name = Golf\n  }\n  class m[\"m : Motor\"] {\n    ps = 150\n  }\n  a1 --> m : motor\n  a2 --> m : motor\n```\n\nEs gibt **drei** Objekte, nicht vier: `new Motor(90)` wird genau einmal ausgeführt. Die Referenz `m` wird an beide Konstruktoren weitergereicht, und `this.motor = motor;` kopiert **die Referenz**, nicht das Objekt (S. 190: *in Java ist eine Referenz die Adresse des Objekts im Speicher*). Beide Autos haben also einen Link auf **dasselbe** Motor-Objekt.\n\nDeshalb:\n- `a1.motor.ps = 150;` ändert das gemeinsame Objekt - `a2` sieht die Änderung sofort.\n- `a1.motor == a2.motor` vergleicht die Referenzen (Identität) und ist `true`.\n- `Motor.anzahl` ist `1`, weil der Motor-Konstruktor nur einmal lief. `anzahl` ist `static`, gehört also der Klasse und wird im Objektdiagramm gar nicht dargestellt (S. 168).\n\nModellierungssicht: Weil ein Motor zu mehreren Autos gehören kann, wäre das eine **Aggregation** (leere Raute), keine Komposition - bei einer Komposition dürfte das Teil-Objekt nur zu genau einem Ganzen gehören (S. 185).\n\nMerkregel: **Zuweisung einer Objektvariablen kopiert den Verweis, nicht das Objekt.**",
+   "hints": [
+    "Zählen Sie zuerst die `new`-Aufrufe - so viele Objekte gibt es.",
+    "Was wird bei `this.motor = motor;` kopiert: das Motor-Objekt oder nur seine Adresse?",
+    "`==` bei Objekten fragt nach Identität ('dasselbe Objekt?'), nicht nach gleichen Werten.",
+    "`anzahl` ist `static` - wie oft läuft der Konstruktor, in dem hochgezählt wird?"
+   ],
+   "pitfalls": [
+    "Annehmen, jedes Auto bekomme eine eigene Kopie des Motors - dann käme fälschlich `Golf: 90` heraus.",
+    "`Motor.anzahl` mit der Zahl der Autos verwechseln.",
+    "`==` als Wertevergleich lesen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 190,
+     "label": "6.5 UML: Realisierung von Assoziationen über Referenzen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 191,
+     "label": "6.5 UML: Objektdiagramm und Speicheradressen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 185,
+     "label": "6.5 UML: Aggregation und Komposition"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 365,
+     "label": "Überblick 6: UML Objektdiagramm"
+    }
+   ],
+   "tags": [
+    "uml",
+    "objektdiagramm",
+    "referenz",
+    "aliasing",
+    "static"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-011",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Multiplizitäten in Worte fassen",
+   "prompt": "Formulieren Sie zu jeder der drei Assoziationen **beide** Leserichtungen in einem Satz ('Ein X steht mit ... Y in Beziehung').\n\n**(a) Bank**\n\n```mermaid\nclassDiagram\n  Kunde \"1\" -- \"1..*\" Konto : besitzt\n  Kunde \"1\" -- \"*\" Depot : besitzt\n```\n\n**(b) Simultan-Schach**\n\n```mermaid\nclassDiagram\n  Schachpartie \"1..8\" -- \"2\" Spieler : spielt\n```\n\n**(c) Geometrie**\n\n```mermaid\nclassDiagram\n  Dreieck \"*\" -- \"3\" Punkt : ist Eckpunkt von\n```",
+   "solution": "**(a) Bank**\n- Ein `Kunde` besitzt **mindestens ein** `Konto` (`1..*`), also eines oder beliebig viele.\n- Ein `Konto` gehört zu **genau einem** `Kunde` (`1`) - es gibt kein herrenloses Konto.\n- Ein `Kunde` besitzt **beliebig viele** `Depot`s (`*`), auch **null** - Depots sind optional.\n- Ein `Depot` gehört zu genau einem `Kunde`.\n\n**(b) Simultan-Schach**\n- Eine `Schachpartie` wird von **genau 2** `Spieler`n gespielt.\n- Ein `Spieler` spielt **1 bis 8** `Schachpartie`n gleichzeitig - mindestens eine, höchstens acht.\n\n**(c) Geometrie**\n- Ein `Dreieck` steht mit **genau 3** `Punkt`en in Verbindung.\n- Ein `Punkt` ist Eckpunkt von **beliebig vielen** `Dreieck`en, auch von **keinem** (`*` schließt 0 ein).\n\n**Bewertungsrubrik (5 Punkte)**\n- 1 P. `1..*` als 'mindestens eines' gelesen (Muss-Assoziation).\n- 1 P. `*` als 'beliebig viele **einschließlich 0**' gelesen (Kann-Assoziation).\n- 1 P. Schach: 2 Spieler pro Partie **und** 1..8 Partien pro Spieler - beide Richtungen richtig zugeordnet.\n- 1 P. Dreieck/Punkt korrekt in beide Richtungen.\n- 1 P. Grundregel angewandt: Die Zahl steht am **Ende der Linie bei der Klasse, von der es so viele gibt** - gelesen wird sie für *ein* Objekt der **gegenüberliegenden** Klasse.",
+   "explanation": "Die Leserichtung ist der klassische Stolperstein. Die Regel lautet:\n\n> Die Multiplizität **am Ende bei Klasse B** sagt, mit wie vielen B-Objekten **ein einzelnes A-Objekt** in Beziehung steht.\n\nMan liest also immer *über Kreuz*: man startet bei der einen Klasse und liest die Zahl am **anderen** Ende. Bei `Schachpartie 1..8 -- 2 Spieler` steht die `2` beim Spieler, also: eine Partie hat 2 Spieler; die `1..8` steht bei der Partie, also: ein Spieler hat 1 bis 8 Partien (S. 177).\n\nDie zweite Falle ist die Bedeutung der Symbole (S. 176):\n\n| Notation | Bedeutung |\n|---|---|\n| `1` | genau eines (Muss) |\n| `0..1` | keines oder eines (Kann) |\n| `*` bzw. `0..*` | beliebig viele, **auch keines** |\n| `1..*` | mindestens eines |\n| `3` / `2,4` / `1..10` | genau 3 / 2 oder 4 / 1 bis 10 |\n\nFehlt die Angabe ganz, ist die Multiplizität **unspezifiziert** - nicht etwa automatisch `1` (bei *Attributen* ist die Voreinstellung dagegen genau ein Wert, S. 167).\n\nMerkregel: **Über Kreuz lesen; `*` schließt die Null ein, `1..*` nicht.**",
+   "hints": [
+    "Halten Sie einen Finger auf eine Klasse und lesen Sie die Zahl am **anderen** Ende der Linie.",
+    "Achten Sie besonders auf die Untergrenze: Steht dort 0 oder 1? Das entscheidet über Kann- oder Muss-Assoziation.",
+    "`*` allein ist die Kurzschreibweise für `0..*`."
+   ],
+   "pitfalls": [
+    "Die Multiplizität der Klasse zuordnen, bei der sie steht ('Kunde 1 heißt: ein Kunde hat 1 Konto') - genau umgekehrt.",
+    "`*` als 'mindestens eines' lesen.",
+    "Bei `1..8` die Obergrenze als Anzahl der Spieler statt der Partien deuten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 176,
+     "label": "6.5 UML: Multiplizität von Assoziationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 177,
+     "label": "6.5 UML: Multiplizität - Beispiele Bank und Simultan-Schach"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 181,
+     "label": "6.5 UML: Beispiel Dreieck / Punkt"
+    }
+   ],
+   "tags": [
+    "uml",
+    "multiplizitaet",
+    "assoziation",
+    "lesen"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-012",
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Welcher Pfeil steht für implements?",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nIn Java steht:\n\n```java\ninterface Fahrbar {\n  void fahren();\n}\nclass Auto implements Fahrbar {\n  public void fahren() { /* ... */ }\n}\n```\n\nWie wird die Beziehung zwischen `Auto` und `Fahrbar` im UML-Klassendiagramm dargestellt?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Durchgezogene Linie mit leerer Dreiecksspitze, die auf `Fahrbar` zeigt (Mermaid: `Fahrbar <|-- Auto`).",
+     "correct": false,
+     "why": "Das ist die **Generalisierung** (`extends`). Der Linienstil unterscheidet sie von der Realisierung: durchgezogen = erben, gestrichelt = implementieren."
+    },
+    {
+     "id": "b",
+     "text": "Gestrichelte Linie mit leerer Dreiecksspitze, die auf `Fahrbar` zeigt (Mermaid: `Fahrbar <|.. Auto`).",
+     "correct": true,
+     "why": "Richtig. Die Implementierungs-Beziehung (Realisierung) wird gestrichelt gezeichnet, die leere Dreiecksspitze zeigt auf die Schnittstelle (S. 208)."
+    },
+    {
+     "id": "c",
+     "text": "Durchgezogene Linie mit ausgefüllter Raute an `Fahrbar` (Mermaid: `Fahrbar *-- Auto`).",
+     "correct": false,
+     "why": "Die ausgefüllte Raute ist eine **Komposition** - eine Teile/Ganzes-Beziehung zwischen Objekten, nicht zwischen Typ und Schnittstelle."
+    },
+    {
+     "id": "d",
+     "text": "Gestrichelte Linie mit offener Pfeilspitze von `Fahrbar` zu `Auto` (Mermaid: `Auto <.. Fahrbar`).",
+     "correct": false,
+     "why": "Gestrichelt mit **offener** Spitze ist eine Abhängigkeit (dependency) - und die Richtung wäre hier außerdem verkehrt."
+    }
+   ],
+   "solution": "b) Gestrichelte Linie mit leerer Dreiecksspitze auf die Schnittstelle - Mermaid: `Fahrbar <|.. Auto`",
+   "explanation": "Die vier Linientypen des Klassendiagramms muss man auseinanderhalten können:\n\n| Beziehung | Linie | Spitze | Mermaid |\n|---|---|---|---|\n| Generalisierung (`extends`) | durchgezogen | leeres Dreieck zur Oberklasse | `Ober <\\|-- Unter` |\n| Realisierung (`implements`) | **gestrichelt** | leeres Dreieck zur Schnittstelle | `Schnittstelle <\\|.. Klasse` |\n| Aggregation | durchgezogen | **leere Raute** am Ganzen | `Ganzes o-- Teil` |\n| Komposition | durchgezogen | **ausgefüllte Raute** am Ganzen | `Ganzes *-- Teil` |\n| gerichtete Assoziation | durchgezogen | offene Pfeilspitze | `A --> B` |\n\nDas Skript nennt die Beziehung ausdrücklich *Implementierungs-Beziehung statt Generalisierung* (S. 206): Vererbt werden nur die **Signaturen**, nicht die Implementierung - deshalb die 'unterbrochene', schwächere Linie.\n\nMerkregel: **Gleiche Spitze, anderer Strich: erben ist durchgezogen, versprechen ist gestrichelt.**",
+   "hints": [
+    "Beide Beziehungen - `extends` und `implements` - haben dieselbe Spitzenform. Unterschieden werden sie nur über den Linienstil.",
+    "Die Spitze zeigt immer zum Allgemeineren, hier also zur Schnittstelle."
+   ],
+   "pitfalls": [
+    "`implements` mit durchgezogener Linie zeichnen (das wäre `extends`).",
+    "Raute und Dreieck verwechseln - Rauten gehören zu Aggregation/Komposition."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 208,
+     "label": "7.1 Interfaces: Implementierungs-Beziehung implements"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 186,
+     "label": "6.5 UML: Darstellung Aggregation und Komposition"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 368,
+     "label": "Überblick 7: Schnittstellen, abstrakte Klassen"
+    }
+   ],
+   "tags": [
+    "uml",
+    "interface",
+    "realisierung",
+    "notation"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-013",
+   "type": "uml",
+   "difficulty": 3,
+   "points": 6,
+   "title": "Objektdiagramm zu gegebenem Code zeichnen",
+   "prompt": "Zeichnen Sie das **Objektdiagramm**, das unmittelbar nach dem Ende der `main`-Methode besteht. Geben Sie für jedes Objekt den Objektnamen, die Klasse und alle Attributwerte an und zeichnen Sie die Links zwischen den Objekten.\n\nÜberlegen Sie insbesondere: **Wie viele Kästen** hat Ihr Diagramm - und gehört `anzahl` in einen davon?",
+   "code": "class Autor {\n  private String name;\n  private static int anzahl = 0;\n  public Autor(String name) { this.name = name; anzahl++; }\n}\n\nclass Buch {\n  private String titel;\n  private int jahr;\n  public Autor autor;\n  public Buch(String titel, int jahr) {\n    this.titel = titel;\n    this.jahr = jahr;\n  }\n}\n\nclass Verlag {\n  public static void main(String[] s) {\n    Autor a = new Autor(\"Knuth\");\n    Buch b1 = new Buch(\"TAOCP 1\", 1968);\n    Buch b2 = new Buch(\"TAOCP 2\", 1969);\n    b1.autor = a;\n    b2.autor = a;\n  }\n}",
+   "solution": "```mermaid\nclassDiagram\n  class b1[\"b1 : Buch\"] {\n    titel = TAOCP 1\n    jahr = 1968\n  }\n  class b2[\"b2 : Buch\"] {\n    titel = TAOCP 2\n    jahr = 1969\n  }\n  class a[\"a : Autor\"] {\n    name = Knuth\n  }\n  b1 --> a : autor\n  b2 --> a : autor\n```\n\n**Handschriftlich (Kopfzeile jeweils unterstrichen, Werte in Anführungszeichen):**\n\n```text\n  +------------------------+          +--------------------+\n  |      b1 : Buch         |          |     a : Autor      |\n  +------------------------+  autor   +--------------------+\n  | titel = \"TAOCP 1\"      |--------->| name = \"Knuth\"     |\n  | jahr  = 1968           |          +--------------------+\n  +------------------------+              ^\n                                          | autor\n  +------------------------+              |\n  |      b2 : Buch         |--------------+\n  +------------------------+\n  | titel = \"TAOCP 2\"      |\n  | jahr  = 1969           |\n  +------------------------+\n```\n\n**Bewertungsrubrik (6 Punkte)**\n- 1 P. Genau **drei** Kästen (ein Autor, zwei Bücher) - nicht vier.\n- 1 P. Kopfzeile in der Form `objektname : Klasse`, **unterstrichen**, Objektname klein, Klassenname groß.\n- 1 P. Konkrete Attribut**werte** statt Typen (`jahr = 1968`, nicht `jahr: int`).\n- 1 P. Zwei Links von `b1` bzw. `b2` auf **dasselbe** Autor-Objekt.\n- 1 P. Kein Operationen-Fach, keine Konstruktoren im Diagramm.\n- 1 P. `anzahl` steht **nicht** im Objektdiagramm (Klassenattribut, gehört der Klasse).",
+   "explanation": "Ein Objektdiagramm ist eine **Momentaufnahme**: Man geht das Programm Zeile für Zeile durch und zeichnet für jedes `new` einen Kasten.\n\n1. `new Autor(\"Knuth\")` -> ein Kasten `a : Autor` mit `name = \"Knuth\"`.\n2. `new Buch(...)` zweimal -> zwei Kästen `b1 : Buch` und `b2 : Buch` mit ihren Werten. Das Attribut `autor` ist zu diesem Zeitpunkt noch `null` - ein `null`-Attribut zeichnet man als *fehlenden Link* (die Multiplizität `0..1` erlaubt das).\n3. `b1.autor = a; b2.autor = a;` -> zwei **Links** auf denselben Kasten.\n\nDrei Punkte, die in der Klausur Punkte kosten:\n\n- **Die Kopfzeile wird unterstrichen** und lautet `objektname : Klasse` (S. 162). Objektnamen und Attributnamen klein, Klassennamen groß.\n- **Keine Operationen** im Objektdiagramm - *sie sind für alle Objekte einer Klasse identisch* (S. 162).\n- **Klassenattribute gehören nicht ins Objektdiagramm.** `anzahl` ist `static`, existiert also genau einmal für die Klasse und nicht pro Objekt (S. 168).\n\nDass beide Bücher auf **ein** Autor-Objekt zeigen, ist genau der Unterschied zwischen Gleichheit und Identität: Es gibt nicht zwei gleiche Autoren, sondern einen einzigen, der zweimal referenziert wird.\n\nMerkregel: **Ein `new` = ein Kasten. Eine Referenzzuweisung = ein Pfeil, kein neuer Kasten.**",
+   "hints": [
+    "Zählen Sie die `new`-Aufrufe im Programm - so viele Kästen braucht Ihr Diagramm.",
+    "Was passiert bei `b2.autor = a;` - entsteht dabei ein neues Objekt?",
+    "Überlegen Sie für `anzahl`: gehört ein `static`-Attribut zu einem Objekt oder zur Klasse?"
+   ],
+   "pitfalls": [
+    "Für jede Referenz einen eigenen Autor-Kasten zeichnen (dann wären es vier Objekte).",
+    "Das Klassenattribut `anzahl` in die Objektkästen schreiben.",
+    "Typen statt Werte notieren (`titel : String` statt `titel = \"TAOCP 1\"`)."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 162,
+     "label": "6.5 UML: Objekte - allgemeines Schema"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 163,
+     "label": "6.5 UML: Objektdiagramm mit Objektbeziehungen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 182,
+     "label": "6.5 UML: Beispiel Objektdiagramm Dreieck/Punkt"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 365,
+     "label": "Überblick 6: UML Objektdiagramm"
+    }
+   ],
+   "tags": [
+    "uml",
+    "objektdiagramm",
+    "code2uml",
+    "referenz"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-014",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: Diagramm mit Interface und abstrakter Klasse falsch umgesetzt",
+   "prompt": "Der folgende Code soll dieses Diagramm umsetzen:\n\n```mermaid\nclassDiagram\n  class Fuetterbar {\n    <<interface>>\n    +fuettern()\n  }\n  class Tier {\n    <<abstract>>\n    #name : String\n    +Tier(name: String)\n    +lautGeben()*\n    +fuettern()\n  }\n  class Hund {\n    +Hund(name: String)\n    +lautGeben()\n  }\n  Fuetterbar <|.. Tier\n  Tier <|-- Hund\n```\n\nEr enthält **genau 3 Compiler-Fehler**. Benennen Sie sie (mit Zeilennummer) und geben Sie jeweils die Korrektur an.",
+   "code": "class Zoo {\n  public static void main(String[] s) {\n    Tier t = new Tier(\"Rex\");\n    Hund h = new Hund(\"Waldi\");\n    h.lautGeben();\n    t.fuettern();\n  }\n}\n\ninterface Fuetterbar {\n  void fuettern();\n}\n\nabstract class Tier implements Fuetterbar {\n  protected String name;\n  public Tier(String name) { this.name = name; }\n  public abstract void lautGeben();\n  void fuettern() { System.out.println(name + \" frisst.\"); }\n}\n\nclass Hund extends Tier {\n  public Hund(String name) { super(name); }\n}",
+   "errors": [
+    {
+     "line": 3,
+     "wrong": "Tier t = new Tier(\"Rex\");",
+     "fix": "Von einer abstrakten Klasse kann man kein Objekt erzeugen. Stattdessen eine konkrete Unterklasse instanziieren: `Tier t = new Hund(\"Rex\");` (die Variable darf weiterhin vom Typ `Tier` sein).",
+     "why": "Compilerfehler: *Tier is abstract; cannot be instantiated*. Das Diagramm zeigt `Tier` mit `<<abstract>>` bzw. kursivem Namen - von solchen Klassen gibt es keine Instanzen (S. 202)."
+    },
+    {
+     "line": 18,
+     "wrong": "void fuettern() { System.out.println(name + \" frisst.\"); }",
+     "fix": "`public void fuettern() { ... }` - die implementierende Methode muss oeffentlich sein.",
+     "why": "Compilerfehler: *fuettern() in Tier cannot implement fuettern() in Fuetterbar - attempting to assign weaker access privileges; was public*. Operationen einer Schnittstelle sind immer `public`; ohne Modifikator wäre die Methode nur paket-sichtbar (S. 207)."
+    },
+    {
+     "line": 21,
+     "wrong": "class Hund extends Tier {",
+     "fix": "`Hund` muss `lautGeben()` implementieren, z. B. `public void lautGeben() { System.out.println(name + \" sagt Wuff.\"); }` - oder selbst `abstract` werden.",
+     "why": "Compilerfehler: *Hund is not abstract and does not override abstract method lautGeben() in Tier*. Im Diagramm steht `+lautGeben()` sowohl bei `Tier` (abstrakt, kursiv) als auch bei `Hund` - die konkrete Klasse muss die Operation überschreiben (S. 203)."
+    }
+   ],
+   "solution": "class Zoo {\n  public static void main(String[] s) {\n    Tier t = new Hund(\"Rex\");\n    Hund h = new Hund(\"Waldi\");\n    h.lautGeben();\n    t.fuettern();\n  }\n}\n\ninterface Fuetterbar {\n  void fuettern();\n}\n\nabstract class Tier implements Fuetterbar {\n  protected String name;\n  public Tier(String name) { this.name = name; }\n  public abstract void lautGeben();\n  public void fuettern() { System.out.println(name + \" frisst.\"); }\n}\n\nclass Hund extends Tier {\n  public Hund(String name) { super(name); }\n  public void lautGeben() { System.out.println(name + \" sagt Wuff.\"); }\n}",
+   "expectedOutput": "Waldi sagt Wuff.\nRex frisst.",
+   "explanation": "Alle drei Fehler entstehen dadurch, dass Notations-Details des Diagramms im Code verlorengegangen sind:\n\n**1. `<<abstract>>` / kursiver Name -> `new` ist verboten.** Eine abstrakte Klasse ist unvollständig; sie hat mit `lautGeben()` eine Operation ohne Rumpf. Eine **Referenz** vom Typ `Tier` bleibt aber erlaubt (S. 206) - deshalb ist `Tier t = new Hund(\"Rex\");` die richtige Korrektur und nicht etwa das Streichen von `abstract`.\n\n**2. `<<interface>>` -> alle Operationen sind `public`.** *Die Operationen einer Schnittstelle sind immer abstrakt und öffentlich* (S. 204), und *die überschreibenden Operationen müssen öffentlich sein* (S. 207). Java erlaubt beim Überschreiben nie eine **engere** Sichtbarkeit - sonst könnte man ein Versprechen des Obertyps brechen.\n\n**3. Steht eine Operation im Kasten der konkreten Klasse, muss sie dort auch implementiert werden.** `Hund` erbt `lautGeben()` als abstrakte Operation. Wer sie nicht überschreibt, bleibt selbst abstrakt - und das ist `Hund` nicht.\n\nBeachten Sie die Ausgabereihenfolge der korrigierten Fassung: erst `h.lautGeben()`, dann `t.fuettern()`. `t` zeigt auf einen Hund namens 'Rex', deshalb *Rex frisst.*\n\nMerkregel: **abstract = kein `new`; Interface-Methoden immer `public`; konkrete Klasse = keine offenen Versprechen.**",
+   "hints": [
+    "Schauen Sie sich Zeile 3 an und vergleichen Sie mit dem Schlüsselwort in Zeile 14.",
+    "Welche Sichtbarkeit haben Operationen einer Schnittstelle - und was passiert, wenn die implementierende Methode gar keinen Modifikator hat?",
+    "Gehen Sie die abstrakten Operationen durch: Welche Klasse muss `lautGeben()` mit Rumpf liefern?"
+   ],
+   "pitfalls": [
+    "Als Korrektur einfach `abstract` bei `Tier` streichen - dann müsste `lautGeben()` dort einen Rumpf bekommen und das Diagramm wäre nicht mehr umgesetzt.",
+    "Den Sichtbarkeitsfehler übersehen, weil `void fuettern()` 'ganz normal' aussieht.",
+    "Nur zwei Fehler nennen - gefragt sind genau drei."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 202,
+     "label": "7.1 Abstrakte Klassen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 204,
+     "label": "7.1 Interfaces: Operationen immer public"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 207,
+     "label": "7.1 Implementierungs-Beziehung implements"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 1b - Fehlersuche"
+    }
+   ],
+   "tags": [
+    "uml",
+    "uml2code",
+    "interface",
+    "abstract",
+    "find-errors"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-015",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "title": "Welche Objektdiagramme passen zur Multiplizität?",
+   "prompt": "Gegeben ist das Klassendiagramm des Simultan-Schachs:\n\n```mermaid\nclassDiagram\n  Schachpartie \"1..8\" -- \"2\" Spieler : spielt\n```\n\n**Mehrfachauswahl.** Welche der folgenden Situationen darf ein dazu passendes **Objektdiagramm** zeigen?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Ein Objekt `p1 : Schachpartie` mit Links zu genau zwei Spieler-Objekten.",
+     "correct": true,
+     "why": "Richtig - die `2` am Spieler-Ende bedeutet: jede Partie hat genau zwei Spieler."
+    },
+    {
+     "id": "b",
+     "text": "Ein Objekt `s1 : Spieler` mit Links zu drei verschiedenen Schachpartien.",
+     "correct": true,
+     "why": "Richtig - `1..8` erlaubt 1 bis 8 Partien, also auch 3."
+    },
+    {
+     "id": "c",
+     "text": "Ein Objekt `s2 : Spieler` ganz ohne Link zu einer Schachpartie.",
+     "correct": false,
+     "why": "Falsch - die Untergrenze ist 1. Ein Spieler ohne Partie wäre nur bei `0..8` oder `*` erlaubt."
+    },
+    {
+     "id": "d",
+     "text": "Ein Objekt `p2 : Schachpartie` mit Links zu drei Spieler-Objekten.",
+     "correct": false,
+     "why": "Falsch - `2` heißt *genau* zwei, nicht *mindestens* zwei."
+    },
+    {
+     "id": "e",
+     "text": "Ein Objekt `s3 : Spieler` mit Links zu acht Schachpartien.",
+     "correct": true,
+     "why": "Richtig - 8 ist die Obergrenze und damit noch erlaubt."
+    },
+    {
+     "id": "f",
+     "text": "Zwei verschiedene Schachpartien haben beide einen Link zu demselben Spieler-Objekt.",
+     "correct": true,
+     "why": "Richtig - genau dafür ist die Obergrenze 8 da: ein Spieler nimmt gleichzeitig an mehreren Partien teil (Simultan-Schach)."
+    }
+   ],
+   "solution": "a, b, e, f",
+   "explanation": "Ein Objektdiagramm ist eine **Instanz** des Klassendiagramms: jede Objektbeziehung (Link) ist die Instanz einer Assoziation (S. 174). Das Klassendiagramm legt mit den Multiplizitäten fest, welche Objektdiagramme überhaupt zulässig sind - man kann also jedes Objektdiagramm gegen das Klassendiagramm prüfen.\n\nVorgehen: Für **jedes einzelne Objekt** die Zahl seiner Links zählen und mit der Multiplizität am **gegenüberliegenden** Ende vergleichen.\n\n- Für eine `Schachpartie` gilt das Spieler-Ende: `2` -> exakt zwei Links. Damit fallen Antwort d) (drei Spieler) und auch 'eine Partie mit nur einem Spieler' heraus.\n- Für einen `Spieler` gilt das Partie-Ende: `1..8` -> mindestens einer, höchstens acht. Damit fällt c) heraus (0 Links).\n\nAntwort f) ist die eigentliche Pointe der Modellierung: Weil ein Spieler mehr als eine Partie haben darf, können mehrere Partie-Objekte auf **dasselbe** Spieler-Objekt zeigen. Genau das meint 'Simultan-Schach'.\n\nMerkregel: **Multiplizität = erlaubte Anzahl der Links pro Objekt, gemessen am anderen Ende.**",
+   "hints": [
+    "Prüfen Sie jede Aussage einzeln: Um welches Objekt geht es, und welche Multiplizität gilt für dessen Links?",
+    "Achten Sie auf Unter- **und** Obergrenze; beide können verletzt werden.",
+    "Eine feste Zahl wie `2` bedeutet immer *genau*, nie *mindestens*."
+   ],
+   "pitfalls": [
+    "`2` als 'mindestens 2' lesen.",
+    "Vergessen, dass eine Untergrenze von 1 ein völlig verbindungsloses Objekt verbietet.",
+    "Annehmen, ein Objekt dürfe nur von einem einzigen anderen Objekt referenziert werden."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 174,
+     "label": "6.5 UML: Assoziationen und Objektbeziehungen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 176,
+     "label": "6.5 UML: Multiplizität von Assoziationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 177,
+     "label": "6.5 UML: Beispiel Simultan-Schach"
+    }
+   ],
+   "tags": [
+    "uml",
+    "multiplizitaet",
+    "objektdiagramm"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-016",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 6,
+   "title": "Vier Fehler im Klassendiagramm finden",
+   "prompt": "Das folgende Klassendiagramm soll den darunter stehenden Java-Code beschreiben. Es enthält **genau 4 Fehler**. Benennen Sie jeden Fehler und geben Sie die Korrektur an.\n\n```mermaid\nclassDiagram\n  class Bestellung {\n    +nummer : int\n    -summe : double\n    +anzahl : int\n    +Bestellung(nummer: int)\n    +getSumme() double\n    +getAnzahl() int\n  }\n  class Eilbestellung {\n    -zuschlag : double\n    +getSumme() double\n  }\n  Eilbestellung <|-- Bestellung\n```",
+   "code": "class Bestellung {\n  private int nummer;\n  protected double summe;\n  private static int anzahl = 0;\n  public Bestellung(int nummer) {\n    this.nummer = nummer;\n    this.summe = 0.0;\n    anzahl++;\n  }\n  public double getSumme() { return summe; }\n  public static int getAnzahl() { return anzahl; }\n}\n\nclass Eilbestellung extends Bestellung {\n  private double zuschlag;\n  public Eilbestellung(int nummer, double zuschlag) {\n    super(nummer);\n    this.zuschlag = zuschlag;\n  }\n  public double getSumme() { return summe + zuschlag; }\n}",
+   "solution": "**Fehler 1 - falsche Sichtbarkeit bei `nummer`.**\nIm Code steht `private int nummer;`, im Diagramm `+nummer`. Richtig ist `-nummer : int`.\n\n**Fehler 2 - falsche Sichtbarkeit bei `summe`.**\nIm Code steht `protected double summe;`, im Diagramm `-summe`. Richtig ist `#summe : double`. (Das ist auch inhaltlich nötig, weil `Eilbestellung` in `getSumme()` direkt auf `summe` zugreift - mit `private` wäre das ein Compilerfehler.)\n\n**Fehler 3 - `anzahl` und `getAnzahl()` sind Klassenelemente.**\nBeide sind `static`, müssen also **unterstrichen** werden (in Mermaid: `-anzahl : int$` und `+getAnzahl() int$`). Außerdem ist `anzahl` `private`, also `-` statt `+`.\n\n**Fehler 4 - Vererbungspfeil in der falschen Richtung.**\n`Eilbestellung <|-- Bestellung` bedeutet 'Bestellung erbt von Eilbestellung'. Der Code sagt `class Eilbestellung extends Bestellung`, also muss es `Bestellung <|-- Eilbestellung` heißen: die leere Dreiecksspitze zeigt auf die **Oberklasse** `Bestellung`.\n\n**Korrigiertes Diagramm**\n\n```mermaid\nclassDiagram\n  class Bestellung {\n    -nummer : int\n    #summe : double\n    -anzahl : int$\n    +Bestellung(nummer: int)\n    +getSumme() double\n    +getAnzahl() int$\n  }\n  class Eilbestellung {\n    -zuschlag : double\n    +Eilbestellung(nummer: int, zuschlag: double)\n    +getSumme() double\n  }\n  Bestellung <|-- Eilbestellung\n```\n\n**Bewertungsrubrik (6 Punkte)**\n- je 1 P. für jeden der vier gefundenen Fehler (4 P.),\n- 1 P. für jeweils korrekte Angabe der Korrektur (Sichtbarkeitszeichen bzw. Unterstreichung),\n- 1 P. für die Begründung der Pfeilrichtung (Spitze zeigt zur Oberklasse).",
+   "explanation": "Die Aufgabe trainiert den Abgleich Diagramm <-> Code in der 'kritischen' Richtung. Vier Fehlerarten kommen dabei immer wieder vor:\n\n1. **Sichtbarkeit falsch übersetzt.** `private` -> `-`, `protected` -> `#`, `public` -> `+`, kein Modifikator -> `~` (S. 192).\n2. **`static` nicht gekennzeichnet.** Klassenattribute und -operationen werden unterstrichen (S. 168/173). Im Diagramm oben sah `anzahl` wie ein ganz normales Objektattribut aus - das wäre ein völlig anderes Modell (jede Bestellung mit eigenem Zähler).\n3. **Pfeilrichtung vertauscht.** Die leere Dreiecksspitze zeigt zur Basisklasse. Sinnprobe: 'Jede Eilbestellung **ist eine** Bestellung' - der Pfeil zeigt in Richtung dieser Aussage.\n4. **Ererbte Elemente doppelt eintragen** (hier nicht der Fall, aber der typische fünfte Fehler): `nummer` und `summe` gehören **nicht** noch einmal in den Kasten von `Eilbestellung` - geerbte Attribute werden im Diagramm nicht wiederholt (S. 200/212).\n\nZusätzlich zeigt der Code den Grund für `protected`: `getSumme()` in `Eilbestellung` greift direkt auf `summe` zu. Mit `private` wäre das der Compilerfehler *summe has private access in Bestellung* - Sichtbarkeiten im Modell haben also handfeste Konsequenzen.\n\nMerkregel: **Erst Sichtbarkeiten prüfen, dann Unterstreichungen, dann Pfeilrichtungen.**",
+   "hints": [
+    "Gehen Sie die Attribute des Codes der Reihe nach durch und vergleichen Sie nur das Sichtbarkeitszeichen.",
+    "Welche Elemente sind im Code `static`? Wie müssten die im Diagramm aussehen?",
+    "Lesen Sie den Vererbungspfeil laut vor: 'X ist ein Y'. Stimmt der Satz?"
+   ],
+   "pitfalls": [
+    "Nur die Sichtbarkeitsfehler finden und die fehlende Unterstreichung übersehen.",
+    "Die Pfeilrichtung für richtig halten, weil die Linie 'ja irgendwie da ist'.",
+    "Als fünften Fehler die fehlenden geerbten Attribute in `Eilbestellung` reklamieren - geerbte Elemente werden im Diagramm bewusst nicht wiederholt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 192,
+     "label": "6.5 UML: Sichtbarkeit"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 168,
+     "label": "6.5 UML: Klassenattribute unterstrichen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 200,
+     "label": "7.1 Generalisierung: Klassenhierarchie"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 366,
+     "label": "Überblick 7: Klassendiagramm mit Vererbung"
+    }
+   ],
+   "tags": [
+    "uml",
+    "fehlersuche",
+    "sichtbarkeit",
+    "static",
+    "vererbung"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-017",
+   "type": "uml",
+   "difficulty": 4,
+   "points": 6,
+   "title": "Aggregation oder Komposition? Drei Fälle modellieren",
+   "prompt": "Modellieren Sie die drei folgenden Teile/Ganzes-Beziehungen als UML-Klassendiagramm. Entscheiden Sie jeweils, ob eine **Aggregation** (leere Raute) oder eine **Komposition** (ausgefüllte Raute) vorliegt, und tragen Sie an **beiden** Enden die Multiplizitäten ein.\n\n1. Ein `Verzeichnis` besteht aus beliebig vielen `Datei`en. Eine Datei steht immer in genau einem Verzeichnis; wird das Verzeichnis gelöscht, werden auch alle enthaltenen Dateien gelöscht.\n2. Ein `Auto` besteht u. a. aus 4 `Rad`-Objekten. Ein Rad ist Teil von höchstens einem Auto - es gibt aber auch Räder ohne Auto (Ersatzräder im Lager).\n3. Ein `Dreieck` besteht immer aus 3 `Punkt`en. Ein Punkt kann gleichzeitig Eckpunkt beliebig vieler Dreiecke sein (auch von keinem).\n\nBegründen Sie in einem Satz je Fall, warum Sie sich für die eine oder andere Rautenart entschieden haben.",
+   "solution": "```mermaid\nclassDiagram\n  Verzeichnis \"1\" *-- \"*\" Datei\n  Auto \"0..1\" o-- \"4\" Rad\n  Dreieck \"*\" o-- \"3\" Punkt\n```\n\n**Begründungen**\n\n1. **Komposition** (ausgefüllte Raute bei `Verzeichnis`): Die Datei gehört zu *genau einem* Verzeichnis und kann ohne ihr Komposit-Objekt nicht existieren - beim Löschen des Verzeichnisses verschwinden auch die Dateien. Multiplizitaeten: `1` beim Verzeichnis, `*` bei der Datei.\n2. **Aggregation** (leere Raute bei `Auto`): Ein Rad kann auch **ohne** Auto existieren, deshalb `0..1` am Auto-Ende. Ein Auto hat genau `4` Räder.\n3. **Aggregation** (leere Raute bei `Dreieck`): Ein Punkt kann gleichzeitig zu **mehreren** Dreiecken gehören (`*` am Dreieck-Ende) - das schließt eine Komposition aus. Ein Dreieck hat genau `3` Punkte.\n\n**Handschriftlich (Raute immer am Ganzen):**\n\n```text\n  Verzeichnis <#>-------------- Datei        # = ausgefüllte Raute (Komposition)\n        1                  *\n\n  Auto <>---------------------- Rad          <> = leere Raute (Aggregation)\n     0..1                  4\n\n  Dreieck <>------------------- Punkt\n       *                   3\n```\n\n**Bewertungsrubrik (6 Punkte)**\n- 1 P. Fall 1 als Komposition erkannt, Raute am `Verzeichnis`.\n- 1 P. Fälle 2 und 3 als Aggregation erkannt, Rauten am `Auto` bzw. `Dreieck`.\n- 1 P. Multiplizitaeten Fall 1 (`1` / `*`).\n- 1 P. Multiplizitaeten Fall 2 (`0..1` / `4`).\n- 1 P. Multiplizitaeten Fall 3 (`*` / `3`).\n- 1 P. Begründung über Existenzabhängigkeit bzw. über die Zahl der möglichen Ganzen.",
+   "explanation": "Das Skript definiert die beiden Beziehungen so (S. 185):\n\n> **Aggregation:** Teile existieren selbständig und können (gleichzeitig) zu mehreren Aggregat-Objekten gehören.\n> **Komposition:** starke Form der Aggregation - das Teil-Objekt gehört zu **genau einem** Komposit-Objekt, kann nicht Teil verschiedener Komposit-Objekte sein und nicht ohne sein Komposit-Objekt existieren. Beim Erzeugen/Löschen des Ganzen werden auch die Teile erzeugt/gelöscht.\n\nDaraus folgt ein **mechanischer Test**: Schauen Sie auf die Multiplizität am Ende des **Ganzen**.\n\n| Multiplizität am Ganzen | Beziehung |\n|---|---|\n| `1` (und Teil stirbt mit) | Komposition (ausgefüllte Raute) |\n| `0..1` oder `*` | Aggregation (leere Raute) |\n\nDie Raute steht **immer beim Ganzen** - das ist die zweite häufige Fehlerquelle. In Mermaid schreibt man `Ganzes *-- Teil` bzw. `Ganzes o-- Teil`; die Raute sitzt jeweils bei der zuerst genannten Klasse.\n\nIn Java sieht man den Unterschied übrigens **nicht** direkt: beide Fälle werden zu einem Feld (`Datei[] dateien;`, `Rad[] raeder;`). Die Komposition erkennt man höchstens daran, dass das Ganze seine Teile selbst erzeugt (`new Datei(...)` im Konstruktor des Verzeichnisses) und keine fremden Teile hereinreicht.\n\nMerkregel: **Kann das Teil ohne das Ganze leben oder zu mehreren gehören? -> leere Raute. Sonst -> ausgefüllte Raute.**",
+   "hints": [
+    "Fragen Sie für jedes Teil: Kann es ohne sein Ganzes existieren?",
+    "Fragen Sie außerdem: Kann dasselbe Teil-Objekt gleichzeitig zu zwei Ganzen gehören?",
+    "Die Multiplizität am Ende des Ganzen verrät die Antwort: nur `1` erlaubt eine Komposition.",
+    "Zeichnen Sie die Raute immer an die Klasse, die das Ganze ist."
+   ],
+   "pitfalls": [
+    "Die Raute ans Teil statt ans Ganze zeichnen.",
+    "Dreieck/Punkt als Komposition modellieren, obwohl ein Punkt zu vielen Dreiecken gehören darf.",
+    "Bei Fall 2 `1` statt `0..1` am Auto-Ende schreiben und damit Ersatzräder verbieten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 185,
+     "label": "6.5 UML: Aggregation und Komposition"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 186,
+     "label": "6.5 UML: Darstellung Aggregation/Komposition"
+    },
+    {
+     "file": "Aufgaben_Objekte_Klassen_UML.pdf",
+     "page": 4,
+     "label": "Aufgabe 4 - Aggregation & Code -> UML"
+    }
+   ],
+   "tags": [
+    "uml",
+    "aggregation",
+    "komposition",
+    "multiplizitaet"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-018",
+   "type": "code",
+   "difficulty": 4,
+   "points": 14,
+   "examStyle": true,
+   "title": "Schnittstelle, Vererbung und polymorphes Array aus dem Diagramm",
+   "prompt": "Setzen Sie das folgende Klassendiagramm in Java um:\n\n```mermaid\nclassDiagram\n  class Figur {\n    <<interface>>\n    +getFlaeche() double\n    +getName() String\n  }\n  class Rechteck {\n    #a : double\n    #b : double\n    -anzahl : int$\n    +Rechteck(a: double, b: double)\n    +getFlaeche() double\n    +getName() String\n    +getAnzahl() int$\n  }\n  class Quadrat {\n    +Quadrat(seite: double)\n    +getName() String\n  }\n  class Kreis {\n    -r : double\n    +Kreis(r: double)\n    +getFlaeche() double\n    +getName() String\n  }\n  Figur <|.. Rechteck\n  Figur <|.. Kreis\n  Rechteck <|-- Quadrat\n```\n\nZusätzlich gilt:\n- `getFlaeche()` liefert bei `Rechteck` `a * b`, bei `Kreis` `3.14159 * r * r`.\n- `getName()` liefert den jeweiligen Klassennamen als Text (`\"Rechteck\"`, `\"Quadrat\"`, `\"Kreis\"`).\n- `Quadrat` erbt Attribute und `getFlaeche()` von `Rechteck` und reicht im Konstruktor die Seitenlänge zweimal an `super` weiter.\n- `anzahl` zählt, wie oft der Konstruktor von `Rechteck` durchlaufen wurde.\n\nDie Klasse `FigurTest` mit `main` ist vorgegeben und darf **nicht** verändert werden.",
+   "starterCode": "class FigurTest {\n  public static void main(String[] s) {\n    Figur[] figuren = new Figur[3];\n    figuren[0] = new Rechteck(3.0, 4.0);\n    figuren[1] = new Kreis(2.0);\n    figuren[2] = new Quadrat(5.0);\n    for (int i = 0; i < figuren.length; i++) {\n      System.out.println(figuren[i].getName() + \": \" + figuren[i].getFlaeche());\n    }\n    System.out.println(\"Figuren: \" + Rechteck.getAnzahl());\n  }\n}\n\n// TODO: interface Figur\n// TODO: class Rechteck implements Figur\n// TODO: class Quadrat extends Rechteck\n// TODO: class Kreis implements Figur",
+   "solution": "class FigurTest {\n  public static void main(String[] s) {\n    Figur[] figuren = new Figur[3];\n    figuren[0] = new Rechteck(3.0, 4.0);\n    figuren[1] = new Kreis(2.0);\n    figuren[2] = new Quadrat(5.0);\n    for (int i = 0; i < figuren.length; i++) {\n      System.out.println(figuren[i].getName() + \": \" + figuren[i].getFlaeche());\n    }\n    System.out.println(\"Figuren: \" + Rechteck.getAnzahl());\n  }\n}\n\ninterface Figur {\n  double getFlaeche();\n  String getName();\n}\n\nclass Rechteck implements Figur {\n  protected double a;\n  protected double b;\n  private static int anzahl = 0;\n  public Rechteck(double a, double b) {\n    this.a = a;\n    this.b = b;\n    anzahl++;\n  }\n  public double getFlaeche() { return a * b; }\n  public String getName() { return \"Rechteck\"; }\n  public static int getAnzahl() { return anzahl; }\n}\n\nclass Quadrat extends Rechteck {\n  public Quadrat(double seite) { super(seite, seite); }\n  public String getName() { return \"Quadrat\"; }\n}\n\nclass Kreis implements Figur {\n  private double r;\n  public Kreis(double r) { this.r = r; }\n  public double getFlaeche() { return 3.14159 * r * r; }\n  public String getName() { return \"Kreis\"; }\n}",
+   "expectedOutput": "Rechteck: 12.0\nKreis: 12.56636\nQuadrat: 25.0\nFiguren: 2",
+   "required": [
+    "implements",
+    "extends",
+    "static"
+   ],
+   "explanation": "Das Diagramm enthält **beide** Pfeilarten, und genau daran entscheidet sich der Code:\n\n| Diagramm | Java |\n|---|---|\n| `Figur <\\|.. Rechteck` (gestrichelt) | `class Rechteck implements Figur` |\n| `Rechteck <\\|-- Quadrat` (durchgezogen) | `class Quadrat extends Rechteck` |\n| `<<interface>>` | `interface Figur { ... }` mit rumpflosen Operationen |\n| `-anzahl : int$` | `private static int anzahl` |\n\n**Warum steht bei `Quadrat` kein `implements Figur`?** Weil `Quadrat` von `Rechteck` erbt und *alle Assoziationen und Operationen* der Oberklasse übernimmt (S. 212) - inklusive der Tatsache, dass `Rechteck` ein `Figur` ist. Ein Quadrat ist damit automatisch auch eine `Figur` und darf im `Figur[]`-Array stehen.\n\n**Warum ist die Ausgabe `Figuren: 2` und nicht `3`?** `anzahl` wird nur im Konstruktor von `Rechteck` erhöht. Der läuft zweimal: einmal direkt für `new Rechteck(3.0, 4.0)` und einmal indirekt über `super(seite, seite)` bei `new Quadrat(5.0)`. `Kreis` hat mit `Rechteck` nichts zu tun - es implementiert nur dieselbe Schnittstelle.\n\n**Polymorphie im Array:** `figuren` ist vom Typ `Figur[]`, enthält aber Objekte dreier verschiedener Klassen. Beim Aufruf `figuren[i].getName()` entscheidet dynamisch das tatsächliche Objekt (dynamische Bindung) - deshalb kommt bei Index 2 `Quadrat` heraus, obwohl `getFlaeche()` von `Rechteck` geerbt ist.\n\nMerkregel: **Gestrichelt = implements, durchgezogen = extends; geerbte Realisierung gilt weiter.**",
+   "hints": [
+    "Beginnen Sie mit dem Interface: rumpflose Methodenköpfe, mit Semikolon abgeschlossen.",
+    "Achten Sie auf den Linienstil der beiden Pfeilarten - einer wird zu `implements`, der andere zu `extends`.",
+    "`Quadrat` braucht selbst kein `getFlaeche()`: `a` und `b` sind `protected` und werden über `super(seite, seite)` gesetzt.",
+    "`anzahl` und `getAnzahl()` sind unterstrichen, also `static`. Überlegen Sie, wie oft der Rechteck-Konstruktor wirklich läuft."
+   ],
+   "pitfalls": [
+    "Bei `Quadrat` zusätzlich `implements Figur` schreiben - unnötig, weil die Realisierung mitvererbt wird.",
+    "Die Methoden der Schnittstelle nicht `public` machen - dann meldet der Compiler *attempting to assign weaker access privileges*.",
+    "`anzahl` in `Quadrat` erneut hochzählen und damit `Figuren: 3` erzeugen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 208,
+     "label": "7.1 Implementierungs-Beziehung implements"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 210,
+     "label": "7.1 Beispiel Schnittstelle Figur (Interface.java)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 212,
+     "label": "7.1 Vererbung: was die Unterklasse übernimmt"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 5 - Vererbung und Polymorphie"
+    }
+   ],
+   "tags": [
+    "uml",
+    "uml2code",
+    "interface",
+    "vererbung",
+    "polymorphie",
+    "static"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-019",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Vom Klassendiagramm zur Ausgabe (Ober-/Unterklasse)",
+   "prompt": "Zu diesem Klassendiagramm (Vorlesungsbeispiel, `klassenattribut` ist unterstrichen)\n\n```mermaid\nclassDiagram\n  class Oberklasse {\n    ~attributA : int\n    ~klassenattribut : double$\n    ~operationA()\n    ~operationB() int\n  }\n  class Unterklasse {\n    ~attributB : char\n    ~operationB() int\n    ~operationC()\n  }\n  Oberklasse <|-- Unterklasse\n```\n\ngehört der folgende Code. **Was gibt das Programm auf der Konsole aus?**",
+   "code": "class UmlErbe {\n  public static void main(String[] s) {\n    Oberklasse.klassenattribut = 1.5;\n    Oberklasse o1 = new Oberklasse();\n    o1.attributA = 1;\n    Unterklasse o2 = new Unterklasse();\n    o2.attributA = 2;\n    o2.attributB = 'x';\n    System.out.println(o1.operationB());\n    System.out.println(o2.operationB());\n    System.out.println(o1.klassenattribut + \" / \" + o2.klassenattribut);\n    Oberklasse o3 = o2;\n    System.out.println(o3.operationB());\n    System.out.println(o3.attributA + \"\" + o2.attributB);\n  }\n}\n\nclass Oberklasse {\n  int attributA;\n  static double klassenattribut;\n  void operationA() { }\n  int operationB() { return 4; }\n}\n\nclass Unterklasse extends Oberklasse {\n  char attributB;\n  int operationB() { return 5; }\n  void operationC() { }\n}",
+   "expectedOutput": "4\n5\n1.5 / 1.5\n5\n2x",
+   "solution": "4\n5\n1.5 / 1.5\n5\n2x",
+   "explanation": "Die fünf Zeilen prüfen fünf verschiedene Konzepte:\n\n1. `o1.operationB()` -> **4**: `o1` ist ein Objekt der Oberklasse.\n2. `o2.operationB()` -> **5**: `Unterklasse` **überschreibt** `operationB()` (im Diagramm daran zu erkennen, dass die Operation in **beiden** Kästen steht, S. 213).\n3. `o1.klassenattribut` und `o2.klassenattribut` -> beide **1.5**: Das Klassenattribut existiert nur **einmal** und ist *auch in der Unterklasse vorhanden* (S. 213/214) - es gibt keine zweite Kopie für `Unterklasse`. Der Zugriff über eine Objektreferenz ist erlaubt, sauberer wäre `Oberklasse.klassenattribut`.\n4. `o3.operationB()` -> **5**: `o3` ist als `Oberklasse` **deklariert**, zeigt aber auf ein `Unterklasse`-Objekt. Bei Methoden entscheidet immer das tatsächliche Objekt (dynamische Bindung) - genau das ist Polymorphie.\n5. `o3.attributA + \"\" + o2.attributB` -> **2x**: `attributA` wurde über `o2` auf 2 gesetzt und `o3` zeigt auf **dasselbe Objekt**. Durch `+ \"\"` wird die Zahl 2 zu Text; danach wird `'x'` angehängt - **nicht** addiert. (Ohne das `\"\"` wäre `2 + 'x'` die Zahl 122!)\n\nBeachten Sie außerdem: `o3.attributB` wäre ein **Compilerfehler**, weil der deklarierte Typ `Oberklasse` dieses Attribut nicht kennt - bei **Attributen** entscheidet der deklarierte, bei **Methoden** der tatsächliche Typ.\n\nMerkregel: **Methoden dynamisch, Attribute statisch; `static` gibt es nur einmal für die ganze Hierarchie.**",
+   "hints": [
+    "Gehen Sie zuerst die Frage durch: Welche der beiden `operationB()` wird jeweils aufgerufen?",
+    "Wie viele Speicherplätze gibt es für ein `static`-Attribut, wenn eine Unterklasse dazukommt?",
+    "Zeile `Oberklasse o3 = o2;` erzeugt kein neues Objekt - `o3` und `o2` zeigen auf dasselbe.",
+    "Bei der letzten Zeile: Was macht `+ \"\"` mit dem `int`, bevor `'x'` angehängt wird?"
+   ],
+   "pitfalls": [
+    "Bei `o3.operationB()` die Methode der Oberklasse erwarten, weil `o3` als `Oberklasse` deklariert ist.",
+    "Annehmen, `Unterklasse` habe eine eigene Kopie von `klassenattribut`.",
+    "In der letzten Zeile `2 + 'x'` rechnen und 122 ausgeben - hier wird wegen `\"\"` verkettet."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 213,
+     "label": "7.1 Vererbung: Beispiel Klassen- und Objektdiagramm"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 214,
+     "label": "7.1 Vererbung: Beispiel in Java"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 366,
+     "label": "Überblick 7: UML Klassendiagramm mit Vererbung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 367,
+     "label": "Überblick 7: UML Objektdiagramm"
+    }
+   ],
+   "tags": [
+    "uml",
+    "vererbung",
+    "polymorphie",
+    "static",
+    "predict-output"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-020",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 8,
+   "title": "Klassendiagramm vervollständigen (Diagramm-Lücken)",
+   "prompt": "Gegeben ist folgender Java-Code:\n\n```java\nclass Bibliothek {\n  private String name;\n  private Buch[] bestand;          // Bücher gibt es auch ohne Bibliothek\n}\n\nclass Buch {\n  private String titel;\n  private Leser ausgeliehenAn;     // null, solange das Buch im Regal steht\n  public String getTitel() { return titel; }\n}\n\nclass Leser {\n  private String name;\n  private static int anzahlLeser = 0;\n}\n```\n\nErgänzen Sie die **6 Lücken** im zugehörigen Klassendiagramm (Mermaid-Schreibweise). Erinnerung an die Mermaid-Notation: `$` = unterstrichen (static), `o--` = Aggregation (leere Raute), `*--` = Komposition (ausgefüllte Raute), `-->` = gerichtete Assoziation.",
+   "code": "classDiagram\n  class Bibliothek {\n    ____(1)____name : String\n  }\n  class Buch {\n    -titel : String\n    +getTitel() String\n  }\n  class Leser {\n    -name : String\n    ____(2)____anzahlLeser : int____(3)____\n  }\n  Bibliothek \"____(4)____\" ____(5)____ \"*\" Buch : bestand\n  Buch \"*\" --> \"____(6)____\" Leser : ausgeliehenAn",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "-"
+     ],
+     "explanation": "`private String name;` -> Minuszeichen. In Mermaid steht das Zeichen direkt vor dem Namen: `-name : String`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "-"
+     ],
+     "explanation": "`private static int anzahlLeser` ist ebenfalls `private`, also wieder `-`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "$"
+     ],
+     "explanation": "`static` wird in UML durch **Unterstreichen** gekennzeichnet; Mermaid kann nicht unterstreichen und benutzt dafür ein angehängtes `$`."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "0..1"
+     ],
+     "explanation": "Ein Buch existiert laut Kommentar auch ohne Bibliothek, gehört aber höchstens zu einer -> `0..1`. Genau deshalb ist es eine Aggregation und keine Komposition."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "o--",
+      "o-->"
+     ],
+     "explanation": "Teile/Ganzes-Beziehung, bei der das Teil selbständig existieren kann -> **Aggregation**, leere Raute am Ganzen: `o--`. Bei `*--` (Komposition) müsste am Bibliotheks-Ende `1` stehen und das Buch mit der Bibliothek gelöscht werden."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "0..1"
+     ],
+     "explanation": "`ausgeliehenAn` ist eine **einfache Referenz**, die `null` sein darf -> höchstens ein Leser, also `0..1`. Ein Array wäre `*`."
+    }
+   ],
+   "solution": "Vollständiges Diagramm:\n\n```mermaid\nclassDiagram\n  class Bibliothek {\n    -name : String\n  }\n  class Buch {\n    -titel : String\n    +getTitel() String\n  }\n  class Leser {\n    -name : String\n    -anzahlLeser : int$\n  }\n  Bibliothek \"0..1\" o-- \"*\" Buch : bestand\n  Buch \"*\" --> \"0..1\" Leser : ausgeliehenAn\n```\n\nLösungen der Lücken: (1) `-`  (2) `-`  (3) `$` (auf Papier: unterstreichen)  (4) `0..1`  (5) `o--`  (6) `0..1`",
+   "explanation": "Diese Aufgabe geht die Richtung **Code -> Diagramm** und trainiert dabei genau die Stellen, an denen im Java-Code Information *versteckt* ist:\n\n**1. Sichtbarkeiten** liest man direkt am Modifikator ab (`private` -> `-`).\n\n**2. `static` wird unterstrichen** (S. 168). Im Java-Code ist es ein Schlüsselwort, im Diagramm eine Schriftauszeichnung - in Mermaid ersatzweise `$`.\n\n**3. Aus dem Typ eines Attributs wird eine Linie.** `Buch[] bestand` ist ein Feld, also 'beliebig viele' -> `*` am Buch-Ende. `Leser ausgeliehenAn` ist eine einfache Referenz, die `null` sein darf -> `0..1` am Leser-Ende (S. 179).\n\n**4. Aggregation vs. Komposition** entscheidet der Kommentar: *Bücher gibt es auch ohne Bibliothek*. Damit ist das Teil nicht existenzabhängig, die Multiplizität am Ganzen ist `0..1` und es wird die **leere** Raute gezeichnet (S. 185). Bei einer Komposition (z. B. Verzeichnis/Datei) stünde dort `1`.\n\nWichtig: `ausgeliehenAn` ist **keine** Aggregation - ein Leser ist kein Bestandteil eines Buches. Teile/Ganzes-Beziehungen erkennt man an der Formulierung *besteht aus* / *ist Teil von*; alles andere ist eine gewöhnliche Assoziation.\n\nMerkregel: **Feld -> `*`, Referenz -> `0..1`, 'besteht aus' -> Raute, `static` -> Strich drunter.**",
+   "hints": [
+    "Lücken 1-3 stehen alle im Attribut-Fach: erst die Sichtbarkeit übersetzen, dann auf `static` achten.",
+    "Für Lücke 4: Lesen Sie den Kommentar hinter `Buch[] bestand`. Muss ein Buch zu einer Bibliothek gehören?",
+    "Für Lücke 5: Kann das Teil ohne das Ganze existieren? Dann leere Raute.",
+    "Für Lücke 6: `ausgeliehenAn` ist kein Array und darf `null` sein - wie viele Leser sind das höchstens?"
+   ],
+   "pitfalls": [
+    "In Lücke 3 `static` hinschreiben - das Schlüsselwort gibt es in UML nicht, dort wird unterstrichen.",
+    "In Lücke 5 `*--` (Komposition) wählen, obwohl Bücher ohne Bibliothek existieren dürfen.",
+    "In Lücke 6 `1` statt `0..1` schreiben und damit erzwingen, dass jedes Buch immer ausgeliehen ist."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 179,
+     "label": "6.5 UML: Umsetzung von Assoziationen in Java"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 185,
+     "label": "6.5 UML: Aggregation und Komposition"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 168,
+     "label": "6.5 UML: Klassenattribute unterstrichen"
+    },
+    {
+     "file": "Aufgaben_Objekte_Klassen_UML.pdf",
+     "page": 4,
+     "label": "Aufgabe 4 - Aggregation & Code -> UML"
+    }
+   ],
+   "tags": [
+    "uml",
+    "code2uml",
+    "aggregation",
+    "multiplizitaet",
+    "static"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-021",
+   "type": "uml",
+   "difficulty": 4,
+   "points": 6,
+   "title": "Mehrere Schnittstellen und eine abstrakte Klasse zeichnen",
+   "prompt": "Zeichnen Sie zu dem folgenden Code das vollständige **UML-Klassendiagramm** mit allen vier Typen und allen Beziehungen.\n\nAchten Sie besonders auf: Stereotype, Kursiv-/Unterstreichungs-Kennzeichnungen, Sichtbarkeiten und die **beiden verschiedenen Pfeilarten**.",
+   "code": "interface Druckbar {\n  void drucken();\n}\n\ninterface Speicherbar {\n  boolean speichern(String pfad);\n}\n\nabstract class Dokument implements Druckbar, Speicherbar {\n  protected String titel;\n  private static int anzahl = 0;\n  public Dokument(String titel) { this.titel = titel; anzahl++; }\n  public void drucken() { System.out.println(titel); }\n  public abstract String getFormat();\n  public static int getAnzahl() { return anzahl; }\n}\n\nclass PdfDokument extends Dokument {\n  private int seiten;\n  public PdfDokument(String titel, int seiten) {\n    super(titel);\n    this.seiten = seiten;\n  }\n  public boolean speichern(String pfad) { return true; }\n  public String getFormat() { return \"PDF\"; }\n}",
+   "solution": "```mermaid\nclassDiagram\n  class Druckbar {\n    <<interface>>\n    +drucken()\n  }\n  class Speicherbar {\n    <<interface>>\n    +speichern(pfad: String) boolean\n  }\n  class Dokument {\n    <<abstract>>\n    #titel : String\n    -anzahl : int$\n    +Dokument(titel: String)\n    +drucken()\n    +getFormat() String*\n    +getAnzahl() int$\n  }\n  class PdfDokument {\n    -seiten : int\n    +PdfDokument(titel: String, seiten: int)\n    +speichern(pfad: String) boolean\n    +getFormat() String\n  }\n  Druckbar <|.. Dokument\n  Speicherbar <|.. Dokument\n  Dokument <|-- PdfDokument\n```\n\n*(In Mermaid: `$` = unterstrichen/static, `*` hinter einer Operation = abstrakt. Auf Papier schreiben Sie `Dokument` und `getFormat()` **kursiv** bzw. mit `{abstract}` und unterstreichen `anzahl` und `getAnzahl()`.)*\n\n**Bewertungsrubrik (6 Punkte)**\n- 1 P. Beide Schnittstellen mit Stereotyp `<<interface>>` und ihren Operationen.\n- 1 P. `Dokument` als abstrakte Klasse gekennzeichnet (kursiv / `{abstract}`).\n- 1 P. `getFormat()` als abstrakte Operation gekennzeichnet.\n- 1 P. `anzahl` (mit `-`) und `getAnzahl()` unterstrichen.\n- 1 P. **Zwei gestrichelte** Realisierungspfeile von `Dokument` zu beiden Schnittstellen.\n- 1 P. **Durchgezogener** Vererbungspfeil von `PdfDokument` zu `Dokument`; `speichern` steht bei `PdfDokument`, nicht bei `Dokument`.",
+   "explanation": "Der Code ist genau das Muster von S. 208/209 - nur mit zwei Schnittstellen statt einer:\n\n**Warum ist `Dokument` abstrakt?** Zwei unabhängige Gründe: (1) `getFormat()` hat keinen Rumpf, und *abstrakte Operationen dürfen nur in abstrakten Klassen auftreten* (S. 203). (2) `Dokument` implementiert `Speicherbar`, liefert `speichern(...)` aber nicht - *werden nicht alle Operationen überschrieben, so bleibt die erbende Klasse abstrakt* (S. 207). Erst `PdfDokument` schließt beide Lücken und ist konkret.\n\n**Zwei Realisierungen, eine Generalisierung.** Eine Klasse darf beliebig viele Schnittstellen implementieren (S. 209) - im Diagramm zwei gestrichelte Pfeile. Erben kann sie in Java aber nur von **einer** Klasse; Mehrfachvererbung wäre in UML zwar zeichenbar, wird von Java aber nicht unterstützt (S. 218, Diamond-Problem).\n\n**Was gehört in welchen Kasten?** Nur das, was die Klasse **selbst** deklariert. `titel` und `drucken()` erscheinen deshalb nur bei `Dokument`, nicht noch einmal bei `PdfDokument` - geerbte Elemente werden nicht wiederholt. `speichern(...)` steht dagegen bei `PdfDokument`, weil dort die Implementierung liegt (und zusätzlich in der Schnittstelle als Signatur).\n\nMerkregel: **Interface -> gestrichelt; jede unerfüllte abstrakte Operation macht die Klasse abstrakt.**",
+   "hints": [
+    "Zeichnen Sie zuerst vier leere Kästen und tragen Sie nur ein, was jede Klasse selbst deklariert.",
+    "Welche Klasse verspricht etwas, ohne es zu liefern? Die muss abstrakt sein.",
+    "`implements` und `extends` bekommen dieselbe Spitzenform, aber verschiedene Linienstile.",
+    "Denken Sie an die Kennzeichnungen: kursiv für abstrakt, unterstrichen für static, `<<interface>>` als Stereotyp."
+   ],
+   "pitfalls": [
+    "`titel` und `drucken()` auch bei `PdfDokument` eintragen (geerbte Elemente werden nicht wiederholt).",
+    "Nur einen Realisierungspfeil zeichnen, obwohl zwei Schnittstellen implementiert werden.",
+    "`Dokument` als normale Klasse zeichnen und damit die Kennzeichnung als abstrakt vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 207,
+     "label": "7.1 Interfaces: Implementierungs-Beziehung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 208,
+     "label": "7.1 Beispiel AbstrClass / MyInterface / MyClass"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 209,
+     "label": "7.1 Implementierung mehrerer Schnittstellen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 368,
+     "label": "Überblick 7: Schnittstellen und abstrakte Klassen"
+    }
+   ],
+   "tags": [
+    "uml",
+    "code2uml",
+    "interface",
+    "abstract",
+    "realisierung"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-022",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: Multiplizitäten und Klassenoperationen falsch umgesetzt",
+   "prompt": "Der folgende Code soll dieses Diagramm umsetzen (`anzahl` und `getAnzahl()` sind **unterstrichen**):\n\n```mermaid\nclassDiagram\n  class Uebungsgruppe {\n    -uhrzeit : String\n    -anzahl : int$\n    +Uebungsgruppe(uhrzeit: String)\n    +getUhrzeit() String\n    +getAnzahl() int$\n  }\n  class Student {\n    +name : String\n  }\n  Uebungsgruppe --> \"*\" Student : teilnehmer\n  Student --> \"0..1\" Uebungsgruppe : gruppe\n```\n\nEr enthält **genau 3 Compiler-Fehler**. Benennen Sie sie (mit Zeilennummer) und geben Sie jeweils die Korrektur an.",
+   "code": "class Uni {\n  public static void main(String[] s) {\n    Uebungsgruppe g = new Uebungsgruppe(\"Mo 10:00\");\n    Student a = new Student(\"Anna\", g);\n    g.teilnehmer[0] = a;\n    System.out.println(g.uhrzeit);\n    System.out.println(Uebungsgruppe.getAnzahl());\n  }\n}\n\nclass Uebungsgruppe {\n  private String uhrzeit;\n  private static int anzahl = 0;\n  public Student[] teilnehmer = new Student[30];\n  public Uebungsgruppe(String uhrzeit) {\n    this.uhrzeit = uhrzeit;\n    anzahl++;\n  }\n  public static int getAnzahl() { return teilnehmer.length; }\n}\n\nclass Student {\n  public String name;\n  public Uebungsgruppe[] gruppe;\n  public Student(String name, Uebungsgruppe gruppe) {\n    this.name = name;\n    this.gruppe = gruppe;\n  }\n}",
+   "errors": [
+    {
+     "line": 6,
+     "wrong": "System.out.println(g.uhrzeit);",
+     "fix": "Eine Get-Methode benutzen: `System.out.println(g.getUhrzeit());` und in `Uebungsgruppe` `public String getUhrzeit() { return uhrzeit; }` ergaenzen (die Methode steht ja im Diagramm).",
+     "why": "Compilerfehler: *uhrzeit has private access in Uebungsgruppe*. Im Diagramm steht `-uhrzeit`, der Zugriff von außen läuft über `+getUhrzeit()` (S. 193)."
+    },
+    {
+     "line": 19,
+     "wrong": "public static int getAnzahl() { return teilnehmer.length; }",
+     "fix": "`public static int getAnzahl() { return anzahl; }` - eine Klassenoperation darf nur auf Klassenattribute zugreifen.",
+     "why": "Compilerfehler: *non-static variable teilnehmer cannot be referenced from a static context*. `teilnehmer` gehört einem Objekt; in einer statischen Methode gibt es kein `this` (S. 173)."
+    },
+    {
+     "line": 27,
+     "wrong": "this.gruppe = gruppe;   (Ursache: die Deklaration `public Uebungsgruppe[] gruppe;` in Zeile 24)",
+     "fix": "Zeile 24 zu `public Uebungsgruppe gruppe;` aendern - die Multiplizitaet `0..1` wird durch eine **einfache Referenz** umgesetzt, nicht durch ein Feld.",
+     "why": "Compilerfehler in Zeile 27: *incompatible types: Uebungsgruppe cannot be converted to Uebungsgruppe[]*. Gemeldet wird die Zuweisung, die eigentliche Ursache steht in Zeile 24. Ein Feld braucht man erst ab einer Obergrenze größer 1 (S. 179)."
+    }
+   ],
+   "solution": "class Uni {\n  public static void main(String[] s) {\n    Uebungsgruppe g = new Uebungsgruppe(\"Mo 10:00\");\n    Student a = new Student(\"Anna\", g);\n    g.teilnehmer[0] = a;\n    System.out.println(g.getUhrzeit());\n    System.out.println(Uebungsgruppe.getAnzahl());\n  }\n}\n\nclass Uebungsgruppe {\n  private String uhrzeit;\n  private static int anzahl = 0;\n  public Student[] teilnehmer = new Student[30];\n  public Uebungsgruppe(String uhrzeit) {\n    this.uhrzeit = uhrzeit;\n    anzahl++;\n  }\n  public String getUhrzeit() { return uhrzeit; }\n  public static int getAnzahl() { return anzahl; }\n}\n\nclass Student {\n  public String name;\n  public Uebungsgruppe gruppe;\n  public Student(String name, Uebungsgruppe gruppe) {\n    this.name = name;\n    this.gruppe = gruppe;\n  }\n}",
+   "expectedOutput": "Mo 10:00\n1",
+   "explanation": "Alle drei Fehler sind typische Übersetzungsfehler von UML nach Java:\n\n**1. `-` bedeutet wirklich `private`.** Das Diagramm bietet extra `+getUhrzeit()` an - wer trotzdem direkt auf das Attribut zugreift, bekommt *has private access*. Im Skript (S. 193) steht ausdrücklich: *im Java-Code ist das Attribut selbst immer private*, der Zugriff läuft über Get-/Set-Methoden.\n\n**2. Klassenoperation != Objektoperation.** `getAnzahl()` ist unterstrichen, also `static`. Sie wird über den **Klassennamen** aufgerufen (`Uebungsgruppe.getAnzahl()`), es gibt also gar kein Objekt - damit auch kein `teilnehmer`. Eine Klassenoperation dient laut S. 173 der *Manipulation von Klassenattributen ohne Beteiligung eines Objekts*.\n\n**3. Multiplizität `0..1` ist kein Array.** Die Regel lautet: Obergrenze 1 -> einfache Referenz (darf `null` sein), Obergrenze > 1 -> Feld (S. 179). Die 0 in `0..1` verführt dazu, an 'kein Element' und damit an ein leeres Array zu denken - gemeint ist aber schlicht `null`.\n\nDie Gegenrichtung stimmt im Code übrigens: `teilnehmer` hat die Multiplizität `*` und ist deshalb völlig zu Recht ein `Student[]`.\n\nMerkregel: **`-` = kein Direktzugriff, `static` = kein `this`, `0..1` = eine Referenz.**",
+   "hints": [
+    "Schauen Sie zuerst, welche Attribute im Diagramm mit `-` markiert sind - und wo im Code trotzdem direkt darauf zugegriffen wird.",
+    "In einer `static`-Methode gibt es kein aktuelles Objekt. Welche Variable in `getAnzahl()` gehört einem Objekt?",
+    "Vergleichen Sie die beiden Multiplizitäten `*` und `0..1`: Welche wird zum Array, welche nicht?"
+   ],
+   "pitfalls": [
+    "Fehler 2 mit `teilnehmer` statisch machen 'reparieren' - dann hätten alle Gruppen dieselbe Teilnehmerliste; gemeint ist `return anzahl;`.",
+    "`0..1` als Array umsetzen, weil eine 0 darin vorkommt.",
+    "`uhrzeit` einfach auf `public` setzen - das widerspräche dem Diagramm."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 179,
+     "label": "6.5 UML: Umsetzung von Assoziationen in Java"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 173,
+     "label": "6.5 UML: Klassenoperationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 193,
+     "label": "6.5 UML: Hinweise zu Get- und Set-Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 189,
+     "label": "6.5 UML: Navigierbarkeit, gruppe == null"
+    }
+   ],
+   "tags": [
+    "uml",
+    "uml2code",
+    "multiplizitaet",
+    "static",
+    "find-errors"
+   ],
+   "lang": "java",
+   "topicId": "java-uml"
+  },
+  {
+   "id": "java-uml-023",
+   "type": "uml",
+   "difficulty": 5,
+   "points": 8,
+   "title": "Vollständiges Modell aus einer Textbeschreibung (Bibliothek)",
+   "prompt": "Modellieren Sie den folgenden Ausschnitt als **UML-Klassendiagramm**. Verwenden Sie Sichtbarkeiten, Multiplizitäten an beiden Enden, mindestens eine Teile/Ganzes-Beziehung und eine **Assoziationsklasse**.\n\n- Eine `Bibliothek` hat einen Namen und besteht aus beliebig vielen `Regal`en. Ein Regal gehört zu genau einer Bibliothek und wird mit ihr zusammen angelegt und gelöscht.\n- In einem Regal stehen 0 bis 200 `Buch`-Objekte; ein Buch steht in höchstens einem Regal.\n- Ein `Leser` hat einen Namen und eine Lesernummer. Ein Leser kann beliebig viele Bücher ausleihen, ein Buch kann (nacheinander) von beliebig vielen Lesern ausgeliehen werden.\n- Zu **jeder Ausleihe** werden das Ausleihdatum und die Zahl der Verlängerungen gespeichert.\n- Die Bibliothek zählt in einem Klassenattribut mit, wie viele Bücher insgesamt erfasst wurden; die Klassenoperation `getGesamtbestand()` liefert diesen Wert.",
+   "solution": "```mermaid\nclassDiagram\n  class Bibliothek {\n    -name : String\n    -gesamtbestand : int$\n    +getGesamtbestand() int$\n  }\n  class Regal {\n    -nummer : int\n  }\n  class Buch {\n    -titel : String\n    -isbn : String\n  }\n  class Leser {\n    -name : String\n    -lesernummer : int\n  }\n  class Ausleihe {\n    -datum : Date\n    -verlaengerungen : int\n  }\n  Bibliothek \"1\" *-- \"*\" Regal\n  Regal \"0..1\" o-- \"0..200\" Buch\n  Leser \"*\" -- \"*\" Buch : leiht aus\n  Ausleihe .. Buch\n```\n\n*(Die `Ausleihe` ist die **Assoziationsklasse** zur Assoziation zwischen `Leser` und `Buch`. Auf Papier zeichnet man sie mit einer **gestrichelten Linie an die Mitte der Assoziationslinie** - Mermaid kann das nicht, deshalb hängt die gestrichelte Linie hier an einem der beiden Enden.)*\n\n**Handschriftlich:**\n\n```text\n  Bibliothek <#>------------ Regal <>------------ Buch\n      1                *   0..1          0..200\n\n  Leser ------------------------------------- Buch\n     *          leiht aus                  *\n                     :\n               +-----------+\n               | Ausleihe  |\n               +-----------+\n               | - datum   |\n               | - verlaengerungen |\n               +-----------+\n```\n\n**Bewertungsrubrik (8 Punkte)**\n- 1 P. Fünf Klassen mit sinnvollen, privaten Attributen (`-`).\n- 1 P. Bibliothek/Regal als **Komposition** (ausgefüllte Raute an der Bibliothek).\n- 1 P. Multiplizitaeten `1` / `*` bei Bibliothek/Regal.\n- 1 P. Regal/Buch als **Aggregation** (leere Raute), weil ein Buch auch ohne Regal existieren kann.\n- 1 P. Multiplizitaeten `0..1` / `0..200` bei Regal/Buch.\n- 1 P. `*` / `*` zwischen Leser und Buch.\n- 1 P. `Ausleihe` als Assoziationsklasse mit gestrichelter Linie an der Assoziation.\n- 1 P. `gesamtbestand` und `getGesamtbestand()` unterstrichen (Klassenelemente).",
+   "explanation": "Die Aufgabe verlangt vier Entscheidungen, die man einzeln begründen kann:\n\n**1. Bibliothek/Regal ist eine Komposition.** Das Regal *wird mit ihr zusammen angelegt und gelöscht* - genau die Definition auf S. 185: *Beim Erzeugen (Löschen) des Komposit-Objekts werden auch seine Teil-Objekte erzeugt (gelöscht)*. Multiplizität am Ganzen: `1`.\n\n**2. Regal/Buch ist eine Aggregation.** Ein Buch steht in *höchstens* einem Regal (`0..1`), kann also auch ohne Regal existieren - das Teil ist nicht existenzabhängig, also leere Raute. Die Obergrenze `200` wird als `0..200` notiert.\n\n**3. Leser/Buch ist eine `*`-zu-`*`-Assoziation.** Beide Seiten können beliebig viele Partner haben.\n\n**4. Die Ausleihdaten gehören an die Assoziation, nicht an eine der Klassen.** Datum und Verlängerung sind weder eine Eigenschaft *des Lesers* noch *des Buchs*, sondern der **Beziehung** - deshalb modelliert man sie als **Assoziationsklasse** (S. 183, dort mit genau diesem Beispiel: Leser/Buch/Ausleihe). Wer `datum` einfach als Attribut in `Buch` steckt, kann nur eine einzige Ausleihe speichern.\n\nIn Java gibt es keine Assoziationsklassen; man löst sie auf, indem `Ausleihe` eine eigene Klasse mit je einer Referenz auf `Leser` und `Buch` wird - aus der `*`-zu-`*`-Assoziation werden dann zwei `1`-zu-`*`-Assoziationen.\n\nMerkregel: **Eigenschaften, die nur im Zusammenspiel entstehen, gehören an die Assoziation.**",
+   "hints": [
+    "Suchen Sie im Text nach den Signalwörtern *besteht aus*, *gehört zu*, *steht in* - das sind Teile/Ganzes-Beziehungen.",
+    "Für jede Beziehung: Kann das Teil ohne das Ganze existieren? Das entscheidet über die Rautenart.",
+    "Datum und Verlängerung passen weder eindeutig zum Leser noch eindeutig zum Buch. Wohin dann?",
+    "Denken Sie zum Schluss an das Klassenattribut - wie wird es gekennzeichnet?"
+   ],
+   "pitfalls": [
+    "`datum` als Attribut in `Buch` oder `Leser` unterbringen - dann kann pro Buch nur eine Ausleihe gespeichert werden.",
+    "Regal/Buch als Komposition modellieren, obwohl `0..1` am Regal-Ende steht.",
+    "Die Obergrenze 200 weglassen oder als `*` schreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 183,
+     "label": "6.5 UML: Assoziationsklassen (Leser/Buch/Ausleihe)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 185,
+     "label": "6.5 UML: Aggregation und Komposition"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 176,
+     "label": "6.5 UML: Multiplizität von Assoziationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 173,
+     "label": "6.5 UML: Klassenoperationen"
+    }
+   ],
+   "tags": [
+    "uml",
+    "modellierung",
+    "assoziationsklasse",
+    "komposition",
+    "aggregation"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  },
+  {
+   "id": "java-uml-024",
+   "type": "code",
+   "difficulty": 5,
+   "points": 12,
+   "title": "Objektdiagramm -> Java: genau diese Objektstruktur erzeugen",
+   "prompt": "Gegeben ist das Klassendiagramm\n\n```mermaid\nclassDiagram\n  class Dreieck {\n    -name : String\n    +Dreieck(name: String, a: Punkt, b: Punkt, c: Punkt)\n    +getName() String\n    +getEcke(i: int) Punkt\n    +xSumme() int\n  }\n  class Punkt {\n    -x : int\n    -y : int\n    -anzahl : int$\n    +Punkt(x: int, y: int)\n    +getX() int\n    +getY() int\n    +getAnzahl() int$\n  }\n  Dreieck \"*\" o-- \"3\" Punkt : ecken\n```\n\nund das folgende **Objektdiagramm**, das nach dem Aufbau der Struktur bestehen soll:\n\n```mermaid\nclassDiagram\n  class d1[\"d1 : Dreieck\"] {\n    name = D1\n  }\n  class d2[\"d2 : Dreieck\"] {\n    name = D2\n  }\n  class p1[\"p1 : Punkt\"] {\n    x = 0\n    y = 10\n  }\n  class p2[\"p2 : Punkt\"] {\n    x = 5\n    y = 5\n  }\n  class p3[\"p3 : Punkt\"] {\n    x = 10\n    y = 5\n  }\n  class p4[\"p4 : Punkt\"] {\n    x = 15\n    y = 10\n  }\n  class p5[\"p5 : Punkt\"] {\n    x = 20\n    y = 0\n  }\n  d1 --> p1 : ecken[0]\n  d1 --> p2 : ecken[1]\n  d1 --> p3 : ecken[2]\n  d2 --> p3 : ecken[0]\n  d2 --> p4 : ecken[1]\n  d2 --> p5 : ecken[2]\n```\n\nSchreiben Sie die beiden Klassen **und** eine Klasse `Geometrie` mit `main`, die **genau diese** Objektstruktur aufbaut (achten Sie auf die Zahl der Punkt-Objekte!) und anschließend ausgibt:\n\n```text\nD1 xSumme=15\nD2 xSumme=45\ngemeinsam: true\nPunkte: 5\n```\n\nDabei ist `xSumme()` die Summe der x-Werte der drei Ecken, `gemeinsam` das Ergebnis von `d1.getEcke(2) == d2.getEcke(0)` und `Punkte` der Wert von `Punkt.getAnzahl()`.",
+   "starterCode": "class Geometrie {\n  public static void main(String[] s) {\n    // TODO: die fünf Punkte und die zwei Dreiecke laut Objektdiagramm erzeugen\n\n    // TODO: die vier Ausgabezeilen erzeugen\n  }\n}\n\nclass Punkt {\n  // TODO laut Klassendiagramm\n}\n\nclass Dreieck {\n  // TODO laut Klassendiagramm\n}",
+   "solution": "class Geometrie {\n  public static void main(String[] s) {\n    Punkt p1 = new Punkt(0, 10);\n    Punkt p2 = new Punkt(5, 5);\n    Punkt p3 = new Punkt(10, 5);\n    Punkt p4 = new Punkt(15, 10);\n    Punkt p5 = new Punkt(20, 0);\n\n    Dreieck d1 = new Dreieck(\"D1\", p1, p2, p3);\n    Dreieck d2 = new Dreieck(\"D2\", p3, p4, p5);\n\n    System.out.println(d1.getName() + \" xSumme=\" + d1.xSumme());\n    System.out.println(d2.getName() + \" xSumme=\" + d2.xSumme());\n    System.out.println(\"gemeinsam: \" + (d1.getEcke(2) == d2.getEcke(0)));\n    System.out.println(\"Punkte: \" + Punkt.getAnzahl());\n  }\n}\n\nclass Punkt {\n  private int x;\n  private int y;\n  private static int anzahl = 0;\n  public Punkt(int x, int y) {\n    this.x = x;\n    this.y = y;\n    anzahl++;\n  }\n  public int getX() { return x; }\n  public int getY() { return y; }\n  public static int getAnzahl() { return anzahl; }\n}\n\nclass Dreieck {\n  private String name;\n  private Punkt[] ecken = new Punkt[3];\n  public Dreieck(String name, Punkt a, Punkt b, Punkt c) {\n    this.name = name;\n    ecken[0] = a;\n    ecken[1] = b;\n    ecken[2] = c;\n  }\n  public String getName() { return name; }\n  public Punkt getEcke(int i) { return ecken[i]; }\n  public int xSumme() {\n    int summe = 0;\n    for (int i = 0; i < ecken.length; i++) summe = summe + ecken[i].getX();\n    return summe;\n  }\n}",
+   "expectedOutput": "D1 xSumme=15\nD2 xSumme=45\ngemeinsam: true\nPunkte: 5",
+   "required": [
+    "static"
+   ],
+   "explanation": "Der Kern der Aufgabe steckt im Objektdiagramm: Es zeigt **fünf** Punkt-Kästen, aber **sechs** Links. `p3` wird von `d1` und von `d2` referenziert - es ist *ein* Objekt, das zu zwei Dreiecken gehört. Wer `new Punkt(10, 5)` zweimal aufruft, erzeugt zwei Objekte, die zwar **gleich**, aber nicht **identisch** sind: `gemeinsam` wäre dann `false` und `Punkte: 6` (S. 165).\n\nGenau das ist auch die Rechtfertigung für die **Aggregation** im Klassendiagramm (`Dreieck \"*\" o-- \"3\" Punkt`): *Teile können gleichzeitig zu mehreren Aggregat-Objekten gehören* (S. 185). Bei einer Komposition dürfte `p3` nur zu einem Dreieck gehören.\n\nDie Multiplizität `3` am Punkt-Ende wird zu `Punkt[] ecken = new Punkt[3];` - die feste Obergrenze taucht in Java nur an dieser einen Stelle auf (S. 169: *in Java erfolgt bei der Deklaration eines Feldes keine Angabe, wieviel Elemente es enthalten kann*).\n\nRechenprobe: `d1` hat die x-Werte 0 + 5 + 10 = 15, `d2` hat 10 + 15 + 20 = 45. Der Zähler `anzahl` ist `static`, wird also im Punkt-Konstruktor genau fünfmal erhöht.\n\nMerkregel: **Ein Kasten = ein `new`. Mehrere Pfeile auf denselben Kasten = dieselbe Referenz mehrfach weitergegeben.**",
+   "hints": [
+    "Zählen Sie die Kästen im Objektdiagramm - genau so viele `new`-Aufrufe brauchen Sie.",
+    "Welcher Punkt wird von beiden Dreiecken referenziert? Er darf nur **einmal** erzeugt und dann zweimal übergeben werden.",
+    "Die Multiplizität `3` wird zu einem Feld fester Größe: `new Punkt[3]`.",
+    "`anzahl` ist unterstrichen, gehört also der Klasse und wird im Konstruktor von `Punkt` erhöht."
+   ],
+   "pitfalls": [
+    "Für `d2` einen neuen Punkt mit denselben Koordinaten erzeugen - dann sind es 6 Objekte und `gemeinsam` ist `false`.",
+    "`anzahl` ohne `static` deklarieren; dann wäre die Ausgabe `Punkte: 1`.",
+    "In `xSumme()` die y-Werte addieren oder `getEcke` mit 1-basiertem Index bauen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 181,
+     "label": "6.5 UML: Beispiel Dreieck/Punkt (Klassendiagramm)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 182,
+     "label": "6.5 UML: Beispiel Dreieck/Punkt (Objektdiagramm)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 165,
+     "label": "6.5 UML: Objektidentität - gleich, aber nicht identisch"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 186,
+     "label": "6.5 UML: Aggregation"
+    }
+   ],
+   "tags": [
+    "uml",
+    "objektdiagramm",
+    "uml2code",
+    "aggregation",
+    "identitaet"
+   ],
+   "lang": "java",
+   "topicId": "java-uml",
+   "examStyle": false
+  }
+ ]
+}

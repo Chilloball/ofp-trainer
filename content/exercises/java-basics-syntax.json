@@ -1,0 +1,1652 @@
+{
+ "topicId": "java-basics-syntax",
+ "exercises": [
+  {
+   "type": "mc",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Was erzeugt javac?",
+   "prompt": "Sie haben Ihr Programm im Editor geschrieben und in der Datei `Programm.java` gespeichert. Auf der Konsole rufen Sie auf:\n\n```\njavac Programm.java\n```\n\nWas ist das Ergebnis dieses Aufrufs?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Eine ausführbare Datei `Programm.exe` für Ihr Betriebssystem.",
+     "correct": false,
+     "why": "Java erzeugt bewusst **keine** plattformabhängige Maschinencode-Datei. Genau das wäre der Verzicht auf die Portabilität, die Java auszeichnet."
+    },
+    {
+     "id": "b",
+     "text": "Die Datei `Programm.class` mit dem Bytecode der Klasse.",
+     "correct": true,
+     "why": "Richtig. Der Java-Compiler `javac` übersetzt den Quellcode in Objektcode (Bytecode) und legt **für jede Klasse** eine eigene `.class`-Datei an."
+    },
+    {
+     "id": "c",
+     "text": "Das Programm wird übersetzt **und** sofort ausgeführt.",
+     "correct": false,
+     "why": "`javac` übersetzt nur. Das Ausführen ist ein zweiter, getrennter Schritt: `java Programm`."
+    },
+    {
+     "id": "d",
+     "text": "Gar nichts – erst `java Programm` erzeugt eine Datei.",
+     "correct": false,
+     "why": "Umgekehrt: `java` erzeugt nichts, sondern *liest* die von `javac` erzeugte `.class`-Datei ein."
+    }
+   ],
+   "solution": "`Programm.class`",
+   "explanation": "Der Weg vom Quellcode zum laufenden Programm hat in Java **zwei** getrennte Schritte. Erst übersetzt der Java-Compiler `javac Programm.java` den *Quellcode* (`.java`) in *Objektcode* (`.class`, sogenannter Bytecode). Danach startet `java Programm` eine Java Virtual Machine, die diesen Bytecode interpretiert. Der Compiler erzeugt dabei für **jede** Klasse eine eigene `.class`-Datei – aus einer Quelldatei mit drei Klassen entstehen also drei `.class`-Dateien. Typischer Denkfehler: zu glauben, Java verhalte sich wie C und produziere eine ausführbare Datei für den jeweiligen Prozessor. Genau das tut Java **nicht**, und daraus folgt die Portabilität: derselbe Bytecode läuft auf jedem Rechner, für den es eine JVM gibt. Merkregel: **`javac` = compile (.java → .class), `java` = run (.class → Ausgabe).**",
+   "hints": [
+    "Wie viele Schritte braucht ein Java-Programm vom Editor bis zur Ausgabe – einen oder zwei?",
+    "Der Buchstabe `c` in `javac` steht für *compile*. Was ist das Produkt eines Compilers?",
+    "Die Endung der erzeugten Datei taucht auch im Begriff *Klassenpfad* auf."
+   ],
+   "pitfalls": [
+    "`javac` und `java` verwechseln (`javac Programm` bzw. `java Programm.java`).",
+    "Glauben, `javac` führe das Programm gleich mit aus."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 5,
+     "label": "1. Erstellen von Programmen – Entstehungsschritte in Java: Program.java → javac → Program.class"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 9,
+     "label": "1.3. Übersetzung: Compiler erzeugt für jede Klasse eine .class-Datei"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 348,
+     "label": "Überblick 1. Erstellen von Programmen in Java"
+    }
+   ],
+   "tags": [
+    "javac",
+    "compiler",
+    "class-datei",
+    "werkzeuge"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-001"
+  },
+  {
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Programm starten – und was tut die JVM zuerst?",
+   "prompt": "Die Übersetzung von `Programm.java` war erfolgreich. Wie starten Sie das Programm, und was macht die JVM unmittelbar nach dem Laden der Klasse?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`java Programm.class` – die JVM sucht die Methode `main`.",
+     "correct": false,
+     "why": "Beim `java`-Kommando wird der **Klassenname** angegeben, nicht der Dateiname. Mit `.class` sucht die JVM eine Klasse namens `class` im Paket `Programm` und meldet einen Fehler."
+    },
+    {
+     "id": "b",
+     "text": "`java Programm` – die JVM lädt die Klasse und führt `public static void main(String[] args)` aus.",
+     "correct": true,
+     "why": "Genau so steht es im Skript: `java <Klassenname>` startet eine JVM, diese lädt die Klasse und versucht anschließend, `public static void main(String[] args)` auszuführen."
+    },
+    {
+     "id": "c",
+     "text": "`javac Programm` – der Compiler startet das Programm nach der Übersetzung.",
+     "correct": false,
+     "why": "`javac` ist der Compiler und führt niemals etwas aus; außerdem erwartet er einen Dateinamen mit Endung `.java`."
+    },
+    {
+     "id": "d",
+     "text": "`java Programm` – die JVM führt alle Anweisungen der Klasse von oben nach unten aus.",
+     "correct": false,
+     "why": "Java hat keinen „Skript-Modus“ wie Python. Es gibt genau einen definierten Einstiegspunkt, und das ist die `main`-Methode."
+    }
+   ],
+   "solution": "`java Programm` – die JVM lädt die Klasse `Programm` und ruft dann `public static void main(String[] args)` auf.",
+   "explanation": "`java <Klassenname>` startet eine **Java Virtual Machine**. Diese lädt zuerst die angegebene Klasse (sie sucht dafür `Programm.class` im Klassenpfad) und versucht danach, die Methode `public static void main(String[] args)` auszuführen. Existiert diese Methode nicht (oder passt ihre Signatur nicht), gibt es eine Fehlermeldung **zur Laufzeit** – nicht beim Übersetzen. Wichtig ist der Unterschied zwischen Datei und Klasse: `javac` bekommt einen **Dateinamen** (`Programm.java`, mit Endung), `java` bekommt einen **Klassennamen** (`Programm`, ohne Endung). Liegt die Klasse in einem Paket, muss der vollständige Name angegeben werden, z. B. `java MyPacket.MyClass`. Nebenbemerkung für Neugierige: seit JDK 11 kann man mit `java Datei.java` auch eine einzelne Quelldatei direkt starten – dabei wird sie aber im Speicher neu übersetzt, die vorhandene `.class`-Datei wird gar nicht benutzt. In der Vorlesung gilt der klassische Zweischritt. Merkregel: **javac bekommt eine Datei, java bekommt eine Klasse.**",
+   "hints": [
+    "Achten Sie darauf, welches der beiden Kommandos eine Dateiendung erwartet und welches nicht.",
+    "Java braucht einen eindeutigen Startpunkt. Wie heißt er, und welche Signatur hat er genau?",
+    "Im Skript steht wörtlich: „Das Kommando `java <Klassenname>` startet eine JVM“."
+   ],
+   "pitfalls": [
+    "`.class` oder `.java` an das `java`-Kommando anhängen.",
+    "Annehmen, Anweisungen außerhalb von `main` würden beim Start ausgeführt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 11,
+     "label": "1.5. Starten eines Java-Programms: java <Klassenname>, JVM sucht public static void main(String[] args)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 10,
+     "label": "1.4. Ausführung: Interpretation durch eine virtuelle Maschine (JVM)"
+    }
+   ],
+   "tags": [
+    "jvm",
+    "java-kommando",
+    "main",
+    "start"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-002"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "print oder println?",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Ausgabe01 {\n  public static void main(String[] args) {\n    System.out.print(\"Hallo\");\n    System.out.print(\", \");\n    System.out.println(\"Welt!\");\n    System.out.print(\"Bis\");\n    System.out.println(\" bald\");\n  }\n}",
+   "expectedOutput": "Hallo, Welt!\nBis bald",
+   "solution": "class Ausgabe01 {\n  public static void main(String[] args) {\n    System.out.print(\"Hallo\");\n    System.out.print(\", \");\n    System.out.println(\"Welt!\");\n    System.out.print(\"Bis\");\n    System.out.println(\" bald\");\n  }\n}",
+   "explanation": "`System.out.print(...)` schreibt den Text an die aktuelle Schreibposition und lässt den Cursor dort stehen. `System.out.println(...)` schreibt denselben Text und hängt zusätzlich einen **Zeilenumbruch** an (`ln` = *line*). Deshalb landet alles, was mit `print` ausgegeben wird, so lange in derselben Zeile, bis das nächste `println` kommt. Hier entstehen genau zwei Zeilen: `Hallo` + `, ` + `Welt!` bilden die erste, `Bis` + ` bald` die zweite. Der typische Denkfehler ist, jede `System.out.…`-Anweisung als eigene Zeile zu lesen – die Anzahl der Anweisungen sagt aber nichts über die Anzahl der Zeilen aus. Achten Sie außerdem auf die Leerzeichen *innerhalb* der Zeichenkettenliterale: `\", \"` und `\" bald\"` enthalten sie, sonst stünde da `Hallo,Welt!`. Merkregel: **`ln` = neue Zeile am Ende.**",
+   "hints": [
+    "Wie viele Zeilen können überhaupt entstehen? Zählen Sie die `println`-Aufrufe.",
+    "Schreiben Sie die Ausgabe Zeichen für Zeichen auf und setzen Sie den Zeilenumbruch nur dort, wo `println` steht.",
+    "Vergessen Sie die Leerzeichen innerhalb der Anführungszeichen nicht."
+   ],
+   "pitfalls": [
+    "Pro Anweisung eine neue Zeile annehmen.",
+    "Leerzeichen in den Literalen übersehen und `Hallo,Welt!` schreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 7,
+     "label": "1.1. Beispielprogramm BDayParadox mit System.out.println"
+    },
+    {
+     "file": "11_Ueberblick/Klausur01.java",
+     "label": "System.out.println zur Konsolenausgabe"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4. Anweisungen – System.out.println(...)"
+    }
+   ],
+   "tags": [
+    "println",
+    "print",
+    "ausgabe",
+    "konsole"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-003"
+  },
+  {
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Welcher Bezeichner ist erlaubt?",
+   "prompt": "Welcher der folgenden Namen (Identifikatoren) ist in Java **zulässig**?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`2hoch4`",
+     "correct": false,
+     "why": "Ein Bezeichner darf **nie** mit einer Ziffer beginnen. Erlaubt sind als erstes Zeichen nur Buchstaben, `_` und `$`."
+    },
+    {
+     "id": "b",
+     "text": "`Tuer-1`",
+     "correct": false,
+     "why": "Der Bindestrich ist kein erlaubtes Zeichen. Der Compiler liest hier den Minus-**Operator** und damit zwei Bezeichner."
+    },
+    {
+     "id": "c",
+     "text": "`get Name`",
+     "correct": false,
+     "why": "Leerzeichen sind Trennzeichen und in einem Bezeichner verboten. Üblich wäre `getName` (camelCase)."
+    },
+    {
+     "id": "d",
+     "text": "`$all4you`",
+     "correct": true,
+     "why": "Zulässig: `$` darf am Anfang stehen, danach folgen nur Buchstaben und Ziffern. Genau dieses Beispiel steht im Skript in der Spalte „korrekt“."
+    }
+   ],
+   "solution": "`$all4you`",
+   "explanation": "Die Regeln für Namen (Identifikatoren) gelten in Java einheitlich für Klassen, Attribute, Operationen, Parameter und Variablen:\n\n1. beliebige Länge,\n2. nur Buchstaben, Ziffern, `_` und `$`,\n3. müssen mit einem Buchstaben, `_` oder `$` **beginnen** (nie mit einer Ziffer),\n4. dürfen kein Schlüsselwort sein.\n\n`$all4you` erfüllt alle vier Regeln. Der typische Denkfehler betrifft Regel 2: Sonderzeichen wie `-`, `.` oder `?` sehen harmlos aus, sind für den Compiler aber Operatoren bzw. Trennzeichen. `Tuer-1` liest er als `Tuer` minus `1`. Und Regel 3 ist strenger als Regel 2: Ziffern sind zwar erlaubt, aber nicht an erster Stelle – sonst könnte der Compiler `2hoch4` nicht von einem Zahlliteral unterscheiden. Merkregel: **Buchstabe, Unterstrich oder Dollar zuerst – danach dürfen auch Ziffern mit.**",
+   "hints": [
+    "Prüfen Sie jeden Kandidaten gegen zwei Fragen: Welche Zeichen kommen vor? Und womit fängt er an?",
+    "Genau zwei Sonderzeichen sind in Java-Namen erlaubt.",
+    "`$` und `_` sind gleichberechtigt zu Buchstaben – auch am Anfang."
+   ],
+   "pitfalls": [
+    "Den Bindestrich für ein normales Namenszeichen halten.",
+    "Vergessen, dass Ziffern zwar erlaubt sind, aber nicht als erstes Zeichen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 16,
+     "label": "2.2. Namen (Identifikatoren): korrekt/falsch-Tabelle mit $all4you, 2hoch4, Tuer-1, get Name"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 349,
+     "label": "Überblick 2. Syntaktische Grundelemente – Namen/Identifikatoren"
+    }
+   ],
+   "tags": [
+    "bezeichner",
+    "identifikatoren",
+    "namensregeln"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-004"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Zulässige Namen – alle ankreuzen",
+   "prompt": "Kreuzen Sie **alle** Namen an, die in Java als Identifikator zulässig sind.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`Summe`",
+     "correct": true,
+     "why": "Nur Buchstaben, beginnt mit einem Buchstaben – zulässig. (Groß geschrieben ist für eine Variable unüblich, aber kein Syntaxfehler.)"
+    },
+    {
+     "id": "b",
+     "text": "`_1_2`",
+     "correct": true,
+     "why": "Beginnt mit `_`, danach Ziffern und `_` – zulässig, steht so im Skript in der Spalte „korrekt“."
+    },
+    {
+     "id": "c",
+     "text": "`while`",
+     "correct": false,
+     "why": "`while` ist ein reserviertes Schlüsselwort und darf deshalb kein Name sein."
+    },
+    {
+     "id": "d",
+     "text": "`beliebige_Länge_123`",
+     "correct": true,
+     "why": "Zulässig. Namen dürfen beliebig lang sein, und `ä`/`Ä` zählen für Java als Buchstaben – genau dieses Beispiel steht auf der Überblicksfolie."
+    },
+    {
+     "id": "e",
+     "text": "`4you`",
+     "correct": false,
+     "why": "Beginnt mit einer Ziffer – verboten."
+    },
+    {
+     "id": "f",
+     "text": "`preis$netto`",
+     "correct": true,
+     "why": "`$` ist innerhalb eines Namens erlaubt (und auch am Anfang)."
+    },
+    {
+     "id": "g",
+     "text": "`mein wert`",
+     "correct": false,
+     "why": "Das Leerzeichen ist ein Trennzeichen; der Compiler sieht zwei Bezeichner hintereinander."
+    },
+    {
+     "id": "h",
+     "text": "`zins-satz`",
+     "correct": false,
+     "why": "`-` ist ein Operator, kein Namenszeichen."
+    }
+   ],
+   "solution": "Zulässig sind: `Summe`, `_1_2`, `beliebige_Länge_123`, `preis$netto`.",
+   "explanation": "Vier Regeln entscheiden: beliebige Länge; nur Buchstaben, Ziffern, `_` und `$`; Beginn mit Buchstabe, `_` oder `$`; kein Schlüsselwort. Interessant sind die beiden „Grenzfälle“:\n\n* `beliebige_Länge_123` mit Umlaut ist erlaubt, weil Java Unicode-Buchstaben akzeptiert – die Folie des Professors führt genau diesen Namen als korrektes Beispiel auf. In der Praxis vermeidet man Umlaute trotzdem, weil sie bei falscher Zeichenkodierung Ärger machen.\n* `while` scheitert **nicht** an den Zeichen, sondern an Regel 4: reservierte Wörter sind für die Sprache belegt.\n\nDer typische Denkfehler ist, nur auf die Zeichen zu achten und die Schlüsselwort-Regel zu vergessen. Merkregel: **Erst Zeichen prüfen, dann Anfang prüfen, dann Schlüsselwortliste prüfen.**",
+   "hints": [
+    "Gehen Sie die vier Regeln der Reihe nach auf jeden Kandidaten an.",
+    "Eine der Regeln hat gar nichts mit den verwendeten Zeichen zu tun.",
+    "Auf der Überblicksfolie steht ein Beispielname, der einen Umlaut enthält."
+   ],
+   "pitfalls": [
+    "Ein reserviertes Wort für einen Namen halten, weil es „nur aus Buchstaben“ besteht.",
+    "Umlaute pauschal für verboten halten (erlaubt, aber unschön)."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 16,
+     "label": "2.2. Namen (Identifikatoren) – Regeln und Beispiele"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 349,
+     "label": "Überblick 2 – Summe, getName, $all4you, _1_2, beliebige_Länge_123"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 15,
+     "label": "2.1. Reservierte Schlüsselworte"
+    }
+   ],
+   "tags": [
+    "bezeichner",
+    "schluesselwoerter",
+    "namensregeln"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-005"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": false,
+   "title": "Von der Spezifikation zum laufenden Programm",
+   "prompt": "a) Nennen Sie die Entstehungsschritte eines Programms in der Reihenfolge, in der sie im Skript stehen, und geben Sie für Java jeweils an, welches Werkzeug bzw. welche Datei dazugehört.\n\nb) Wenden Sie die Schritte auf folgende Aufgabe an: *„Gib von drei eingegebenen ganzen Zahlen die größte aus.“* Formulieren Sie Spezifikation, Lösungsidee und Algorithmus (Pseudocode) – das fertige Java-Programm müssen Sie hier **nicht** schreiben.",
+   "solution": "**a) Entstehungsschritte (Skript S. 4–5):**\n1. **Spezifikation** – *was* soll das Programm leisten (Eingaben, Ausgaben, Randbedingungen)?\n2. **Lösungsidee** – *wie* kommt man prinzipiell zum Ziel?\n3. **Algorithmus** – die Lösungsidee als endliche, eindeutige Schrittfolge (z. B. Pseudocode).\n4. **Programm in einer Programmiersprache = Quellcode** – Schritt „Programmieren“, Werkzeug: Editor (`nano Programm.java`), Ergebnis: `Programm.java`.\n5. **Programm in Maschinensprache = Objektcode** – Schritt „Compilen“, Werkzeug: Java-Compiler (`javac Programm.java`), Ergebnis: `Programm.class` (Bytecode).\n6. **Ausführungsplattform** – Schritt „Binden, Laden“: Java Virtual Machine / Java-Interpreter (`java Programm`) auf Betriebssystem und Hardware.\n\n**b) Beispiel „größte von drei Zahlen“:**\n* *Spezifikation:* Eingabe: drei ganze Zahlen a, b, c von der Konsole. Ausgabe: genau eine Zeile mit der größten der drei Zahlen. Sind mehrere gleich groß, wird dieser Wert ausgegeben.\n* *Lösungsidee:* Ein „Bestwert“ wird mitgeführt und mit jeder weiteren Zahl verglichen; er wird ersetzt, wenn die neue Zahl größer ist.\n* *Algorithmus (Pseudocode):*\n  ```\n  lies a, b, c\n  max <- a\n  wenn b > max dann max <- b\n  wenn c > max dann max <- c\n  gib max aus\n  ```\n\n**Bewertungsrubrik (6 P.):**\n* 3 P. für a): je 0,5 P. für die sechs Stationen in korrekter Reihenfolge; volle Punktzahl nur mit der Zuordnung `.java` ↔ Editor, `javac` ↔ `.class`, `java` ↔ JVM.\n* 1 P. Spezifikation nennt Ein- **und** Ausgabe.\n* 1 P. Lösungsidee ist eine Idee (Vergleichen/Bestwert), keine Programmzeile.\n* 1 P. Algorithmus ist eindeutig, endlich und sprachunabhängig formuliert.",
+   "explanation": "Der Professor stellt die Entstehungsschritte gleich auf Folie 4/5 als Kette dar und wiederholt sie im Klausur-Überblick auf Folie 348 – ein sehr typischer Kandidat für eine Theoriefrage. Wichtig ist das Verständnis, dass die ersten drei Schritte **sprachunabhängig** sind: Spezifikation, Lösungsidee und Algorithmus enthalten noch kein Java. Erst im vierten Schritt entsteht Quellcode, im fünften Objektcode. Der häufigste Fehler ist, Lösungsidee und Algorithmus zu verschmelzen oder sofort Java-Code hinzuschreiben; die Lösungsidee beschreibt das *Prinzip*, der Algorithmus die *eindeutige Schrittfolge*. Der zweite häufige Fehler ist die Zuordnung der Werkzeuge: „Quellcode“ ist `.java`, „Objektcode“ ist `.class` – nicht umgekehrt. Merkregel: **Denken (Spez. → Idee → Algorithmus) – Schreiben (`.java`) – Übersetzen (`.class`) – Ausführen (JVM).**",
+   "hints": [
+    "Die Kette hat sechs Stationen; die ersten drei kommen ganz ohne Java aus.",
+    "Ordnen Sie jedem Pfeil in der Skriptgrafik ein Verb zu: Programmieren, Compilen, Binden/Laden.",
+    "Für b) reicht Pseudocode – schreiben Sie ihn so, dass ihn auch jemand ohne Java-Kenntnisse ausführen könnte."
+   ],
+   "pitfalls": [
+    "Lösungsidee und Algorithmus als dasselbe behandeln.",
+    "„Objektcode“ mit „objektorientiertem Code“ verwechseln – gemeint ist der Maschinen-/Bytecode.",
+    "In der Spezifikation nur die Ausgabe beschreiben und die Eingabe vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 4,
+     "label": "1. Erstellen von Programmen – Entstehungsschritte eines Programms"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 5,
+     "label": "Entstehungsschritte in Java: Program.java, Program.class, JVM"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 348,
+     "label": "Überblick 1. Erstellen von Programmen in Java"
+    }
+   ],
+   "tags": [
+    "spezifikation",
+    "algorithmus",
+    "quellcode",
+    "objektcode",
+    "entwicklungsprozess"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-006"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finde die 2 Compiler-Fehler",
+   "prompt": "Finde die **2** Compiler-Fehler. Gib jeweils die Zeilennummer, den Fehler und die Korrektur an.",
+   "code": "class Begruessung {\n  public static void main(String[] args) {\n    String name = \"Java\";\n    System.out.printLn(\"Hallo, \" + name);\n    system.out.println(\"Fertig\");\n  }\n}",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "System.out.printLn(\"Hallo, \" + name);",
+     "fix": "System.out.println(\"Hallo, \" + name);",
+     "why": "Java ist streng case-sensitive. Die Methode heißt `println` (kleines `l`, kleines `n`) – `printLn` gibt es nicht. javac meldet: *cannot find symbol – method printLn(String)*."
+    },
+    {
+     "line": 5,
+     "wrong": "system.out.println(\"Fertig\");",
+     "fix": "System.out.println(\"Fertig\");",
+     "why": "Die Klasse heißt `System` mit großem `S`. Klein geschrieben hält der Compiler `system` für einen Paketnamen und meldet *package system does not exist*."
+    }
+   ],
+   "solution": "class Begruessung {\n  public static void main(String[] args) {\n    String name = \"Java\";\n    System.out.println(\"Hallo, \" + name);\n    System.out.println(\"Fertig\");\n  }\n}",
+   "expectedOutput": "Hallo, Java\nFertig",
+   "explanation": "Beide Fehler haben dieselbe Ursache: **Java unterscheidet Groß- und Kleinschreibung**, und zwar überall – bei Klassennamen, Methodennamen und Variablennamen. `System` und `system` sind zwei völlig verschiedene Namen, ebenso `println` und `printLn`. Beide Fehler sind *semantische* Fehler: syntaktisch ist die Zeile in Ordnung, der Compiler findet nur das gemeinte Symbol nicht. Deshalb meldet er sie mit *cannot find symbol* bzw. *package system does not exist* und zeigt mit `^` genau auf die Stelle. Der typische Denkfehler ist, die Fehlermeldung *package system does not exist* wörtlich zu nehmen und nach einem fehlenden `import` zu suchen – `System` liegt in `java.lang` und wird nie importiert. Merkregel: **`System.out.println` – groß, klein, klein; genau eine Großschreibung ganz am Anfang.**",
+   "hints": [
+    "Der Compiler sagt zweimal sinngemäß „diesen Namen kenne ich nicht“. Vergleichen Sie die Namen buchstabengenau mit der Schreibweise aus der Vorlesung.",
+    "Schauen Sie sich in beiden Zeilen jeweils den ersten Buchstaben und die Wortmitte an.",
+    "Eine der beiden Zeilen ist an der Klasse falsch, die andere an der Methode."
+   ],
+   "pitfalls": [
+    "Nur einen der beiden Fehler finden, weil beide Zeilen „auf den ersten Blick gleich aussehen“.",
+    "Wegen der Meldung *package system does not exist* ein fehlendes `import` vermuten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 7,
+     "label": "Beispielprogramm mit System.out.println"
+    },
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "label": "Aufgabenformat „Finde die 2 Compiler-Fehler“"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 16,
+     "label": "2.2. Namen – Java unterscheidet Groß-/Kleinschreibung"
+    }
+   ],
+   "tags": [
+    "compiler-fehler",
+    "case-sensitive",
+    "println",
+    "fehlersuche"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-007"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Wie weit reicht der Blockkommentar?",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Kommentare01 {\n  public static void main(String[] args) {\n    System.out.println(\"A\");\n    /* System.out.println(\"B\");\n    System.out.println(\"C\");\n    /* System.out.println(\"D\"); */\n    System.out.println(\"E\");\n    // System.out.println(\"F\");\n    System.out.println(\"G\");\n  }\n}",
+   "expectedOutput": "A\nE\nG",
+   "solution": "class Kommentare01 {\n  public static void main(String[] args) {\n    System.out.println(\"A\");\n    /* System.out.println(\"B\");\n    System.out.println(\"C\");\n    /* System.out.println(\"D\"); */\n    System.out.println(\"E\");\n    // System.out.println(\"F\");\n    System.out.println(\"G\");\n  }\n}",
+   "explanation": "Java kennt drei Kommentarformen: `//` bis zum Zeilenende, `/* … */` über beliebig viele Zeilen und `/** … */` als Dokumentationskommentar für javadoc. Entscheidend hier: **Blockkommentare lassen sich nicht verschachteln.** Ein `/* …` endet beim **ersten** `*/`, das der Compiler findet – ein zweites `/*` darin ist nur gewöhnlicher Kommentartext ohne jede Wirkung. Der Kommentar beginnt also in Zeile 4 und endet am `*/` in Zeile 6; damit sind die Ausgaben `B`, `C` und `D` verschwunden. `E` wird ausgegeben, `F` ist durch einen Zeilenkommentar deaktiviert, `G` wird ausgegeben. Der typische Denkfehler ist, das innere `/* … */` als eigenständigen Kommentar zu lesen und deshalb `E` ebenfalls für auskommentiert zu halten – oder umgekehrt zu meinen, der äußere Kommentar bräuchte noch ein zweites `*/`. Merkregel: **Das erste `*/` gewinnt.**",
+   "hints": [
+    "Suchen Sie zuerst nur nach dem *ersten* `*/` nach dem öffnenden `/*` – markieren Sie diesen Bereich.",
+    "Blockkommentare verschachteln sich in Java nicht; das innere `/*` ist bloßer Text.",
+    "Danach bleiben noch zwei Ausgabe-Anweisungen übrig – plus die allererste."
+   ],
+   "pitfalls": [
+    "Verschachtelte Blockkommentare wie in manchen anderen Sprachen annehmen.",
+    "Den Zeilenkommentar `//` übersehen und `F` mit ausgeben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 18,
+     "label": "2.7. Kommentare: //, /* */, /** */"
+    },
+    {
+     "file": "01_JavaProgramme/BDayParadox.java",
+     "label": "Beispiel für alle drei Kommentararten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 7,
+     "label": "Beispielprogramm BDayParadox mit /** */ und /* */"
+    }
+   ],
+   "tags": [
+    "kommentare",
+    "blockkommentar",
+    "ausgabe"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-008"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Grundgerüst eines Java-Programms",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass eine lauffähige Klasse in der Datei `Hallo.java` entsteht, die genau `Hallo OFP!` in **einer** Zeile ausgibt (je 2 P.).\n\nHinweis: In jede Lücke gehört genau **ein** Wort bzw. ein Zeichen.",
+   "code": "// Datei: Hallo.java\n____(1)____ Hallo {\n\n  public ____(2)____ void ____(3)____(String[] args) {\n    String gruss = \"Hallo OFP\"____(4)____\n    System.out.____(5)____(gruss);\n    System.out.____(6)____(\"!\");\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "class"
+     ],
+     "explanation": "Jedes Java-Programm besteht aus mindestens einer Klasse; sie wird mit dem Schlüsselwort `class` eingeleitet. Der Name muss zum Dateinamen `Hallo.java` passen."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "static"
+     ],
+     "explanation": "Die JVM ruft `main` auf, **bevor** irgendein Objekt existiert. Deshalb muss die Methode eine Klassenmethode sein: `static`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "main"
+     ],
+     "explanation": "`main` ist der festgelegte Einstiegspunkt. Die JVM sucht exakt `public static void main(String[] args)` – jeder andere Name führt zu einem Laufzeitfehler beim Start."
+    },
+    {
+     "id": 4,
+     "accept": [
+      ";"
+     ],
+     "explanation": "Jede Anweisung wird in Java mit einem Semikolon abgeschlossen. Der Zeilenumbruch allein beendet keine Anweisung."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "print"
+     ],
+     "explanation": "`print` gibt ohne Zeilenumbruch aus, damit das `!` noch in dieselbe Zeile passt."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "println"
+     ],
+     "explanation": "`println` schließt die Zeile ab (`ln` = *line*). Wäre hier ebenfalls `print` eingesetzt, stimmte die Ausgabe zwar auf den ersten Blick, es fehlte aber der abschließende Zeilenumbruch."
+    }
+   ],
+   "solution": "class Hallo {\n\n  public static void main(String[] args) {\n    String gruss = \"Hallo OFP\";\n    System.out.print(gruss);\n    System.out.println(\"!\");\n  }\n}",
+   "expectedOutput": "Hallo OFP!",
+   "explanation": "Diese Aufgabe prüft das absolute Grundgerüst, das in jeder Java-Klausur vorausgesetzt wird. `class Hallo { … }` – die Klasse; `public static void main(String[] args)` – der Einstiegspunkt, den die JVM nach `java Hallo` sucht; `;` – der Abschluss **jeder** Anweisung; `{ }` – die Blockklammern, die eine Anweisungsfolge zu einem Block zusammenfassen. Besonders wichtig ist `static`: `main` wird aufgerufen, bevor ein Objekt der Klasse existiert, also darf sie kein Objekt voraussetzen. Fehlt `static`, übersetzt javac das Programm anstandslos, aber `java Hallo` bricht mit *Main method is not static* ab. Der zweite Klassiker ist Lücke 4: In Java beendet **nicht** der Zeilenumbruch eine Anweisung, sondern das Semikolon – Zeilenwechsel sind bloße Trennzeichen wie Leerzeichen. Merkregel: **class – public static void main(String[] args) – jede Anweisung endet mit `;`.**",
+   "hints": [
+    "Lücken 1–3 bilden zusammen die Zeile, ohne die kein Java-Programm startet. Schreiben Sie sie zuerst komplett auf.",
+    "Lücke 4: Woran erkennt der Compiler in Java das Ende einer Anweisung?",
+    "Lücken 5 und 6 unterscheiden sich um genau zwei Buchstaben – überlegen Sie, wo der Zeilenumbruch hin soll."
+   ],
+   "pitfalls": [
+    "`static` vergessen – der Code kompiliert, lässt sich aber nicht starten.",
+    "In Lücke 4 den Zeilenumbruch für ausreichend halten.",
+    "Zweimal `println` einsetzen und dadurch zwei Zeilen statt einer erzeugen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 6,
+     "label": "1.1. Programmstruktur: jedes Java-Programm besteht aus mindestens einer Klasse"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 11,
+     "label": "1.5. Starten: public static void main(String[] args)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. Anweisungen: Anweisungen werden immer mit ';' beendet, { } bildet einen Block"
+    }
+   ],
+   "tags": [
+    "grundgeruest",
+    "main",
+    "semikolon",
+    "class",
+    "println"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-009"
+  },
+  {
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Dateiname und Klassenname",
+   "prompt": "In der Datei `Test.java` steht ausschließlich folgender Code:\n\n```java\npublic class Rechner {\n  public static void main(String[] args) {\n    System.out.println(\"ok\");\n  }\n}\n```\n\nWas passiert bei `javac Test.java`?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Es wird `Test.class` erzeugt; der Klassenname spielt keine Rolle.",
+     "correct": false,
+     "why": "Der Compiler benennt `.class`-Dateien immer nach der **Klasse**, nie nach der Quelldatei. `Test.class` entsteht so nie."
+    },
+    {
+     "id": "b",
+     "text": "Es wird `Rechner.class` erzeugt, alles ist in Ordnung.",
+     "correct": false,
+     "why": "Das wäre richtig, wenn die Klasse **nicht** `public` wäre. Mit `public` erzwingt Java die Namensgleichheit."
+    },
+    {
+     "id": "c",
+     "text": "Compiler-Fehler: eine `public`-Klasse muss in einer gleichnamigen Datei stehen.",
+     "correct": true,
+     "why": "Richtig. javac meldet: *class Rechner is public, should be declared in a file named Rechner.java*."
+    },
+    {
+     "id": "d",
+     "text": "javac läuft durch; erst `java Rechner` meldet einen Fehler.",
+     "correct": false,
+     "why": "Der Fehler tritt bereits beim Übersetzen auf – es entsteht gar keine `.class`-Datei, die man starten könnte."
+    }
+   ],
+   "solution": "Compiler-Fehler: *class Rechner is public, should be declared in a file named Rechner.java*.",
+   "explanation": "Im Skript steht: „Der Programmcode einer **öffentlichen** Java-Klasse steht in einer eigenen Quelldatei, die den Namen der Klasse trägt“ – mit dem Zusatz „private Klassen können in beliebigen Dateien stehen“. Genau diese Unterscheidung wird hier abgefragt. Wäre `public` weggelassen, würde `javac Test.java` problemlos durchlaufen und `Rechner.class` erzeugen; gestartet wird dann mit `java Rechner`. Der typische Denkfehler ist, den Dateinamen für maßgeblich zu halten. Maßgeblich ist immer der **Klassenname**: `javac` bekommt den Dateinamen, erzeugt aber `.class`-Dateien nach Klassennamen, und `java` bekommt den Klassennamen. Deshalb heißen in den Beispielen des Professors die Dateien genauso wie die Klassen (`Klausur01.java` ↔ `class Klausur01`). Merkregel: **`public class X` ⇒ Datei `X.java`. Ohne `public` ist der Dateiname frei.**",
+   "hints": [
+    "Achten Sie auf das Schlüsselwort vor `class` – ohne dieses Wort sähe die Antwort anders aus.",
+    "Wonach benennt der Compiler die erzeugte `.class`-Datei: nach der Datei oder nach der Klasse?",
+    "Im Skript steht ein Satz über „öffentliche“ Klassen und ihre Quelldatei."
+   ],
+   "pitfalls": [
+    "`public` überlesen und deshalb Antwort b) wählen.",
+    "Glauben, der Fehler zeige sich erst beim Starten mit `java`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 6,
+     "label": "1.1. Programmstruktur: Code einer öffentlichen Klasse steht in gleichnamiger Quelldatei"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 9,
+     "label": "1.3. Übersetzung: Compiler erzeugt für jede Klasse eine .class-Datei"
+    }
+   ],
+   "tags": [
+    "dateiname",
+    "klassenname",
+    "public",
+    "javac"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-010"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Compiler, Interpreter und die JVM",
+   "prompt": "a) Erklären Sie in zwei bis drei Sätzen, welche Rolle der Java-**Compiler** und welche Rolle die **Java Virtual Machine** beim Ausführen eines Java-Programms spielen. Verwenden Sie dabei die Begriffe *Quellcode* und *Objektcode*.\n\nb) Nennen Sie zwei Vorteile und einen Nachteil, die sich daraus ergeben, dass Java-Programme nicht direkt vom Prozessor ausgeführt werden.",
+   "solution": "**a)** Der Java-Compiler (`javac Programm.java`) übersetzt den **Quellcode** (`Programm.java`) einmalig in **Objektcode**, den sogenannten Bytecode (`Programm.class`). Dieser Bytecode ist noch kein Maschinencode eines konkreten Prozessors. Erst die **Java Virtual Machine** (gestartet mit `java Programm`) liest die `.class`-Dateien bei Bedarf ein und **interpretiert** sie, d. h. sie arbeitet bei Operations-Aufrufen den Programmcode der Operation ab. Java kombiniert also beides: compilieren *und* interpretieren.\n\n**b)** Vorteile:\n1. **Portabilität** – derselbe Bytecode läuft auf jedem Rechner, unabhängig von Prozessortyp und Betriebssystem, solange es dort eine JVM gibt.\n2. **Sicherheit** – die JVM kann Zugriffe des Programms auf Ressourcen des Rechners (z. B. Dateien) einschränken.\n\nNachteil: **geringere Ausführungsgeschwindigkeit**, weil zwischen Programm und Hardware eine zusätzliche Schicht liegt.\n\n**Bewertungsrubrik (6 P.):**\n* 1 P. Compiler übersetzt `.java` → `.class` (Quellcode → Objektcode/Bytecode).\n* 1 P. JVM lädt `.class` und interpretiert den Bytecode zur Laufzeit.\n* 1 P. explizite Aussage, dass der Bytecode **kein** prozessorspezifischer Maschinencode ist.\n* 1 P. Portabilität. 1 P. Sicherheit/Sandbox. 1 P. Geschwindigkeitsnachteil.",
+   "explanation": "Diese Frage zielt auf den zentralen Unterschied zwischen Java und klassisch compilierten Sprachen. Ein reiner Compiler (z. B. bei C) erzeugt Maschinencode für **einen** Prozessor; ein reiner Interpreter liest den Quelltext bei jeder Ausführung neu. Java geht einen Mittelweg: einmal compilieren in plattformneutralen Bytecode, dann von der JVM interpretieren lassen. Daraus folgt direkt das „write once, run anywhere“-Versprechen. Der typische Denkfehler ist die Aussage „Java ist eine interpretierte Sprache“ – das greift zu kurz, denn ohne den Compilerschritt gibt es gar keinen Bytecode. Ein zweiter häufiger Fehler ist, Sicherheit mit Typsicherheit zu verwechseln: gemeint ist im Skript die Kontrolle der JVM über Ressourcenzugriffe. Merkregel: **Java wird compiliert *und* interpretiert – der Bytecode ist die Brücke dazwischen.**",
+   "hints": [
+    "Zeichnen Sie die Kette `.java` → `.class` → Ausgabe und schreiben Sie an jeden Pfeil das zuständige Werkzeug.",
+    "Überlegen Sie, warum es überhaupt eine *virtuelle* Maschine braucht – wovon macht sie unabhängig?",
+    "Das Skript nennt genau zwei Vorteile und genau einen Nachteil in einer Aufzählung."
+   ],
+   "pitfalls": [
+    "Bytecode mit Maschinencode des Prozessors gleichsetzen.",
+    "Nur „Java ist plattformunabhängig“ schreiben, ohne die JVM als Grund zu nennen.",
+    "Den Geschwindigkeitsnachteil vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 10,
+     "label": "1.4. Ausführung von Java-Programmen: JVM, Vorteile Portabilität und Sicherheit, Nachteil Geschwindigkeit"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 5,
+     "label": "Entstehungsschritte in Java: Quellcode → Objektcode → Ausführungsplattform JVM"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 348,
+     "label": "Überblick 1. Erstellen von Programmen in Java"
+    }
+   ],
+   "tags": [
+    "jvm",
+    "compiler",
+    "interpreter",
+    "bytecode",
+    "portabilitaet"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-011"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 10,
+   "examStyle": true,
+   "title": "Programm Visitenkarte schreiben",
+   "prompt": "Schreiben Sie ein vollständiges Java-Programm in der Datei `Visitenkarte.java`, das **exakt** folgende Konsolenausgabe erzeugt:\n\n```\n*** Visitenkarte ***\nName: Ada Lovelace\nStudiengang: Informatik\nSemester: 3\n```\n\nVorgaben (sie prüfen genau die syntaktischen Grundelemente):\n* Die Klasse heißt `Visitenkarte`.\n* Der Name steht in einer Konstanten `final String NAME`.\n* Die Zeile `Name: Ada Lovelace` muss aus **zwei** Anweisungen entstehen: zuerst `System.out.print`, dann `System.out.println`.\n* Über der Klasse steht ein Dokumentationskommentar `/** … */`, im Rumpf mindestens ein `//`-Kommentar.\n* Halten Sie die Programmierkonventionen ein: aussagekräftige Namen, Einrückung, Blöcke mit `{ }`.",
+   "starterCode": "/** Visitenkarte -- gibt eine kleine Visitenkarte auf der Konsole aus.\n *  Autor:  ...\n */\nclass Visitenkarte {\n  public static void main(String[] args) {\n    // hier ausfüllen\n\n  }\n}",
+   "constraints": [
+    "Klasse heißt Visitenkarte (Datei Visitenkarte.java)",
+    "Name in einer final-Konstanten NAME",
+    "mindestens ein System.out.print und ein //-Kommentar",
+    "Dokumentationskommentar /** */ über der Klasse"
+   ],
+   "required": [
+    "class Visitenkarte",
+    "final String NAME",
+    "System.out.print(",
+    "/**",
+    "//"
+   ],
+   "solution": "/** Visitenkarte -- gibt eine kleine Visitenkarte auf der Konsole aus.\n *  Autor:  OFP-Kurs\n */\nclass Visitenkarte {\n  public static void main(String[] args) {\n    final String NAME = \"Ada Lovelace\";   // Konstante: darf nicht mehr geändert werden\n    int semester = 3;                      // aktuelles Fachsemester\n    System.out.println(\"*** Visitenkarte ***\");\n    System.out.print(\"Name: \");\n    System.out.println(NAME);\n    System.out.println(\"Studiengang: Informatik\");\n    System.out.println(\"Semester: \" + semester);\n  }\n}",
+   "expectedOutput": "*** Visitenkarte ***\nName: Ada Lovelace\nStudiengang: Informatik\nSemester: 3",
+   "explanation": "Diese Aufgabe zieht alle Grundelemente in einem kleinen Programm zusammen: Klassendeklaration mit passendem Dateinamen, die `main`-Signatur, Anweisungen mit `;`, ein Block `{ }`, zwei Kommentararten, eine Konstante mit `final` und die beiden Ausgabemethoden. Wichtig ist der Unterschied zwischen `print` und `println`: Nur weil `Name: ` und `Ada Lovelace` aus zwei Anweisungen kommen, heißt das nicht, dass zwei Zeilen entstehen – der Umbruch entsteht ausschließlich durch `println`. `final String NAME` macht aus der Variablen eine Konstante; ein späteres `NAME = …` wäre ein Compiler-Fehler. Konventionsgemäß werden Konstanten GROSS geschrieben, Variablen klein (`semester`), Klassen mit großem Anfangsbuchstaben (`Visitenkarte`). Beim Zusammensetzen der letzten Zeile wird der `int`-Wert automatisch in seine Textdarstellung umgewandelt, weil links vom `+` bereits ein String steht. Merkregel: **Erst Ausgabe hinschreiben, dann entscheiden, wo `println` den Umbruch setzt.**",
+   "hints": [
+    "Schreiben Sie zuerst das leere Gerüst: Kommentar, `class`, `main`, Block – und lassen Sie den Rumpf leer.",
+    "Zählen Sie die geforderten Zeilen der Ausgabe: so viele Zeilenumbrüche brauchen Sie, also so viele `println`.",
+    "Für `Name: Ada Lovelace` ist die erste Anweisung ein `print` (ohne Umbruch), die zweite ein `println`.",
+    "Achten Sie auf die Leerzeichen: nach `Name:` steht genau eines, ebenso nach `Studiengang:` und `Semester:`."
+   ],
+   "pitfalls": [
+    "Statt `print` zweimal `println` benutzen – dann steht der Name in einer eigenen Zeile.",
+    "`final` vergessen oder die Konstante klein schreiben.",
+    "Den Dateinamen nicht an den Klassennamen anpassen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 7,
+     "label": "Beispielprogramm BDayParadox: Aufbau einer Klasse mit main und Kommentaren"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 18,
+     "label": "2.7. Kommentare"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4: Programmier-Konventionen – aussagekräftige Namen, Einrückungen, { }, Kommentare"
+    }
+   ],
+   "tags": [
+    "programm-schreiben",
+    "println",
+    "final",
+    "kommentare",
+    "konventionen"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-012"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Plus: addieren oder aneinanderhängen?",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Ausgabe02 {\n  public static void main(String[] args) {\n    System.out.println(\"Summe: \" + 3 + 4);\n    System.out.println(\"Summe: \" + (3 + 4));\n    System.out.println(3 + 4 + \" Punkte\");\n    System.out.println('A' + 1);\n    System.out.println(\"\" + 'A' + 1);\n  }\n}",
+   "expectedOutput": "Summe: 34\nSumme: 7\n7 Punkte\n66\nA1",
+   "solution": "class Ausgabe02 {\n  public static void main(String[] args) {\n    System.out.println(\"Summe: \" + 3 + 4);\n    System.out.println(\"Summe: \" + (3 + 4));\n    System.out.println(3 + 4 + \" Punkte\");\n    System.out.println('A' + 1);\n    System.out.println(\"\" + 'A' + 1);\n  }\n}",
+   "explanation": "Der Operator `+` hat in Java zwei Bedeutungen: **Addition**, wenn beide Operanden Zahlen sind, und **String-Konkatenation**, sobald einer der beiden Operanden ein String ist. Da `+` linksassoziativ ist, wird von links nach rechts ausgewertet:\n\n1. `\"Summe: \" + 3` ergibt den String `\"Summe: 3\"`, danach `+ 4` hängt `4` an → `Summe: 34`.\n2. Die Klammern erzwingen zuerst die Zahlenaddition `3 + 4` = `7` → `Summe: 7`.\n3. Hier steht der String **rechts**: `3 + 4` wird zuerst gerechnet (`7`), erst dann kommt der Text dazu → `7 Punkte`.\n4. `'A'` ist ein **Zeichenliteral** (einfache Anführungszeichen). In einer Rechnung wird es zu seinem Unicode-Wert 65 erweitert, also 65 + 1 = **66** – kein Buchstabe!\n5. Durch das führende `\"\"` ist der linke Operand ein String, deshalb wird `'A'` als Zeichen angehängt und danach die `1` → `A1`.\n\nTypischer Denkfehler: `\"…\" + 3 + 4` als „Text plus die Summe“ lesen. Merkregel: **Von links nach rechts – sobald einmal Text im Spiel ist, bleibt es Text.**",
+   "hints": [
+    "`+` wird von links nach rechts ausgewertet. Werten Sie jeden Ausdruck schrittweise aus und notieren Sie nach jedem Schritt den *Typ* des Zwischenergebnisses.",
+    "Achten Sie auf den Unterschied zwischen `\"A\"` (doppelte Anführungszeichen = String-Literal) und `'A'` (einfache = Zeichenliteral).",
+    "Zwei der fünf Zeilen enthalten überhaupt keinen Text links vom ersten `+`."
+   ],
+   "pitfalls": [
+    "Klammern übersehen und in Zeile 1 und 2 dasselbe Ergebnis annehmen.",
+    "`'A' + 1` als `'B'` oder `A1` lesen statt als Zahl 66.",
+    "Vergessen, dass Zeile 3 rechnet, weil der String erst am Ende dazukommt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 17,
+     "label": "2.3. Konstanten (Literale) und 2.4. Operatoren"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. Anweisungen – Ausdrücke und Priorität"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3: char sym = '?'; Typkonversion"
+    }
+   ],
+   "tags": [
+    "konkatenation",
+    "literale",
+    "operatoren",
+    "char",
+    "ausgabe"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-013"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 2,
+   "points": 4,
+   "examStyle": false,
+   "title": "Kommentare in Java",
+   "prompt": "Welche Aussagen über Kommentare in Java sind **richtig**? Kreuzen Sie alle zutreffenden an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`// …` kommentiert den Rest der Zeile aus.",
+     "correct": true,
+     "why": "Richtig – der Zeilenkommentar endet automatisch am Zeilenende, ein Abschlusszeichen gibt es nicht."
+    },
+    {
+     "id": "b",
+     "text": "`/* … */` darf sich über mehrere Zeilen erstrecken.",
+     "correct": true,
+     "why": "Richtig, genau dafür ist der Blockkommentar da; im Skript wird er für die Formelerklärung in `BDayParadox` genutzt."
+    },
+    {
+     "id": "c",
+     "text": "`/** … */` ist ein Dokumentationskommentar, aus dem sich Programmdokumentation erzeugen lässt.",
+     "correct": true,
+     "why": "Richtig – das ist der javadoc-Kommentar; Entwicklungsumgebungen erzeugen daraus die Programmdokumentation."
+    },
+    {
+     "id": "d",
+     "text": "Blockkommentare `/* … */` dürfen ineinander verschachtelt werden.",
+     "correct": false,
+     "why": "Falsch. Ein Blockkommentar endet beim **ersten** `*/`; ein inneres `/*` ist nur Text. Das führt beim Auskommentieren größerer Codeblöcke oft zu Compiler-Fehlern."
+    },
+    {
+     "id": "e",
+     "text": "Kommentare werden vom Compiler in die `.class`-Datei übernommen und zur Laufzeit ausgegeben.",
+     "correct": false,
+     "why": "Falsch. Kommentare richten sich an Menschen; der Compiler überliest sie vollständig."
+    },
+    {
+     "id": "f",
+     "text": "Ein `//`-Kommentar kann auch hinter einer Anweisung in derselben Zeile stehen.",
+     "correct": true,
+     "why": "Richtig – genau so nutzt der Professor ihn: `double p = 1.0;   // probability that out of n people, 2 …`"
+    }
+   ],
+   "solution": "Richtig sind a), b), c) und f).",
+   "explanation": "Java kennt drei Kommentarformen, alle drei kommen im Beispielprogramm `BDayParadox` des Skripts vor:\n\n* `// …` – Zeilenkommentar bis zum Zeilenende, gern hinter einer Anweisung;\n* `/* … */` – Blockkommentar über beliebig viele Zeilen;\n* `/** … */` – Dokumentationskommentar, aus dem javadoc die Programmdokumentation erzeugt (Entwicklungsumgebungen unterstützen das).\n\nDie beiden falschen Aussagen sind die klassischen Missverständnisse. Erstens: Blockkommentare verschachteln sich **nicht** – wer einen Bereich auskommentiert, der bereits ein `/* … */` enthält, produziert dadurch Syntaxfehler. Zweitens: Kommentare sind reine Leserhilfe und verschwinden bei der Übersetzung vollständig; sie kosten also weder Laufzeit noch Speicher. Merkregel: **Drei Formen, null Wirkung zur Laufzeit, keine Verschachtelung.**",
+   "hints": [
+    "Denken Sie an das erste Beispielprogramm der Vorlesung – dort kommen alle drei Formen vor.",
+    "Eine der Aussagen behauptet etwas über die Laufzeit; Kommentare haben damit nie zu tun.",
+    "Was passiert, wenn man Code auskommentiert, in dem schon ein `/* … */` steckt?"
+   ],
+   "pitfalls": [
+    "Verschachtelte Blockkommentare für erlaubt halten.",
+    "`/** */` und `/* */` für dasselbe halten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 18,
+     "label": "2.7. Kommentare: //, /* */, /** */ mit Beispiel"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 7,
+     "label": "BDayParadox – alle drei Kommentararten im Einsatz"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 14,
+     "label": "1.7. Entwicklungsumgebungen: Erzeugung von Programmdokumentation"
+    }
+   ],
+   "tags": [
+    "kommentare",
+    "javadoc",
+    "theorie"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-014"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Schlüsselwort oder nur ein Name?",
+   "prompt": "Welche der folgenden Wörter sind **reservierte Schlüsselworte** von Java (und dürfen deshalb nicht als Bezeichner verwendet werden)? Kreuzen Sie alle zutreffenden an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`class`",
+     "correct": true,
+     "why": "Schlüsselwort – leitet eine Klassendeklaration ein."
+    },
+    {
+     "id": "b",
+     "text": "`static`",
+     "correct": true,
+     "why": "Schlüsselwort – Modifikator für Klassenattribute und Klassenmethoden."
+    },
+    {
+     "id": "c",
+     "text": "`main`",
+     "correct": false,
+     "why": "**Kein** Schlüsselwort, sondern ein ganz gewöhnlicher Methodenname. Er ist nur dadurch besonders, dass die JVM beim Start genau nach ihm sucht. `int main = 5;` ist erlaubt."
+    },
+    {
+     "id": "d",
+     "text": "`void`",
+     "correct": true,
+     "why": "Schlüsselwort – der „leere“ Rückgabetyp."
+    },
+    {
+     "id": "e",
+     "text": "`String`",
+     "correct": false,
+     "why": "**Kein** Schlüsselwort, sondern der Name einer Klasse aus dem Paket `java.lang`. Deshalb wird er groß geschrieben – Schlüsselworte sind in Java durchgehend klein."
+    },
+    {
+     "id": "f",
+     "text": "`final`",
+     "correct": true,
+     "why": "Schlüsselwort – macht eine Variable zur Konstanten."
+    },
+    {
+     "id": "g",
+     "text": "`println`",
+     "correct": false,
+     "why": "**Kein** Schlüsselwort, sondern eine Methode der Klasse `PrintStream`."
+    },
+    {
+     "id": "h",
+     "text": "`System`",
+     "correct": false,
+     "why": "**Kein** Schlüsselwort, sondern eine Klasse aus `java.lang` mit dem Klassenattribut `out`."
+    }
+   ],
+   "solution": "Schlüsselworte sind: `class`, `static`, `void`, `final`.",
+   "explanation": "Reservierte Schlüsselworte gehören zur **Sprache** Java; sie stehen in der Tabelle auf Folie 15 und dürfen nach Regel 4 der Namensregeln nie als Bezeichner benutzt werden. Alles andere in einem Java-Programm sind gewöhnliche Namen – entweder aus der Standardbibliothek (`String`, `System`, `println`) oder selbst vergeben (`main`, `args`).\n\nEine sehr verlässliche Faustregel hilft beim Unterscheiden: **alle Java-Schlüsselworte werden komplett klein geschrieben.** Alles, was mit einem Großbuchstaben beginnt, ist damit garantiert kein Schlüsselwort, sondern ein Klassenname. Umgekehrt gilt die Regel nicht automatisch – `println`, `args` und `main` sind klein und trotzdem keine Schlüsselworte.\n\nDer überraschendste Punkt für viele ist `main`: Man darf tatsächlich eine Variable `main` nennen. Die `main`-Methode ist nur durch eine **Konvention der JVM** ausgezeichnet, nicht durch die Grammatik der Sprache. Merkregel: **Schlüsselworte sind klein – aber nicht alles Kleine ist ein Schlüsselwort.**",
+   "hints": [
+    "Prüfen Sie zuerst die Groß-/Kleinschreibung: das schließt zwei Kandidaten sofort aus.",
+    "Fragen Sie sich bei den restlichen: Steht das Wort in der Grammatik der Sprache – oder ist es nur ein Name aus einer Bibliothek?",
+    "Testfrage: Dürfte man `int X = 5;` schreiben, wenn `X` der Kandidat ist? Wenn ja, ist es kein Schlüsselwort."
+   ],
+   "pitfalls": [
+    "`String` und `System` für Schlüsselworte halten, weil sie in jedem Programm vorkommen.",
+    "`main` für reserviert halten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 15,
+     "label": "2.1. Reservierte Schlüsselworte (Tabelle)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 16,
+     "label": "2.2. Namen: dürfen kein Schlüsselwort sein (Beispiel while)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 349,
+     "label": "Überblick 2. Syntaktische Grundelemente – Schlüsselworte"
+    }
+   ],
+   "tags": [
+    "schluesselwoerter",
+    "bezeichner",
+    "theorie"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-015"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Eingaben mit Scanner einlesen",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass eine lauffähige Klasse entsteht, die eine ganze Zahl von der Konsole einliest und wieder ausgibt (je 2 P.).\n\nGibt der Benutzer `20` ein, soll die Konsole genau so aussehen:\n\n```\nAlter? Du bist 20 Jahre alt.\n```",
+   "code": "____(1)____ java.util.Scanner;   // Scanner-Klasse bekannt machen\n\nclass Alterspruefung {\n  public static void main(String[] args) {\n    Scanner eingabe = ____(2)____ Scanner(____(3)____)____(4)____\n    System.out.print(\"Alter? \");\n    int alter = eingabe.____(5)____;\n    System.out.____(6)____(\"Du bist \" + alter + \" Jahre alt.\");\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "import"
+     ],
+     "explanation": "`Scanner` liegt im Paket `java.util` und muss vor der Klasse mit `import java.util.Scanner;` bekannt gemacht werden. Ohne diese Zeile meldet javac *cannot find symbol – class Scanner*."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "new"
+     ],
+     "explanation": "`Scanner` ist eine Klasse; ein Objekt davon entsteht nur mit dem Schlüsselwort `new`, das den Konstruktor aufruft."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "System.in"
+     ],
+     "explanation": "Dem Konstruktor wird die Datenquelle übergeben. `System.in` ist der Standard-Eingabestrom, also die Tastatur. (`new Scanner(new File(...))` läse stattdessen aus einer Datei.)"
+    },
+    {
+     "id": 4,
+     "accept": [
+      ";"
+     ],
+     "explanation": "Auch eine Deklaration mit Initialisierung ist eine Anweisung und endet mit einem Semikolon."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "nextInt()",
+      "nextInt ()"
+     ],
+     "explanation": "`nextInt()` liest das nächste Token und liefert es als `int`. `next()` läge einen String, `nextLine()` die ganze Zeile – beides passt nicht zur Variablen vom Typ `int`."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "println"
+     ],
+     "explanation": "`println` schließt die Ausgabezeile mit einem Zeilenumbruch ab. Der Prompt davor benutzt bewusst `print`, damit die Eingabe in derselben Zeile erfolgt."
+    }
+   ],
+   "solution": "import java.util.Scanner;   // Scanner-Klasse bekannt machen\n\nclass Alterspruefung {\n  public static void main(String[] args) {\n    Scanner eingabe = new Scanner(System.in);\n    System.out.print(\"Alter? \");\n    int alter = eingabe.nextInt();\n    System.out.println(\"Du bist \" + alter + \" Jahre alt.\");\n  }\n}",
+   "expectedOutput": "Alter? Du bist 20 Jahre alt.",
+   "explanation": "Das Einlesen von der Konsole läuft in der Vorlesung immer nach demselben Dreischritt ab – so steht es in `Klausur01.java` und in allen Beispielen des Skripts:\n\n1. `import java.util.Scanner;` **vor** der Klasse,\n2. `Scanner eingabe = new Scanner(System.in);` – ein Scanner-Objekt auf den Standard-Eingabestrom,\n3. `eingabe.nextInt()` / `eingabe.next()` / `eingabe.nextLine()` – je nachdem, was gelesen werden soll.\n\nDer häufigste Fehler ist das fehlende `import`; der Compiler meldet dann gleich zweimal *cannot find symbol – class Scanner* für dieselbe Zeile (einmal für den Typ, einmal für `new Scanner`). Der zweitwichtigste Punkt ist die Wahl der Lesemethode: der Rückgabetyp muss zum deklarierten Typ passen, sonst gibt es einen Typfehler. Beachten Sie außerdem, warum der Prompt mit `print` und nicht mit `println` ausgegeben wird: so bleibt der Cursor hinter `Alter? ` stehen und der Benutzer tippt in dieselbe Zeile. Merkregel: **import – new Scanner(System.in) – nextInt().**",
+   "hints": [
+    "Die erste Lücke steht ganz oben im Programm, noch vor `class` – dort gibt es nur eine mögliche Anweisungsart.",
+    "In Lücke 2 und 3 entsteht ein Objekt. Welches Schlüsselwort erzeugt Objekte, und woher soll der Scanner lesen?",
+    "Die Variable links vom `=` in Lücke 5 hat den Typ `int` – die Lesemethode muss genau diesen Typ liefern."
+   ],
+   "pitfalls": [
+    "`import java.util.Scanner` ohne Semikolon oder mit kleinem `s` schreiben.",
+    "`new` vergessen: `Scanner eingabe = Scanner(System.in);` ist ein Methodenaufruf, kein Konstruktor.",
+    "`next()` statt `nextInt()` benutzen und den String einer `int`-Variablen zuweisen wollen."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur01.java",
+     "label": "import java.util.Scanner; Scanner input = new Scanner(System.in); int max = input.nextInt();"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 353,
+     "label": "Überblick – Klausuraufgabe mit Scanner"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 83,
+     "label": "5. Arrays und Strings, Beispiel 4: Scanner scan = new Scanner(System.in)"
+    }
+   ],
+   "tags": [
+    "scanner",
+    "eingabe",
+    "import",
+    "system-in"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-016",
+   "stdin": "20\n"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finde die 2 Compiler-Fehler im Scanner-Programm",
+   "prompt": "Das Programm soll zwei ganze Zahlen einlesen und ihre Summe ausgeben. Es enthält genau **2** Compiler-Fehler. Benennen Sie beide mit Zeilennummer und geben Sie die Korrektur an.",
+   "code": "import java.util.Scanner;\n\nclass Summe {\n  public static void main(String[] args) {\n    Scanner eingabe = Scanner(System.in);\n    System.out.print(\"Zahl 1: \");\n    int a = eingabe.nextInt();\n    System.out.print(\"Zahl 2: \");\n    int b = eingabe.nextInteger();\n    System.out.println(\"Summe: \" + (a + b));\n  }\n}",
+   "errors": [
+    {
+     "line": 5,
+     "wrong": "Scanner eingabe = Scanner(System.in);",
+     "fix": "Scanner eingabe = new Scanner(System.in);",
+     "why": "Ohne `new` liest der Compiler `Scanner(System.in)` als Aufruf einer Methode namens `Scanner` und meldet *cannot find symbol – method Scanner(InputStream)*. Objekte entstehen in Java ausschließlich mit `new`."
+    },
+    {
+     "line": 9,
+     "wrong": "int b = eingabe.nextInteger();",
+     "fix": "int b = eingabe.nextInt();",
+     "why": "Die Klasse `Scanner` hat keine Methode `nextInteger()`. Sie heißt `nextInt()` – javac meldet *cannot find symbol – method nextInteger()*."
+    }
+   ],
+   "solution": "import java.util.Scanner;\n\nclass Summe {\n  public static void main(String[] args) {\n    Scanner eingabe = new Scanner(System.in);\n    System.out.print(\"Zahl 1: \");\n    int a = eingabe.nextInt();\n    System.out.print(\"Zahl 2: \");\n    int b = eingabe.nextInt();\n    System.out.println(\"Summe: \" + (a + b));\n  }\n}",
+   "expectedOutput": "Zahl 1: Zahl 2: Summe: 7",
+   "explanation": "Beide Fehler sind *semantische* Fehler: die Zeilen sind grammatikalisch korrekt, der Compiler findet nur das gemeinte Symbol nicht. Das ist typisch für die Fehlersuche-Aufgabe in der Klausur.\n\nZeile 5 zeigt den wichtigsten Unterschied zwischen einem Methodenaufruf und einer Objekterzeugung: `Scanner(System.in)` sieht aus wie ein Aufruf, ist aber keiner – ein Konstruktor wird **nur** über `new` erreicht. Zeile 9 ist der klassische „fast richtige Name“: `nextInteger` klingt plausibel, existiert aber nicht. Ein Blick auf die Fehlermeldung genügt: *cannot find symbol – method nextInteger()*, gefolgt von *location: variable eingabe of type Scanner*. Die Meldung sagt also nicht nur *was* fehlt, sondern auch *wo* der Compiler gesucht hat.\n\nAchtung bei der Ausgabe: `\"Summe: \" + (a + b)` – die Klammern sind hier nötig, sonst würden die beiden Zahlen an den Text angehängt statt addiert. Wird 3 und 4 eingegeben, lautet die Ausgabe `Zahl 1: Zahl 2: Summe: 7` in einer Zeile, weil die Prompts mit `print` (ohne Umbruch) ausgegeben werden. Merkregel: **Objekt ⇒ `new`; und Methodennamen nie raten, sondern nachschlagen.**",
+   "hints": [
+    "Vergleichen Sie Zeile 5 Zeichen für Zeichen mit der Scanner-Zeile aus `Klausur01.java`.",
+    "Die zweite Fehlerzeile unterscheidet sich von einer korrekten Zeile weiter oben nur in einem Wort.",
+    "Beide Meldungen von javac beginnen mit *cannot find symbol* – der Compiler kennt den Namen also schlicht nicht."
+   ],
+   "pitfalls": [
+    "Ein fehlendes `import` vermuten – das ist hier korrekt vorhanden.",
+    "Die Klammern in `(a + b)` für überflüssig halten und dadurch einen dritten „Fehler“ erfinden.",
+    "Nur einen der beiden Fehler nennen."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur01.java",
+     "label": "korrekte Scanner-Verwendung als Vergleich"
+    },
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "label": "Aufgabenformat „Finde die 2 Compiler-Fehler“"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 353,
+     "label": "Überblick – Scanner-Beispiel"
+    }
+   ],
+   "tags": [
+    "scanner",
+    "compiler-fehler",
+    "new",
+    "fehlersuche"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-017"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ein Semikolon zu viel",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Bloecke01 {\n  public static void main(String[] args) {\n    int punkte = 2;\n    if (punkte > 5);\n      System.out.println(\"bestanden\");\n    System.out.println(\"fertig\");\n    int zaehler = 0;\n    while (zaehler < 3)\n      zaehler++;\n      System.out.println(\"zaehler = \" + zaehler);\n  }\n}",
+   "expectedOutput": "bestanden\nfertig\nzaehler = 3",
+   "solution": "class Bloecke01 {\n  public static void main(String[] args) {\n    int punkte = 2;\n    if (punkte > 5);\n      System.out.println(\"bestanden\");\n    System.out.println(\"fertig\");\n    int zaehler = 0;\n    while (zaehler < 3)\n      zaehler++;\n      System.out.println(\"zaehler = \" + zaehler);\n  }\n}",
+   "explanation": "Zwei Fallen auf einmal – und beide haben nichts mit der Einrückung zu tun.\n\n**Falle 1 (Zeile 4):** Das Semikolon direkt hinter `if (punkte > 5)` ist selbst schon eine vollständige Anweisung, nämlich die **leere Anweisung**. Damit lautet das `if` sinngemäß „wenn punkte > 5, dann tue nichts“. Die eingerückte `println`-Zeile darunter gehört überhaupt nicht mehr zum `if` und wird deshalb **immer** ausgeführt – `bestanden` erscheint, obwohl `punkte` nur 2 ist.\n\n**Falle 2 (Zeilen 8–10):** Ohne `{ }` gehört zu einer Schleife nur die **eine** unmittelbar folgende Anweisung. Die Schleife zählt also stumm bis 3 und erst danach wird einmal ausgegeben. Die Einrückung suggeriert etwas anderes, aber Leerräume sind für den Compiler bloße Trennzeichen ohne Bedeutung.\n\nGenau deshalb lautet eine der Programmier-Konventionen im Skript: **Anweisungen mit `{ }` klammern.** Merkregel: **Einrückung ist für Menschen, `{ }` ist für den Compiler.**",
+   "hints": [
+    "Lesen Sie Zeile 4 bis zum letzten Zeichen. Wie viele Anweisungen stehen dort eigentlich?",
+    "Ohne geschweifte Klammern gehört zu `if` bzw. `while` genau eine Anweisung – welche ist das jeweils?",
+    "Prüfen Sie am Ende, welchen Wert `zaehler` hat, wenn die Schleifenbedingung erstmals falsch wird."
+   ],
+   "pitfalls": [
+    "Sich von der Einrückung leiten lassen und `bestanden` weglassen.",
+    "Annehmen, die Ausgabe in Zeile 10 werde dreimal ausgeführt.",
+    "Das `;` in Zeile 4 für einen Compiler-Fehler halten – es ist legal."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. Anweisungen: Anweisungen werden immer mit ';' beendet, Anweisungsfolge wird mit { } zu Block"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4: Programmier-Konventionen – Anweisungen mit { } klammern"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 17,
+     "label": "2.6. Trennzeichen sowie Leerräume, Tabstops und Zeilenwechsel"
+    }
+   ],
+   "tags": [
+    "semikolon",
+    "leere-anweisung",
+    "bloecke",
+    "konventionen"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-018"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": false,
+   "title": "Klammern und Trennzeichen",
+   "prompt": "a) Nennen Sie die drei Klammerarten in Java und geben Sie zu jeder **zwei** verschiedene Verwendungen mit einem kurzen Codebeispiel an.\n\nb) Welche Trennzeichen nennt das Skript, und welche Rolle spielen Leerzeichen, Tabstops und Zeilenwechsel für den Compiler?",
+   "solution": "**a) Klammerarten:**\n\n| Klammer | Verwendung 1 | Verwendung 2 |\n|---|---|---|\n| `( )` runde | Parameterlisten von Methoden: `public void print(boolean b)` / Aufruf: `dreieck(size)` | Gruppierung in Ausdrücken und Bedingungen: `(a + b) * 2`, `if (x > 0)`, Typumwandlung: `(short) sym` |\n| `[ ]` eckige | Array-Deklaration: `double[] nums;` / `new double[3]` | Zugriff auf ein Element: `nums[0] = 1.5;` |\n| `{ }` geschweifte | Block, der eine Anweisungsfolge zusammenfasst: `if (b) { … }`, Klassen- und Methodenrumpf | Array-Initialisierung: `int[] a = {1, 33, 7};` |\n\n**b) Trennzeichen:** `.` (Punkt, z. B. `System.out`), `,` (Komma, z. B. `int d = 3, e = 8;`), `;` (Semikolon, beendet jede Anweisung) und `:` (Doppelpunkt, z. B. bei `case 1:` oder im Bedingungsoperator `? :`) – **sowie Leerräume, Tabstops und Zeilenwechsel**.\n\nLeerzeichen, Tabstops und Zeilenwechsel sind für den Compiler gleichwertige, reine Trennzeichen: sie trennen Symbole voneinander, haben aber **keine** darüber hinausgehende Bedeutung. Ein Zeilenwechsel beendet also keine Anweisung (das tut nur `;`) und eine Einrückung bildet keinen Block (das tun nur `{ }`). Beliebig viele Leerräume sind erlaubt; man setzt sie allein der Lesbarkeit wegen — die Einrückung ist eine Programmier-Konvention, keine Syntaxregel.\n\n**Bewertungsrubrik (6 P.):**\n* 3 P. für a): je 1 P. pro Klammerart mit **zwei** korrekten, unterschiedlichen Verwendungen.\n* 1 P. Aufzählung der Trennzeichen `. , ; :`.\n* 1 P. Leerräume/Tabs/Zeilenwechsel als Trennzeichen benannt.\n* 1 P. explizite Aussage, dass Zeilenwechsel/Einrückung für den Compiler bedeutungslos sind (im Gegensatz zu z. B. Python).",
+   "explanation": "Die Klammerarten und die Trennzeichen stehen im Skript auf einer einzigen Folie (2.5 und 2.6) und wirken dadurch harmlos – in der Klausur zahlt es sich aber aus, jede Klammer sicher zuordnen zu können, weil Klammerfehler zu den häufigsten Compiler-Fehlern gehören. Besonders lehrreich sind die Doppelrollen: `( )` klammert sowohl Parameter als auch Ausdrücke und Casts, `{ }` bildet sowohl Blöcke als auch Array-Initialisierer.\n\nTeil b) ist der eigentlich prüfungsrelevante Kern: In Java bestimmt **ausschließlich** die Interpunktion die Struktur, nicht das Layout. Wer aus Python kommt, verwechselt das leicht und hält eine Einrückung für strukturbildend. Der Compiler sieht dagegen nur eine Folge von Symbolen, getrennt durch beliebige Leerräume. Merkregel: **`;` beendet, `{ }` gruppiert – Leerraum trennt nur.**",
+   "hints": [
+    "Gehen Sie ein beliebiges Beispielprogramm aus der Vorlesung durch und markieren Sie jede Klammer – Sie finden alle Verwendungen darin.",
+    "Für `{ }` gibt es eine Verwendung, die nichts mit Anweisungen zu tun hat (denken Sie an Arrays).",
+    "Bei b): Was steht auf der Folie hinter der Aufzählung der Satzzeichen noch dabei?"
+   ],
+   "pitfalls": [
+    "Nur je eine Verwendung pro Klammerart nennen.",
+    "Die Array-Initialisierung `{1, 33, 7}` vergessen.",
+    "Behaupten, ein Zeilenwechsel beende eine Anweisung."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 17,
+     "label": "2.5. Klammern und 2.6. Trennzeichen sowie Leerräume, Tabstops und Zeilenwechsel"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4: Anweisungen enden mit ';', { } bildet einen Block"
+    },
+    {
+     "file": "11_Ueberblick/Klausur06.java",
+     "label": "int[] myArray = { 1, 33, 7}; – geschweifte Klammern als Array-Initialisierer"
+    }
+   ],
+   "tags": [
+    "klammern",
+    "trennzeichen",
+    "semikolon",
+    "whitespace"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-019"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Genau 3 Fehler: Konstante und Schreibweisen",
+   "prompt": "Der folgende Code enthält genau **3** Fehler. Benennen Sie sie mit Zeilennummer und geben Sie die Korrektur an. (Das Programm soll `Max: 10` und `Zaehler: 12` ausgeben.)",
+   "code": "class Konstanten {\n  public static void main(String[] args) {\n    final int MAX = 10;\n    int Zaehler = 0;\n    MAX = 12;\n    System.out.Println(\"Max: \" + MAX);\n    System.out.println(\"Zaehler: \" + zaehler);\n  }\n}",
+   "errors": [
+    {
+     "line": 5,
+     "wrong": "MAX = 12;",
+     "fix": "Zaehler = 12;",
+     "why": "`MAX` ist mit `final` als Konstante deklariert und wurde bereits initialisiert – eine zweite Zuweisung ist verboten. javac meldet *cannot assign a value to final variable MAX*. Gemeint war offensichtlich der Zähler."
+    },
+    {
+     "line": 6,
+     "wrong": "System.out.Println(\"Max: \" + MAX);",
+     "fix": "System.out.println(\"Max: \" + MAX);",
+     "why": "Die Methode heißt `println` – komplett klein. `Println` mit großem `P` existiert nicht: *cannot find symbol – method Println(String)*."
+    },
+    {
+     "line": 7,
+     "wrong": "System.out.println(\"Zaehler: \" + zaehler);",
+     "fix": "System.out.println(\"Zaehler: \" + Zaehler);",
+     "why": "Deklariert wurde `Zaehler` mit großem `Z`. Da Java case-sensitive ist, ist `zaehler` ein anderer, nirgends deklarierter Name: *cannot find symbol – variable zaehler*."
+    }
+   ],
+   "solution": "class Konstanten {\n  public static void main(String[] args) {\n    final int MAX = 10;\n    int Zaehler = 0;\n    Zaehler = 12;\n    System.out.println(\"Max: \" + MAX);\n    System.out.println(\"Zaehler: \" + Zaehler);\n  }\n}",
+   "expectedOutput": "Max: 10\nZaehler: 12",
+   "explanation": "Drei Fehler, drei unterschiedliche Konzepte – genau das Muster der Fehlersuche-Aufgabe aus der Probeklausur.\n\n1. **`final`**: Das Schlüsselwort macht aus einer Variablen eine **Konstante**. Nach der Initialisierung ist jede weitere Zuweisung ein Compiler-Fehler. Dieselbe Falle baut der Professor in `Klausur04.java` ein (`final boolean f = false; … f = (e <= 8);`).\n2. und 3. **Groß-/Kleinschreibung**: Java ist konsequent case-sensitive, bei Methoden ebenso wie bei Variablen. Der Compiler meldet in beiden Fällen *cannot find symbol* und zeigt mit `^` auf die Stelle.\n\nZwei Nebenbemerkungen zur Sache: Die Variable `Zaehler` verstößt gegen die Programmier-Konvention (Variablen beginnen klein, nur Klassen groß) – ein Stilproblem, aber **kein** Compiler-Fehler; werten Sie das nicht als vierten Fehler. Und alle drei Fehler sind *semantische* Fehler, deshalb meldet javac sie auch alle drei auf einmal. Ein einziger Syntaxfehler (z. B. ein fehlendes `;`) hätte den Compiler dagegen schon beim Parsen gestoppt, und die anderen wären zunächst unsichtbar geblieben. Merkregel: **`final` heißt einmal und nie wieder – und Java liest jeden Buchstaben genau.**",
+   "hints": [
+    "Eine der drei Zeilen scheitert nicht an einem Namen, sondern an einer Eigenschaft der Variablen aus Zeile 3.",
+    "Vergleichen Sie Zeile 6 und Zeile 7 buchstabengenau mit den korrekten Schreibweisen weiter oben.",
+    "Achtung: Die ungewöhnliche Schreibweise `Zaehler` ist ein Stilverstoß, aber kein Compiler-Fehler."
+   ],
+   "pitfalls": [
+    "Den Stilverstoß `Zaehler` als vierten Fehler zählen.",
+    "In Zeile 5 `final` einfach streichen – die geforderte Ausgabe `Max: 10` wäre dann falsch.",
+    "Nur einen der beiden Schreibfehler entdecken."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur04.java",
+     "label": "final boolean f = false; … f = (e <= 8); – Zuweisung an eine Konstante"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 15,
+     "label": "2.1. Reservierte Schlüsselworte (final)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4: Programmier-Konventionen – aussagekräftige Namen"
+    }
+   ],
+   "tags": [
+    "final",
+    "konstanten",
+    "case-sensitive",
+    "compiler-fehler",
+    "fehlersuche"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-020"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Alles in einer Zeile",
+   "prompt": "Was ist die Ausgabe dieses (bewusst grässlich formatierten) Programms? Begründen Sie in einem Satz, warum die Formatierung nichts an der Ausgabe ändert.",
+   "code": "class Formatierung{public static void main(String[]args){int a=3,b=4;System.out.println(\"a+b=\"+(a+b));\nSystem.out.println   (   \"fertig\"   )   ;}}",
+   "expectedOutput": "a+b=7\nfertig",
+   "solution": "class Formatierung {\n  public static void main(String[] args) {\n    int a = 3, b = 4;\n    System.out.println(\"a+b=\" + (a + b));\n    System.out.println(\"fertig\");\n  }\n}\n// Ausgabe: a+b=7 / fertig\n// Begründung: Leerzeichen, Tabstops und Zeilenwechsel sind für den Compiler\n// reine Trennzeichen ohne weitere Bedeutung; die Struktur ergibt sich allein\n// aus ';' und '{ }'.",
+   "explanation": "Für den Compiler ist ein Java-Programm eine Folge von Symbolen (Tokens). Leerzeichen, Tabstops und Zeilenwechsel dienen ausschließlich dazu, diese Symbole voneinander zu **trennen** – das Skript führt sie deshalb ausdrücklich unter „2.6. Trennzeichen … sowie Leerräume, Tabstops und Zeilenwechsel“ auf. Ob ein Programm auf zwei oder auf zwanzig Zeilen steht, ändert daher nichts: Die Struktur ergibt sich allein aus dem Semikolon (Ende einer Anweisung) und den geschweiften Klammern (Block). Nötig ist Leerraum nur dort, wo zwei Symbole sonst zu einem verschmelzen würden – zwischen `int` und `a` etwa, während `String[]args` problemlos zusammenrücken darf, weil `]` das Symbol ohnehin beendet.\n\nDas ist der zentrale Unterschied zu Python, wo die Einrückung Blöcke bildet. In Java ist ordentliche Formatierung „nur“ eine der vier Programmier-Konventionen der Vorlesung (aussagekräftige Namen, Einrückungen, Anweisungen mit `{ }` klammern, Kommentare) – für Menschen unverzichtbar, für den Compiler irrelevant. Merkregel: **Der Compiler liest Semikolons und Klammern, der Mensch liest Einrückung.**",
+   "hints": [
+    "Formatieren Sie den Code zuerst sauber um – Sie dürfen dabei Zeilenumbrüche und Leerzeichen frei setzen.",
+    "Achten Sie auf die Klammern in `\"a+b=\"+(a+b)`: Was wird zuerst berechnet?",
+    "Zwei `println`-Aufrufe bedeuten zwei Ausgabezeilen."
+   ],
+   "pitfalls": [
+    "Vermuten, der Code sei wegen der Formatierung nicht übersetzbar.",
+    "Die Klammer um `(a + b)` übersehen und `a+b=34` schreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 17,
+     "label": "2.6. Trennzeichen: sowie Leerräume, Tabstops und Zeilenwechsel"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4: Programmier-Konventionen – Einrückungen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4: Anweisungen enden mit ';', { } bildet einen Block"
+    }
+   ],
+   "tags": [
+    "whitespace",
+    "trennzeichen",
+    "konventionen",
+    "formatierung"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-021"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 10,
+   "examStyle": true,
+   "title": "Escape-Sequenzen in Zeichenketten",
+   "prompt": "Schreiben Sie eine Klasse `Quittung`, deren Konsolenausgabe **exakt** so aussieht:\n\n```\nDer Befehl \"javac\" uebersetzt den Quellcode.\nWindows-Pfad: C:\\OFP\\Programme\nZeile 1\nZeile 2\nFertig\n```\n\nVorgaben:\n* Die Anführungszeichen um `javac` und die Backslashes im Pfad sind **Teil der Ausgabe**.\n* Die beiden Zeilen `Zeile 1` und `Zeile 2` müssen mit **einer einzigen** `System.out.print`-Anweisung erzeugt werden.\n* Insgesamt dürfen Sie höchstens vier Ausgabeanweisungen verwenden.",
+   "starterCode": "class Quittung {\n  public static void main(String[] args) {\n    // hier ausfüllen\n\n  }\n}",
+   "constraints": [
+    "Klasse heißt Quittung",
+    "Zeile 1 und Zeile 2 aus einer einzigen System.out.print-Anweisung",
+    "höchstens vier Ausgabeanweisungen insgesamt"
+   ],
+   "required": [
+    "class Quittung",
+    "\\\"",
+    "\\\\",
+    "\\n",
+    "System.out.print("
+   ],
+   "solution": "class Quittung {\n  public static void main(String[] args) {\n    System.out.println(\"Der Befehl \\\"javac\\\" uebersetzt den Quellcode.\");\n    System.out.println(\"Windows-Pfad: C:\\\\OFP\\\\Programme\");\n    System.out.print(\"Zeile 1\\nZeile 2\\n\");\n    System.out.println(\"Fertig\");\n  }\n}",
+   "expectedOutput": "Der Befehl \"javac\" uebersetzt den Quellcode.\nWindows-Pfad: C:\\OFP\\Programme\nZeile 1\nZeile 2\nFertig",
+   "explanation": "Zeichenkettenliterale werden in Java von `\"` begrenzt. Alles, was innerhalb des Literals ein `\"` oder ein `\\` sein soll, muss deshalb **maskiert** werden – sonst würde der Compiler das Literal an der falschen Stelle beenden bzw. den Backslash als Beginn einer Escape-Sequenz lesen:\n\n* `\\\"` → ein Anführungszeichen in der Ausgabe,\n* `\\\\` → **ein** Backslash in der Ausgabe,\n* `\\n` → Zeilenumbruch,\n* `\\t` → Tabulator.\n\nDer Windows-Pfad ist der Härtetest: `\"C:\\OFP\\Programme\"` lässt sich gar nicht erst übersetzen, weil `\\O` keine gültige Escape-Sequenz ist. Richtig ist `\"C:\\\\OFP\\\\Programme\"` – im Quelltext stehen vier Backslashes, in der Ausgabe erscheinen zwei.\n\nDie dritte Anweisung zeigt, dass ein Zeilenumbruch nicht zwingend von `println` kommen muss: `print(\"Zeile 1\\nZeile 2\\n\")` erzeugt zwei vollständige Zeilen mit einer einzigen Anweisung. `println(x)` ist letztlich nichts anderes als `print(x + \"\\n\")`. Merkregel: **Im Quelltext zwei Zeichen, in der Ausgabe eines – der Backslash zählt doppelt.**",
+   "hints": [
+    "Überlegen Sie zuerst, welche Zeichen der geforderten Ausgabe im Quelltext ein Problem darstellen würden.",
+    "Ein Backslash im Literal leitet immer eine Escape-Sequenz ein. Wie schreibt man dann einen echten Backslash?",
+    "Für die dritte Vorgabe brauchen Sie eine Escape-Sequenz, die denselben Effekt hat wie das `ln` in `println`.",
+    "Vier Ausgabezeilen bekommen Sie mit vier Anweisungen hin – eine davon liefert gleich zwei Zeilen, dafür ist die letzte ein einfaches `println`."
+   ],
+   "pitfalls": [
+    "`\"C:\\OFP\\Programme\"` schreiben – das ist ein Compiler-Fehler (*illegal escape character*).",
+    "Für die beiden mittleren Zeilen zwei `println`-Anweisungen benutzen und damit die Vorgabe verletzen.",
+    "Das Anführungszeichen nicht maskieren und dadurch das Literal vorzeitig beenden."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 17,
+     "label": "2.3. Konstanten: Zeichen- und Zeichenkettenliterale"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 87,
+     "label": "5.2. Strings: String motto = \"Wir lernen Java!\";"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 345,
+     "label": "10.2. Sockets: out.write((msg + \"\\r\\n\").getBytes()) – Escape-Sequenzen im Einsatz"
+    }
+   ],
+   "tags": [
+    "literale",
+    "escape-sequenzen",
+    "strings",
+    "println",
+    "programm-schreiben"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-022"
+  },
+  {
+   "type": "mc",
+   "difficulty": 4,
+   "points": 2,
+   "examStyle": true,
+   "title": "main ohne static",
+   "prompt": "Die Datei `Start.java` enthält:\n\n```java\nclass Start {\n  public void main(String[] args) {\n    System.out.println(\"Los!\");\n  }\n}\n```\n\nSie rufen nacheinander `javac Start.java` und `java Start` auf. Was passiert?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`javac` meldet einen Compiler-Fehler, weil `main` nicht `static` ist.",
+     "correct": false,
+     "why": "Für den Compiler ist `public void main(String[] args)` eine ganz normale Instanzmethode – daran ist syntaktisch und semantisch nichts falsch."
+    },
+    {
+     "id": "b",
+     "text": "Beides läuft durch, die Ausgabe lautet `Los!`.",
+     "correct": false,
+     "why": "Die JVM ruft ausschließlich eine **Klassen**methode `main` auf. Für eine Instanzmethode müsste sie erst ein Objekt erzeugen – das tut sie nicht."
+    },
+    {
+     "id": "c",
+     "text": "`javac` läuft fehlerfrei; `java Start` bricht mit einer Fehlermeldung ab.",
+     "correct": true,
+     "why": "Richtig. `Start.class` entsteht, aber die JVM meldet: *Error: Main method is not static in class Start, please define the main method as: public static void main(String[] args)*."
+    },
+    {
+     "id": "d",
+     "text": "`javac` läuft fehlerfrei; `java Start` erzeugt keine Ausgabe und endet stillschweigend.",
+     "correct": false,
+     "why": "Die JVM schweigt nicht – sie gibt eine ausdrückliche Fehlermeldung aus und beendet sich mit einem Fehlercode."
+    }
+   ],
+   "solution": "`javac Start.java` erzeugt `Start.class` ohne Fehler. `java Start` bricht ab mit:\n\n```\nError: Main method is not static in class Start, please define the main method as:\n   public static void main(String[] args)\n```",
+   "explanation": "Diese Aufgabe trennt sauber zwischen **Übersetzungszeit** und **Laufzeit**. Der Compiler prüft die Grammatik und die Typen einer Klasse – dass eine Methode `main` heißt, ist ihm gleichgültig. Die Sonderrolle von `main` entsteht erst beim Start: Laut Skript lädt `java <Klassenname>` die Klasse und „versucht anschließend, die Methode `public static void main(String[] args)` auszuführen; existiert diese Methode nicht, erfolgt eine Fehlermeldung“.\n\nWarum muss `main` `static` sein? Weil zum Startzeitpunkt noch **kein Objekt** der Klasse existiert. Eine Instanzmethode könnte die JVM gar nicht aufrufen, ohne vorher zu entscheiden, mit welchem Konstruktor sie ein Objekt erzeugen soll. Eine Klassenmethode gehört dagegen zur Klasse selbst und ist sofort nach dem Laden verfügbar. Genau deshalb erzeugt man in `main` typischerweise erst selbst ein Objekt – so wie im Beispiel des Skripts: `BDayParadox b = new BDayParadox(); … b.prob(n)`.\n\nMerkregel: **Fehlt `static`, merkt es erst die JVM – nicht der Compiler.**",
+   "hints": [
+    "Fragen Sie sich getrennt: Was prüft `javac`? Und was prüft die JVM beim Start?",
+    "Zum Zeitpunkt des Programmstarts existiert noch kein einziges Objekt. Was folgt daraus für die Methode, die als erstes laufen soll?",
+    "Im Skript steht, was passiert, wenn die gesuchte Methode „nicht existiert“."
+   ],
+   "pitfalls": [
+    "Jede Abweichung von der `main`-Signatur automatisch für einen Compiler-Fehler halten.",
+    "Annehmen, die JVM erzeuge zum Aufruf von `main` selbstständig ein Objekt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 11,
+     "label": "1.5. Starten eines Java-Programms: JVM versucht public static void main(String[] args) auszuführen; existiert diese Methode nicht, erfolgt eine Fehlermeldung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 7,
+     "label": "BDayParadox: main erzeugt selbst ein Objekt mit new"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 10,
+     "label": "1.4. Ausführung durch die JVM"
+    }
+   ],
+   "tags": [
+    "main",
+    "static",
+    "jvm",
+    "laufzeitfehler"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-023"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": true,
+   "title": "Der Fehler steht nicht dort, wo javac ihn meldet",
+   "prompt": "Der folgende Code lässt sich nicht übersetzen. javac meldet:\n\n```\nDoku.java:4: error: ';' expected\n     in Java. */\n            ^\n1 error\n```\n\nDer Text in den Zeilen 2 bis 4 war als **ein einziger** Kommentar gedacht. Benennen Sie die eigentliche Ursache und geben Sie eine Korrektur an.",
+   "code": "class Doku {\n  /* Dieses Programm zeigt\n     /* die verschiedenen Kommentararten */\n     in Java. */\n  public static void main(String[] args) {\n    System.out.println(\"Kommentare\");\n  }\n}",
+   "errors": [
+    {
+     "line": 3,
+     "reportedLine": 4,
+     "wrong": "     /* die verschiedenen Kommentararten */",
+     "fix": "     die verschiedenen Kommentararten",
+     "why": "Blockkommentare lassen sich in Java **nicht verschachteln**. Das innere `/*` ist wirkungslos, das `*/` am Ende dieser Zeile beendet bereits den äußeren Kommentar. Alles ab Zeile 4 wird deshalb als Code gelesen – dort meldet javac dann *';' expected*. Ursache ist Zeile 3, gemeldet wird Zeile 4."
+    }
+   ],
+   "solution": "class Doku {\n  /* Dieses Programm zeigt\n     die verschiedenen Kommentararten\n     in Java. */\n  public static void main(String[] args) {\n    System.out.println(\"Kommentare\");\n  }\n}",
+   "expectedOutput": "Kommentare",
+   "explanation": "Ein Blockkommentar beginnt bei `/*` und endet beim **ersten** darauffolgenden `*/`. Ein zweites `/*` innerhalb des Kommentars ist bloßer Text und ändert daran nichts – **Blockkommentare verschachteln sich in Java nicht**. Hier endet der Kommentar also schon am Ende von Zeile 3. Der Rest, `in Java. */`, steht damit als Code im Klassenrumpf: javac liest `in` als Typnamen und `Java` als Bezeichner, erwartet danach ein `;` und meldet den Fehler in Zeile 4.\n\nGenau das macht die Aufgabe schwer und lehrreich: **Die gemeldete Zeile ist nicht die fehlerhafte Zeile.** Der Compiler meldet die Stelle, an der er stolpert, nicht die Stelle, an der die Ursache liegt. Bei Syntaxfehlern lohnt es sich deshalb immer, auch ein paar Zeilen *oberhalb* der Meldung zu schauen – besonders bei Kommentaren, Anführungszeichen und Klammern, die „weit reichen“.\n\nPraxisrelevant wird das beim Auskommentieren: Wer einen Codeblock mit `/* … */` deaktiviert, in dem bereits ein Blockkommentar steckt, erzeugt genau diesen Fehler. Sicherer ist es, ganze Blöcke zeilenweise mit `//` auszukommentieren. Merkregel: **Das erste `*/` schließt – und der Fehler wohnt oft über der Fehlermeldung.**",
+   "hints": [
+    "Markieren Sie mit dem Finger, wo der Kommentar beginnt und wo das erste `*/` steht.",
+    "Was passiert mit einem `/*`, das sich bereits *innerhalb* eines Kommentars befindet?",
+    "Wenn der Kommentar schon in Zeile 3 endet – was ist Zeile 4 dann für den Compiler?"
+   ],
+   "pitfalls": [
+    "In Zeile 4 nach dem Fehler suchen, weil javac diese Zeile nennt.",
+    "Das `*/` in Zeile 4 einfach löschen – dann fehlt dem (bereits geschlossenen) Kommentar gar nichts, und `in Java.` bleibt trotzdem als Code stehen.",
+    "Blockkommentare zum Auskommentieren größerer Bereiche verwenden, ohne auf enthaltene `/* */` zu achten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 18,
+     "label": "2.7. Kommentare: //, /* */, /** */"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 7,
+     "label": "BDayParadox: mehrzeiliger /* */-Kommentar"
+    },
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "label": "Aufgabenformat Fehlersuche"
+    }
+   ],
+   "tags": [
+    "kommentare",
+    "blockkommentar",
+    "compiler-fehler",
+    "fehlersuche"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-024"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": false,
+   "title": "Ein Kommentar, der doch etwas tut",
+   "prompt": "Was ist die Ausgabe dieses Programms? (Achtung: Es kompiliert fehlerfrei – die Antwort ist nicht das, was man auf den ersten Blick erwartet.)",
+   "code": "class Unicode01 {\n  public static void main(String[] args) {\n    // Debug-Ausgabe: \\u000A System.out.println(\"versteckt\");\n    System.out.println(\"sichtbar\");\n  }\n}",
+   "expectedOutput": "versteckt\nsichtbar",
+   "solution": "class Unicode01 {\n  public static void main(String[] args) {\n    // Debug-Ausgabe: \\u000A System.out.println(\"versteckt\");\n    System.out.println(\"sichtbar\");\n  }\n}\n// Ausgabe:\n// versteckt\n// sichtbar",
+   "explanation": "Java verarbeitet Unicode-Escapes der Form `\\uXXXX` in einem **eigenen, allerersten Schritt** – noch bevor der Quelltext in Symbole (Tokens) zerlegt wird und noch bevor Kommentare erkannt werden. `\\u000A` ist der Zeilenvorschub (line feed). Aus Sicht des Compilers steht in der Datei also:\n\n```java\n    // Debug-Ausgabe: \n System.out.println(\"versteckt\");\n```\n\nDer Zeilenkommentar `//` endet am Zeilenende – und genau dort hat das `\\u000A` nun eines erzeugt. Die `println`-Anweisung steht damit **außerhalb** des Kommentars und wird ausgeführt: zuerst `versteckt`, dann `sichtbar`.\n\nDas ist der bekannteste Sonderfall der Java-Syntax und ein sehr guter Test dafür, ob man den Ablauf wirklich verstanden hat: Ein Kommentar ist eben nicht „alles hinter `//`“ im rohen Text, sondern „alles hinter `//` bis zum nächsten Zeilenende **nach der Unicode-Ersetzung**“. Aus demselben Grund lässt sich `char c = '\\u0027';` nicht übersetzen – die Ersetzung erzeugt dort ein `'`, das das Literal vorzeitig schließt.\n\nPraktische Konsequenz: Schreiben Sie in Kommentaren nie `\\u`, wenn Sie es wörtlich meinen (etwa in einem Windows-Pfad `C:\\users`). Merkregel: **`\\uXXXX` wird ersetzt, bevor der Compiler überhaupt hinsieht.**",
+   "hints": [
+    "Der Aufgabentext verrät, dass es kompiliert – und dass die naheliegende Antwort falsch ist. Was steht überhaupt in Zeile 3?",
+    "`\\u000A` ist eine Unicode-Escape-Sequenz. Schlagen Sie nach, welches Zeichen den Code 000A hat.",
+    "Ein `//`-Kommentar endet am Zeilenende. Was, wenn mitten in der Zeile plötzlich ein Zeilenende auftaucht?"
+   ],
+   "pitfalls": [
+    "Annehmen, in einem Kommentar könne grundsätzlich nichts passieren.",
+    "`\\u000A` für einen harmlosen Text halten, weil es innerhalb von `//` steht.",
+    "Nur `sichtbar` als Ausgabe angeben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 18,
+     "label": "2.7. Kommentare: // bis zum Zeilenende"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 17,
+     "label": "2.3. Konstanten – Zeichenliterale und Escape-Sequenzen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 87,
+     "label": "5.2. Strings: Folge von (Unicode-)Zeichen"
+    }
+   ],
+   "tags": [
+    "kommentare",
+    "unicode",
+    "literale",
+    "haertetest"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-025"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finde die 2 Compiler-Fehler: Semikolon und Klammern",
+   "prompt": "Finde die **2** Compiler-Fehler. Gib Zeilennummer, Fehler und Korrektur an. Das korrigierte Programm soll `Summe: 12` ausgeben.",
+   "code": "class Rechnen {\n  public static void main(String[] args) {\n    int a = 5\n    int b = 7;\n    System.out.println(\"Summe: \" + (a + b);\n  }\n}",
+   "errors": [
+    {
+     "line": 3,
+     "wrong": "int a = 5",
+     "fix": "int a = 5;",
+     "why": "Jede Anweisung endet in Java mit einem Semikolon; der Zeilenumbruch allein reicht nicht. javac meldet *';' expected* und zeigt mit `^` hinter die `5`."
+    },
+    {
+     "line": 5,
+     "wrong": "System.out.println(\"Summe: \" + (a + b);",
+     "fix": "System.out.println(\"Summe: \" + (a + b));",
+     "why": "Es fehlt eine schließende runde Klammer: eine für die Gruppierung `(a + b)`, eine für die Parameterliste von `println(...)`. javac meldet *')' or ',' expected*."
+    }
+   ],
+   "solution": "class Rechnen {\n  public static void main(String[] args) {\n    int a = 5;\n    int b = 7;\n    System.out.println(\"Summe: \" + (a + b));\n  }\n}",
+   "expectedOutput": "Summe: 12",
+   "explanation": "Beide Fehler sind reine **Syntaxfehler** – der Compiler kommt schon beim Zerlegen des Textes ins Stolpern. Das erklärt auch das typische Bild solcher Meldungen: javac nennt das erwartete Zeichen (*';' expected*, *')' or ',' expected*) und zeigt mit `^` auf die Position, an der es hingehört hätte.\n\nFehler 1 ist die Grundregel schlechthin: **Anweisungen werden immer mit `;` beendet.** In Java ist der Zeilenumbruch nur ein Trennzeichen wie ein Leerzeichen – ein Programm dürfte auch komplett in einer einzigen Zeile stehen.\n\nFehler 2 zeigt, warum Klammern paarweise gezählt werden müssen. In Zeile 5 werden zwei runde Klammern geöffnet (die Parameterliste von `println` und die Gruppierung um `a + b`), aber nur eine geschlossen. Ein hilfreicher Trick beim Korrekturlesen: von links nach rechts durchgehen und einen Zähler mitführen – bei `(` hochzählen, bei `)` herunter; am Ende der Anweisung muss der Zähler 0 sein.\n\nÜbrigens ist die Klammer um `a + b` inhaltlich nötig, nicht bloß Kosmetik: ohne sie stünde dort `\"Summe: \" + a + b` und das Ergebnis wäre `Summe: 57` statt `Summe: 12`. Merkregel: **Erst Semikolons zählen, dann Klammern zählen.**",
+   "hints": [
+    "Beide Fehlermeldungen von javac nennen ein *fehlendes Zeichen* – suchen Sie also nicht nach falschen Namen.",
+    "Gehen Sie Zeile 5 Zeichen für Zeichen durch und zählen Sie geöffnete und geschlossene runde Klammern.",
+    "Prüfen Sie danach jede Zeile darauf, ob sie mit dem richtigen Zeichen endet."
+   ],
+   "pitfalls": [
+    "In Zeile 5 die Klammer um `(a + b)` streichen statt eine zu ergänzen – dann kompiliert es zwar, die Ausgabe wäre aber `Summe: 57`.",
+    "Nur den Semikolonfehler finden, weil javac Syntaxfehler manchmal nur einzeln meldet.",
+    "Den Zeilenumbruch für einen gültigen Anweisungsabschluss halten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. Anweisungen: Anweisungen werden immer mit ';' beendet"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 17,
+     "label": "2.5. Klammern und 2.6. Trennzeichen"
+    },
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "label": "Aufgabenformat „Finde die 2 Compiler-Fehler“"
+    }
+   ],
+   "tags": [
+    "semikolon",
+    "klammern",
+    "syntaxfehler",
+    "fehlersuche"
+   ],
+   "lang": "java",
+   "topicId": "java-basics-syntax",
+   "id": "java-basics-syntax-026"
+  }
+ ]
+}

@@ -1,0 +1,1704 @@
+{
+ "topicId": "py-control",
+ "exercises": [
+  {
+   "id": "py-control-001",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "if, elif, else - und was danach kommt",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus?",
+   "code": "punkte_spieler1 = 4\npunkte_spieler2 = 9\n\nif punkte_spieler1 > punkte_spieler2:\n    print(\"Spieler 1 hat gewonnen!\")\nelif punkte_spieler2 > punkte_spieler1:\n    print(\"Spieler 2 hat gewonnen!\")\n    print(\"Glueckwunsch!\")\nelse:\n    print(\"Unentschieden!\")\nprint(\"Spiel beendet.\")",
+   "expectedOutput": "Spieler 2 hat gewonnen!\nGlueckwunsch!\nSpiel beendet.",
+   "solution": "Spieler 2 hat gewonnen!\nGlückwunsch!\nSpiel beendet.",
+   "explanation": "Eine `if`/`elif`/`else`-Kette ist **eine einzige Verzweigung**: Python prüft die Bedingungen von oben nach unten und führt genau den ersten Zweig aus, dessen Bedingung `True` ist. Danach werden alle übrigen Zweige übersprungen - auch dann, wenn deren Bedingung ebenfalls wahr wäre.\n\nHier ist `4 > 9` falsch, also wird der `if`-Zweig übersprungen. `9 > 4` ist wahr, also wird der `elif`-Zweig ausgeführt - und zwar **alles**, was darin eingerückt ist, also beide `print`-Befehle. Der `else`-Zweig kommt nicht mehr dran.\n\nDie letzte Zeile `print(\"Spiel beendet.\")` ist **nicht** eingerückt und gehört damit zu keinem Zweig. Sie wird deshalb immer ausgeführt. Genau das meint der Dozent mit *\"Einrückungen sind in Python Teil des Programms! Sie haben einen Einfluss auf die Bedeutung und Funktionsweise des Codes!\"*\n\nTypischer Denkfehler: annehmen, dass nach einem ausgeführten Zweig das ganze Programm endet. Merkregel: **Die Einrückung entscheidet, was zum Zweig gehört - der Rest läuft immer.**",
+   "hints": [
+    "Prüfe die Bedingungen der Reihe nach von oben nach unten. Welche ist die erste, die `True` ergibt?",
+    "Wie viele Zeilen sind in dem Zweig eingerückt, den du gewählt hast?",
+    "Schau dir die Einrückung der allerletzten Zeile an - zu welchem Zweig gehört sie?"
+   ],
+   "pitfalls": [
+    "Die nicht eingerückte letzte Zeile vergessen - sie läuft in jedem Fall.",
+    "Nur die erste `print`-Zeile des `elif`-Zweigs ausgeben und die zweite übersehen.",
+    "Denken, dass nach `elif` auch noch `else` geprüft wird."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 4,
+     "label": "if / elif / else - 'Es wird alles ausgeführt was eingerückt ist!'"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 3,
+     "label": "Zelle mit punkte_spieler1 / punkte_spieler2"
+    }
+   ],
+   "tags": [
+    "if",
+    "elif",
+    "else",
+    "einrueckung",
+    "goofspiel"
+   ]
+  },
+  {
+   "id": "py-control-002",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "Die sechs Vergleichsoperatoren",
+   "prompt": "Was gibt der folgende Code aus? Achten Sie genau auf den Unterschied zwischen den 'echten' und den 'oder gleich'-Vergleichen.",
+   "code": "a = 3\nb = 3\nprint(a == b, a != b)\nprint(a > b, a < b)\nprint(a >= b, a <= b)",
+   "expectedOutput": "True False\nFalse False\nTrue True",
+   "solution": "True False\nFalse False\nTrue True",
+   "explanation": "Das ist genau die Operatoren-Tabelle aus der Vorlesung, angewendet auf `3` und `3`:\n\n| Operator | Bedeutung | `3 ? 3` |\n|---|---|---|\n| `==` | gleich? | `True` |\n| `!=` | ungleich? | `False` |\n| `>`  | echt größer? | `False` |\n| `<`  | echt kleiner? | `False` |\n| `>=` | größer **oder gleich**? | `True` |\n| `<=` | kleiner **oder gleich**? | `True` |\n\nDer springende Punkt: `>` und `<` sind *echte* (strikte) Vergleiche - bei Gleichheit liefern beide `False`. Erst `>=` bzw. `<=` schließen den Gleichheitsfall mit ein. Genau daran scheitern in der Klausur Schleifenbedingungen (`i < n` lässt `n` selbst aus) und Spiel-Auswertungen (bei Gleichstand bekommt in Goofspiel niemand Punkte, weil dort nur `>` verwendet wird).\n\nAußerdem sichtbar: `print` mit mehreren Argumenten trennt diese automatisch durch **ein** Leerzeichen, und Wahrheitswerte werden als `True`/`False` mit großem Anfangsbuchstaben ausgegeben. Merkregel: **Ein Strich unter dem Vergleich (`>=`) heißt 'Gleichheit erlaubt'.**",
+   "hints": [
+    "Setze in jede der sechs Vergleiche 3 und 3 ein und frage dich nur: stimmt die Aussage?",
+    "`>` heißt *echt* größer. Ist 3 echt größer als 3?",
+    "Wahrheitswerte schreibt Python groß: `True` und `False`."
+   ],
+   "pitfalls": [
+    "`>=` und `>` verwechseln - bei gleichen Werten unterscheiden sie sich.",
+    "`true`/`false` klein schreiben; Python gibt `True`/`False` aus."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 6,
+     "label": "Tabelle der Vergleichsoperatoren == != > < >= <="
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 6,
+     "label": "Überblick VL 1c - Vergleichsoperatoren"
+    }
+   ],
+   "tags": [
+    "vergleichsoperatoren",
+    "bool",
+    "print"
+   ]
+  },
+  {
+   "id": "py-control-003",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "short-answer",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "Zwei einzelne if-Abfragen oder if/elif?",
+   "prompt": "Was passiert im ersten und was im zweiten Fall? Geben Sie für **beide** Varianten die Ausgabe an und erklären Sie in einem Satz, worin der wesentliche Unterschied besteht. Gehen Sie außerdem kurz darauf ein, welche Rolle die Einrückung hier spielt.",
+   "code": "# ---------- Variante A ----------\nx = 10\nif x > 5:\n    print(\"A\")\nif x > 8:\n    print(\"B\")\n\n# ---------- Variante B ----------\nx = 10\nif x > 5:\n    print(\"A\")\nelif x > 8:\n    print(\"B\")",
+   "solution": "**Musterlösung**\n\n*Variante A* gibt aus:\n\n```\nA\nB\n```\n\n*Variante B* gibt aus:\n\n```\nA\n```\n\n**Unterschied:** In Variante A stehen **zwei voneinander unabhängige** `if`-Anweisungen. Beide Bedingungen werden geprüft, und da `10 > 5` *und* `10 > 8` wahr sind, werden beide Rumpfe ausgeführt.\n\nIn Variante B bilden `if` und `elif` **eine einzige** Verzweigung. Der `elif`-Zweig wird nur dann überhaupt geprüft, wenn die `if`-Bedingung `False` war. Da `x > 5` bereits `True` ist, wird `x > 8` gar nicht mehr ausgewertet und `B` nie ausgegeben.\n\n**Rolle der Einrückung:** Die Einrückung ist in Python Teil der Syntax. Sie legt fest, welche Anweisungen zum Rumpf des jeweiligen Zweigs gehören - es wird alles ausgeführt, was eingerückt ist. Würde man `print(\"B\")` in Variante A nicht einrücken, liefe es unabhängig von jeder Bedingung.\n\n**Bewertungsrubrik (3 P)**\n- 1 P: Ausgabe von Variante A korrekt (`A` und `B`).\n- 1 P: Ausgabe von Variante B korrekt (nur `A`).\n- 1 P: Begründung: bei `elif` wird nur der **erste** zutreffende Zweig ausgeführt / die zweite Bedingung wird gar nicht mehr geprüft; die Einrückung bestimmt den Rumpf.",
+   "explanation": "Diese Frage stellt der Dozent auf der Folie *\"Was passiert im ersten und was im zweiten Fall?\"* wörtlich - sie ist damit ein sehr heißer Klausurkandidat. Der Kern ist der Unterschied zwischen **Auswahl** und **Aufzählung**: Eine `if`/`elif`/`else`-Kette wählt höchstens *einen* Zweig aus, mehrere aufeinander folgende `if`-Anweisungen sind dagegen voneinander vollkommen unabhängig und können alle zuschlagen.\n\nDer typische Denkfehler ist, `elif` als reine Schreibabkürzung für ein weiteres `if` zu sehen. Das ist es nicht: `elif` trägt die stillschweigende Zusatzbedingung *\"und alle vorherigen Bedingungen waren falsch\"*. Praktische Konsequenz: sich gegenseitig ausschließende Fälle (größer / kleiner / gleich) gehören in eine `if`/`elif`/`else`-Kette; unabhängige Prüfungen (ist die Zahl gerade? ist sie durch 3 teilbar?) gehören in getrennte `if`-Anweisungen.\n\nMerkregel: **`elif` heißt 'sonst, falls ...' - ein neues `if` heißt 'außerdem, falls ...'.**",
+   "hints": [
+    "Prüfe für x = 10 beide Bedingungen einzeln: welche ist wahr?",
+    "Frage dich bei Variante B: wird die zweite Bedingung überhaupt noch angeschaut, wenn die erste schon zutraf?",
+    "Formuliere `elif` in Worten: 'sonst, falls ...'. Wann greift dieses 'sonst'?"
+   ],
+   "pitfalls": [
+    "`elif` als bloße Abkürzung für ein weiteres `if` ansehen.",
+    "Bei Variante A nur `A` angeben, weil man denkt, nach dem ersten Treffer sei Schluss.",
+    "Vergessen zu erwähnen, dass die Einrückung den Rumpf definiert."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 5,
+     "label": "'Was passiert im ersten und was im zweiten Fall?'"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 4,
+     "label": "'Einrückungen sind in Python Teil des Programms!'"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 2,
+     "label": "Zelle mit zwei getrennten if-Abfragen"
+    }
+   ],
+   "tags": [
+    "if",
+    "elif",
+    "einrueckung",
+    "kontrollfluss"
+   ]
+  },
+  {
+   "id": "py-control-004",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": false,
+   "title": "range mit einem, zwei und drei Argumenten",
+   "prompt": "Was gibt der folgende Code aus?",
+   "code": "print(list(range(5)))\nprint(list(range(2, 6)))\nprint(list(range(1, 10, 3)))",
+   "expectedOutput": "[0, 1, 2, 3, 4]\n[2, 3, 4, 5]\n[1, 4, 7]",
+   "solution": "[0, 1, 2, 3, 4]\n[2, 3, 4, 5]\n[1, 4, 7]",
+   "explanation": "`range(a, b, c)` erzeugt die Zahlen von `a` bis `b` in Schritten von `c` - wobei der **Endpunkt `b` nie dazugehört**. Man kann `range` mit einem, zwei oder drei Argumenten aufrufen:\n\n- `range(5)` -> Start 0, Ende 5 (exklusiv), Schrittweite 1: `0 1 2 3 4` (also genau 5 Werte).\n- `range(2, 6)` -> Start 2, Ende 6 (exklusiv): `2 3 4 5`.\n- `range(1, 10, 3)` -> Start 1, Schrittweite 3: `1, 4, 7`; die nächste Zahl wäre 10, die aber als Endpunkt nicht mehr dazugehört.\n\nDer häufigste Fehler ist der **Off-by-one**: `range(1, 10)` enthält nicht die 10. Dafür gilt die praktische Regel: `range(n)` hat immer genau `n` Elemente, und `for i in range(len(liste))` liefert exakt die gültigen Indizes einer Liste.\n\n`list(...)` steht hier nur, damit man die Zahlen sehen kann - `range` selbst ist ein iterierbares Objekt und würde beim direkten `print` nur als `range(0, 5)` erscheinen. Merkregel: **Start ist dabei, Ende ist draußen.**",
+   "hints": [
+    "Bei nur einem Argument beginnt `range` immer bei 0.",
+    "Zähle in der dritten Zeile in Dreierschritten von 1 aufwärts und stoppe, *bevor* du 10 erreichst.",
+    "Der Endwert gehört nie zur Aufzählung dazu."
+   ],
+   "pitfalls": [
+    "Den Endwert mitzählen (`range(2, 6)` enthält keine 6).",
+    "Bei `range(1, 10, 3)` glauben, die Schrittweite gäbe die Anzahl der Werte an."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "'Im Allgemeinen hat range einen Startpunkt, einen Endpunkt, und eine Schrittweite'"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 2,
+     "label": "Jetzt mit mehr Zeit: for-Schleifen / range"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 22,
+     "label": "Klausurrelevant: 'Zahlen von a bis b in Schritten c range(a,b,c)'"
+    }
+   ],
+   "tags": [
+    "for",
+    "range",
+    "iterierbar"
+   ]
+  },
+  {
+   "id": "py-control-005",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "range mit negativer Schrittweite - und wann gar nichts passiert",
+   "prompt": "Was gibt der folgende Code aus? Überlegen Sie bei jeder Schleife zuerst, ob ihr Rumpf überhaupt jemals ausgeführt wird.",
+   "code": "for i in range(10, 0, -3):\n    print(i)\nprint(\"---\")\nfor i in range(3, 3):\n    print(i)\nprint(\"---\")\nfor i in range(0, 5, -1):\n    print(i)\nprint(\"fertig\")",
+   "expectedOutput": "10\n7\n4\n1\n---\n---\nfertig",
+   "solution": "10\n7\n4\n1\n---\n---\nfertig",
+   "explanation": "Drei Fälle, die man auseinanderhalten muss:\n\n1. `range(10, 0, -3)`: Start 10, Schrittweite **-3**, Ende 0 (exklusiv). Es entstehen `10, 7, 4, 1`. Die nächste Zahl wäre -2, die den Endwert 0 bereits unterschritten hat - bei negativer Schrittweite läuft die Schleife, solange `i > ende` gilt.\n2. `range(3, 3)`: Start gleich Ende, und da das Ende exklusiv ist, ist die Aufzählung **leer**. Der Schleifenrumpf wird kein einziges Mal ausgeführt - das ist **kein Fehler**, es passiert schlicht nichts.\n3. `range(0, 5, -1)`: Man soll von 0 aus *abwärts* zählen, das Ziel 5 liegt aber *oberhalb* des Starts. Auch diese Aufzählung ist leer. Wieder kein Fehler, nur eine Schleife, die nie läuft.\n\nGenau das ist die Falle: Ein leeres `range` sieht aus wie ein Absturzkandidat, verhält sich aber völlig still. Wenn ein Programm 'nichts tut', lohnt es sich immer, die `range`-Grenzen zu prüfen. Merkregel: **Negative Schrittweite verlangt Start > Ende - sonst ist die Schleife leer.**",
+   "hints": [
+    "Zähle bei der ersten Schleife von 10 in Dreierschritten abwärts und stoppe, bevor du 0 erreichst oder unterschreitest.",
+    "Überlege bei der zweiten und dritten Schleife: Gibt es überhaupt eine Zahl, die die Bedingung erfüllt?",
+    "Eine leere `range` führt zu null Durchläufen - der Code läuft danach ganz normal weiter."
+   ],
+   "pitfalls": [
+    "Glauben, `range(0, 5, -1)` zähle 0, -1, -2, ... beliebig weiter (Endlosschleife) - es ist schlicht leer.",
+    "Bei `range(10, 0, -3)` die 0 mit ausgeben.",
+    "Annehmen, eine leere `range` werfe einen Fehler."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "range mit Startpunkt, Endpunkt und Schrittweite"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 22,
+     "label": "Klausurrelevant: range(a,b,c)"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 7,
+     "label": "Überblick VL 1c - for, range, enumerate"
+    }
+   ],
+   "tags": [
+    "for",
+    "range",
+    "negative-schrittweite",
+    "leere-schleife"
+   ]
+  },
+  {
+   "id": "py-control-006",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Alle durch 3 teilbaren Zahlen kleiner als 100",
+   "prompt": "Vervollständigen Sie die beiden Lücken so, dass alle ohne Rest durch 3 teilbaren Zahlen kleiner als 100 ausgegeben werden (also 0, 3, 6, ... , 99 - jede Zahl in einer eigenen Zeile).\n\nIn jede Lücke gehört genau ein **boolscher Ausdruck**.",
+   "code": "a = 0\nwhile ## Lücke 1 ##:\n    if ## Lücke 2 ##:\n        print(a)\n    a += 1",
+   "expectedOutput": "0\n3\n6\n9\n12\n15\n18\n21\n24\n27\n30\n33\n36\n39\n42\n45\n48\n51\n54\n57\n60\n63\n66\n69\n72\n75\n78\n81\n84\n87\n90\n93\n96\n99",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "a < 100",
+      "(a < 100)",
+      "a <= 99",
+      "a < 100 ",
+      "100 > a"
+     ],
+     "explanation": "Die Schleife soll laufen, solange `a` noch kleiner als 100 ist. Mit `a <= 100` würde auch die 100 geprüft, mit `a < 99` fehlte die 99."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "a % 3 == 0",
+      "(a % 3 == 0)",
+      "a%3==0",
+      "0 == a % 3",
+      "a % 3 < 1"
+     ],
+     "explanation": "`%` liefert den Rest der Division. Ohne Rest durch 3 teilbar heißt genau: der Rest ist 0."
+    }
+   ],
+   "solution": "a = 0\nwhile a < 100:\n    if a % 3 == 0:\n        print(a)\n    a += 1",
+   "explanation": "Diese Aufgabe steht fast wörtlich auf der Zusammenfassungsfolie zur Vorlesung 1c. Sie kombiniert die drei Bausteine, die man für jede `while`-Schleife braucht:\n\n1. **Initialisierung** der Laufvariablen vor der Schleife (`a = 0`),\n2. eine **Abbruchbedingung**, die irgendwann `False` wird (`a < 100`),\n3. eine **Veränderung** der Laufvariablen im Rumpf (`a += 1`).\n\nFällt Punkt 3 weg, entsteht eine Endlosschleife - der Dozent warnt dazu ausdrücklich: *\"Es muss sicher gestellt werden, dass boolscher_ausdruck irgendwann False ist!\"*\n\nDie zweite Lücke prüft die Teilbarkeit mit dem Modulo-Operator `%`: `a % 3` ist der Rest der Division durch 3, und genau dann, wenn dieser Rest `0` ist, ist `a` ohne Rest teilbar. Beachten Sie, dass das `if` **innerhalb** des Schleifenrumpfs eingerückt ist, `a += 1` dagegen auf der Ebene des `if` steht - also in jedem Durchlauf ausgeführt wird, nicht nur bei Treffern. Würde `a += 1` eine Ebene tiefer stehen, würde der Zähler nur bei Vielfachen von 3 erhöht: eine Endlosschleife ab `a = 1`.\n\nMerkregel: **while braucht immer Startwert, Abbruch und Fortschritt.**",
+   "hints": [
+    "Die Schleife soll bei 0 starten und alle Zahlen bis knapp unter 100 durchgehen - welcher Vergleich beschreibt 'kleiner als 100'?",
+    "Für 'ohne Rest teilbar' gibt es einen eigenen Operator aus der Vorlesung über Rechenoperationen.",
+    "`a % 3` liefert den Rest. Welchen Wert muss dieser Rest haben?"
+   ],
+   "pitfalls": [
+    "`a <= 100` schreiben und damit die 100 mitprüfen (sie ist zwar nicht durch 3 teilbar, die Bedingung wäre trotzdem falsch formuliert).",
+    "`a / 3 == 0` statt `a % 3 == 0` - das wäre nur für a = 0 wahr.",
+    "`a += 1` versehentlich in den `if`-Rumpf einrücken -> Endlosschleife."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 7,
+     "label": "Überblick VL 1c: 'Vervollständigen sie die beiden Lücken so, dass alle ohne Rest durch 3 teilbaren Zahlen kleiner als 100 ausgegeben werden'"
+    },
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "Zelle: while (a<100) mit if a%3==0"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 8,
+     "label": "While-loops - 'Es muss sicher gestellt werden, dass boolscher_ausdruck irgendwann False ist!'"
+    }
+   ],
+   "tags": [
+    "while",
+    "modulo",
+    "abbruchbedingung",
+    "einrueckung"
+   ]
+  },
+  {
+   "id": "py-control-007",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "and, or, not - und wer bindet stärker?",
+   "prompt": "Was gibt der folgende Code aus? Achten Sie besonders auf die letzte Zeile.",
+   "code": "a = 5\nb = 0\nc = 10\n\nprint(a > b and c > a)\nprint(a > c or b < a)\nprint(not (a == 5))\nprint(a > b and c > a and b > c)\nprint(not a > b or c == 10)",
+   "expectedOutput": "True\nTrue\nFalse\nFalse\nTrue",
+   "solution": "True\nTrue\nFalse\nFalse\nTrue",
+   "explanation": "Die drei logischen Verknüpfungen aus der Vorlesung: `and` ist nur `True`, wenn **beide** Seiten `True` sind; `or` ist `True`, wenn **mindestens eine** Seite `True` ist; `not` dreht den Wahrheitswert um.\n\n- `a > b and c > a` -> `5 > 0` (True) und `10 > 5` (True) -> **True**\n- `a > c or b < a` -> `5 > 10` (False) oder `0 < 5` (True) -> **True**\n- `not (a == 5)` -> `not True` -> **False**\n- `a > b and c > a and b > c` -> True und True und `0 > 10` (False) -> **False**; ein einziges falsches Glied genügt, um eine ganze `and`-Kette zu Fall zu bringen.\n- `not a > b or c == 10`: Hier ist die **Operatorrangfolge** entscheidend. Vergleichsoperatoren binden stärker als `not`, und `not` bindet stärker als `or`. Python liest die Zeile also als `(not (a > b)) or (c == 10)` = `(not True) or True` = `False or True` = **True**. Wer stattdessen `not (a > b or c == 10)` liest, kommt fälschlich auf `False`.\n\nMerkregel: **Rangfolge: Vergleiche vor `not` vor `and` vor `or`** - und wenn man unsicher ist, setzt man Klammern, so wie der Dozent es in seinem Code oft tut.",
+   "hints": [
+    "Werte in jeder Zeile zuerst die einzelnen Vergleiche aus und schreibe True/False darüber.",
+    "Bei einer `and`-Kette reicht ein einziges `False`, damit das Gesamtergebnis `False` ist.",
+    "Überlege in der letzten Zeile: Bezieht sich `not` auf `a > b` allein oder auf den ganzen Rest der Zeile?"
+   ],
+   "pitfalls": [
+    "`not a > b or c == 10` als `not (a > b or c == 10)` lesen.",
+    "`and` und `or` verwechseln, wenn mehrere Bedingungen aneinandergereiht sind.",
+    "`not` auf eine Zahl statt auf einen Vergleich anwenden wollen."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 6,
+     "label": "Logische Verknüpfungen boolscher Variablen: and, or, not"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 6,
+     "label": "Überblick VL 1c - and / or / not"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 22,
+     "label": "Klausurrelevant: 'Verknüpfung/Ändern boolscher Werte and or not'"
+    }
+   ],
+   "tags": [
+    "and",
+    "or",
+    "not",
+    "operatorrangfolge",
+    "bool"
+   ]
+  },
+  {
+   "id": "py-control-008",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Kurzschlussauswertung sichtbar gemacht",
+   "prompt": "Die beiden Funktionen geben beim Aufruf eine Meldung aus. Was gibt der folgende Code auf der Kommandozeile aus? Überlegen Sie für jede Zeile genau, **welche** der beiden Funktionen tatsächlich aufgerufen wird.",
+   "code": "def links():\n    print(\"links wird ausgewertet\")\n    return False\n\ndef rechts():\n    print(\"rechts wird ausgewertet\")\n    return True\n\nprint(links() and rechts())\nprint(\"---\")\nprint(rechts() or links())\nprint(\"---\")\nprint(links() or rechts())",
+   "expectedOutput": "links wird ausgewertet\nFalse\n---\nrechts wird ausgewertet\nTrue\n---\nlinks wird ausgewertet\nrechts wird ausgewertet\nTrue",
+   "solution": "links wird ausgewertet\nFalse\n---\nrechts wird ausgewertet\nTrue\n---\nlinks wird ausgewertet\nrechts wird ausgewertet\nTrue",
+   "explanation": "Python wertet `and` und `or` **von links nach rechts und nur so weit wie nötig** aus - das nennt man *Kurzschlussauswertung* (short-circuit evaluation):\n\n- `links() and rechts()`: `links()` liefert `False`. Damit steht das Ergebnis der `and`-Verknüpfung bereits fest (`False and irgendwas` ist immer `False`), also wird `rechts()` **gar nicht aufgerufen** - seine Meldung erscheint nicht.\n- `rechts() or links()`: `rechts()` liefert `True`. Bei `or` genügt ein wahres Glied, also wird `links()` **nicht** mehr aufgerufen.\n- `links() or rechts()`: `links()` liefert `False` - damit ist bei `or` noch nichts entschieden, also **muss** `rechts()` ausgewertet werden. Beide Meldungen erscheinen.\n\nWichtig ist die Reihenfolge der Ausgaben: Die Meldungen aus den Funktionen erscheinen **vor** dem `print` des Ergebnisses, weil die Argumente eines Funktionsaufrufs vollständig ausgewertet werden, bevor `print` überhaupt startet.\n\nPraktischer Nutzen: Man kann sich auf die Kurzschlussauswertung verlassen und schreibt deshalb `if len(liste) > 0 and liste[0] == 5:` - der zweite Teil wird bei leerer Liste nie ausgeführt und erzeugt daher keinen `IndexError`. Merkregel: **`and` bricht beim ersten `False` ab, `or` beim ersten `True`.**",
+   "hints": [
+    "Überlege zuerst: Steht das Ergebnis einer `and`-Verknüpfung schon fest, wenn die linke Seite `False` ist?",
+    "Gleiche Frage für `or`: Was ist, wenn die linke Seite bereits `True` liefert?",
+    "Denke daran: Ein `print` in einer Funktion erzeugt nur dann eine Zeile, wenn die Funktion wirklich aufgerufen wird."
+   ],
+   "pitfalls": [
+    "Annehmen, dass immer beide Seiten einer Verknüpfung ausgewertet werden.",
+    "Die Reihenfolge vertauschen und das Ergebnis vor den Meldungen der Funktionen ausgeben.",
+    "Vergessen, dass `links()` `False` zurückgibt, obwohl es etwas ausgibt."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 6,
+     "label": "and / or / not"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 6,
+     "label": "Überblick VL 1c - logische Verknüpfungen"
+    },
+    {
+     "file": "goofspiel26_imperativ.py",
+     "page": 1,
+     "label": "Bedingungen in while/if des Goofspiels"
+    }
+   ],
+   "tags": [
+    "and",
+    "or",
+    "kurzschlussauswertung",
+    "short-circuit",
+    "funktionen"
+   ]
+  },
+  {
+   "id": "py-control-009",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Feedback für ein Zahlen-Ratespiel",
+   "prompt": "Schreiben Sie eine Funktion `rate_feedback(geheim, tipps)`.\n\n`tipps` ist eine Liste von geratenen Zahlen, die der Reihe nach abgearbeitet werden. Für jeden Tipp soll eine Rückmeldung in eine Ergebnisliste eingetragen werden:\n\n- Tipp kleiner als die geheime Zahl -> `\"Zu klein!\"`\n- Tipp größer als die geheime Zahl -> `\"Zu gross!\"`\n- Tipp richtig -> `\"Richtig! Die geheime Zahl war <geheim>.\"` und die Schleife wird **sofort beendet** (alle weiteren Tipps werden ignoriert).\n\nDie Funktion gibt die Liste der Rückmeldungen zurück.\n\nBeispiel: `rate_feedback(42, [30, 80, 42, 7])` -> `['Zu klein!', 'Zu gross!', 'Richtig! Die geheime Zahl war 42.']`",
+   "starterCode": "def rate_feedback(geheim, tipps):\n    \"\"\"\n    geheim: die zu erratende Zahl (int)\n    tipps:  Liste der geratenen Zahlen, der Reihe nach\n    Rückgabe: Liste der Rückmeldungen als Strings\n    \"\"\"\n    # Ihr Code hier\n",
+   "constraints": [
+    "Verwenden Sie eine for-Schleife und break",
+    "Keine while-Schleife"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "rate_feedback(42, [30, 80, 42, 7])",
+     "expected": "['Zu klein!', 'Zu gross!', 'Richtig! Die geheime Zahl war 42.']"
+    },
+    {
+     "name": "sofort richtig",
+     "call": "rate_feedback(7, [7])",
+     "expected": "['Richtig! Die geheime Zahl war 7.']"
+    },
+    {
+     "name": "nie erraten",
+     "call": "rate_feedback(5, [1, 2, 9])",
+     "expected": "['Zu klein!', 'Zu klein!', 'Zu gross!']"
+    },
+    {
+     "name": "break wirkt: Tipps nach dem Treffer werden ignoriert",
+     "call": "rate_feedback(5, [9, 5, 3, 4])",
+     "expected": "['Zu gross!', 'Richtig! Die geheime Zahl war 5.']"
+    },
+    {
+     "name": "leere Tippliste",
+     "call": "rate_feedback(3, [])",
+     "expected": "[]"
+    }
+   ],
+   "forbidden": [
+    "while"
+   ],
+   "required": [
+    "for ",
+    "break"
+   ],
+   "solution": "def rate_feedback(geheim, tipps):\n    rueckmeldungen = []\n    for tipp in tipps:\n        if tipp < geheim:\n            rueckmeldungen.append(\"Zu klein!\")\n        elif tipp > geheim:\n            rueckmeldungen.append(\"Zu gross!\")\n        else:\n            rueckmeldungen.append(\"Richtig! Die geheime Zahl war \" + str(geheim) + \".\")\n            break\n    return rueckmeldungen\n",
+   "explanation": "Die Aufgabe kombiniert die drei Bausteine, die der Dozent im Ratespiel-Beispiel der Übungsaufgaben zur 1. Vorlesung verlangt: eine Schleife über die Eingaben, eine dreifache Fallunterscheidung mit `if`/`elif`/`else` und ein sauberes Abbruchkriterium.\n\nWichtig ist, dass die drei Fälle 'kleiner', 'größer' und 'gleich' **einander ausschließen** - deshalb gehören sie in *eine* `if`/`elif`/`else`-Kette und nicht in drei getrennte `if`-Anweisungen. Der `else`-Zweig braucht gar keine eigene Bedingung: wenn weder kleiner noch größer, dann bleibt nur gleich.\n\n`break` verlässt die Schleife **sofort**, noch bevor die restlichen Elemente angeschaut werden - genau das brauchen wir, damit Tipps nach dem Treffer ignoriert werden. Das `return` steht dabei **hinter** der Schleife und ist nicht eingerückt; stünde es im Schleifenrumpf, würde die Funktion schon nach dem ersten Tipp zurückkehren.\n\nBeachten Sie außerdem die Umwandlung `str(geheim)`: Ein `int` lässt sich nicht mit `+` an einen String hängen. Merkregel: **Sich ausschließende Fälle -> `elif`; vorzeitiges Verlassen -> `break`.**",
+   "hints": [
+    "Lege vor der Schleife eine leere Ergebnisliste an und hänge mit `.append(...)` an.",
+    "Die drei Fälle schließen sich gegenseitig aus - benutze eine `if`/`elif`/`else`-Kette statt drei einzelner `if`.",
+    "Wie verlässt man eine Schleife vorzeitig, ohne die Funktion sofort zu beenden? Und wo genau muss `return` dann stehen?"
+   ],
+   "pitfalls": [
+    "`return` in den Schleifenrumpf einrücken - dann kommt nur die erste Rückmeldung zurück.",
+    "Statt `break` einfach weiterlaufen lassen: dann erscheinen auch die Rückmeldungen nach dem Treffer.",
+    "Die Zahl ohne `str(...)` an den String hängen -> TypeError."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL0_undVL1.pdf",
+     "page": 4,
+     "label": "Aufgabe 5: Zahlen-Ratespiel mit while und if"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 4,
+     "label": "if / elif / else"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 22,
+     "label": "Klausurrelevante Dinge/Befehle VL 1c"
+    }
+   ],
+   "tags": [
+    "for",
+    "if",
+    "elif",
+    "else",
+    "break",
+    "listen"
+   ]
+  },
+  {
+   "id": "py-control-010",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "while (liste) - solange noch Karten da sind",
+   "prompt": "Was gibt der folgende Code aus?",
+   "code": "preiskarten = [3, 7, 1]\nrunde = 0\nwhile preiskarten:\n    karte = preiskarten.pop()\n    runde = runde + 1\n    print(\"Runde\", runde, \"- Preiskarte\", karte, \"- Rest\", preiskarten)\nprint(\"Keine Preiskarten mehr:\", preiskarten)",
+   "expectedOutput": "Runde 1 - Preiskarte 1 - Rest [3, 7]\nRunde 2 - Preiskarte 7 - Rest [3]\nRunde 3 - Preiskarte 3 - Rest []\nKeine Preiskarten mehr: []",
+   "solution": "Runde 1 - Preiskarte 1 - Rest [3, 7]\nRunde 2 - Preiskarte 7 - Rest [3]\nRunde 3 - Preiskarte 3 - Rest []\nKeine Preiskarten mehr: []",
+   "explanation": "Hier stecken zwei Dinge drin, die der Dozent als *\"schöne Python-Vereinfachung\"* bezeichnet:\n\n**1. `while liste:`** - eine Liste darf direkt als boolscher Ausdruck verwendet werden. Eine nichtleere Liste gilt als `True`, die leere Liste `[]` als `False`. `while preiskarten:` bedeutet also wörtlich *\"führe diesen Code aus, solange die Liste nicht leer ist\"* und ist gleichbedeutend mit `while len(preiskarten) > 0:`.\n\n**2. `.pop()` ohne Index** nimmt immer das **letzte** Element der Liste, gibt es zurück **und entfernt es**. Aus `[3, 7, 1]` kommt also zuerst die `1`, dann die `7`, dann die `3` - die Reihenfolge ist umgekehrt zur Leserichtung. Genau deshalb funktioniert im Goofspiel die Idee *\"Mische die Preiskarten am Anfang, dann ziehe immer die oberste Karte mit .pop()\"*.\n\nDas `pop` sorgt zugleich für den **Fortschritt** der Schleife: Die Liste wird in jedem Durchlauf kürzer und ist irgendwand leer - damit endet die Schleife garantiert. Würde man stattdessen nur lesend `preiskarten[-1]` verwenden, hätte man eine Endlosschleife.\n\nMerkregel: **`while liste:` heißt 'solange noch etwas drin ist' - und im Rumpf muss etwas herausgenommen werden.**",
+   "hints": [
+    "`while preiskarten:` - wann ist diese Bedingung falsch?",
+    "Welches Element nimmt `.pop()` ohne Index-Argument aus der Liste?",
+    "Die Liste wird beim `print` erst *nach* dem `pop` ausgegeben - notiere dir nach jedem Durchlauf den aktuellen Listeninhalt."
+   ],
+   "pitfalls": [
+    "Glauben, `.pop()` nehme das *erste* Element - es nimmt das letzte.",
+    "Vergessen, dass `pop` die Liste tatsächlich verändert (mutable!), und deshalb immer `[3, 7, 1]` ausgeben.",
+    "Die letzte Zeile weglassen - sie läuft nach dem Ende der Schleife."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 17,
+     "label": "'while (Liste): führt diesen Code aus, solange Liste nicht leer ist'"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 15,
+     "label": "'.pop() ohne index nimmt immer das letzte Element der Liste!'"
+    },
+    {
+     "file": "goofspiel26_imperativ.py",
+     "page": 1,
+     "label": "while (len(preiskarten)>0) mit preiskarten.pop()"
+    }
+   ],
+   "tags": [
+    "while",
+    "liste",
+    "pop",
+    "truthiness",
+    "goofspiel"
+   ]
+  },
+  {
+   "id": "py-control-011",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Eine Goofspiel-Runde vervollständigen",
+   "prompt": "Der folgende Code spielt eine verkürzte Partie Goofspiel. Spieler 1 legt immer genau den Wert der aufgedeckten Preiskarte, Spieler 2 legt immer die oberste Karte seines Stapels. Wer die höhere Karte legt, bekommt den Wert der Preiskarte gutgeschrieben; bei Gleichstand bekommt niemand etwas.\n\nFüllen Sie die drei Lücken. Die letzte Zeile muss `4 6` ausgeben.",
+   "code": "karten_spieler2 = [2, 9, 3]\npreiskarten = [4, 6, 3]\npunkte1 = 0\npunkte2 = 0\n\nwhile ## Lücke 1 ##:\n    preiskarte = preiskarten.pop()\n    karte1 = preiskarte                # Strategie Spieler 1\n    karte2 = karten_spieler2.pop()     # Strategie Spieler 2\n    if karte1 > karte2:\n        ## Lücke 2 ##\n    elif ## Lücke 3 ##:\n        punkte2 = punkte2 + preiskarte\n\nprint(punkte1, punkte2)",
+   "expectedOutput": "4 6",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "preiskarten",
+      "len(preiskarten) > 0",
+      "len(preiskarten)>0",
+      "len(preiskarten) != 0",
+      "(preiskarten)"
+     ],
+     "explanation": "Die Runden werden wiederholt, solange noch Preiskarten da sind. In Python darf die Liste direkt als Bedingung stehen: `while preiskarten:` ist gleichbedeutend mit `while len(preiskarten) > 0:`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "punkte1 = punkte1 + preiskarte",
+      "punkte1 += preiskarte",
+      "punkte1=punkte1+preiskarte"
+     ],
+     "explanation": "Spieler 1 hat die höhere Karte gelegt und bekommt den Wert der Preiskarte **zusätzlich** zu seinen bisherigen Punkten. Ein einfaches `punkte1 = preiskarte` würde den bisherigen Punktestand überschreiben."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "karte2 > karte1",
+      "karte2>karte1",
+      "karte1 < karte2",
+      "(karte2 > karte1)"
+     ],
+     "explanation": "Der zweite Fall ist das Spiegelbild des ersten. Wichtig: **echt** größer (`>`), denn bei Gleichstand soll niemand Punkte bekommen - genau deshalb gibt es hier auch keinen `else`-Zweig."
+    }
+   ],
+   "solution": "karten_spieler2 = [2, 9, 3]\npreiskarten = [4, 6, 3]\npunkte1 = 0\npunkte2 = 0\n\nwhile preiskarten:\n    preiskarte = preiskarten.pop()\n    karte1 = preiskarte                # Strategie Spieler 1\n    karte2 = karten_spieler2.pop()     # Strategie Spieler 2\n    if karte1 > karte2:\n        punkte1 = punkte1 + preiskarte\n    elif karte2 > karte1:\n        punkte2 = punkte2 + preiskarte\n\nprint(punkte1, punkte2)",
+   "explanation": "Das ist der Kern des Goofspiels, so wie er in der Vorlesung entwickelt wurde. Drei Runden werden abgearbeitet, wobei `.pop()` jeweils das **letzte** Element nimmt:\n\n| Runde | Preiskarte | Spieler 1 | Spieler 2 | Ergebnis |\n|---|---|---|---|---|\n| 1 | 3 | 3 | 3 | Gleichstand - niemand bekommt Punkte |\n| 2 | 6 | 6 | 9 | Spieler 2 gewinnt -> punkte2 = 6 |\n| 3 | 4 | 4 | 2 | Spieler 1 gewinnt -> punkte1 = 4 |\n\nAm wichtigsten ist der **fehlende `else`-Zweig**: Weder `if` noch `elif` treffen zu, wenn beide Karten gleich sind - und dann passiert einfach nichts. Eine `if`/`elif`-Kette *ohne* `else` ist völlig legal und genau das richtige Werkzeug, wenn es einen Fall gibt, in dem nichts geschehen soll.\n\nZweiter Punkt: `punkte1 = punkte1 + preiskarte` (bzw. die Kurzform `punkte1 += preiskarte`) **addiert** auf den bisherigen Stand. Das ist das klassische Akkumulator-Muster: Variable vor der Schleife auf 0 setzen, im Rumpf erhöhen, nach der Schleife auslesen.\n\nMerkregel: **Kein `else` heißt 'in allen anderen Fällen passiert nichts'.**",
+   "hints": [
+    "Für Lücke 1: Der Dozent nennt eine 'schöne Python-Vereinfachung' für 'solange die Liste nicht leer ist'.",
+    "Für Lücke 2: Der Punktestand soll wachsen, nicht ersetzt werden.",
+    "Für Lücke 3: Formuliere den Fall 'Spieler 2 gewinnt die Runde' - und überlege, was bei *gleichen* Karten passieren soll."
+   ],
+   "pitfalls": [
+    "In Lücke 3 `karte2 >= karte1` schreiben - dann bekäme Spieler 2 auch bei Gleichstand Punkte.",
+    "In Lücke 2 `punkte1 = preiskarte` statt `punkte1 = punkte1 + preiskarte` schreiben.",
+    "Vergessen, dass `.pop()` von hinten zieht, und die Runden in falscher Reihenfolge durchspielen."
+   ],
+   "sources": [
+    {
+     "file": "goofspiel26_imperativ.py",
+     "page": 1,
+     "label": "Auswertung der Runde mit if/elif"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 17,
+     "label": "while (Liste)"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 3,
+     "label": "Spielregeln / Punktevergabe Goofspiel"
+    }
+   ],
+   "tags": [
+    "while",
+    "if",
+    "elif",
+    "goofspiel",
+    "pop",
+    "akkumulator"
+   ]
+  },
+  {
+   "id": "py-control-012",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Was liefert enumerate eigentlich?",
+   "prompt": "Was gibt der folgende Code aus?",
+   "code": "namen = [\"Anna\", \"Ben\", \"Cem\"]\nfor i, name in enumerate(namen):\n    print(i, name)\nprint(\"---\")\nfor eintrag in enumerate(namen):\n    print(eintrag)",
+   "expectedOutput": "0 Anna\n1 Ben\n2 Cem\n---\n(0, 'Anna')\n(1, 'Ben')\n(2, 'Cem')",
+   "solution": "0 Anna\n1 Ben\n2 Cem\n---\n(0, 'Anna')\n(1, 'Ben')\n(2, 'Cem')",
+   "explanation": "`enumerate(objekt)` liefert nicht die Elemente allein, sondern **Paare aus Index und Element** - technisch gesehen Tupel der Form `(index, element)`. Der Index beginnt bei `0`.\n\nDie erste Schleife nutzt das sogenannte *Entpacken* (unpacking): `for i, name in ...` zerlegt jedes Tupel automatisch in seine beiden Bestandteile, sodass `i` den Index und `name` den Wert enthält. `print(i, name)` gibt beide durch ein Leerzeichen getrennt aus - ohne Klammern und ohne Anführungszeichen, weil `print` Strings ohne Quotes darstellt.\n\nDie zweite Schleife verzichtet auf das Entpacken. `eintrag` ist dann das komplette Tupel, und ein Tupel wird von `print` mit Klammern und Kommas dargestellt - Strings darin erscheinen mit einfachen Anführungszeichen, weil `print` für den Tupelinhalt die *Repräsentation* verwendet.\n\nGenau dieser Unterschied ist die Falle: `0 Anna` und `(0, 'Anna')` sind dieselben Daten, aber verschiedene Ausgaben. Merkregel: **`enumerate` gibt Index *und* Wert - mit zwei Schleifenvariablen ausgepackt, mit einer als Tupel.**",
+   "hints": [
+    "Womit beginnt der Index, den `enumerate` liefert?",
+    "In der ersten Schleife stehen *zwei* Namen hinter `for` - was passiert dabei mit dem gelieferten Paar?",
+    "Wie stellt `print` ein Tupel dar, das einen String enthält?"
+   ],
+   "pitfalls": [
+    "Denken, `enumerate` starte bei 1.",
+    "In der zweiten Schleife `0 Anna` statt `(0, 'Anna')` schreiben.",
+    "Die Anführungszeichen im Tupel vergessen."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "'Mit enumerate kann zusätzlich auf den Index zugegriffen werden'"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 22,
+     "label": "Klausurrelevant: 'Auflistung mit Indices = enumerate'"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 21,
+     "label": "Klausurrelevant: enumerate für Schleifen über Indizes und Werte"
+    }
+   ],
+   "tags": [
+    "for",
+    "enumerate",
+    "tupel",
+    "unpacking"
+   ]
+  },
+  {
+   "id": "py-control-013",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Alle Positionen eines Wertes finden",
+   "prompt": "Schreiben Sie eine Funktion `positionen(liste, wert)`, die eine Liste **aller** Indizes zurückgibt, an denen `wert` in `liste` vorkommt. Kommt der Wert gar nicht vor, wird die leere Liste zurückgegeben.\n\nBeispiel: `positionen([3, 7, 3, 1], 3)` -> `[0, 2]`\n\nVerwenden Sie dabei `enumerate`; die fertige Methode `.index(...)` ist nicht erlaubt.",
+   "starterCode": "def positionen(liste, wert):\n    \"\"\"\n    liste: beliebige Liste\n    wert:  gesuchter Wert\n    Rückgabe: Liste aller Indizes, an denen wert vorkommt\n    \"\"\"\n    # Ihr Code hier\n",
+   "constraints": [
+    "enumerate verwenden",
+    "keine while-Schleife",
+    "kein .index(...)"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "positionen([3, 7, 3, 1], 3)",
+     "expected": "[0, 2]"
+    },
+    {
+     "name": "Wert kommt nicht vor",
+     "call": "positionen([1, 2], 5)",
+     "expected": "[]"
+    },
+    {
+     "name": "Strings statt Zahlen",
+     "call": "positionen(['a', 'b', 'a', 'a'], 'a')",
+     "expected": "[0, 2, 3]"
+    },
+    {
+     "name": "leere Liste",
+     "call": "positionen([], 1)",
+     "expected": "[]"
+    },
+    {
+     "name": "alle Elemente passen",
+     "call": "positionen([4, 4, 4], 4)",
+     "expected": "[0, 1, 2]"
+    }
+   ],
+   "forbidden": [
+    "while",
+    ".index("
+   ],
+   "required": [
+    "enumerate("
+   ],
+   "solution": "def positionen(liste, wert):\n    ergebnis = []\n    for i, element in enumerate(liste):\n        if element == wert:\n            ergebnis.append(i)\n    return ergebnis\n",
+   "explanation": "Das ist der Standardfall für `enumerate`: Man braucht **sowohl den Wert als auch seine Position**. Ohne `enumerate` müsste man `for i in range(len(liste))` schreiben und dann jedes Mal `liste[i]` nachschlagen - das geht auch, ist aber länger und fehleranfälliger.\n\nDas Muster ist das klassische **Sammel-Muster**: leere Ergebnisliste vor der Schleife anlegen, im Schleifenrumpf mit `.append(...)` befüllen, nach der Schleife zurückgeben. Genau wie beim Akkumulator für Zahlen muss die Initialisierung **vor** der Schleife stehen - liegt sie im Rumpf, wird die Liste bei jedem Durchlauf zurückgesetzt.\n\nWarum liefert `.index(...)` hier nicht das Gewünschte? Weil es nur das **erste** Vorkommen findet und bei gar keinem Vorkommen einen `ValueError` wirft. Die Schleifenlösung ist robuster und liefert automatisch die leere Liste, wenn nichts passt - man muss diesen Sonderfall nicht extra behandeln.\n\nMerkregel: **Index *und* Wert gebraucht -> `enumerate`; nur der Wert -> direkt über die Liste iterieren.**",
+   "hints": [
+    "Lege vor der Schleife eine leere Liste an, in die du die Treffer sammelst.",
+    "`for i, element in enumerate(liste)` gibt dir in jedem Durchlauf Index und Wert gleichzeitig.",
+    "Im `if` vergleichst du den *Wert*, in die Ergebnisliste hängst du den *Index*."
+   ],
+   "pitfalls": [
+    "Den Wert statt des Index anhängen.",
+    "Die Ergebnisliste innerhalb der Schleife anlegen - dann bleibt am Ende höchstens ein Treffer übrig.",
+    "`return` in die Schleife einrücken und damit nach dem ersten Treffer abbrechen."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "enumerate"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 21,
+     "label": "Klausurrelevant: enumerate für Schleifen über Indizes und Werte"
+    },
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "Schleife über range(len(liste)) mit Indexzugriff"
+    }
+   ],
+   "tags": [
+    "for",
+    "enumerate",
+    "listen",
+    "append"
+   ]
+  },
+  {
+   "id": "py-control-014",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Verschachtelte Schleifen: die innere hängt von der äußeren ab",
+   "prompt": "Was gibt der folgende Code aus? Achten Sie darauf, auf welcher Ebene der `print`-Befehl eingerückt ist.",
+   "code": "for i in range(1, 5):\n    zeile = \"\"\n    for j in range(i, 5):\n        zeile = zeile + str(j)\n    print(i, zeile)",
+   "expectedOutput": "1 1234\n2 234\n3 34\n4 4",
+   "solution": "1 1234\n2 234\n3 34\n4 4",
+   "explanation": "Bei verschachtelten Schleifen läuft die **innere Schleife bei jedem Durchlauf der äußeren komplett durch**. Hier hängen ihre Grenzen zusätzlich von der äußeren Laufvariablen ab: `range(i, 5)` startet bei `i` und endet vor 5.\n\n- `i = 1`: `j` läuft über 1, 2, 3, 4 -> `\"1234\"`\n- `i = 2`: `j` läuft über 2, 3, 4 -> `\"234\"`\n- `i = 3`: `j` läuft über 3, 4 -> `\"34\"`\n- `i = 4`: `j` läuft nur über 4 -> `\"4\"`\n\nEntscheidend ist die **Einrückung** des `print`: Es steht auf der Ebene der *inneren for-Zeile*, also im Rumpf der **äußeren** Schleife - und wird deshalb genau vier Mal ausgeführt, jeweils nachdem die innere Schleife fertig ist. Wäre `print` eine Ebene tiefer eingerückt, stünde es im Rumpf der inneren Schleife und es kämen 10 Zeilen heraus. Genau das ist in Python der Unterschied zwischen richtig und falsch: *\"Einrückungen sind Teil des Programms!\"*\n\nEbenso wichtig ist die Zurücksetzung `zeile = \"\"` **innerhalb** der äußeren, aber **außerhalb** der inneren Schleife - dadurch beginnt jede Zeile neu. Merkregel: **Die Einrückung sagt dir, wie oft etwas läuft.**",
+   "hints": [
+    "Schreibe für jeden Wert von `i` auf, welche Werte `j` durchläuft.",
+    "Achte darauf, wo `zeile = \"\"` steht - wann wird die Zeichenkette geleert?",
+    "Wie viele Zeilen erzeugt der `print`-Befehl insgesamt? Schau auf seine Einrückung."
+   ],
+   "pitfalls": [
+    "`print` fälschlich der inneren Schleife zuordnen und 10 Zeilen ausgeben.",
+    "Bei `range(i, 5)` den Wert 5 mit ausgeben.",
+    "Vergessen, dass `zeile` in jedem äußeren Durchlauf zurückgesetzt wird."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL2.pdf",
+     "page": 1,
+     "label": "Aufgabe 2/3: verschachtelte for-Schleifen (Einmaleins, Rechteck-Muster)"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 4,
+     "label": "'Einrückungen sind in Python Teil des Programms!'"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "Verschachtelte for-Schleifen mit i<j"
+    }
+   ],
+   "tags": [
+    "for",
+    "verschachtelte-schleifen",
+    "range",
+    "einrueckung"
+   ]
+  },
+  {
+   "id": "py-control-015",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "code",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": true,
+   "title": "Stein-Schere-Papier-Echse-Spock: alle Paarungen",
+   "prompt": "Gegeben sind eine Liste von Symbolen und eine Liste von Verben. Für **jedes Paar** aus zwei verschiedenen Symbolen gibt es genau ein Verb, und zwar in der Reihenfolge, in der die Paare entstehen, wenn man jedes Symbol mit allen *später* stehenden Symbolen kombiniert.\n\nSchreiben Sie eine Funktion `alle_paarungen(symbols, verbs)`, die die Liste der Sätze `\"<symbol1> <verb> <symbol2>\"` zurückgibt.\n\nBeispiel:\n\n```python\nsymbols = [\"scissors\", \"paper\", \"rock\", \"lizzard\", \"spock\"]\nverbs = [\"cuts\", \"gets crushed by\", \"decapitates\", \"gets smashed by\",\n         \"covers\", \"gets eaten by\", \"disproves\",\n         \"crushes\", \"gets vaporized by\",\n         \"poisons\"]\n```\n\nsoll ergeben:\n\n```\nscissors cuts paper\nscissors gets crushed by rock\nscissors decapitates lizzard\nscissors gets smashed by spock\npaper covers rock\npaper gets eaten by lizzard\npaper disproves spock\nrock crushes lizzard\nrock gets vaporized by spock\nlizzard poisons spock\n```\n\n(als Liste dieser zehn Strings).",
+   "starterCode": "def alle_paarungen(symbols, verbs):\n    \"\"\"\n    symbols: Liste der Symbole\n    verbs:   Liste der Verben, passend zur Reihenfolge der Paare\n    Rückgabe: Liste der Sätze '<symbol1> <verb> <symbol2>'\n    \"\"\"\n    # Ihr Code hier\n",
+   "constraints": [
+    "zwei verschachtelte for-Schleifen",
+    "keine while-Schleife"
+   ],
+   "tests": [
+    {
+     "name": "Stein-Schere-Papier (3 Symbole)",
+     "call": "alle_paarungen(['Stein', 'Schere', 'Papier'], ['schlaegt', 'wird eingewickelt von', 'schneidet'])",
+     "expected": "['Stein schlaegt Schere', 'Stein wird eingewickelt von Papier', 'Schere schneidet Papier']"
+    },
+    {
+     "name": "Alle 10 Paarungen aus der Vorlesung",
+     "call": "alle_paarungen(['scissors', 'paper', 'rock', 'lizzard', 'spock'], ['cuts', 'gets crushed by', 'decapitates', 'gets smashed by', 'covers', 'gets eaten by', 'disproves', 'crushes', 'gets vaporized by', 'poisons'])",
+     "expected": "['scissors cuts paper', 'scissors gets crushed by rock', 'scissors decapitates lizzard', 'scissors gets smashed by spock', 'paper covers rock', 'paper gets eaten by lizzard', 'paper disproves spock', 'rock crushes lizzard', 'rock gets vaporized by spock', 'lizzard poisons spock']"
+    },
+    {
+     "name": "nur ein Symbol -> keine Paarung",
+     "call": "alle_paarungen(['rock'], [])",
+     "expected": "[]"
+    },
+    {
+     "name": "keine Symbole",
+     "call": "alle_paarungen([], [])",
+     "expected": "[]"
+    },
+    {
+     "name": "zwei Symbole",
+     "call": "alle_paarungen(['a', 'b'], ['schlaegt'])",
+     "expected": "['a schlaegt b']"
+    }
+   ],
+   "forbidden": [
+    "while"
+   ],
+   "required": [
+    "for "
+   ],
+   "solution": "def alle_paarungen(symbols, verbs):\n    ergebnis = []\n    zaehler = 0\n    for i in range(len(symbols)):\n        for j in range(i + 1, len(symbols)):\n            ergebnis.append(symbols[i] + \" \" + verbs[zaehler] + \" \" + symbols[j])\n            zaehler = zaehler + 1\n    return ergebnis\n",
+   "explanation": "Diese Aufgabe steht im Vorlesungsmaterial ausdrücklich als *\"Fortgeschrittene Aufgabe wie sie später in einer Klausur vorkommen könnte\"* - sie ist der Prototyp für den vom Dozenten geforderten **Transfer**.\n\nDrei Ideen müssen zusammenkommen:\n\n1. **Jedes Paar genau einmal.** Würde die innere Schleife bei 0 beginnen, kämen auch `rock rock` und jedes Paar in beiden Richtungen heraus. Mit `for j in range(i + 1, len(symbols))` beginnt die innere Schleife immer *hinter* der äußeren - das erzeugt genau die 'obere Dreiecksmatrix'. Alternativ kann man innen bei 0 beginnen und mit `if i < j:` filtern, was der Dozent in einer Variante ebenfalls zeigt.\n2. **Ein eigener Zähler.** Die Verben liegen in *einer* flachen Liste, die Paare entstehen aber in *zwei* Schleifen. Weder `i` noch `j` allein indizieren die Verben richtig - man braucht eine Variable `zaehler`, die **vor beiden Schleifen** auf 0 gesetzt und bei jedem erzeugten Satz um 1 erhöht wird. Setzt man sie innerhalb der äußeren Schleife zurück, werden die Verben mehrfach verwendet.\n3. **Zusammenbauen des Strings** mit `+` und Leerzeichen (oder mit `.format`).\n\nBei 5 Symbolen entstehen 4+3+2+1 = 10 Paare - genau so viele Verben sind angegeben. Merkregel: **Innere Schleife bei `i+1` starten = jedes Paar genau einmal, ohne Selbstpaarung.**",
+   "hints": [
+    "Überlege zuerst, welche Index-Paare (i, j) überhaupt vorkommen sollen: 0-1, 0-2, 0-3, 0-4, 1-2, ...",
+    "Womit muss die innere Schleife starten, damit `j` immer größer als `i` ist?",
+    "Die Verben-Liste wird nicht über `i` oder `j` angesprochen - du brauchst einen eigenen Zähler, der bei jedem erzeugten Satz um eins wächst. Wo muss der initialisiert werden?"
+   ],
+   "pitfalls": [
+    "Die innere Schleife bei 0 starten -> jedes Paar doppelt und zusätzlich 'rock rock'.",
+    "`verbs[i]` oder `verbs[j]` verwenden statt eines eigenen Zählers.",
+    "Den Zähler innerhalb der äußeren Schleife auf 0 zurücksetzen."
+   ],
+   "sources": [
+    {
+     "file": "1_installation_variablen_anweisungen_26.pdf",
+     "page": 22,
+     "label": "'Einfügen der Stein-Schere-Papier-Aufgabe hier' - Vervollständigen sie den folgenden Code"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "'Fortgeschrittene Aufgabe wie sie später in einer Klausur vorkommen könnte'"
+    },
+    {
+     "file": "final_lecture_examples.ipynb",
+     "page": 1,
+     "label": "Variante mit range(i+1, len(symbols))"
+    }
+   ],
+   "tags": [
+    "for",
+    "verschachtelte-schleifen",
+    "range",
+    "listen",
+    "transfer"
+   ]
+  },
+  {
+   "id": "py-control-016",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Fehlersuche: Summe der geraden Zahlen",
+   "prompt": "Ein Kollege von Ihnen hat den folgenden Code geschrieben und Sie um Hilfe bei der Fehlersuche gebeten. Die Funktion soll die Summe aller **geraden** Zahlen einer Liste zurückgeben; für `[2, 3, 4, 6]` also `12`.\n\nIn welchen **3** Zeilen befinden sich Fehler? Benennen Sie jeden Fehler und geben Sie die Korrektur an.",
+   "code": "def summiere_gerade(liste):\n    summe = 0\n    for i in range(1, len(liste)):\n        if liste[i] % 2 = 0:\n            summe = liste[i]\n    return summe\n\nprint(summiere_gerade([2, 3, 4, 6]))",
+   "expectedOutput": "12",
+   "errors": [
+    {
+     "line": 3,
+     "wrong": "for i in range(1, len(liste)):",
+     "fix": "for i in range(len(liste)):",
+     "why": "Die Indizes einer Liste beginnen bei 0. Mit `range(1, len(liste))` wird das erste Element nie angeschaut - im Beispiel fiele die 2 unter den Tisch. Richtig ist `range(len(liste))` (oder gleich `for zahl in liste:`)."
+    },
+    {
+     "line": 4,
+     "wrong": "if liste[i] % 2 = 0:",
+     "fix": "if liste[i] % 2 == 0:",
+     "why": "`=` ist die Zuweisung, `==` der Vergleich. In einer Bedingung muss `==` stehen; sonst bricht Python schon beim Einlesen mit einem SyntaxError ab."
+    },
+    {
+     "line": 5,
+     "wrong": "summe = liste[i]",
+     "fix": "summe = summe + liste[i]",
+     "why": "So wird der bisherige Zwischenstand jedes Mal überschrieben statt erhöht; am Ende bliebe nur die letzte gerade Zahl übrig. Ein Akkumulator muss aufaddieren: `summe = summe + liste[i]` bzw. `summe += liste[i]`."
+    }
+   ],
+   "solution": "def summiere_gerade(liste):\n    summe = 0\n    for i in range(len(liste)):\n        if liste[i] % 2 == 0:\n            summe = summe + liste[i]\n    return summe\n\nprint(summiere_gerade([2, 3, 4, 6]))",
+   "explanation": "Drei Fehler, die zusammen die komplette Fehlerlandschaft von Schleifen abdecken:\n\n**(1) Off-by-one bei den Grenzen.** `range(len(liste))` liefert genau die gültigen Indizes `0 ... len-1`. Wer bei 1 startet, überspringt das erste Element; wer `range(len(liste)+1)` schreibt, läuft in einen `IndexError`. Die eleganteste Lösung vermeidet Indizes ganz: `for zahl in liste:` - Python kann for-Schleifen über beliebige iterierbare Objekte.\n\n**(2) `=` statt `==`.** Das ist der Klassiker schlechthin. `=` *macht* (weist zu), `==` *fragt* (vergleicht). In Python ist das ein harter `SyntaxError` - das Programm startet gar nicht erst, was immerhin ehrlicher ist als ein still falsches Ergebnis.\n\n**(3) Überschreiben statt Akkumulieren.** `summe = liste[i]` wirft den Zwischenstand weg. Ohne die anderen beiden Fehler käme `6` heraus statt `12` - ein Fehler, den kein Interpreter meldet und den man nur durch Nachrechnen findet. Richtig ist `summe = summe + liste[i]` oder die Kurzform `summe += liste[i]`.\n\nNach der Korrektur gibt das Programm `12` aus (2 + 4 + 6). Merkregel: **Grenzen prüfen, `==` statt `=`, und ein Akkumulator addiert immer auf sich selbst.**",
+   "hints": [
+    "Schreibe auf, welche Indizes die for-Schleife tatsächlich durchläuft - und welche es sein müssten.",
+    "Eine der Zeilen lässt Python gar nicht erst starten. Welche Zeile enthält einen echten Syntaxfehler?",
+    "Rechne die Funktion (mit korrigierter Bedingung) im Kopf durch: Was steht am Ende in `summe`, und warum ist das nur die letzte gerade Zahl?"
+   ],
+   "pitfalls": [
+    "Nur den `=`/`==`-Fehler finden und die beiden logischen Fehler übersehen.",
+    "`range(1, len(liste))` für richtig halten, weil 'die Liste ja bei 1 anfängt' - sie fängt bei 0 an.",
+    "`summe = liste[i]` für korrekt halten, weil es 'ja zuweist'."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 7,
+     "label": "'Ein Kollege von Ihnen hat den folgenden Code geschrieben und sie um Hilfe bei der Fehlersuche gebeten'"
+    },
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "Schleife über range(len(liste)) mit Modulo-Test"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 6,
+     "label": "Vergleichsoperatoren: == als Test auf Gleichheit"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "for",
+    "range",
+    "off-by-one",
+    "akkumulator",
+    "vergleichsoperatoren"
+   ]
+  },
+  {
+   "id": "py-control-017",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "break und continue in verschachtelten Schleifen",
+   "prompt": "Was gibt der folgende Code aus?",
+   "code": "for i in range(1, 4):\n    for j in range(1, 4):\n        if j == 2:\n            continue\n        if i == j:\n            break\n        print(i, j)\n    print(\"Ende der inneren Schleife\", i)",
+   "expectedOutput": "Ende der inneren Schleife 1\n2 1\n2 3\nEnde der inneren Schleife 2\n3 1\nEnde der inneren Schleife 3",
+   "solution": "Ende der inneren Schleife 1\n2 1\n2 3\nEnde der inneren Schleife 2\n3 1\nEnde der inneren Schleife 3",
+   "explanation": "Die beiden Schlüsselwörter tun sehr Verschiedenes:\n\n- **`continue`** überspringt nur den **Rest des aktuellen Durchlaufs** und macht mit dem nächsten Wert weiter.\n- **`break`** verlässt die Schleife ganz - aber **nur die innerste**, in der es steht. Die äußere Schleife läuft ungerührt weiter.\n\nDurchlauf für Durchlauf:\n\n- `i = 1`: `j = 1` -> kein `continue`; `i == j` -> **break**. Nichts wurde ausgegeben. Danach folgt die Zeile `print(\"Ende der inneren Schleife\", 1)`, denn sie steht im Rumpf der *äußeren* Schleife.\n- `i = 2`: `j = 1` -> `print(2, 1)`. `j = 2` -> **continue**, also keine Ausgabe. `j = 3` -> `print(2, 3)`. Die innere Schleife ist regulär zu Ende -> `Ende der inneren Schleife 2`.\n- `i = 3`: `j = 1` -> `print(3, 1)`. `j = 2` -> **continue**. `j = 3` -> `i == j` -> **break** -> `Ende der inneren Schleife 3`.\n\nDer häufigste Denkfehler ist, `break` breche *alle* Schleifen ab. Ebenso wichtig: Der Text `\"Ende der inneren Schleife\"` erscheint **auch** nach einem `break`, weil er nicht zur inneren Schleife gehört - wieder eine Frage der Einrückung. Merkregel: **`continue` = nächste Runde, `break` = raus aus genau einer Schleife.**",
+   "hints": [
+    "Notiere für jedes Paar (i, j) der Reihe nach, welche der beiden Bedingungen greift.",
+    "Bei `continue` wird der Rest des Rumpfs übersprungen - kommt `print` dann noch dran?",
+    "Überlege bei `break`: Welche der beiden Schleifen wird verlassen, und was passiert direkt danach?"
+   ],
+   "pitfalls": [
+    "Glauben, `break` beende beide Schleifen.",
+    "Die `Ende der inneren Schleife`-Zeile nach einem `break` weglassen.",
+    "Bei `continue` fälschlich auch die äußere Schleife weiterschalten."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "for-Schleifen über iterierbare Objekte"
+    },
+    {
+     "file": "Beispielaufgaben_VL2.pdf",
+     "page": 1,
+     "label": "verschachtelte for-Schleifen"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 4,
+     "label": "Einrückung als Teil des Programms"
+    }
+   ],
+   "tags": [
+    "break",
+    "continue",
+    "verschachtelte-schleifen",
+    "for"
+   ]
+  },
+  {
+   "id": "py-control-018",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Welche Schleife terminiert nicht?",
+   "prompt": "Der Dozent betont: *\"Es muss sicher gestellt werden, dass boolscher_ausdruck irgendwann False ist!\"*\n\nWelcher der folgenden Code-Abschnitte ist eine **Endlosschleife**?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "```python\ni = 0\nwhile i < 5:\n    print(i)\n    i += 1\n```",
+     "correct": false,
+     "why": "`i` wächst in jedem Durchlauf um 1 und erreicht nach fünf Durchläufen den Wert 5 - dann ist `i < 5` falsch und die Schleife endet."
+    },
+    {
+     "id": "b",
+     "text": "```python\nkarten = [1, 2, 3]\nwhile karten:\n    karten.pop()\n```",
+     "correct": false,
+     "why": "`pop()` entfernt jedes Mal ein Element. Nach drei Durchläufen ist die Liste leer und gilt damit als `False` - die Schleife endet."
+    },
+    {
+     "id": "c",
+     "text": "```python\ni = 10\nwhile i > 0:\n    print(i)\n    i = i + 1\n```",
+     "correct": true,
+     "why": "Richtig: `i` startet bei 10 und wird immer **größer**. `i > 0` wird nie falsch - die Schleife läuft ewig. Die Laufvariable wird zwar verändert, aber in die falsche Richtung."
+    },
+    {
+     "id": "d",
+     "text": "```python\ni = 10\nwhile i > 0:\n    i = i - 3\n```",
+     "correct": false,
+     "why": "`i` nimmt die Werte 7, 4, 1, -2 an. Auch wenn die 0 nie exakt getroffen wird, ist `i > 0` bei -2 falsch und die Schleife endet."
+    }
+   ],
+   "solution": "Antwort c) - `i = i + 1` entfernt sich von der Abbruchbedingung, statt sich ihr zu nähern.",
+   "explanation": "Jede `while`-Schleife braucht drei Zutaten: einen **Startwert**, eine **Abbruchbedingung** und einen **Fortschritt im Rumpf, der auf die Abbruchbedingung hinarbeitet**. Fehlt oder irrt die dritte Zutat, entsteht eine Endlosschleife.\n\nIn Variante c) ist die Laufvariable durchaus veränderlich - aber sie läuft von der Bedingung **weg**: `i` startet bei 10 und wird immer größer, `i > 0` bleibt für immer wahr. Das ist tückischer als eine vergessene Zeile, weil auf den ersten Blick 'etwas passiert'.\n\nVariante d) zeigt eine wichtige Feinheit: Die Abbruchbedingung muss **nicht exakt getroffen** werden. `i` springt von 1 direkt auf -2 und überspringt die 0 - da `>` aber ein Bereichsvergleich ist, endet die Schleife trotzdem. Hätte dort `while i != 0:` gestanden, wäre es tatsächlich eine Endlosschleife gewesen. Deshalb sind bei Zählschleifen `<`, `<=`, `>` und `>=` fast immer sicherer als `==` oder `!=`.\n\nVariante b) ist das Muster aus dem Goofspiel: Die Liste wird durch `pop()` kürzer und ist irgendwann leer - das ist der Fortschritt. Merkregel: **Frage bei jeder `while`-Schleife: Was genau macht die Bedingung irgendwann falsch?**",
+   "hints": [
+    "Prüfe für jede Variante: Welche Größe verändert sich im Rumpf, und in welche Richtung?",
+    "Vergleiche die Richtung der Veränderung mit der Abbruchbedingung - nähert sie sich ihr an?",
+    "Achtung bei Variante d): Muss die Abbruchbedingung exakt getroffen werden, oder reicht 'überschritten'?"
+   ],
+   "pitfalls": [
+    "Variante d) für eine Endlosschleife halten, weil die 0 übersprungen wird.",
+    "Variante b) für eine Endlosschleife halten, weil kein Zähler zu sehen ist.",
+    "Nur prüfen, *ob* sich etwas ändert, statt *in welche Richtung*."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 8,
+     "label": "'Wichtig: Es muss sicher gestellt werden, dass boolscher_ausdruck irgendwann False ist!'"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 17,
+     "label": "while (Liste)"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 6,
+     "label": "Überblick VL 1c: while"
+    }
+   ],
+   "tags": [
+    "while",
+    "endlosschleife",
+    "abbruchbedingung"
+   ]
+  },
+  {
+   "id": "py-control-019",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "while oder for - wann nimmt man was?",
+   "prompt": "Die Wiederholung der Spielzüge im Goofspiel wurde in der Vorlesung zuerst mit einer `while`-Schleife umgesetzt (siehe Code unten).\n\na) Erklären Sie in zwei bis drei Sätzen, wann man sinnvollerweise eine `while`-Schleife und wann eine `for`-Schleife verwendet.\nb) Schreiben Sie die unten gezeigte Schleife so um, dass sie eine `for`-Schleife verwendet, und geben Sie an, was `karte` dann in jedem Durchlauf enthält.\nc) Worauf muss man bei einer `while`-Schleife zwingend achten - und wieso stellt sich diese Frage bei einer `for`-Schleife über eine Liste nicht?",
+   "code": "preiskarten = [4, 6, 3]\nsumme = 0\nwhile preiskarten:\n    karte = preiskarten.pop()\n    summe = summe + karte\nprint(summe)",
+   "solution": "**Musterlösung**\n\n**a)** Eine `for`-Schleife nimmt man, wenn von vornherein feststeht, **worüber** iteriert wird - also über ein iterierbares Objekt (Liste, String, `range(a, b, c)`). Die Anzahl der Durchläufe ist dann durch das Objekt bestimmt.\nEine `while`-Schleife nimmt man, wenn die Anzahl der Durchläufe vorher **nicht bekannt** ist und nur eine Bedingung angegeben werden kann - z. B. 'solange der Benutzer die Zahl noch nicht erraten hat', 'solange noch Preiskarten da sind' oder 'solange der Spieler weiterwürfeln will'.\n\n**b)** Umschreiben:\n\n```python\npreiskarten = [4, 6, 3]\nsumme = 0\nfor karte in preiskarten:\n    summe = summe + karte\nprint(summe)\n```\n\n`karte` enthält in jedem Durchlauf **direkt ein Element der Liste** (nacheinander 4, 6 und 3) - nicht dessen Index. Die Ausgabe ist in beiden Fällen `13`. Ein Unterschied bleibt: Die `while`-Variante leert die Liste per `pop()`, die `for`-Variante lässt sie unverändert; außerdem läuft `for` von vorne nach hinten, `pop()` von hinten nach vorne (für die Summe spielt das keine Rolle).\n\n**c)** Bei `while` muss sichergestellt sein, dass der boolsche Ausdruck **irgendwann `False`** wird - der Rumpf muss also etwas verändern, das in der Bedingung vorkommt (Zähler erhöhen, Liste verkleinern, Flag umsetzen). Sonst entsteht eine Endlosschleife. Bei einer `for`-Schleife über eine Liste stellt sich die Frage nicht, weil die Liste endlich ist und Python den Fortschritt selbst übernimmt - die Schleife endet automatisch nach dem letzten Element.\n\n**Bewertungsrubrik (3 P)**\n- 1 P (a): `for` bei bekanntem/iterierbarem Umfang, `while` bei nur bedingungsbasiertem Abbruch.\n- 1 P (b): korrekte `for`-Schleife über die Liste **und** Aussage, dass `karte` das Element (nicht den Index) enthält.\n- 1 P (c): Bedingung muss irgendwann `False` werden / Endlosschleife vermeiden; bei `for` übernimmt Python den Fortschritt.",
+   "explanation": "Der Dozent stellt genau diese Umbau-Aufgabe als mögliche Übung: *\"Ändern sie das Programm so, dass es eine for-Schleife statt einer while-Schleife verwendet.\"* Dahinter steckt eine konzeptionelle Unterscheidung, die in der Klausur als Kurzfrage auftauchen kann.\n\n**`for` ist eine Iteration über Daten.** In Python ist sie bewusst allgemeiner als in vielen anderen Sprachen: `for x in objekt` läuft über *jedes* iterierbare Objekt - Listen, Strings, `range`, `enumerate`. Die Variante `for i in range(len(liste))` ist die 'anderen Programmiersprachen ähnlichste Art', aber meist unnötig umständlich.\n\n**`while` ist eine Iteration über einen Zustand.** Hier gibt es kein Objekt, das man abklappern könnte, sondern nur eine Bedingung. Deshalb liegt die Verantwortung für den Fortschritt beim Programmierer - und deshalb warnt die Vorlesungsfolie ausdrücklich davor, das zu vergessen.\n\nDer typische Denkfehler ist, `while` für 'moderner' oder `for` für 'nur für Zahlen' zu halten. Merkregel: **Weiß ich, *worüber* ich laufe -> `for`. Weiß ich nur, *wann Schluss ist* -> `while`.**",
+   "hints": [
+    "Frage dich: Steht vor dem ersten Durchlauf fest, wie oft die Schleife laufen wird?",
+    "Überlege bei b), was hinter dem `in` stehen muss, damit du direkt die Kartenwerte bekommst.",
+    "Bei c) hilft die Warnung der Vorlesungsfolie zu while-Schleifen."
+   ],
+   "pitfalls": [
+    "Behaupten, `for` funktioniere nur mit `range` - Python iteriert über beliebige iterierbare Objekte.",
+    "Bei b) `for karte in range(len(preiskarten))` schreiben - dann enthält `karte` den Index, nicht den Wert.",
+    "Bei c) nur 'Endlosschleife' nennen, ohne zu sagen, dass der Rumpf die Bedingung beeinflussen muss."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 21,
+     "label": "'Ändern sie das Programm so, dass es eine for-Schleife statt einer while-Schleife verwendet.'"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "Im Nachgang: for-loops über iterierbare Objekte"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 8,
+     "label": "Warnung zur Abbruchbedingung bei while"
+    }
+   ],
+   "tags": [
+    "while",
+    "for",
+    "iterierbar",
+    "kurzfrage"
+   ]
+  },
+  {
+   "id": "py-control-020",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Das kleine Einmaleins als Tabelle",
+   "prompt": "Schreiben Sie eine Funktion `einmaleins(n)`, die das kleine Einmaleins bis `n` als Liste von Zeilen zurückgibt. Zeile `i` enthält die Produkte `i*1`, `i*2`, ... , `i*n`, jeweils durch **genau ein Leerzeichen** getrennt.\n\nBeispiel: `einmaleins(3)` -> `['1 2 3', '2 4 6', '3 6 9']`\n\nFür `n = 0` ist das Ergebnis die leere Liste.",
+   "starterCode": "def einmaleins(n):\n    \"\"\"\n    n: größter Faktor (int, >= 0)\n    Rückgabe: Liste von n Strings; Zeile i enthält i*1 ... i*n, durch Leerzeichen getrennt\n    \"\"\"\n    # Ihr Code hier\n",
+   "constraints": [
+    "zwei verschachtelte for-Schleifen",
+    "keine while-Schleife"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "einmaleins(3)",
+     "expected": "['1 2 3', '2 4 6', '3 6 9']"
+    },
+    {
+     "name": "n = 1",
+     "call": "einmaleins(1)",
+     "expected": "['1']"
+    },
+    {
+     "name": "n = 0 -> leere Tabelle",
+     "call": "einmaleins(0)",
+     "expected": "[]"
+    },
+    {
+     "name": "n = 4, mehrstellige Produkte",
+     "call": "einmaleins(4)",
+     "expected": "['1 2 3 4', '2 4 6 8', '3 6 9 12', '4 8 12 16']"
+    },
+    {
+     "name": "Anzahl der Zeilen",
+     "call": "len(einmaleins(10))",
+     "expected": "10"
+    },
+    {
+     "name": "letzte Zeile bei n = 10",
+     "call": "einmaleins(10)[9]",
+     "expected": "'10 20 30 40 50 60 70 80 90 100'"
+    }
+   ],
+   "forbidden": [
+    "while"
+   ],
+   "required": [
+    "for "
+   ],
+   "solution": "def einmaleins(n):\n    tabelle = []\n    for i in range(1, n + 1):\n        zeile = \"\"\n        for j in range(1, n + 1):\n            if j > 1:\n                zeile = zeile + \" \"\n            zeile = zeile + str(i * j)\n        tabelle.append(zeile)\n    return tabelle\n",
+   "explanation": "Die klassische Aufgabe zu verschachtelten Schleifen aus den Übungsaufgaben zur 2. Vorlesung: *\"Die äußere Schleife läuft über die Zahlen 1 bis 10 (Zeilen), die innere Schleife läuft ebenfalls über 1 bis 10 (Spalten).\"*\n\nZwei Details entscheiden über richtig oder falsch:\n\n**1. Die Grenzen.** Das Einmaleins beginnt bei 1, nicht bei 0, und soll `n` **einschließen** - also `range(1, n + 1)`. Wer `range(n)` schreibt, bekommt eine Zeile mit lauter Nullen; wer `range(1, n)` schreibt, verliert die letzte Zeile und Spalte. Für `n = 0` ist `range(1, 1)` leer, sodass automatisch die leere Liste zurückkommt - der Sonderfall braucht keine eigene Behandlung.\n\n**2. Die Trennzeichen.** Zwischen zwei Zahlen steht ein Leerzeichen, aber nicht am Anfang oder Ende. Deshalb wird das Leerzeichen *vor* jeder Zahl außer der ersten eingefügt (`if j > 1`). Wer stattdessen nach jeder Zahl ein Leerzeichen anhängt, erzeugt ein überzähliges Zeichen am Zeilenende - im Ausdruck unsichtbar, im Test aber ein Fehlschlag.\n\nWichtig ist außerdem, dass `zeile = \"\"` **innerhalb** der äußeren, aber **außerhalb** der inneren Schleife steht: Jede Zeile beginnt leer, wächst in der inneren Schleife und wird danach angehängt. Merkregel: **Äußere Schleife = Zeile, innere Schleife = Spalte; zurücksetzen zwischen beiden.**",
+   "hints": [
+    "Die äußere Schleife erzeugt die Zeilen, die innere die einzelnen Zahlen einer Zeile.",
+    "Überlege genau, welche Werte `range` liefern muss, damit du bei 1 startest und `n` noch dabei ist.",
+    "Achte auf die Leerzeichen: zwischen den Zahlen ja, am Zeilenende nein."
+   ],
+   "pitfalls": [
+    "`range(n)` statt `range(1, n + 1)` verwenden.",
+    "Ein überflüssiges Leerzeichen am Ende jeder Zeile stehen lassen.",
+    "`zeile = \"\"` vor die äußere Schleife setzen - dann landen alle Produkte in einer einzigen Zeile."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL2.pdf",
+     "page": 1,
+     "label": "Aufgabe 2: Ein kleines Einmaleins mit zwei verschachtelten for-Schleifen"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "for-Schleifen mit range"
+    }
+   ],
+   "tags": [
+    "for",
+    "verschachtelte-schleifen",
+    "range",
+    "strings"
+   ]
+  },
+  {
+   "id": "py-control-021",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Fehlersuche: die while-Schleife, die nie endet",
+   "prompt": "Die folgende Funktion soll für `n = 5` die Liste `[1, 2, 3, 4, 5]` liefern. Tatsächlich lässt sich das Programm nicht einmal starten - und selbst danach würde es hängenbleiben.\n\nDer Code enthält **3** Fehler (zwei davon in derselben Zeile). Benennen Sie jeden Fehler und geben Sie die Korrektur an.",
+   "code": "def zaehle_bis(n):\n    i = 1\n    ergebnis = []\n    while i < n\n        ergebnis.append(i)\n    i = i + 1\n    return ergebnis\n\nprint(zaehle_bis(5))",
+   "expectedOutput": "[1, 2, 3, 4, 5]",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "while i < n        (Doppelpunkt fehlt)",
+     "fix": "while i < n:       (Doppelpunkt ergänzen)",
+     "why": "Der Doppelpunkt am Ende der `while`-Zeile fehlt. Jede Kopfzeile einer Kontrollstruktur (`if`, `elif`, `else`, `while`, `for`, `def`) endet in Python mit `:`; ohne ihn gibt es einen SyntaxError und das Programm startet gar nicht."
+    },
+    {
+     "line": 4,
+     "wrong": "while i < n        (falscher Vergleichsoperator)",
+     "fix": "while i <= n:",
+     "why": "Off-by-one: Mit `i < n` bricht die Schleife bei `i = 5` ab, die 5 landet also nie in der Liste. Gefordert ist `[1, 2, 3, 4, 5]`, also muss `i <= n` geprüft werden."
+    },
+    {
+     "line": 6,
+     "wrong": "    i = i + 1   (nicht eingerückt, steht außerhalb der Schleife)",
+     "fix": "        i = i + 1   (eine Ebene tiefer, in den Schleifenrumpf)",
+     "why": "Die Zeile ist nur auf Funktionsebene eingerückt und gehört damit **nicht** zum Rumpf der while-Schleife. `i` bleibt in der Schleife für immer 1, die Bedingung wird nie falsch: eine Endlosschleife, die die Liste unbegrenzt füllt. Die Einrückung ist in Python Teil des Programms."
+    }
+   ],
+   "solution": "def zaehle_bis(n):\n    i = 1\n    ergebnis = []\n    while i <= n:\n        ergebnis.append(i)\n        i = i + 1\n    return ergebnis\n\nprint(zaehle_bis(5))",
+   "explanation": "Drei Fehler, die genau die drei Dinge treffen, auf die man bei `while` achten muss.\n\n**(1) Der fehlende Doppelpunkt.** Jede Kopfzeile einer Kontrollstruktur endet mit `:`. Das ist der häufigste reine Syntaxfehler bei Kontrollstrukturen und fällt sofort auf, weil das Programm gar nicht erst startet.\n\n**(2) Off-by-one bei der Bedingung.** `i < n` schließt `n` aus, `i <= n` schließt `n` ein. Das ist genau der Unterschied zwischen den Vergleichsoperatoren `<` und `<=` aus der Operatorentabelle - und die häufigste Ursache dafür, dass in einer Ausgabe der letzte Wert fehlt.\n\n**(3) Die falsch eingerückte Zeile.** Das ist der interessanteste Fehler: Syntaktisch ist `i = i + 1` auf Funktionsebene völlig korrekt, aber semantisch katastrophal. Die Zeile läuft erst **nach** dem Ende der Schleife - und da die Schleife nie endet, läuft sie nie. `i` bleibt 1, `1 <= 5` bleibt wahr, die Liste wächst endlos. Der Dozent betont deshalb: *\"Einrückungen sind in Python Teil des Programms! Sie haben einen Einfluss auf die Bedeutung und Funktionsweise des Codes!\"* und *\"Es muss sicher gestellt werden, dass boolscher_ausdruck irgendwann False ist!\"*\n\nNach der Korrektur gibt das Programm `[1, 2, 3, 4, 5]` aus. Merkregel: **Doppelpunkt, richtige Grenze, Fortschritt im Rumpf - fehlt eines davon, ist die Schleife kaputt.**",
+   "hints": [
+    "Eine Zeile enthält einen reinen Syntaxfehler - vergleiche die Kopfzeile mit denen aus der Vorlesung.",
+    "Rechne durch, welche Werte in `ergebnis` landen würden. Fehlt am Ende etwas?",
+    "Schau dir die Einrückung von `i = i + 1` an: Wann genau wird diese Zeile ausgeführt?"
+   ],
+   "pitfalls": [
+    "Nur den fehlenden Doppelpunkt finden und die Einrückung übersehen.",
+    "Die Einrückung von `i = i + 1` für reine Kosmetik halten.",
+    "`i < n` für richtig halten, weil es 'bei range ja auch so ist' - hier ist keine range im Spiel."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 8,
+     "label": "While-loops: Bedingung muss irgendwann False sein"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 4,
+     "label": "'Einrückungen sind in Python Teil des Programms!'"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 6,
+     "label": "Vergleichsoperatoren < und <="
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "while",
+    "endlosschleife",
+    "einrueckung",
+    "off-by-one",
+    "syntax"
+   ]
+  },
+  {
+   "id": "py-control-022",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "multi-mc",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": false,
+   "title": "Welche Aussagen über Kontrollstrukturen sind richtig?",
+   "prompt": "Kreuzen Sie **alle** zutreffenden Aussagen an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Ein `elif`-Zweig wird nur dann geprüft, wenn alle vorherigen `if`- und `elif`-Bedingungen `False` waren.",
+     "correct": true,
+     "why": "Richtig - genau das unterscheidet `elif` von einem weiteren, eigenständigen `if`."
+    },
+    {
+     "id": "b",
+     "text": "In Python entscheidet die Einrückung darüber, welche Anweisungen zum Rumpf einer Schleife oder Verzweigung gehören.",
+     "correct": true,
+     "why": "Richtig - 'Einrückungen sind in Python Teil des Programms! Sie haben einen Einfluss auf die Bedeutung und Funktionsweise des Codes!' Andere Sprachen wie Java nutzen dafür geschweifte Klammern."
+    },
+    {
+     "id": "c",
+     "text": "`range(a, b, c)` enthält immer auch den Wert `b`.",
+     "correct": false,
+     "why": "Falsch - der Endwert `b` ist **exklusiv**. `range(1, 4)` liefert 1, 2, 3."
+    },
+    {
+     "id": "d",
+     "text": "`while liste:` führt den Rumpf aus, solange die Liste nicht leer ist.",
+     "correct": true,
+     "why": "Richtig - die 'schöne Python-Vereinfachung' aus der Vorlesung: eine nichtleere Liste gilt als `True`, die leere Liste `[]` als `False`."
+    },
+    {
+     "id": "e",
+     "text": "`break` beendet in verschachtelten Schleifen alle Schleifen auf einmal.",
+     "correct": false,
+     "why": "Falsch - `break` verlässt nur die **innerste** Schleife, in der es steht. Die äußere läuft weiter."
+    },
+    {
+     "id": "f",
+     "text": "Bei `a > 0 and f(a)` wird `f(a)` gar nicht aufgerufen, wenn `a > 0` bereits `False` ist.",
+     "correct": true,
+     "why": "Richtig - das ist die Kurzschlussauswertung: bei `and` steht das Ergebnis nach einem `False` links bereits fest."
+    },
+    {
+     "id": "g",
+     "text": "Eine `for`-Schleife in Python kann nur über Zahlen aus `range(...)` laufen.",
+     "correct": false,
+     "why": "Falsch - 'in Python können for-Schleifen auch noch allgemeiner, nämlich für beliebige iterierbare Objekte verwendet werden', z. B. Listen, Strings oder `enumerate(...)`."
+    }
+   ],
+   "solution": "Richtig sind a), b), d) und f).",
+   "explanation": "Die sieben Aussagen decken die vier häufigsten Missverständnisse rund um Kontrollstrukturen ab.\n\n**`elif` (a)** ist kein zweites `if`, sondern der Teil *einer* Verzweigung: nur der erste zutreffende Zweig wird ausgeführt.\n\n**Einrückung (b)** ist in Python nicht nur Formatierung, sondern Syntax. Wer aus Java kommt, sucht hier nach geschweiften Klammern - in Python übernimmt die Einrückung deren Rolle vollständig.\n\n**Exklusiver Endwert (c)** ist die häufigste Off-by-one-Quelle. Dafür gilt: `range(n)` hat genau `n` Elemente und `range(len(liste))` liefert genau die gültigen Indizes.\n\n**`while liste:` (d)** nutzt aus, dass Objekte in boolschen Kontexten automatisch als wahr oder falsch gelten - leere Liste `False`, nichtleere Liste `True`. Der Dozent nennt das eine 'schöne Python-Vereinfachung'.\n\n**`break` (e)** wirkt nur auf die innerste Schleife. Wer wirklich aus beiden ausbrechen will, braucht ein Flag oder eine Funktion mit `return`.\n\n**Kurzschlussauswertung (f)** erlaubt Schutzabfragen wie `if len(l) > 0 and l[0] == 5:`.\n\n**Allgemeine `for`-Schleife (g)**: `range` ist nur *ein* iterierbares Objekt unter vielen. Merkregel: **In Python iteriert `for` über Objekte, nicht über Zähler.**",
+   "hints": [
+    "Gehe jede Aussage einzeln durch und suche jeweils ein konkretes Gegenbeispiel.",
+    "Bei c) hilft es, `range(1, 4)` auszuschreiben.",
+    "Bei e) denke an eine verschachtelte Schleife: Was passiert direkt nach dem `break`?"
+   ],
+   "pitfalls": [
+    "Aussage g) für richtig halten, weil `range` das erste Beispiel in der Vorlesung war.",
+    "Aussage e) für richtig halten - `break` wirkt nur eine Ebene.",
+    "Aussage b) für eine reine Stilfrage halten."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 22,
+     "label": "Klausurrelevante Dinge/Befehle VL 1c"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "for-Schleifen für beliebige iterierbare Objekte"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 17,
+     "label": "while (Liste)"
+    }
+   ],
+   "tags": [
+    "if",
+    "elif",
+    "for",
+    "while",
+    "range",
+    "break",
+    "einrueckung",
+    "kurzschlussauswertung"
+   ]
+  },
+  {
+   "id": "py-control-023",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Rechteck-Muster mit Rand",
+   "prompt": "Das folgende Programm soll ein Rechteck aus Sternchen zeichnen, bei dem **nur der Rand** aus Sternchen besteht und die Mitte mit Leerzeichen gefüllt ist. Für `rechteck(8, 5)` soll also entstehen:\n\n```\n********\n*      *\n*      *\n*      *\n********\n```\n\nFüllen Sie die beiden Lücken mit je einem boolschen Ausdruck.\n\n*Hinweis: Am Rand sind Sie, wenn Sie in der ersten oder letzten Zeile sind oder in der ersten oder letzten Spalte.*",
+   "code": "def rechteck(breite, hoehe):\n    zeilen = []\n    for zeile in range(hoehe):\n        text = \"\"\n        for spalte in range(breite):\n            if ## Lücke 1 ## or ## Lücke 2 ##:\n                text = text + \"*\"\n            else:\n                text = text + \" \"\n        zeilen.append(text)\n    return zeilen\n\nfor z in rechteck(8, 5):\n    print(z)",
+   "expectedOutput": "********\n*      *\n*      *\n*      *\n********",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "zeile == 0 or zeile == hoehe - 1",
+      "zeile == 0 or zeile == hoehe-1",
+      "(zeile == 0 or zeile == hoehe - 1)",
+      "zeile == 0 or zeile == hoehe - 1 ",
+      "zeile == hoehe - 1 or zeile == 0"
+     ],
+     "explanation": "Erste Zeile ist `zeile == 0`, letzte Zeile ist `zeile == hoehe - 1` - denn `range(hoehe)` läuft von 0 bis `hoehe - 1`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "spalte == 0 or spalte == breite - 1",
+      "spalte == 0 or spalte == breite-1",
+      "(spalte == 0 or spalte == breite - 1)",
+      "spalte == breite - 1 or spalte == 0"
+     ],
+     "explanation": "Analog für die Spalten: erste Spalte `spalte == 0`, letzte Spalte `spalte == breite - 1`."
+    }
+   ],
+   "solution": "def rechteck(breite, hoehe):\n    zeilen = []\n    for zeile in range(hoehe):\n        text = \"\"\n        for spalte in range(breite):\n            if zeile == 0 or zeile == hoehe - 1 or spalte == 0 or spalte == breite - 1:\n                text = text + \"*\"\n            else:\n                text = text + \" \"\n        zeilen.append(text)\n    return zeilen\n\nfor z in rechteck(8, 5):\n    print(z)",
+   "explanation": "Diese Aufgabe stammt aus den Übungsaufgaben zur 2. Vorlesung und kombiniert verschachtelte Schleifen mit einer zusammengesetzten boolschen Bedingung.\n\nDer Kern ist die Übersetzung der umgangssprachlichen Regel *\"am Rand bin ich, wenn ich in der ersten **oder** letzten Zeile **oder** in der ersten **oder** letzten Spalte bin\"* in vier mit `or` verknüpfte Vergleiche. Vier Bedingungen, alle mit `or` - denn es genügt, dass **eine** davon zutrifft.\n\nDie zweite Hürde sind die Indexgrenzen: `range(hoehe)` liefert `0, 1, ... , hoehe - 1`. Die letzte Zeile hat also den Index `hoehe - 1`, **nicht** `hoehe`. Wer `zeile == hoehe` schreibt, bekommt ein Rechteck ohne untere Kante - der klassische Off-by-one.\n\nDer typische Denkfehler ist, hier `and` statt `or` zu verwenden: `zeile == 0 and spalte == 0` wäre nur die eine Ecke oben links. Wer 'und' im deutschen Satz hört ('erste und letzte Zeile'), muss aufpassen - gemeint ist immer 'entweder ... oder ...', also `or`.\n\nMerkregel: **'Ich bin am Rand, wenn *irgendeine* Randbedingung zutrifft' -> lauter `or`.**",
+   "hints": [
+    "Welchen Index hat die erste Zeile, welchen die letzte? Denke daran, dass `range(hoehe)` bei 0 beginnt.",
+    "Die Regel 'erste ODER letzte' braucht zwei Vergleiche, verknüpft mit einem logischen Operator.",
+    "Formuliere Lücke 2 genau analog zu Lücke 1 - nur mit `spalte` und `breite`."
+   ],
+   "pitfalls": [
+    "`zeile == hoehe` statt `zeile == hoehe - 1` schreiben (Off-by-one).",
+    "`and` statt `or` verwenden - dann werden nur die Ecken bzw. gar nichts markiert.",
+    "Zeilen- und Spaltenvariablen vertauschen und `breite` mit `hoehe` verwechseln."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL2.pdf",
+     "page": 1,
+     "label": "Aufgabe 3: Rechteck-Muster mit Rand, zwei verschachtelte for-Schleifen"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 6,
+     "label": "and / or / not"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "range und for-Schleifen"
+    }
+   ],
+   "tags": [
+    "for",
+    "verschachtelte-schleifen",
+    "or",
+    "range",
+    "off-by-one"
+   ]
+  },
+  {
+   "id": "py-control-024",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "mc",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Eine Liste während der for-Schleife verändern",
+   "prompt": "Der folgende Code soll alle geraden Zahlen aus der Liste entfernen. Was gibt er tatsächlich aus?",
+   "code": "zahlen = [1, 2, 4, 5, 6]\nfor z in zahlen:\n    if z % 2 == 0:\n        zahlen.remove(z)\nprint(zahlen)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`[1, 5]`",
+     "correct": false,
+     "why": "Das wäre das *gewünschte* Ergebnis - der Code erreicht es aber nicht, weil sich die Liste während der Iteration verschiebt."
+    },
+    {
+     "id": "b",
+     "text": "`[1, 4, 5]`",
+     "correct": true,
+     "why": "Richtig: Nach dem Entfernen der 2 rutschen alle folgenden Elemente einen Platz nach vorne, sodass die 4 vom internen Zähler übersprungen wird."
+    },
+    {
+     "id": "c",
+     "text": "`[1, 4, 5, 6]`",
+     "correct": false,
+     "why": "Die 6 wird tatsächlich noch entfernt: Nach dem Entfernen der 2 steht die 6 an Index 3 und wird im vierten Durchlauf erreicht."
+    },
+    {
+     "id": "d",
+     "text": "Ein Fehler (`RuntimeError`), weil eine Liste während der Iteration nicht verändert werden darf.",
+     "correct": false,
+     "why": "In Python ist das erlaubt und wirft keinen Fehler - genau das macht die Falle so gefährlich. (Bei Dictionaries während der Iteration gibt es dagegen tatsächlich einen RuntimeError.)"
+    }
+   ],
+   "solution": "Antwort b) - die Ausgabe ist `[1, 4, 5]`.",
+   "explanation": "Eine `for`-Schleife über eine Liste merkt sich intern eine **Position** und holt in jedem Durchlauf das Element an dieser Position - sie merkt sich nicht die Elemente selbst. Wird die Liste dabei kürzer, rutscht alles nach, die Position wandert aber trotzdem weiter:\n\n| Durchlauf | Position | `z` | Liste danach |\n|---|---|---|---|\n| 1 | 0 | 1 | `[1, 2, 4, 5, 6]` |\n| 2 | 1 | 2 | `[1, 4, 5, 6]` (2 entfernt) |\n| 3 | 2 | **5** | `[1, 4, 5, 6]` - die 4 wurde übersprungen! |\n| 4 | 3 | 6 | `[1, 4, 5]` (6 entfernt) |\n| 5 | 4 | - | Liste hat nur noch 3 Elemente -> Schleife endet |\n\nErgebnis: `[1, 4, 5]`. Die 4 überlebt, obwohl sie gerade ist - und man bekommt **keinerlei Fehlermeldung**. Das ist ein still falsches Programm, die gefährlichste Fehlersorte überhaupt.\n\nRichtig macht man es, indem man **nicht** die Liste verändert, über die man läuft: entweder über eine Kopie iterieren (`for z in zahlen.copy():`), oder - besser - eine **neue** Liste aufbauen (`ergebnis = []` und die ungeraden Zahlen anhängen). Später in der Vorlesung kommt dafür das saubere funktionale Werkzeug `filter`.\n\nMerkregel: **Niemals die Liste verändern, über die man gerade iteriert.**",
+   "hints": [
+    "Eine for-Schleife merkt sich intern einen Index, nicht die einzelnen Elemente. Was passiert mit den Indizes, wenn ein Element verschwindet?",
+    "Schreibe die Liste nach jedem Durchlauf neu auf und markiere, an welcher Position die Schleife als nächstes nachschaut.",
+    "Achte darauf, wann die Schleife endet: Sie stoppt, sobald die Position hinter dem letzten Element liegt."
+   ],
+   "pitfalls": [
+    "Das gewünschte Ergebnis `[1, 5]` angeben, statt den Code wirklich Schritt für Schritt durchzuspielen.",
+    "Einen Laufzeitfehler erwarten - Python erlaubt das Entfernen klaglos.",
+    "Annehmen, `remove` entferne alle Vorkommen - es entfernt nur das erste."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 14,
+     "label": "Manipulation von Listen: append, insert, remove"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "for-Schleifen über Listen"
+    },
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "runde_ungerade_zahlen_auf: arbeitet bewusst auf liste.copy()"
+    }
+   ],
+   "tags": [
+    "for",
+    "listen",
+    "remove",
+    "mutable",
+    "falle"
+   ]
+  },
+  {
+   "id": "py-control-025",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "code",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": true,
+   "title": "Push Your Luck: eine Runde auswerten",
+   "prompt": "Beim Würfelspiel *Push Your Luck* würfelt ein Spieler mehrfach hintereinander und sammelt die Augen. Es gelten zwei Regeln:\n\n1. Würfelt er eine **1**, ist die Runde sofort vorbei und **alle** Punkte der Runde sind verloren (0 Punkte).\n2. Erreicht die Rundensumme den Wert `grenze` oder mehr, hört er **sofort** auf und behält die Punkte.\n\nSchreiben Sie eine Funktion `runde_auswerten(wuerfe, grenze)`. `wuerfe` ist die Liste der Würfe in der Reihenfolge, in der sie geworfen würden. Die Funktion gibt ein Tupel `(punkte, anzahl_ausgefuehrter_wuerfe)` zurück - Würfe, zu denen es wegen Regel 1 oder 2 gar nicht mehr kommt, zählen nicht mit.\n\nBeispiele:\n\n- `runde_auswerten([3, 4, 5, 6], 6)` -> `(7, 2)` (3, dann 4 -> Summe 7 >= 6, Stopp)\n- `runde_auswerten([2, 1, 5], 20)` -> `(0, 2)` (die 1 vernichtet die Runde)\n- `runde_auswerten([2, 3], 20)` -> `(5, 2)` (Würfe gehen aus, bevor die Grenze erreicht ist)",
+   "starterCode": "def runde_auswerten(wuerfe, grenze):\n    \"\"\"\n    wuerfe: Liste der Würfelergebnisse in der geworfenen Reihenfolge\n    grenze: ab dieser Rundensumme hört der Spieler auf\n    Rückgabe: Tupel (punkte, anzahl_ausgefuehrter_wuerfe)\n    \"\"\"\n    # Ihr Code hier\n",
+   "constraints": [
+    "for-Schleife über die Würfe",
+    "keine while-Schleife"
+   ],
+   "tests": [
+    {
+     "name": "Grenze erreicht -> Stopp",
+     "call": "runde_auswerten([3, 4, 5, 6], 6)",
+     "expected": "(7, 2)"
+    },
+    {
+     "name": "eine 1 vernichtet die Runde",
+     "call": "runde_auswerten([2, 1, 5], 20)",
+     "expected": "(0, 2)"
+    },
+    {
+     "name": "Würfe gehen aus",
+     "call": "runde_auswerten([2, 3], 20)",
+     "expected": "(5, 2)"
+    },
+    {
+     "name": "gar keine Würfe",
+     "call": "runde_auswerten([], 10)",
+     "expected": "(0, 0)"
+    },
+    {
+     "name": "sofort eine 1",
+     "call": "runde_auswerten([1], 5)",
+     "expected": "(0, 1)"
+    },
+    {
+     "name": "erster Wurf reicht schon",
+     "call": "runde_auswerten([6, 6], 5)",
+     "expected": "(6, 1)"
+    },
+    {
+     "name": "Grenze exakt getroffen",
+     "call": "runde_auswerten([2, 2, 2, 4], 6)",
+     "expected": "(6, 3)"
+    }
+   ],
+   "forbidden": [
+    "while"
+   ],
+   "required": [
+    "for "
+   ],
+   "solution": "def runde_auswerten(wuerfe, grenze):\n    punkte = 0\n    anzahl = 0\n    for wurf in wuerfe:\n        anzahl = anzahl + 1\n        if wurf == 1:\n            return (0, anzahl)\n        punkte = punkte + wurf\n        if punkte >= grenze:\n            break\n    return (punkte, anzahl)\n",
+   "explanation": "Die Aufgabe verlangt den Transfer der Kontrollstrukturen auf ein Spiel mit **zwei verschiedenen Abbruchgründen** - genau die Art von Übung, die der Dozent für die Klausur empfiehlt (Push Your Luck, Kniffel-Light, Mäxchen).\n\nEntscheidend ist die **Reihenfolge im Schleifenrumpf**:\n\n1. Zuerst `anzahl` erhöhen - der Wurf hat ja stattgefunden, egal wie er ausgeht.\n2. Dann die 1 prüfen. Sie muss **vor** dem Aufaddieren behandelt werden, denn die Augenzahl 1 darf nicht in die Punkte einfließen - die Runde ist ohnehin verloren. Hier ist `return (0, anzahl)` das Mittel der Wahl: es verlässt Schleife *und* Funktion auf einen Schlag.\n3. Erst danach die Punkte addieren und die Grenze prüfen. Die Prüfung muss **nach** der Addition stehen, sonst würde die Grenze immer einen Wurf zu spät bemerkt.\n4. `break` beendet nur die Schleife; das gemeinsame `return (punkte, anzahl)` hinter der Schleife deckt damit **beide** regulären Enden ab: 'Grenze erreicht' und 'Würfe aufgebraucht'.\n\nWer statt `break` ein zweites `return (punkte, anzahl)` schreibt, bekommt dasselbe Ergebnis - das ist völlig in Ordnung. Wer die Grenze dagegen **vor** der Addition prüft, liefert bei `[3, 4, 5, 6]` das falsche Ergebnis `(12, 3)`.\n\nMerkregel: **Erst zählen, dann verlieren prüfen, dann addieren, dann aufhören prüfen.**",
+   "hints": [
+    "Du brauchst zwei Zähler, die vor der Schleife initialisiert werden: die Punkte und die Anzahl der Würfe.",
+    "Überlege genau, ob die Augenzahl 1 noch zu den Punkten addiert werden darf - und ob dieser Wurf trotzdem mitgezählt wird.",
+    "Für den Fall 'Grenze erreicht' brauchst du ein `break`; teste die Grenze *nachdem* du die Augen addiert hast."
+   ],
+   "pitfalls": [
+    "Die Grenze vor dem Addieren prüfen - dann wird ein Wurf zu viel gemacht.",
+    "Beim Wurf einer 1 die `anzahl` nicht mitzählen.",
+    "Bei einer 1 die Augenzahl trotzdem addieren, bevor auf 0 zurückgesetzt wird."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 19,
+     "label": "Runden mit Pech-Würfen, Schleifen über die Würfe einer Runde"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 21,
+     "label": "Übungsempfehlungen: eigene kleine Spiele programmieren"
+    },
+    {
+     "file": "neues_spiel.py",
+     "page": 1,
+     "label": "Push-Your-Luck-Schleife: bei Wurf 6 alle Punkte weg, sonst weiterwürfeln"
+    }
+   ],
+   "tags": [
+    "for",
+    "break",
+    "return",
+    "if",
+    "spiel",
+    "transfer"
+   ]
+  },
+  {
+   "id": "py-control-026",
+   "lang": "python",
+   "topicId": "py-control",
+   "type": "code",
+   "difficulty": 5,
+   "points": 7,
+   "examStyle": true,
+   "title": "Goofspiel komplett auswerten",
+   "prompt": "Schreiben Sie eine Funktion `goofspiel(preiskarten, karten_spieler2)`, die eine komplette Partie Goofspiel auswertet.\n\nRegeln (wie in der Vorlesung):\n\n- Solange noch Preiskarten übrig sind, wird mit `.pop()` die oberste Preiskarte aufgedeckt.\n- **Spieler 1** spielt immer genau den Wert der Preiskarte.\n- **Spieler 2** spielt immer die oberste Karte seines Stapels (ebenfalls `.pop()`).\n- Wer die **echt höhere** Karte legt, bekommt den Wert der Preiskarte gutgeschrieben; bei Gleichstand bekommt niemand etwas.\n\nRückgabe ist das Tupel `(punkte1, punkte2, meldung)`, wobei `meldung` einer der drei Strings `\"Spieler 1 hat gewonnen!\"`, `\"Spieler 2 hat gewonnen!\"` oder `\"Unentschieden!\"` ist.\n\nBeispiel: `goofspiel([1, 5, 2], [3, 1, 4])` -> `(5, 3, 'Spieler 1 hat gewonnen!')`\n\nVerwenden Sie für die Runden eine `while`-Schleife über die Liste der Preiskarten.",
+   "starterCode": "def goofspiel(preiskarten, karten_spieler2):\n    \"\"\"\n    preiskarten:     Liste der Preiskarten (oberste Karte am Listenende)\n    karten_spieler2: Stapel von Spieler 2 (oberste Karte am Listenende)\n    Rückgabe: Tupel (punkte1, punkte2, meldung)\n    \"\"\"\n    # Ihr Code hier\n",
+   "constraints": [
+    "while-Schleife über die Preiskarten",
+    "keine for-Schleife"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "goofspiel([1, 5, 2], [3, 1, 4])",
+     "expected": "(5, 3, 'Spieler 1 hat gewonnen!')"
+    },
+    {
+     "name": "Spieler 2 gewinnt",
+     "call": "goofspiel([7, 1], [8, 9])",
+     "expected": "(0, 8, 'Spieler 2 hat gewonnen!')"
+    },
+    {
+     "name": "lauter Gleichstände",
+     "call": "goofspiel([2, 2], [2, 2])",
+     "expected": "(0, 0, 'Unentschieden!')"
+    },
+    {
+     "name": "leeres Spiel",
+     "call": "goofspiel([], [])",
+     "expected": "(0, 0, 'Unentschieden!')"
+    },
+    {
+     "name": "eine einzige Runde",
+     "call": "goofspiel([3], [5])",
+     "expected": "(0, 3, 'Spieler 2 hat gewonnen!')"
+    },
+    {
+     "name": "Punktegleichstand trotz Runden",
+     "call": "goofspiel([4, 4], [9, 1])",
+     "expected": "(4, 4, 'Unentschieden!')"
+    }
+   ],
+   "forbidden": [
+    "for "
+   ],
+   "required": [
+    "while"
+   ],
+   "solution": "def goofspiel(preiskarten, karten_spieler2):\n    punkte1 = 0\n    punkte2 = 0\n    while preiskarten:\n        preiskarte = preiskarten.pop()\n        karte1 = preiskarte\n        karte2 = karten_spieler2.pop()\n        if karte1 > karte2:\n            punkte1 = punkte1 + preiskarte\n        elif karte2 > karte1:\n            punkte2 = punkte2 + preiskarte\n    if punkte1 > punkte2:\n        meldung = \"Spieler 1 hat gewonnen!\"\n    elif punkte2 > punkte1:\n        meldung = \"Spieler 2 hat gewonnen!\"\n    else:\n        meldung = \"Unentschieden!\"\n    return (punkte1, punkte2, meldung)\n",
+   "explanation": "Das ist das komplette imperative Goofspiel aus der ersten Vorlesung, in eine testbare Funktion gegossen - und damit die Zusammenfassung des gesamten Kapitels 'Kontrollstrukturen'.\n\nVier Bausteine müssen zusammenspielen:\n\n1. **`while preiskarten:`** - die 'schöne Python-Vereinfachung': wiederhole, solange die Liste nicht leer ist. Den Fortschritt liefert das `pop()` im Rumpf, das die Liste in jeder Runde um ein Element verkürzt. Ohne dieses `pop()` wäre es eine Endlosschleife.\n2. **`if`/`elif` ohne `else` für die Rundenauswertung** - bei Gleichstand soll nichts passieren, also gibt es keinen dritten Zweig. Beide Vergleiche müssen **echt** sein (`>`), sonst bekäme bei Gleichstand jemand Punkte.\n3. **Zwei Akkumulatoren** `punkte1` und `punkte2`, vor der Schleife auf 0 gesetzt und im Rumpf erhöht.\n4. **`if`/`elif`/`else` für die Endauswertung** - hier gibt es sehr wohl einen `else`-Zweig, denn 'weder mehr noch weniger' bedeutet zwingend 'gleich viel'. Man braucht also **kein** drittes `elif` mit `punkte1 == punkte2`.\n\nWichtig ist die Einrückung: Die Endauswertung steht **außerhalb** der `while`-Schleife, sonst würde nach jeder Runde ein Zwischenstand gemeldet und die Funktion (bei einem `return` im Rumpf) bereits nach der ersten Runde beendet.\n\nMerkregel: **Runden-`if` ohne `else` (Gleichstand = nichts), End-`if` mit `else` (Gleichstand = Unentschieden).**",
+   "hints": [
+    "Baue das Programm in zwei Blöcken: erst die Schleife über die Runden, danach - auf gleicher Ebene wie die Schleife - die Endauswertung.",
+    "Überlege bei der Rundenauswertung, was bei gleichen Karten passieren soll. Brauchst du dafür einen `else`-Zweig?",
+    "Bei der Endauswertung gilt umgekehrt: 'weder mehr noch weniger' heißt automatisch 'gleich' - ein `else` reicht."
+   ],
+   "pitfalls": [
+    "Die Endauswertung in den Schleifenrumpf einrücken.",
+    "Bei der Rundenauswertung `>=` verwenden - dann gewinnt bei Gleichstand fälschlich ein Spieler.",
+    "Vergessen, dass `pop()` die Liste verändert und damit die Schleife überhaupt erst terminiert."
+   ],
+   "sources": [
+    {
+     "file": "goofspiel26_imperativ.py",
+     "page": 1,
+     "label": "Das fertige imperative Goofspiel mit while, if/elif und Endauswertung"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 19,
+     "label": "Das fertige Spiel - mit Logs"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 3,
+     "label": "Spielregeln und Endauswertung des Goofspiels"
+    }
+   ],
+   "tags": [
+    "while",
+    "if",
+    "elif",
+    "else",
+    "goofspiel",
+    "akkumulator",
+    "transfer"
+   ]
+  }
+ ]
+}

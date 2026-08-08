@@ -1,0 +1,1924 @@
+{
+ "topicId": "java-statements",
+ "exercises": [
+  {
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 3,
+   "examStyle": false,
+   "title": "Arithmetische Operatoren und Ganzzahl-Division",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Arithmetik01 {\n  public static void main(String[] s) {\n    int x = 2, y = 3, laenge = 7;\n    int breite = x + y;\n    System.out.println(\"breite = \" + breite);\n    laenge = laenge - 1;\n    System.out.println(\"laenge = \" + laenge);\n    System.out.println(\"quotient = \" + (x / y));\n    System.out.println(\"rest = \" + (x % y));\n    System.out.println(\"laenge/2 = \" + (laenge / 2));\n    x++;\n    System.out.println(\"x = \" + x);\n    x--;\n    System.out.println(\"x = \" + x);\n    laenge = 4 * (x + y);\n    System.out.println(\"laenge = \" + laenge);\n    laenge = breite = 1;\n    System.out.println(\"laenge = \" + laenge + \", breite = \" + breite);\n  }\n}",
+   "expectedOutput": "breite = 5\nlaenge = 6\nquotient = 0\nrest = 2\nlaenge/2 = 3\nx = 3\nx = 2\nlaenge = 20\nlaenge = 1, breite = 1",
+   "explanation": "Die Aufgabe prüft die arithmetischen Operatoren aus Kapitel 4.1. Die entscheidende Falle ist `x / y` mit `x = 2` und `y = 3`: Sind **beide** Operanden ganzzahlig, rechnet Java eine **Ganzzahl-Division** – der Nachkommateil wird nicht gerundet, sondern abgeschnitten. `2/3` ist also `0`, nicht `0.67` und auch nicht `1`. Genauso ergibt `laenge / 2` mit `laenge == 6` den Wert `3`, aber bei `laenge == 7` wäre es ebenfalls `3`. Der Modulo-Operator `%` liefert den Rest derselben Division: `2 % 3 == 2`, weil 3 kein einziges Mal in 2 passt und die 2 komplett übrig bleibt. `x++` und `x--` verändern `x` um genau 1 – hier heben sie sich gegenseitig auf, `x` ist danach wieder 2. Die letzte Zeile zeigt ein wichtiges Prinzip: **eine Zuweisung ist selbst ein Ausdruck**, der den zugewiesenen Wert liefert. `laenge = breite = 1` weist deshalb zuerst `breite` den Wert 1 zu und dann das *Ergebnis dieser Zuweisung* (also 1) an `laenge`. Merkregel: **int / int bleibt int – abgeschnitten, nie gerundet.**",
+   "hints": [
+    "Achten Sie besonders auf die Zeile mit `x / y`. Welchen Typ haben beide Operanden?",
+    "Rechnen Sie `2 / 3` und `2 % 3` so aus, wie es die Grundschule bei der Division mit Rest macht: „0 Rest 2“.",
+    "`laenge = breite = 1` sind zwei Zuweisungen in einer Zeile – welche wird zuerst ausgeführt?"
+   ],
+   "pitfalls": [
+    "`2 / 3` als `0.67` oder gerundet als `1` angeben statt `0`.",
+    "`x++` und `x--` doppelt zählen und am Ende `x = 4` schreiben.",
+    "Vergessen, dass `laenge` durch `laenge = 4 * (x + y)` vorher überschrieben wurde."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 44,
+     "label": "4.1. Arithmetische Operatoren"
+    },
+    {
+     "file": "04_Anweisungen/Arithm.java",
+     "label": "Beispielprogramm des Dozenten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. Anweisungen – Ausdrücke und Zuweisungen"
+    }
+   ],
+   "tags": [
+    "operatoren",
+    "int-division",
+    "modulo",
+    "inkrement",
+    "zuweisung"
+   ],
+   "solution": "class Arithmetik01 {\n  public static void main(String[] s) {\n    int x = 2, y = 3, laenge = 7;\n    int breite = x + y;\n    System.out.println(\"breite = \" + breite);\n    laenge = laenge - 1;\n    System.out.println(\"laenge = \" + laenge);\n    System.out.println(\"quotient = \" + (x / y));\n    System.out.println(\"rest = \" + (x % y));\n    System.out.println(\"laenge/2 = \" + (laenge / 2));\n    x++;\n    System.out.println(\"x = \" + x);\n    x--;\n    System.out.println(\"x = \" + x);\n    laenge = 4 * (x + y);\n    System.out.println(\"laenge = \" + laenge);\n    laenge = breite = 1;\n    System.out.println(\"laenge = \" + laenge + \", breite = \" + breite);\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-001"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 2,
+   "points": 4,
+   "examStyle": false,
+   "title": "Prä- und Postinkrement: welche Aussagen stimmen?",
+   "prompt": "Kreuzen Sie **alle** richtigen Aussagen über die Operatoren `++` und `--` an.\n\n(Mehrere Antworten können richtig sein.)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Nach `int a = 10; int b = ++a;` gilt `a == 11` und `b == 11`.",
+     "correct": true,
+     "why": "Richtig. Beim **Präfix**-Inkrement wird erst hochgezählt, dann der (neue) Wert als Ergebnis des Ausdrucks geliefert."
+    },
+    {
+     "id": "b",
+     "text": "Nach `int a = 10; int b = a++;` gilt `a == 11` und `b == 10`.",
+     "correct": true,
+     "why": "Richtig. Beim **Postfix**-Inkrement ist der Wert des Ausdrucks der *alte* Wert; hochgezählt wird trotzdem."
+    },
+    {
+     "id": "c",
+     "text": "Als eigenständige Anweisung haben `a++;` und `++a;` denselben Effekt auf `a`.",
+     "correct": true,
+     "why": "Richtig. Der Unterschied liegt nur im *Wert des Ausdrucks*. Wird dieser Wert – wie bei einer eigenständigen Anweisung – gar nicht verwendet, sind beide Formen gleichwertig."
+    },
+    {
+     "id": "d",
+     "text": "Das Postfix-`++` hat eine höhere Priorität als das Präfix-`++`.",
+     "correct": true,
+     "why": "Richtig. Laut Prioritätstabelle: Postfix `++`/`--` haben Priorität 14, Präfix `++`/`--` nur 13."
+    },
+    {
+     "id": "e",
+     "text": "Der Ausdruck `a+++b` wird vom Compiler als `a + (++b)` gelesen.",
+     "correct": false,
+     "why": "Falsch. Der Compiler liest so viele Zeichen wie möglich zu einem Token zusammen („maximal munch“) und macht daraus `(a++) + b`."
+    },
+    {
+     "id": "f",
+     "text": "Nach `int x = 1; int y = x++;` gilt `x == 1` und `y == 2`.",
+     "correct": false,
+     "why": "Falsch, genau vertauscht. Es gilt `x == 2` und `y == 1`. Nur bei `y = ++x` wären beide 2."
+    }
+   ],
+   "solution": "Richtig sind a, b, c und d. Falsch sind e (`a+++b` ist `(a++) + b`) und f (dort gilt `x == 2`, `y == 1`).",
+   "explanation": "`++` und `--` gibt es in zwei Varianten, die sich **nur im Wert des Gesamtausdrucks** unterscheiden, nicht in der Wirkung auf die Variable:\n\n* **Präfix** `++x`: erst erhöhen, dann den *neuen* Wert liefern. `x = 1; y = ++x;` → `x == y == 2`.\n* **Postfix** `x++`: erst den *alten* Wert liefern, dann erhöhen. `x = 1; y = x++;` → `x == 2`, `y == 1`.\n\nIn beiden Fällen ist `x` hinterher um 1 größer – der Unterschied betrifft ausschließlich das, was *an der Stelle des Ausdrucks* herauskommt. Genau diese beiden Zeilen stehen wörtlich auf der Überblicksfolie zu Kapitel 4 und sind damit gesetzte Klausurfragen. Der typische Denkfehler ist, die Reihenfolge des Erhöhens mit der Reihenfolge des *Auslesens* zu verwechseln. Merkregel: **Das `++` steht dort, wo die Erhöhung „passiert“ – vorne heißt vorher, hinten heißt hinterher.**",
+   "hints": [
+    "Schreiben Sie sich für jede Aussage die zwei Zeilen hin und führen Sie sie im Kopf Schritt für Schritt aus.",
+    "Fragen Sie sich bei jeder Variante getrennt: (1) Was ist der Wert des Ausdrucks? (2) Was steht danach in der Variablen?",
+    "Für `a+++b`: Der Compiler zerlegt Zeichenketten immer in die *längstmöglichen* Tokens. Welches Token entsteht aus `+++`?"
+   ],
+   "pitfalls": [
+    "Glauben, `a++` erhöhe `a` gar nicht, wenn das Ergebnis zugewiesen wird.",
+    "Die Prioritäten von Postfix und Präfix vertauschen.",
+    "`a+++b` als `a + (++b)` lesen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 50,
+     "label": "4.2. Präfix und Postfix Inkrement / Dekrement"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 49,
+     "label": "4.2. Prioritätstabelle"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. – x=1; y=++x; // x==y==2   x=1; y=x++; // x==2, y==1"
+    }
+   ],
+   "tags": [
+    "inkrement",
+    "praefix",
+    "postfix",
+    "prioritaet"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-002"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ausdrücke und Priorität – was gibt das Programm aus?",
+   "prompt": "Was gibt der folgende Code-Ausschnitt auf der Konsole aus?",
+   "code": "class Ausdruecke01 {\n  public static void main(String[] s) {\n    int x, y, produkt;\n    boolean b;\n    x = 2;  produkt = 1;\n\n    y = x * 7 / 2;\n    System.out.println(\"y = \" + y);\n    b = ( (x + y) >= 13 );\n    System.out.println(\"b = \" + b);\n    x += -5;\n    System.out.println(\"x = \" + x);\n    y = y | 8;\n    System.out.println(\"y = \" + y);\n    produkt *= x - y;\n    System.out.println(\"produkt = \" + produkt);\n    b = produkt != 3117;\n    System.out.println(\"b = \" + b);\n  }\n}",
+   "expectedOutput": "y = 7\nb = false\nx = -3\ny = 15\nprodukt = -18\nb = true",
+   "explanation": "Das ist das Beispiel `Ausdruecke.java` des Dozenten, Zeile für Zeile:\n\n1. `y = x * 7 / 2` – `*` und `/` haben dieselbe Priorität (11) und sind **linksassoziativ**, also `((2 * 7) / 2) = 14 / 2 = 7`. Rechnete man `2 * (7/2)`, käme durch die Ganzzahl-Division `2 * 3 = 6` heraus – ein anderes Ergebnis!\n2. `b = ((x + y) >= 13)` – `(2 + 7) = 9`, und `9 >= 13` ist `false`.\n3. `x += -5` bedeutet `x = x + (-5)` = `2 - 5` = `-3`.\n4. `y = y | 8` ist ein **Bit-Oder**: `7` ist binär `0111`, `8` ist `1000`, zusammen `1111` = `15`.\n5. `produkt *= x - y` bedeutet `produkt = produkt * (x - y)` – die rechte Seite wird **vollständig** ausgewertet, bevor multipliziert wird: `1 * (-3 - 15) = -18`. Die Klammern sind hier wesentlich: `produkt = produkt * x - y` wäre etwas anderes. Merken Sie sich die Regel `a op= b` ≡ `a = a op (b)` – mit Klammern um die **ganze** rechte Seite.\n6. `b = produkt != 3117` – `-18` ist ungleich `3117`, also `true`. `!=` (Priorität 7) bindet stärker als `=` (Priorität 0), deshalb braucht es keine Klammern.\n\nMerkregel: **Bei gleicher Priorität von links nach rechts; `a op= b` heißt `a = a op (b)`.**",
+   "hints": [
+    "Gehen Sie streng Zeile für Zeile vor und notieren Sie nach jeder Zeile den Wert *aller* Variablen.",
+    "`x * 7 / 2`: `*` und `/` haben dieselbe Priorität. Was sagt die Assoziativität?",
+    "`y | 8` ist kein logisches Oder, sondern ein Bit-Oder. Schreiben Sie 7 und 8 binär untereinander.",
+    "`produkt *= x - y` klammern Sie zuerst um zu `produkt = produkt * (x - y)`."
+   ],
+   "pitfalls": [
+    "`x * 7 / 2` als `x * (7 / 2) = 6` rechnen statt `(x * 7) / 2 = 7`.",
+    "`|` als logisches Oder auf `boolean` deuten statt als Bit-Oder auf `int`.",
+    "Bei `produkt *= x - y` die rechte Seite nicht als Ganzes klammern."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 42,
+     "label": "4.1. Ausdrücke und Zuweisungen – Einstiegsbeispiel"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 49,
+     "label": "4.2. Ausdrücke und Priorität"
+    },
+    {
+     "file": "04_Anweisungen/Ausdruecke.java",
+     "label": "Beispielprogramm des Dozenten"
+    }
+   ],
+   "tags": [
+    "prioritaet",
+    "assoziativitaet",
+    "zusammengesetzte-zuweisung",
+    "bitoperator",
+    "int-division"
+   ],
+   "solution": "class Ausdruecke01 {\n  public static void main(String[] s) {\n    int x, y, produkt;\n    boolean b;\n    x = 2;  produkt = 1;\n\n    y = x * 7 / 2;\n    System.out.println(\"y = \" + y);\n    b = ( (x + y) >= 13 );\n    System.out.println(\"b = \" + b);\n    x += -5;\n    System.out.println(\"x = \" + x);\n    y = y | 8;\n    System.out.println(\"y = \" + y);\n    produkt *= x - y;\n    System.out.println(\"produkt = \" + produkt);\n    b = produkt != 3117;\n    System.out.println(\"b = \" + b);\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-003"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": false,
+   "title": "Härtetest: Inkremente in einem Ausdruck",
+   "prompt": "Was ist die Ausgabe dieses Programms? Rechnen Sie jede Zeile Teilausdruck für Teilausdruck durch.",
+   "code": "class Inkrement02 {\n  public static void main(String[] s) {\n    int a = 3, b = 5;\n    int c = a++ + ++a;\n    System.out.println(\"a = \" + a + \", c = \" + c);\n    int d = b-- - --b;\n    System.out.println(\"b = \" + b + \", d = \" + d);\n    int i = 2;\n    i = i++ + i++;\n    System.out.println(\"i = \" + i);\n    int k = 1;\n    k += k++ * ++k;\n    System.out.println(\"k = \" + k);\n    int m = 10;\n    System.out.println(\"m = \" + (-~m));\n  }\n}",
+   "expectedOutput": "a = 5, c = 8\nb = 3, d = 2\ni = 5\nk = 4\nm = 11",
+   "explanation": "In Java werden die Operanden eines binären Operators **strikt von links nach rechts** ausgewertet, und zwar *vollständig inklusive aller Seiteneffekte*, bevor der Operator angewendet wird. Damit lässt sich jede Zeile mechanisch abarbeiten:\n\n* `c = a++ + ++a` mit `a = 3`: `a++` liefert `3` (danach `a == 4`), `++a` macht `a == 5` und liefert `5`. Also `c = 3 + 5 = 8`, `a == 5`.\n* `d = b-- - --b` mit `b = 5`: `b--` liefert `5` (danach `b == 4`), `--b` macht `b == 3` und liefert `3`. Also `d = 5 - 3 = 2`, `b == 3`.\n* `i = i++ + i++` mit `i = 2`: rechts steht `2 + 3 = 5`, `i` ist zwischendurch auf 4 gestiegen – doch dann **überschreibt** die Zuweisung `i` mit `5`. Die Erhöhungen gehen verloren.\n* `k += k++ * ++k` mit `k = 1`: `k += E` bedeutet `k = k + (E)`, wobei der **linke** `k`-Wert *vor* der Auswertung von `E` gemerkt wird (hier `1`). Dann `k++` → `1` (`k == 2`), `++k` → `3` (`k == 3`), Produkt `1 * 3 = 3`. Ergebnis `k = 1 + 3 = 4`.\n* `-~m` mit `m = 10`: `~10 == -11` (Zweierkomplement: `~n == -n-1`), das unäre Minus macht daraus `11`. Beide unären Operatoren haben Priorität 13 und sind **rechtsassoziativ**, also `-(~m)`.\n\nMerkregel: **Erst alles links, dann alles rechts, dann der Operator – und eine Zuweisung ganz am Schluss.**",
+   "hints": [
+    "Werten Sie jeden Ausdruck streng von links nach rechts aus und notieren Sie nach jedem Teilausdruck den aktuellen Variablenwert.",
+    "Bei `i = i++ + i++`: Was passiert am Ende mit der berechneten Summe – und was mit den Erhöhungen von `i`?",
+    "Bei `k += ...` müssen Sie den alten Wert von `k` merken, *bevor* die rechte Seite ausgewertet wird.",
+    "`~n` ist im Zweierkomplement immer `-n-1`."
+   ],
+   "pitfalls": [
+    "Bei `i = i++ + i++` das Ergebnis `6` oder `7` angeben, weil man die Erhöhungen mitzählt, die anschließend überschrieben werden.",
+    "Bei `k += k++ * ++k` den *neuen* Wert von `k` als linken Summanden benutzen.",
+    "`-~m` als `-(-10)-1` oder als `~(-m)` lesen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 50,
+     "label": "4.2. Beispiele: Priorität und Assoziativität, -~a; // -(~a)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 49,
+     "label": "4.2. Prioritätstabelle"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 45,
+     "label": "4.1. Bitoperatoren – Komplement ~"
+    }
+   ],
+   "tags": [
+    "inkrement",
+    "auswertungsreihenfolge",
+    "seiteneffekt",
+    "zweierkomplement",
+    "haertetest"
+   ],
+   "solution": "class Inkrement02 {\n  public static void main(String[] s) {\n    int a = 3, b = 5;\n    int c = a++ + ++a;\n    System.out.println(\"a = \" + a + \", c = \" + c);\n    int d = b-- - --b;\n    System.out.println(\"b = \" + b + \", d = \" + d);\n    int i = 2;\n    i = i++ + i++;\n    System.out.println(\"i = \" + i);\n    int k = 1;\n    k += k++ * ++k;\n    System.out.println(\"k = \" + k);\n    int m = 10;\n    System.out.println(\"m = \" + (-~m));\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-004"
+  },
+  {
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Operatorpriorität: richtige Klammerung",
+   "prompt": "Gegeben ist die Anweisung\n\n```java\nint ergebnis = 2 + 3 * 4 % 5 - 1;\n```\n\nWelche Klammerung gibt die Auswertungsreihenfolge korrekt wieder – und welchen Wert hat `ergebnis` danach?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`2 + (3 * (4 % 5)) - 1` → `ergebnis == 13`",
+     "correct": false,
+     "why": "Falsch. `%` hat dieselbe Priorität wie `*` (11), bindet also nicht stärker. Bei gleicher Priorität wird von **links** ausgewertet, `3 * 4` kommt zuerst."
+    },
+    {
+     "id": "b",
+     "text": "`(2 + ((3 * 4) % 5)) - 1` → `ergebnis == 3`",
+     "correct": true,
+     "why": "Richtig. `*` und `%` (Priorität 11) binden stärker als `+` und `-` (Priorität 10); untereinander sind sie linksassoziativ: `(3*4)%5 = 12%5 = 2`. Dann `2 + 2 - 1 = 3`."
+    },
+    {
+     "id": "c",
+     "text": "`((2 + 3) * 4) % (5 - 1)` → `ergebnis == 0`",
+     "correct": false,
+     "why": "Falsch. Das wäre die Reihenfolge, wenn `+` und `-` stärker binden würden als `*` und `%` – genau umgekehrt."
+    },
+    {
+     "id": "d",
+     "text": "`2 + ((3 * 4) % (5 - 1))` → `ergebnis == 2`",
+     "correct": false,
+     "why": "Falsch. Das `- 1` gehört nicht zum rechten Operanden von `%`, sondern ist eine eigene Subtraktion auf der äußersten Ebene."
+    }
+   ],
+   "solution": "b — `(2 + ((3 * 4) % 5)) - 1` und `ergebnis == 3`.",
+   "explanation": "Die Auswertungsreihenfolge richtet sich nach zwei Regeln, die in der Prioritätstabelle des Skripts (Folie 49) stehen:\n\n1. **Höhere Priorität zuerst.** `*`, `/` und `%` liegen alle auf Priorität 11, `+` und `-` auf 10. Multiplikation und Modulo werden also vor Addition und Subtraktion ausgeführt.\n2. **Bei gleicher Priorität entscheidet die Assoziativität.** `*` und `%` sind linksassoziativ, deshalb `(3 * 4) % 5` und nicht `3 * (4 % 5)`.\n\nDamit ergibt sich `(3*4) % 5 = 12 % 5 = 2`, danach `2 + 2 = 4` und schließlich `4 - 1 = 3`. Der häufigste Denkfehler ist, `%` für „schwächer“ als `*` zu halten, weil es seltener vorkommt – es steht aber gleichauf. Der Dozent empfiehlt ausdrücklich: *„Gute Praxis: Im Zweifelsfall Klammern verwenden.“* Merkregel: **Punkt-vor-Strich gilt auch für `%`, und gleich starke Operatoren arbeiten von links nach rechts.**",
+   "hints": [
+    "Auf welcher Prioritätsstufe steht `%` – bei `*` und `/` oder bei `+` und `-`?",
+    "Zeichnen Sie den Ausdruck als Baum: Was ist der äußerste, zuletzt ausgeführte Operator?",
+    "Rechnen Sie beide Kandidaten `12 % 5` und `3 * 4` aus und vergleichen Sie die Endergebnisse."
+   ],
+   "pitfalls": [
+    "`%` eine niedrigere Priorität als `*` zuschreiben.",
+    "Bei gleicher Priorität von rechts nach links auswerten.",
+    "Das abschließende `- 1` fälschlich in den Modulo-Ausdruck hineinziehen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 49,
+     "label": "4.2. Ausdrücke und Priorität – Prioritätstabelle"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 50,
+     "label": "4.2. Beispiele: a = b * c + d;"
+    }
+   ],
+   "tags": [
+    "prioritaet",
+    "assoziativitaet",
+    "modulo",
+    "klammerung"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-005"
+  },
+  {
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Warum ist laenge = breite = 1; erlaubt?",
+   "prompt": "Im Beispielprogramm des Dozenten steht die Zeile\n\n```java\nlaenge = breite = 1;\n```\n\nund danach haben **beide** Variablen den Wert 1. Welche Begründung ist richtig?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Weil Java erlaubt, mehrere Variablen in einer Zeile zu deklarieren.",
+     "correct": false,
+     "why": "Falsch. Um eine Deklaration geht es hier gar nicht – `laenge` und `breite` existieren bereits. Es sind zwei *Zuweisungen*."
+    },
+    {
+     "id": "b",
+     "text": "Weil eine Zuweisung selbst ein Ausdruck ist, der den zugewiesenen Wert liefert, und `=` rechtsassoziativ ist.",
+     "correct": true,
+     "why": "Richtig. `breite = 1` ist ein Ausdruck mit dem Wert `1`; dieser Wert wird durch das linke `=` an `laenge` weitergereicht. Die Rechtsassoziativität von `=` (Priorität 0) sorgt dafür, dass rechts angefangen wird."
+    },
+    {
+     "id": "c",
+     "text": "Weil der Compiler die Zeile intern in `laenge = 1; breite = 1;` umschreibt.",
+     "correct": false,
+     "why": "Falsch. Der Compiler schreibt hier nichts um. Dass am Ende beide `1` sind, ist eine *Folge* davon, dass die innere Zuweisung den Wert 1 als Ergebnis hat."
+    },
+    {
+     "id": "d",
+     "text": "Weil `=` von links nach rechts ausgewertet wird, also zuerst `laenge = breite`.",
+     "correct": false,
+     "why": "Falsch – genau umgekehrt. Wäre `=` linksassoziativ, stünde `(laenge = breite) = 1`, und die linke Seite einer Zuweisung wäre ein Wert statt einer Variablen; das ließe sich gar nicht übersetzen."
+    }
+   ],
+   "solution": "b — Eine Zuweisung ist ein Ausdruck mit dem zugewiesenen Wert als Ergebnis, und `=` ist rechtsassoziativ.",
+   "explanation": "Das Skript formuliert es auf Folie 44 wörtlich: *„Eine Zuweisung ist wieder ein Ausdruck“*. Das ist der Schlüssel. Eine Zuweisung `v = A` tut zwei Dinge: Sie speichert den Wert von `A` in `v` **und** sie liefert diesen Wert als Ergebnis des Gesamtausdrucks. Deshalb kann man Zuweisungen verketten (`laenge = breite = 1`), sie in andere Ausdrücke einbauen (`produkt = (x = 2) * (y = 5);` – laut Skript *„möglich, aber schlechter Stil“*) oder sie sogar direkt ausgeben. Dass rechts angefangen wird, liegt an der Assoziativität: Die Zuweisungsoperatoren `=`, `+=`, `-=` usw. stehen auf Priorität 0 und sind als einzige (neben den unären Operatoren und `?:`-Verschachtelungen) **rechtsassoziativ**. Genau diese Eigenschaft macht andererseits den klassischen Tippfehler `if (a = 3)` möglich: Er ist syntaktisch ein gültiger Ausdruck – in Java rettet uns nur, dass sein Typ `int` und nicht `boolean` ist. Merkregel: **Zuweisen und gleichzeitig einen Wert liefern – `=` wird von rechts abgearbeitet.**",
+   "hints": [
+    "Was liefert `breite = 1` als *Wert*, wenn man es als Ausdruck betrachtet?",
+    "Schauen Sie in die Prioritätstabelle: Welche Assoziativität haben die Zuweisungsoperatoren?",
+    "Probieren Sie gedanklich die andere Klammerung `(laenge = breite) = 1` – ergibt die überhaupt Sinn?"
+   ],
+   "pitfalls": [
+    "Glauben, es handle sich um eine Mehrfachdeklaration wie `int a = 1, b = 1;`.",
+    "Die Zuweisung für eine reine Anweisung ohne Wert halten.",
+    "`=` für linksassoziativ halten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 44,
+     "label": "4.1. laenge = breite = 1; // Eine Zuweisung ist wieder ein Ausdruck"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 48,
+     "label": "4.1. Zuweisungen / Zuweisungsoperatoren – x = y = 7;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 49,
+     "label": "4.2. Prioritätstabelle – Zuweisungsoperatoren: von rechts"
+    }
+   ],
+   "tags": [
+    "zuweisung",
+    "ausdruck",
+    "assoziativitaet"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-006"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Kurzschlussauswertung: && || gegen & |",
+   "prompt": "Was ist die Ausgabe dieses Programms? Achten Sie genau darauf, welche Seiteneffekte tatsächlich stattfinden.",
+   "code": "class Kurzschluss01 {\n  public static void main(String[] s) {\n    int a = 0, b = 0, c = 0, d = 0;\n    int x = 0;\n\n    boolean r1 = (x == 0) || (a++ > 0);\n    System.out.println(\"r1 = \" + r1 + \", a = \" + a);\n\n    boolean r2 = (x == 0) |  (b++ > 0);\n    System.out.println(\"r2 = \" + r2 + \", b = \" + b);\n\n    boolean r3 = (x != 0) && (c++ > 0);\n    System.out.println(\"r3 = \" + r3 + \", c = \" + c);\n\n    boolean r4 = (x != 0) &  (d++ > 0);\n    System.out.println(\"r4 = \" + r4 + \", d = \" + d);\n  }\n}",
+   "expectedOutput": "r1 = true, a = 0\nr2 = true, b = 1\nr3 = false, c = 0\nr4 = false, d = 1",
+   "explanation": "`&&` und `||` sind die **kurzschließenden** logischen Operatoren, `&` und `|` die nicht kurzschließenden:\n\n* `||`: Steht links schon `true`, ist das Ergebnis unabhängig von rechts – der rechte Operand wird **gar nicht ausgewertet**. `a++` findet also nie statt, `a` bleibt `0`.\n* `|`: Beide Operanden werden **immer** ausgewertet. `b++` läuft, `b` wird `1` – am Wahrheitswert ändert das nichts.\n* `&&`: Steht links `false`, wird rechts nicht mehr geschaut. `c` bleibt `0`.\n* `&`: Beide Seiten werden ausgewertet, `d` wird `1`.\n\nWichtig: Die *Wahrheitswerte* `r1`…`r4` sind hier bei beiden Varianten gleich – der Unterschied zeigt sich nur an den **Seiteneffekten** (und, praktisch viel wichtiger, an Abstürzen). Genau deshalb schreibt das Skript `if ((x != 0) && (y / x < 5))`: Dank Kurzschluss wird bei `x == 0` niemals durch 0 geteilt. Mit `&` an derselben Stelle gäbe es eine `ArithmeticException`. Beachten Sie außerdem, dass `a++ > 0` mit `a == 0` den *alten* Wert `0` vergleicht, also `false` liefert. Merkregel: **Doppelt = faul (schaut rechts nur, wenn nötig), einfach = gründlich (schaut immer).**",
+   "hints": [
+    "Bestimmen Sie für jede Zeile zuerst den Wahrheitswert des **linken** Operanden.",
+    "Fragen Sie sich dann: Steht das Gesamtergebnis damit schon fest? Und wenn ja – wird rechts noch ausgewertet?",
+    "`a++ > 0` mit `a == 0`: Welcher Wert wird verglichen, der alte oder der neue?"
+   ],
+   "pitfalls": [
+    "Annehmen, `&` und `|` seien auf `boolean` gar nicht erlaubt.",
+    "Bei `||` und `&&` die Seiteneffekte der rechten Seite trotzdem mitzählen.",
+    "`a++ > 0` mit `a == 0` als `true` werten, weil `a` ja auf 1 steigt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 47,
+     "label": "4.1. Logische Operatoren – Kurzschlussauswertung"
+    },
+    {
+     "file": "04_Anweisungen/Logops.java",
+     "label": "Beispielprogramm des Dozenten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 43,
+     "label": "4.1. Erlaubte Operatoren – Logische Operatoren & && | || !"
+    }
+   ],
+   "tags": [
+    "kurzschluss",
+    "logische-operatoren",
+    "seiteneffekt",
+    "inkrement"
+   ],
+   "solution": "class Kurzschluss01 {\n  public static void main(String[] s) {\n    int a = 0, b = 0, c = 0, d = 0;\n    int x = 0;\n\n    boolean r1 = (x == 0) || (a++ > 0);\n    System.out.println(\"r1 = \" + r1 + \", a = \" + a);\n\n    boolean r2 = (x == 0) |  (b++ > 0);\n    System.out.println(\"r2 = \" + r2 + \", b = \" + b);\n\n    boolean r3 = (x != 0) && (c++ > 0);\n    System.out.println(\"r3 = \" + r3 + \", c = \" + c);\n\n    boolean r4 = (x != 0) &  (d++ > 0);\n    System.out.println(\"r4 = \" + r4 + \", d = \" + d);\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-007"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Logische Operatoren und ihre Priorität",
+   "prompt": "Kreuzen Sie **alle** richtigen Aussagen an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`&&` wertet den rechten Operanden nur aus, wenn der linke `true` ergibt.",
+     "correct": true,
+     "why": "Richtig. Ist links `false`, steht das Ergebnis bereits fest, und Java spart sich die rechte Seite (Kurzschluss)."
+    },
+    {
+     "id": "b",
+     "text": "`&` und `|` werten bei `boolean`-Operanden immer beide Seiten aus.",
+     "correct": true,
+     "why": "Richtig. Das Skript formuliert es explizit: *„logisches ODER, immer beide Operanden ausgewertet“*."
+    },
+    {
+     "id": "c",
+     "text": "`!` hat eine höhere Priorität als `&&`.",
+     "correct": true,
+     "why": "Richtig. `!` steht als unärer Operator auf Priorität 13, `&&` nur auf 3. Deshalb bedeutet `!a && b` immer `(!a) && b`."
+    },
+    {
+     "id": "d",
+     "text": "`&&` bindet stärker als `||`.",
+     "correct": true,
+     "why": "Richtig: `&&` hat Priorität 3, `||` nur 2. `a || b && c` bedeutet also `a || (b && c)`."
+    },
+    {
+     "id": "e",
+     "text": "`&` und `|` dürfen nur auf ganzzahlige Operanden angewendet werden, nicht auf `boolean`.",
+     "correct": false,
+     "why": "Falsch. `&`, `|` und `^` sind laut Folie 43 *unäre und binäre* Operatoren, die sowohl als Bitoperatoren (auf Ganzzahlen) als auch als logische Operatoren (auf `boolean`) auftreten."
+    },
+    {
+     "id": "f",
+     "text": "In `if (x != 0 && y / x < 5)` kann eine Division durch 0 auftreten.",
+     "correct": false,
+     "why": "Falsch. Genau das verhindert der Kurzschluss: Bei `x == 0` ist der linke Operand `false`, und `y / x` wird nie berechnet. Mit `&` statt `&&` wäre die Aussage richtig."
+    }
+   ],
+   "solution": "Richtig sind a, b, c und d. Falsch sind e (`&`/`|` gelten auch für `boolean`) und f (der Kurzschluss von `&&` schützt genau davor).",
+   "explanation": "Zwei Themen greifen hier ineinander:\n\n**1. Kurzschlussauswertung.** `&&` und `||` werten den rechten Operanden nur aus, wenn das Ergebnis noch nicht feststeht. `&` und `|` werten bei `boolean` immer beides aus. Das ist kein reiner Geschwindigkeitstrick, sondern ein *Schutzmuster*: Man stellt links eine Bedingung, die die rechte Seite überhaupt erst zulässig macht – `x != 0 && y / x < 5` oder `i < laenge && ...`.\n\n**2. Priorität.** Aus der Tabelle auf Folie 49: `!` = 13, `&` = 6, `^` = 5, `|` = 4, `&&` = 3, `||` = 2. Daraus folgt die oft übersehene Regel `a || b && c` ≡ `a || (b && c)` – **`&&` ist das „Mal“, `||` das „Plus“ der Logik.** Auffällig ist außerdem, dass die *nicht* kurzschließenden Varianten `&` und `|` stärker binden als ihre doppelten Geschwister.\n\nTypischer Denkfehler bei (e): Man kennt `&` nur aus dem Kapitel Bitoperatoren und übersieht, dass es auf Folie 43 gleich zweimal aufgeführt ist – bei den Bit- **und** bei den logischen Operatoren. Merkregel: **Doppelt schließt kurz, einfach rechnet zu Ende.**",
+   "hints": [
+    "Schlagen Sie in Gedanken die Prioritätstabelle auf: Wo stehen `!`, `&`, `|`, `&&`, `||`?",
+    "Überlegen Sie bei Aussage (f), welcher Operand zuerst ausgewertet wird und ob der zweite überhaupt drankommt.",
+    "Schauen Sie auf Folie 43 nach, in welchen Operatorgruppen `&` und `|` jeweils auftauchen."
+   ],
+   "pitfalls": [
+    "`&` und `|` nur als Bitoperatoren kennen.",
+    "`||` und `&&` für gleichwertig in der Priorität halten.",
+    "Glauben, der Kurzschluss ändere den Wahrheitswert des Ausdrucks."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 47,
+     "label": "4.1. Logische Operatoren"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 43,
+     "label": "4.1. Erlaubte Operatoren"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 49,
+     "label": "4.2. Prioritätstabelle: && = 3, || = 2, & = 6, | = 4, ! = 13"
+    }
+   ],
+   "tags": [
+    "logische-operatoren",
+    "kurzschluss",
+    "prioritaet"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-008"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Bitoperatoren – was gibt das Programm aus?",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Bitops01 {\n  public static void main(String[] s) {\n    int y = 2, z = 3;\n    System.out.println(\"y & z = \" + (y & z));\n    System.out.println(\"y | z = \" + (y | z));\n    System.out.println(\"y ^ z = \" + (y ^ z));\n    System.out.println(\"~y = \" + (~y));\n    System.out.println(\"y << 1 = \" + (y << 1));\n    System.out.println(\"y >> 1 = \" + (y >> 1));\n    System.out.println(\"y >>> 4 = \" + (y >>> 4));\n    int x = 5 | 010;\n    System.out.println(\"5 | 010 = \" + x);\n    System.out.println(\"(0xF0 & 0xAB) >> 4 = \" + ((0xF0 & 0xAB) >> 4));\n  }\n}",
+   "expectedOutput": "y & z = 2\ny | z = 3\ny ^ z = 1\n~y = -3\ny << 1 = 4\ny >> 1 = 1\ny >>> 4 = 0\n5 | 010 = 13\n(0xF0 & 0xAB) >> 4 = 10",
+   "explanation": "Bitoperatoren arbeiten auf der **Binärdarstellung** der Zahlen. Mit `y = 2` = `0010` und `z = 3` = `0011`:\n\n* `y & z` (UND, Bit für Bit): `0010` → `2`\n* `y | z` (ODER): `0011` → `3`\n* `y ^ z` (exklusives ODER, „genau eines von beiden“): `0001` → `1`\n* `~y` (Komplement, kippt **alle** 32 Bits): Im Zweierkomplement gilt `~n == -n-1`, also `-3`. Das Ergebnis ist negativ – ein sehr beliebter Klausurstolperstein.\n* `y << 1` schiebt alle Bits um eine Stelle nach links: `0100` = `4`. Linksschieben um `k` ist eine Multiplikation mit 2^k.\n* `y >> 1` schiebt nach rechts und zieht das **Vorzeichenbit** nach: `0001` = `1`.\n* `y >>> 4` schiebt nach rechts und füllt links mit **Nullen**: Bei nur zwei gesetzten Bits ist nach vier Stellen nichts mehr übrig → `0`.\n* `010` ist eine **Oktalzahl** (führende Null!) mit dem Wert 8. `5 | 8` = `0101 | 1000` = `1101` = `13`.\n* `0xF0` = 240 = `1111 0000`, `0xAB` = 171 = `1010 1011`. `240 & 171` = `1010 0000` = 160, und `160 >> 4` = 10 – das ist die klassische Technik, um die oberen vier Bits herauszuziehen.\n\nMerkregel: **`~n` ist `-n-1`; eine führende `0` macht aus einer Zahl eine Oktalzahl.**",
+   "hints": [
+    "Schreiben Sie 2 und 3 binär untereinander und wenden Sie die Operatoren spaltenweise an.",
+    "Für `~y`: Nutzen Sie die Kurzformel des Zweierkomplements statt alle 32 Bits zu kippen.",
+    "`010` beginnt mit einer Null – das ist in Java kein Tippfehler, sondern ein Zahlensystem.",
+    "Für die letzte Zeile: `0xF0` maskiert die oberen vier Bits eines Bytes; `>> 4` schiebt sie nach unten."
+   ],
+   "pitfalls": [
+    "`~2` als `-2` oder `1` angeben statt `-3`.",
+    "`010` als dezimale 10 lesen statt als oktale 8.",
+    "`>>` und `>>>` verwechseln (bei positiven Zahlen fällt der Unterschied nicht auf!)."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 45,
+     "label": "4.1. Bitoperatoren"
+    },
+    {
+     "file": "04_Anweisungen/Bitops.java",
+     "label": "Beispielprogramm des Dozenten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 43,
+     "label": "4.1. Erlaubte Operatoren – Bitoperatoren & | ^ ~ << >> >>>"
+    }
+   ],
+   "tags": [
+    "bitoperatoren",
+    "schieben",
+    "oktal",
+    "hexadezimal",
+    "zweierkomplement"
+   ],
+   "solution": "class Bitops01 {\n  public static void main(String[] s) {\n    int y = 2, z = 3;\n    System.out.println(\"y & z = \" + (y & z));\n    System.out.println(\"y | z = \" + (y | z));\n    System.out.println(\"y ^ z = \" + (y ^ z));\n    System.out.println(\"~y = \" + (~y));\n    System.out.println(\"y << 1 = \" + (y << 1));\n    System.out.println(\"y >> 1 = \" + (y >> 1));\n    System.out.println(\"y >>> 4 = \" + (y >>> 4));\n    int x = 5 | 010;\n    System.out.println(\"5 | 010 = \" + x);\n    System.out.println(\"(0xF0 & 0xAB) >> 4 = \" + ((0xF0 & 0xAB) >> 4));\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-009"
+  },
+  {
+   "type": "mc",
+   "difficulty": 4,
+   "points": 2,
+   "examStyle": true,
+   "title": ">> gegen >>> bei negativen Zahlen",
+   "prompt": "Was gibt der folgende Code aus?\n\n```java\nint x = -8;\nSystem.out.println((x >> 2) + \" \" + (x >>> 28));\n```",
+   "code": "class Schieben01 {\n  public static void main(String[] s) {\n    int x = -8;\n    System.out.println((x >> 2) + \" \" + (x >>> 28));\n  }\n}",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`-2 15`",
+     "correct": true,
+     "why": "Richtig. `>>` zieht das Vorzeichenbit nach: `-8 >> 2 == -2`. `>>>` füllt mit Nullen: `-8` ist `0xFFFFFFF8`, um 28 Stellen nach rechts bleibt `0xF` = 15."
+    },
+    {
+     "id": "b",
+     "text": "`-2 -2`",
+     "correct": false,
+     "why": "Falsch. Das wäre das Ergebnis, wenn `>>>` sich wie `>>` verhielte – dann wäre der dritte Operator überflüssig."
+    },
+    {
+     "id": "c",
+     "text": "`2 15`",
+     "correct": false,
+     "why": "Falsch. `>>` verändert das Vorzeichen nicht: Aus einer negativen Zahl wird durch Rechtsschieben nie eine positive."
+    },
+    {
+     "id": "d",
+     "text": "`-2 0`",
+     "correct": false,
+     "why": "Falsch. Bei `-8` sind die oberen 28 Bits alle `1` – nach dem Schieben um 28 Stellen bleiben genau die vier obersten übrig, also `1111` = 15, nicht 0."
+    }
+   ],
+   "solution": "a — die Ausgabe ist `-2 15`.",
+   "explanation": "Java kennt **zwei** Rechtsschiebe-Operatoren, und der Unterschied wird erst bei negativen Zahlen sichtbar:\n\n* `>>` ist das **arithmetische** Rechtsschieben: Es zieht das Vorzeichenbit nach. Aus `-8` (binär `1111…1111 1000`) wird nach zwei Stellen `1111…1111 1110` = `-2`. Das entspricht einer ganzzahligen Division durch 2^k (mit Abrunden Richtung minus unendlich).\n* `>>>` ist das **logische** Rechtsschieben: Es füllt links immer mit Nullen auf und behandelt das Bitmuster damit als vorzeichenlose 32-Bit-Zahl. `-8` ist als Bitmuster `0xFFFFFFF8`; nach 28 Stellen bleiben die obersten vier Bits `1111` übrig – also `15`.\n\nBei **positiven** Zahlen liefern beide Operatoren dasselbe, weil das Vorzeichenbit `0` ist. Genau deshalb ist das ein so beliebter Klausurstolperstein: Man testet mit `8 >> 1` und `8 >>> 1`, sieht keinen Unterschied und schließt daraus, es gäbe keinen. Einen `<<<`-Operator gibt es übrigens nicht – beim Linksschieben wird ohnehin immer mit Nullen aufgefüllt. Merkregel: **`>>` behält das Vorzeichen, `>>>` schiebt Nullen nach.**",
+   "hints": [
+    "Schreiben Sie `-8` als 32-Bit-Zweierkomplement auf. Wie viele Einsen stehen ganz links?",
+    "Was füllt `>>` links nach, was füllt `>>>` links nach?",
+    "Wie viele Bits bleiben übrig, wenn Sie 32 Bit um 28 Stellen nach rechts schieben?"
+   ],
+   "pitfalls": [
+    "Annehmen, `>>` und `>>>` seien immer gleich (stimmt nur für nicht-negative Zahlen).",
+    "`-8 >> 2` als `-4` rechnen (das wäre nur ein Schritt).",
+    "Vergessen, dass `int` in Java 32 Bit breit ist."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 45,
+     "label": "4.1. Bitoperatoren – y >> 1 schiebt Vorzeichen nach, y >>> 4 schiebt 0 nach"
+    },
+    {
+     "file": "04_Anweisungen/Bitops.java",
+     "label": "Beispielprogramm des Dozenten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 49,
+     "label": "4.2. Prioritätstabelle: <<, >>, >>> Priorität 9"
+    }
+   ],
+   "tags": [
+    "bitoperatoren",
+    "schieben",
+    "vorzeichen",
+    "zweierkomplement"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-010"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Quersumme mit einer while-Schleife",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass das Programm die **Quersumme** (Summe aller Ziffern) und die **Anzahl der Ziffern** von `zahl` berechnet und ausgibt (je 2 P.).\n\nErwartete Ausgabe:\n\n```\nQuersumme: 23, Ziffern: 4\n```",
+   "code": "class Quersumme {\n  public static void main(String[] str) {\n    int zahl = 4739;\n    int summe = ____(1)____;          // Startwert der Summe\n    int ziffern = 0;\n    ____(2)____ (zahl > 0) {          // wiederhole, solange noch Ziffern übrig sind\n      summe ____(3)____ zahl % 10;    // letzte Ziffer aufaddieren\n      zahl ____(4)____ 10;            // letzte Ziffer abschneiden\n      ziffern____(5)____;             // eine Ziffer mehr verarbeitet\n    }\n    System.out.println(\"Quersumme: \" + summe + \", Ziffern: \" + ____(6)____);\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "0"
+     ],
+     "explanation": "Die Summe muss mit dem neutralen Element der Addition starten. Mit `1` käme durchweg ein um eins zu großer Wert heraus."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "while"
+     ],
+     "explanation": "Die Anzahl der Durchläufe hängt von der Zahl ab und ist nicht im Voraus bekannt – laut Skript genau der Fall für eine `while`-Schleife. Die Bedingung wird **vor** jedem Durchlauf geprüft, sodass bei `zahl == 0` gar nicht erst begonnen wird."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "+="
+     ],
+     "explanation": "`summe += zahl % 10` ist die Kurzform von `summe = summe + (zahl % 10)`. Mit einem einfachen `=` würde die Summe bei jedem Durchlauf überschrieben statt aufaddiert."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "/=",
+      "= zahl /"
+     ],
+     "explanation": "`zahl /= 10` ist `zahl = zahl / 10`. Weil `zahl` ein `int` ist, schneidet die Ganzzahl-Division die letzte Ziffer ab: aus 4739 wird 473. Mit `%=` bliebe die Zahl bei der letzten Ziffer stehen und die Schleife käme nie zum Ende."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "++",
+      "+= 1",
+      "+=1"
+     ],
+     "explanation": "`ziffern++` erhöht den Zähler um 1. Da der Wert des Ausdrucks nicht verwendet wird, wären `ziffern++` und `++ziffern` hier gleichwertig."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "ziffern"
+     ],
+     "explanation": "Ausgegeben wird der Zähler. `zahl` steht hier nicht mehr zur Verfügung – sie wurde von der Schleife auf 0 heruntergeteilt."
+    }
+   ],
+   "solution": "class Quersumme {\n  public static void main(String[] str) {\n    int zahl = 4739;\n    int summe = 0;\n    int ziffern = 0;\n    while (zahl > 0) {\n      summe += zahl % 10;\n      zahl /= 10;\n      ziffern++;\n    }\n    System.out.println(\"Quersumme: \" + summe + \", Ziffern: \" + ziffern);\n  }\n}",
+   "expectedOutput": "Quersumme: 23, Ziffern: 4",
+   "explanation": "Das Ziffern-Abbau-Muster `% 10` / `/= 10` ist eines der wichtigsten Schleifenmuster überhaupt und kombiniert genau die Bausteine aus Kapitel 4:\n\n* `zahl % 10` liefert die **letzte** Ziffer (Rest der Division durch 10),\n* `zahl /= 10` **entfernt** sie durch Ganzzahl-Division – 4739 → 473 → 47 → 4 → 0,\n* `while (zahl > 0)` bricht ab, sobald nichts mehr übrig ist.\n\nDamit läuft die Schleife genau so oft, wie die Zahl Ziffern hat: 4+7+3+9 = 23 in 4 Durchläufen. Beim Entwurf einer Schleife nennt das Skript drei Punkte: Initialisierung (`summe = 0`), Abbruchbedingung (`zahl > 0`) und **Terminierung** – der Rumpf muss die Abbruchbedingung irgendwann herstellen. Genau das leistet `zahl /= 10`; ohne diese Zeile liefe das Programm ewig. Typischer Denkfehler: `%=` statt `/=` einzusetzen, weil beide „irgendwas mit 10“ machen. Merkregel: **`% 10` holt die letzte Ziffer, `/ 10` wirft sie weg.**",
+   "hints": [
+    "Welchen Startwert braucht ein Akkumulator, in dem aufsummiert wird?",
+    "Wie viele Durchläufe braucht die Schleife? Ist diese Zahl vor dem Start bekannt? Das entscheidet über die Schleifenart.",
+    "Überlegen Sie für Lücke 3 und 4, welche Kurzformen `+=`, `-=`, `*=`, `/=`, `%=` es gibt und welche die Zahl kleiner macht.",
+    "Prüfen Sie am Beispiel 4739 von Hand: 4739 → ? → ? → ? → 0."
+   ],
+   "pitfalls": [
+    "`%=` statt `/=` einsetzen – dann terminiert die Schleife nie.",
+    "In Lücke 3 ein einfaches `=` schreiben, sodass die Summe überschrieben statt aufaddiert wird.",
+    "In Lücke 6 `zahl` statt `ziffern` ausgeben – `zahl` ist nach der Schleife 0."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 57,
+     "label": "4.5.1. Die while-Schleife"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 61,
+     "label": "4.5. Beim Entwurf einer Schleife: Initialisierung, Abbruchbedingung, Terminierung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 48,
+     "label": "4.1. Zuweisungsoperatoren += /= %="
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4. Anweisungen (2/2) – while"
+    }
+   ],
+   "tags": [
+    "while",
+    "modulo",
+    "int-division",
+    "zusammengesetzte-zuweisung",
+    "terminierung"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-011"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 2,
+   "points": 4,
+   "examStyle": false,
+   "title": "Warum liefert die Notenskala das falsche Ergebnis?",
+   "prompt": "Das folgende Programm soll für `punkte == 75` die Ausgabe `gut` liefern (75 Punkte sollen bereits zu „gut“ zählen). Tatsächlich gibt es etwas anderes aus.\n\n**a)** Was gibt das Programm aus?\n**b)** Erklären Sie, woran das liegt.\n**c)** Geben Sie die Korrektur an.",
+   "code": "class Notenstufe {\n  public static void main(String[] str) {\n    int punkte = 75;\n    if (punkte > 90)\n      System.out.println(\"sehr gut\");\n    else if (punkte > 75)\n      System.out.println(\"gut\");\n    else if (punkte > 60)\n      System.out.println(\"befriedigend\");\n    else if (punkte > 50)\n      System.out.println(\"ausreichend\");\n    else\n      System.out.println(\"nicht bestanden\");\n  }\n}",
+   "solution": "**a) Ausgabe:** `befriedigend`\n\n**b) Begründung:** Eine `if / else if / else`-Kette wird **von oben nach unten** geprüft und bricht beim **ersten** zutreffenden Zweig ab. Für `punkte == 75` ist `75 > 90` falsch, `75 > 75` ist ebenfalls falsch (75 ist *nicht* größer als 75), und erst `75 > 60` trifft zu. Es handelt sich um einen klassischen **„off by one“**-Fehler: Gemeint war „ab 75 Punkten“, geschrieben wurde „über 75 Punkte“.\n\n**c) Korrektur:** Alle Vergleiche von `>` auf `>=` ändern:\n\n```java\nif (punkte >= 90)        System.out.println(\"sehr gut\");\nelse if (punkte >= 75)   System.out.println(\"gut\");\nelse if (punkte >= 60)   System.out.println(\"befriedigend\");\nelse if (punkte >= 50)   System.out.println(\"ausreichend\");\nelse                     System.out.println(\"nicht bestanden\");\n```\n\nDanach gibt das Programm `gut` aus.\n\n**Bewertungsrubrik (4 P.):**\n* 1 P. – korrekte Ausgabe `befriedigend`\n* 1 P. – Erkennen, dass die Kette von oben nach unten geprüft wird und beim ersten Treffer endet\n* 1 P. – `75 > 75` ist `false` benannt / „off by one“ als Fehlerursache erkannt\n* 1 P. – Korrektur `>` → `>=` (mindestens für die betroffenen Grenzen)",
+   "explanation": "Eine `if / else if / else`-Kette ist **keine** Menge unabhängiger Bedingungen, sondern eine geschachtelte Alternativauswahl: Jedes `else if` gehört zum `else`-Zweig des vorherigen `if`. Java prüft von oben nach unten und führt **genau einen** Zweig aus – nämlich den ersten, dessen Bedingung `true` ergibt. Alle darunter werden gar nicht mehr angeschaut. Daraus folgt zweierlei: Erstens muss die Reihenfolge stimmen (die *strengste* Bedingung zuerst), zweitens entscheidet an jeder Grenze das eine Zeichen `>` gegen `>=` über das Ergebnis. Der Denkfehler ist fast immer sprachlicher Natur: „ab 75“ heißt `>= 75`, „über 75“ heißt `> 75`. Prüfen Sie eine Schwellenwert-Kette deshalb immer mit genau den **Grenzwerten** selbst – hier also mit 90, 75, 60 und 50, nicht mit 82 oder 43. Merkregel: **Grenzen testet man auf der Grenze.**",
+   "hints": [
+    "Setzen Sie `punkte = 75` in jede Bedingung der Reihe nach ein und notieren Sie `true` oder `false`.",
+    "Ist 75 größer als 75?",
+    "Welcher der fünf Zweige wird ausgeführt, wenn mehrere Bedingungen zuträfen?"
+   ],
+   "pitfalls": [
+    "Annehmen, alle `if`-Zweige würden geprüft und der „beste“ gewinne.",
+    "Die Grenzwerte nur mit Zwischenwerten testen, wo `>` und `>=` dasselbe liefern.",
+    "Nur die eine betroffene Zeile korrigieren und die übrigen Grenzen mit `>` stehen lassen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 52,
+     "label": "4.4. Auswahl-Anweisungen – Alternativauswahl"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 55,
+     "label": "4.4. Verschachtelte if-Anweisungen: Beispiel Menuauswahl"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 46,
+     "label": "4.1. Vergleichsoperatoren > >= == != < <="
+    }
+   ],
+   "tags": [
+    "if-else",
+    "off-by-one",
+    "vergleichsoperatoren"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-012"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Zu welchem if gehört das else?",
+   "prompt": "Was ist die Ausgabe dieses Programms? **Achtung:** Die Einrückung ist nicht notwendigerweise ein verlässlicher Hinweis.",
+   "code": "class DanglingElse {\n  public static void main(String[] s) {\n    int a = 5, b = 10;\n\n    if (a > 0)\n      if (b > 20)\n        System.out.println(\"A\");\n      else\n        System.out.println(\"B\");\n\n    if (a > 0) {\n      if (b > 20)\n        System.out.println(\"C\");\n    }\n    else\n      System.out.println(\"D\");\n\n    if (a < 0)\n      if (b > 20)\n        System.out.println(\"E\");\n    else\n      System.out.println(\"F\");\n\n    System.out.println(\"Ende\");\n  }\n}",
+   "expectedOutput": "B\nEnde",
+   "explanation": "Java bindet ein `else` **immer an das nächstgelegene noch offene `if`** – unabhängig davon, wie der Code eingerückt ist. Der Compiler sieht keine Leerzeichen, nur Klammern.\n\n* **Block 1:** `a > 0` ist wahr → das innere `if` wird erreicht. `b > 20` ist falsch → dessen `else` greift → **`B`**.\n* **Block 2:** Die geschweiften Klammern schließen das innere `if` ab, also gehört das `else` hier zum **äußeren** `if`. Da `a > 0` wahr ist, wird der `else`-Zweig nicht betreten; im Block ist `b > 20` falsch → **gar keine Ausgabe**.\n* **Block 3:** Das ist die eigentliche Falle. Die Einrückung suggeriert, `else` gehöre zum äußeren `if (a < 0)`. Tatsächlich gehört es zum inneren `if (b > 20)`. Weil `a < 0` falsch ist, wird die **gesamte** Anweisung übersprungen – inklusive `else`. Deshalb erscheint **kein `F`**.\n\nAnschließend noch `Ende`. Genau wegen dieser Falle steht in den Programmier-Konventionen des Skripts: *„Bei Unklarheit: auch einzelne Anweisungen mit `{ }` klammern.“* Merkregel: **Das `else` sucht sich das nächste freie `if` – Einrückung zählt nicht, Klammern zählen.**",
+   "hints": [
+    "Ignorieren Sie die Einrückung vollständig und fragen Sie sich bei jedem `else`: Welches `if` ist das letzte, das noch keinen `else`-Zweig hat?",
+    "Klammern Sie jeden der drei Blöcke gedanklich mit `{ }` so, wie der Compiler ihn liest.",
+    "Prüfen Sie bei Block 3 zuerst die äußere Bedingung `a < 0`. Wird der Rest überhaupt betreten?"
+   ],
+   "pitfalls": [
+    "Sich von der Einrückung leiten lassen und im dritten Block `F` ausgeben.",
+    "Im zweiten Block `D` erwarten, obwohl der `if`-Zweig genommen wurde.",
+    "Vergessen, dass ein `if` ohne passendes `else` einfach gar nichts ausgibt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 54,
+     "label": "4.4. Verschachtelte if-Anweisungen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 70,
+     "label": "4.6. Programmier-Konventionen – Bei Unklarheit auch einzelne Anweisungen mit { } klammern"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 52,
+     "label": "4.4. Auswahl-Anweisungen"
+    }
+   ],
+   "tags": [
+    "if-else",
+    "dangling-else",
+    "verschachtelung",
+    "block"
+   ],
+   "solution": "class DanglingElse {\n  public static void main(String[] s) {\n    int a = 5, b = 10;\n\n    if (a > 0)\n      if (b > 20)\n        System.out.println(\"A\");\n      else\n        System.out.println(\"B\");\n\n    if (a > 0) {\n      if (b > 20)\n        System.out.println(\"C\");\n    }\n    else\n      System.out.println(\"D\");\n\n    if (a < 0)\n      if (b > 20)\n        System.out.println(\"E\");\n    else\n      System.out.println(\"F\");\n\n    System.out.println(\"Ende\");\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-013"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Finde die 3 Compiler-Fehler (Bedingungen)",
+   "prompt": "Der folgende Code enthält genau **3** Fehler. Benennen Sie sie mit Zeilennummer und geben Sie jeweils die Korrektur an.",
+   "code": "class BedingungFehler {\n  public static void main(String[] str) {\n    int a = 5;\n    if (a = 3) {\n      System.out.println(\"drei\");\n    }\n    int b = (a > 0) ? \"positiv\" : 0;\n    boolean c = (a > 0) ? 1 : 0;\n    System.out.println(b + \" \" + c);\n  }\n}",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "if (a = 3) {",
+     "fix": "if (a == 3) {",
+     "why": "`a = 3` ist eine **Zuweisung**, kein Vergleich; ihr Wert hat den Typ `int`. Eine `if`-Bedingung muss aber `boolean` sein. javac meldet: *incompatible types: int cannot be converted to boolean*. Gemeint war der Vergleichsoperator `==`."
+    },
+    {
+     "line": 7,
+     "wrong": "int b = (a > 0) ? \"positiv\" : 0;",
+     "fix": "String b = (a > 0) ? \"positiv\" : \"nicht positiv\";",
+     "why": "Beim Auswahloperator `? :` müssen die beiden Zweige zu **einem** gemeinsamen Typ passen, der zur Zielvariablen passt. Hier stehen `String` und `int` gegenüber – javac meldet *bad type in conditional expression: String cannot be converted to int*. Man muss beide Zweige auf denselben Typ bringen (oder die Variable als `String` deklarieren)."
+    },
+    {
+     "line": 8,
+     "wrong": "boolean c = (a > 0) ? 1 : 0;",
+     "fix": "boolean c = (a > 0) ? true : false;   // kürzer: boolean c = a > 0;",
+     "why": "Java hat **keine** implizite Umwandlung von Zahlen nach `boolean` – anders als C/C++ ist `1` nicht `true` und `0` nicht `false`. javac meldet *incompatible types: int cannot be converted to boolean*."
+    }
+   ],
+   "solution": "class BedingungFehler {\n  public static void main(String[] str) {\n    int a = 5;\n    if (a == 3) {\n      System.out.println(\"drei\");\n    }\n    String b = (a > 0) ? \"positiv\" : \"nicht positiv\";\n    boolean c = (a > 0) ? true : false;\n    System.out.println(b + \" \" + c);\n  }\n}",
+   "expectedOutput": "positiv true",
+   "explanation": "Alle drei Fehler haben dieselbe Wurzel: **Java trennt `boolean` strikt von allen anderen Typen.**\n\nIn C oder Python ist eine Bedingung „wahr“, sobald sie ungleich 0 bzw. nicht leer ist. In Java muss die Bedingung von `if`, `while`, `do while`, `for` und `? :` **genau** vom Typ `boolean` sein. Deshalb ist der berühmte Tippfehler `if (a = 3)` in Java kein stiller Laufzeitfehler, sondern wird vom Compiler abgefangen – ein echter Vorteil der Sprache. (Nur bei `boolean`-Variablen kann er durchrutschen: `if (fertig = true)` übersetzt anstandslos!)\n\nDer Auswahloperator `(bed) ? a : b` ist ein **Ausdruck** und hat deshalb genau einen Typ. Dieser Typ wird aus beiden Zweigen bestimmt; `String` und `int` haben keinen gemeinsamen Zahlentyp, weshalb sich das Ergebnis nicht an ein `int` zuweisen lässt. Merkregel: **Bedingungen sind `boolean` – `=` ist zuweisen, `==` ist vergleichen, und beide `?:`-Zweige brauchen denselben Typ.**",
+   "hints": [
+    "Welchen Typ muss die Bedingung eines `if` in Java haben? Und welchen Typ hat eine Zuweisung?",
+    "Schauen Sie sich bei Zeile 7 die beiden Zweige des `? :` an. Passen ihre Typen zueinander und zur Zielvariablen?",
+    "Gibt es in Java eine automatische Umwandlung von `int` nach `boolean`?"
+   ],
+   "pitfalls": [
+    "`if (a = 3)` für korrekt halten, weil es in C funktioniert.",
+    "Nur einen der beiden `? :`-Fehler finden.",
+    "Bei Zeile 7 die Variable auf `String` ändern, aber den `int`-Zweig `0` stehen lassen – dann bleibt der Fehler bestehen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 52,
+     "label": "4.4. Auswahl-Anweisungen – if (<Bedingung>)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 46,
+     "label": "4.1. Vergleichsoperatoren und Auswahloperator ? :"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 53,
+     "label": "4.4. Mit Auswahloperator: signum = zahl == 0 ? 0 : (...)"
+    },
+    {
+     "file": "11_Ueberblick/Klausur04.java",
+     "label": "Klausur-Übungsaufgabe: Compiler-Fehler finden"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "boolean",
+    "ternaer",
+    "vergleich",
+    "zuweisung"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-014"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Der Auswahloperator (bed) ? a : b",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Ternaer01 {\n  public static void main(String[] s) {\n    int zahl = -7;\n    int signum = zahl == 0 ? 0 : (zahl > 0 ? +1 : -1);\n    System.out.println(\"signum = \" + signum);\n\n    int a = 4, b = 9, c = 6;\n    int max = (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);\n    System.out.println(\"max = \" + max);\n\n    int n = 15;\n    String t = (n % 3 == 0) ? ((n % 5 == 0) ? \"FizzBuzz\" : \"Fizz\") : ((n % 5 == 0) ? \"Buzz\" : \"\" + n);\n    System.out.println(t);\n\n    int x = 5;\n    System.out.println(x > 3 ? \"gross\" : x > 1 ? \"mittel\" : \"klein\");\n    System.out.println(1 + 2 + \"\" + (true ? 3 : 4));\n  }\n}",
+   "expectedOutput": "signum = -1\nmax = 9\nFizzBuzz\ngross\n33",
+   "explanation": "Der Auswahloperator `(<Bedingung>) ? <wenn wahr> : <wenn falsch>` ist Javas einziger **ternärer** Operator (drei Operanden) und – anders als `if` – ein **Ausdruck**: Er liefert einen Wert und kann deshalb direkt zugewiesen oder ausgegeben werden.\n\n* `signum`: `zahl == 0` ist falsch → rechter Zweig → `zahl > 0` ist falsch → `-1`. Das ist genau die Signum-Berechnung von Folie 53.\n* `max`: `4 > 9` ist falsch → rechter Zweig `(b > c) ? b : c` → `9 > 6` wahr → `9`.\n* Die FizzBuzz-Zeile: `15 % 3 == 0` wahr → innerer Test `15 % 5 == 0` ebenfalls wahr → `FizzBuzz`.\n* `x > 3 ? \"gross\" : x > 1 ? \"mittel\" : \"klein\"` – hier fehlen die Klammern. `?:` wird **von rechts** gruppiert, das Ganze bedeutet also `x > 3 ? \"gross\" : (x > 1 ? \"mittel\" : \"klein\")`. Mit `x == 5` kommt sofort `gross` heraus.\n* Die letzte Zeile ist ein Prioritäts-Test: `+` (Priorität 10) bindet viel stärker als `?:` (Priorität 1), und `1 + 2` sind noch **Zahlen** – erst durch `+ \"\"` wird daraus die Zeichenkette `\"3\"`, an die anschließend `3` angehängt wird: `33`.\n\nMerkregel: **`?:` ist ein Ausdruck mit einem Wert; verschachtelt gruppiert es von rechts.**",
+   "hints": [
+    "Klammern Sie jede Zeile zuerst vollständig aus, bevor Sie rechnen.",
+    "Bei der `x > 3 ? ... : x > 1 ? ... : ...`-Zeile: Wo würden Sie die fehlenden Klammern setzen? Was sagt die Assoziativität von `?:`?",
+    "Bei der letzten Zeile: Was passiert bei `1 + 2 + \"\"` – wird zuerst gerechnet oder verkettet?"
+   ],
+   "pitfalls": [
+    "Bei verschachtelten `?:` den falschen Zweig zuordnen.",
+    "`1 + 2 + \"\"` als `\"12\"` lesen (dann käme `123` heraus).",
+    "Das Ergebnis von `? :` für eine Anweisung halten und `System.out.println` vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 53,
+     "label": "4.4. Mit Auswahloperator: signum = zahl == 0 ? 0 : (zahl > 0 ? +1 : -1)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 46,
+     "label": "4.1. minimum = (x < y)? x : y; // Operator mit 3 Operanden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 49,
+     "label": "4.2. Prioritätstabelle – ?: Priorität 1"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. Anweisungen (1/2) – signum = (zahl==0) ? 0 : (...)"
+    }
+   ],
+   "tags": [
+    "ternaer",
+    "auswahloperator",
+    "verschachtelung",
+    "prioritaet",
+    "stringverkettung"
+   ],
+   "solution": "class Ternaer01 {\n  public static void main(String[] s) {\n    int zahl = -7;\n    int signum = zahl == 0 ? 0 : (zahl > 0 ? +1 : -1);\n    System.out.println(\"signum = \" + signum);\n\n    int a = 4, b = 9, c = 6;\n    int max = (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);\n    System.out.println(\"max = \" + max);\n\n    int n = 15;\n    String t = (n % 3 == 0) ? ((n % 5 == 0) ? \"FizzBuzz\" : \"Fizz\") : ((n % 5 == 0) ? \"Buzz\" : \"\" + n);\n    System.out.println(t);\n\n    int x = 5;\n    System.out.println(x > 3 ? \"gross\" : x > 1 ? \"mittel\" : \"klein\");\n    System.out.println(1 + 2 + \"\" + (true ? 3 : 4));\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-015"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": false,
+   "title": "Bewertung mit Auswahloperator und Ganzzahl-Division",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass das Programm die folgende Ausgabe erzeugt (je 2 P.):\n\n```\nprozent = 67\nbestanden = true\nnote = 3\nja\n```\n\nRegeln: Bestanden ist, wer **mindestens die Hälfte** der Punkte hat. Die Note ist 1 ab 90 %, 2 ab 75 %, 3 ab 60 %, sonst 5. Verwenden Sie in den Lücken 3, 4 und 6 den **Auswahloperator**.",
+   "code": "class Bewertung {\n  public static void main(String[] str) {\n    int punkte = 27;\n    int max = 40;\n    boolean bestanden = punkte ____(1)____ max / 2;\n    int prozent = punkte * 100 ____(2)____ max;\n    int note = (prozent >= 90) ? 1 : (prozent >= 75) ____(3)____ 2 : ((prozent >= 60) ? 3 ____(4)____ 5);\n    System.out.println(\"prozent = \" + prozent);\n    System.out.println(\"bestanden = \" + bestanden);\n    System.out.println(\"note = \" + ____(5)____);\n    System.out.println(bestanden ____(6)____ \"ja\" : \"nein\");\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      ">="
+     ],
+     "explanation": "„mindestens die Hälfte“ heißt `>=`. Mit `>` wäre jemand mit exakt 20 von 40 Punkten durchgefallen – der klassische *off by one*."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "/"
+     ],
+     "explanation": "`punkte * 100 / max` = `2700 / 40` = `67` (Ganzzahl-Division, 67,5 wird abgeschnitten). Wichtig ist die Reihenfolge: `punkte / max * 100` ergäbe `0 * 100 = 0`, weil `27/40` als `int` schon 0 ist."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "?"
+     ],
+     "explanation": "Der zweite Auswahloperator beginnt. Zusammen mit Lücke 4 entsteht die Kette `(…) ? 1 : (…) ? 2 : ((…) ? 3 : 5)`."
+    },
+    {
+     "id": 4,
+     "accept": [
+      ":"
+     ],
+     "explanation": "Der Doppelpunkt trennt den `sonst`-Zweig ab. Ohne ihn ist der Auswahloperator syntaktisch unvollständig."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "note"
+     ],
+     "explanation": "Ausgegeben wird die berechnete Variable. Der Auswahloperator liefert einen Wert – dieser steckt bereits in `note`."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "?"
+     ],
+     "explanation": "`bestanden ? \"ja\" : \"nein\"` – die Bedingung ist bereits ein `boolean`, ein zusätzliches `== true` wäre überflüssig."
+    }
+   ],
+   "solution": "class Bewertung {\n  public static void main(String[] str) {\n    int punkte = 27;\n    int max = 40;\n    boolean bestanden = punkte >= max / 2;\n    int prozent = punkte * 100 / max;\n    int note = (prozent >= 90) ? 1 : (prozent >= 75) ? 2 : ((prozent >= 60) ? 3 : 5);\n    System.out.println(\"prozent = \" + prozent);\n    System.out.println(\"bestanden = \" + bestanden);\n    System.out.println(\"note = \" + note);\n    System.out.println(bestanden ? \"ja\" : \"nein\");\n  }\n}",
+   "expectedOutput": "prozent = 67\nbestanden = true\nnote = 3\nja",
+   "explanation": "Die Aufgabe verbindet drei Stolpersteine aus Kapitel 4:\n\n**1. Reihenfolge bei der Prozentrechnung.** `punkte * 100 / max` und `punkte / max * 100` sind mathematisch gleich, in `int`-Arithmetik aber **nicht**: Bei `27 / 40` schneidet die Ganzzahl-Division sofort auf `0` ab, und `0 * 100` bleibt `0`. Deshalb gilt die Faustregel: **erst multiplizieren, dann dividieren.**\n\n**2. Grenzen.** „Mindestens die Hälfte“ ist `>=`, nicht `>`.\n\n**3. Verschachtelte Auswahloperatoren.** `bed1 ? a : bed2 ? b : c` ist eine kompakte `if / else if / else`-Kette. Weil `?:` von rechts gruppiert, sind die äußeren Klammern in der Musterlösung nur zur Lesbarkeit da. Für 67 % greift der dritte Zweig → Note 3.\n\nTypischer Denkfehler bei Lücke 6: `bestanden == true ? …` zu schreiben. Das ist zwar nicht falsch, aber überflüssig – `bestanden` **ist** schon der Wahrheitswert. Merkregel: **Bei `int`-Rechnungen erst mal nehmen, dann teilen.**",
+   "hints": [
+    "Rechnen Sie `27 * 100 / 40` und `27 / 40 * 100` beide von Hand aus – in `int`-Arithmetik!",
+    "„Mindestens“ und „mehr als“ sind zwei verschiedene Vergleichsoperatoren.",
+    "Ein vollständiger Auswahloperator besteht immer aus genau einem `?` und einem `:`. Zählen Sie in der `note`-Zeile beide.",
+    "Für Lücke 6: `bestanden` hat bereits den Typ `boolean`."
+   ],
+   "pitfalls": [
+    "In Lücke 1 `>` statt `>=` einsetzen.",
+    "Die Ganzzahl-Division `2700 / 40` auf 68 aufrunden statt auf 67 abzuschneiden.",
+    "Bei der `note`-Kette `?` und `:` vertauschen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 53,
+     "label": "4.4. Auswahloperator"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 46,
+     "label": "4.1. Vergleichsoperatoren und ? :"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 44,
+     "label": "4.1. Arithmetische Operatoren – Division"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 48,
+     "label": "4.1. summe = x + y / 2 // Priorität"
+    }
+   ],
+   "tags": [
+    "ternaer",
+    "int-division",
+    "prioritaet",
+    "vergleichsoperatoren"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-016"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "switch ohne break – Fall-Through",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class SwitchFall {\n  public static void main(String[] s) {\n    int tag = 3;\n    switch (tag) {\n      case 1:\n        System.out.println(\"Montag\");\n      case 2:\n        System.out.println(\"Dienstag\");\n      case 3:\n        System.out.println(\"Mittwoch\");\n      case 4:\n        System.out.println(\"Donnerstag\");\n        break;\n      case 5:\n        System.out.println(\"Freitag\");\n        break;\n      default:\n        System.out.println(\"Wochenende\");\n    }\n    System.out.println(\"---\");\n    int note = 7;\n    switch (note) {\n      case 1:\n      case 2:\n      case 3:\n        System.out.println(\"bestanden\");\n        break;\n      case 4:\n        System.out.println(\"knapp bestanden\");\n        break;\n      default:\n        System.out.println(\"ungueltig\");\n    }\n  }\n}",
+   "expectedOutput": "Mittwoch\nDonnerstag\n---\nungueltig",
+   "explanation": "`switch` ist **kein** „Vielfach-if“, sondern eine **Sprungtabelle**. Der Ausdruck wird ausgewertet, und die Ausführung springt an die passende `case`-Marke. Von dort läuft sie einfach **weiter** – über alle folgenden `case`-Marken hinweg – bis ein `break` (oder das Ende des Blocks) erreicht wird. Das nennt man **Fall-Through**.\n\nIm ersten `switch` ist `tag == 3`: Der Sprung geht zu `case 3` → `Mittwoch`. Weil dort kein `break` steht, läuft es weiter in `case 4` → `Donnerstag`. Erst dort steht ein `break`, das den Block verlässt. `Freitag` und `Wochenende` werden nicht mehr erreicht.\n\nIm zweiten `switch` sieht man den **beabsichtigten** Einsatz des Fall-Through: `case 1:`, `case 2:` und `case 3:` haben keine eigenen Anweisungen und teilen sich deshalb den Rumpf von `case 3` – genau das Muster `case 3: case 4:` von Folie 56. Mit `note == 7` passt allerdings keine Marke, also greift `default` → `ungueltig`.\n\nTypischer Denkfehler: Man liest `switch` wie eine `if/else if`-Kette und geht davon aus, nach einem Treffer sei automatisch Schluss. Merkregel: **`case` ist eine Einsprungstelle, kein Käfig – ohne `break` läuft es durch.**",
+   "hints": [
+    "Suchen Sie zuerst die Stelle, an die gesprungen wird. Was passiert danach, wenn kein `break` folgt?",
+    "Markieren Sie jedes `break` im ersten `switch`. Wie viele `println` liegen zwischen Sprungziel und erstem `break`?",
+    "Der zweite `switch`: Passt der Wert 7 zu irgendeiner `case`-Marke?"
+   ],
+   "pitfalls": [
+    "Nur `Mittwoch` ausgeben und das Fall-Through nach `case 4` übersehen.",
+    "Denken, `default` werde immer zusätzlich ausgeführt.",
+    "`case 1: case 2: case 3:` für einen Fehler halten statt für bewusstes Zusammenfassen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 56,
+     "label": "4.4.2. Die switch-Anweisung – break verlässt den switch-Block"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. – switch (menuItem) { case 1: ... break; case 3: case 4: case 5: ... }"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 55,
+     "label": "4.4. Verschachtelte if-Anweisungen: Beispiel Menuauswahl"
+    }
+   ],
+   "tags": [
+    "switch",
+    "fall-through",
+    "break",
+    "default"
+   ],
+   "solution": "class SwitchFall {\n  public static void main(String[] s) {\n    int tag = 3;\n    switch (tag) {\n      case 1:\n        System.out.println(\"Montag\");\n      case 2:\n        System.out.println(\"Dienstag\");\n      case 3:\n        System.out.println(\"Mittwoch\");\n      case 4:\n        System.out.println(\"Donnerstag\");\n        break;\n      case 5:\n        System.out.println(\"Freitag\");\n        break;\n      default:\n        System.out.println(\"Wochenende\");\n    }\n    System.out.println(\"---\");\n    int note = 7;\n    switch (note) {\n      case 1:\n      case 2:\n      case 3:\n        System.out.println(\"bestanden\");\n        break;\n      case 4:\n        System.out.println(\"knapp bestanden\");\n        break;\n      default:\n        System.out.println(\"ungueltig\");\n    }\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-017"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Finde die 3 Compiler-Fehler (switch)",
+   "prompt": "Der folgende Code enthält genau **3** Fehler. Benennen Sie sie mit Zeilennummer und geben Sie jeweils die Korrektur an. Nach der Korrektur soll das Programm `20` ausgeben.",
+   "code": "class SwitchFehler {\n  public static void main(String[] str) {\n    double stufe = 2.0;\n    int grenze = 3;\n    int punkte;\n    switch (stufe) {\n      case 1:\n        punkte = 10;\n        break;\n      case 2:\n        punkte = 20;\n        break;\n      case grenze:\n        punkte = 30;\n        break;\n      case 2:\n        punkte = 40;\n        break;\n      default:\n        punkte = 0;\n    }\n    System.out.println(punkte);\n  }\n}",
+   "errors": [
+    {
+     "line": 6,
+     "wrong": "switch (stufe) {   // stufe ist double",
+     "fix": "int stufe = 2;   // Zeile 3 ändern, damit der Selektor ganzzahlig ist",
+     "why": "Der Ausdruck im `switch` muss laut Skript **ganzzahlig** sein (`byte`, `short`, `int`, `char`; zusätzlich `String` und Aufzählungstypen). `double` ist nicht erlaubt, weil Gleitkommazahlen nicht exakt verglichen werden können. javac meldet: *selector type double is not allowed*."
+    },
+    {
+     "line": 13,
+     "wrong": "case grenze:",
+     "fix": "final int grenze = 3;   // Zeile 4 ändern – dann ist grenze eine Konstante",
+     "why": "`case`-Marken müssen **zur Übersetzungszeit konstant** sein, denn der Compiler baut daraus eine Sprungtabelle. Eine gewöhnliche Variable ist das nicht. javac meldet *pattern or enum constant required*. Mit `final int grenze = 3;` wird `grenze` zu einer Konstanten und darf als Marke stehen."
+    },
+    {
+     "line": 16,
+     "wrong": "case 2:   // zum zweiten Mal",
+     "fix": "case 4:",
+     "why": "Jeder Wert darf höchstens **einmal** als `case`-Marke vorkommen – sonst wäre nicht entscheidbar, wohin gesprungen werden soll. javac meldet: *duplicate case label*."
+    }
+   ],
+   "solution": "class SwitchFehler {\n  public static void main(String[] str) {\n    int stufe = 2;\n    final int grenze = 3;\n    int punkte;\n    switch (stufe) {\n      case 1:\n        punkte = 10;\n        break;\n      case 2:\n        punkte = 20;\n        break;\n      case grenze:\n        punkte = 30;\n        break;\n      case 4:\n        punkte = 40;\n        break;\n      default:\n        punkte = 0;\n    }\n    System.out.println(punkte);\n  }\n}",
+   "expectedOutput": "20",
+   "explanation": "Die drei Fehler zeigen die drei harten Regeln der `switch`-Anweisung:\n\n1. **Der Selektor muss ganzzahlig sein.** Das Skript schreibt direkt neben das Syntaxschema: *„Ausdruck muss ganzzahlig sein“*. Erlaubt sind `byte`, `short`, `char`, `int` (sowie `String` und `enum`), nicht aber `float`/`double` oder `boolean`.\n2. **`case`-Marken müssen Konstanten sein.** `switch` wird nicht als Kette von Vergleichen übersetzt, sondern als Sprungtabelle – dafür müssen alle Marken schon beim Compilieren feststehen. `final int grenze = 3;` erfüllt das, `int grenze = 3;` nicht.\n3. **Marken müssen eindeutig sein.** Zwei gleiche `case`-Werte sind ein Widerspruch.\n\nNach der Korrektur springt `switch (2)` zu `case 2`, setzt `punkte = 20` und verlässt den Block mit `break` – Ausgabe `20`. Beachten Sie noch etwas: `punkte` ist ohne Startwert deklariert. Das geht hier nur gut, weil **jeder** Zweig inklusive `default` einen Wert zuweist. Ohne `default` würde javac *variable punkte might not have been initialized* melden. Merkregel: **Ganzzahliger Selektor, konstante und eindeutige Marken.**",
+   "hints": [
+    "Welchen Typ darf der Ausdruck in den Klammern des `switch` haben? Schauen Sie auf den Kommentar im Syntaxschema des Skripts.",
+    "Was muss der Compiler über eine `case`-Marke wissen, um daraus eine Sprungtabelle zu bauen?",
+    "Lesen Sie alle `case`-Werte laut vor. Kommt einer doppelt vor?"
+   ],
+   "pitfalls": [
+    "Das fehlende `break` bei `default` für einen Fehler halten – es ist keiner, weil danach der Block ohnehin endet.",
+    "Nur zwei der drei Fehler finden, weil die doppelte `case`-Marke weit unten steht.",
+    "`case grenze:` durch `case 3:` ersetzen und dabei übersehen, dass auch `final` eine gültige Korrektur ist."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 56,
+     "label": "4.4.2. Die switch-Anweisung – // Ausdruck muss ganzzahlig sein"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. Anweisungen (1/2) – switch"
+    },
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "label": "Klausur-Übungsaufgabe: Finde die 2 Compiler-Fehler"
+    }
+   ],
+   "tags": [
+    "switch",
+    "find-errors",
+    "case",
+    "final",
+    "typen"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-018"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": false,
+   "title": "switch mit char – default steht in der Mitte",
+   "prompt": "**a)** Was gibt das folgende Programm aus?\n\n**b)** Begründen Sie insbesondere den zweiten Wert: `default` steht hier **nicht** am Ende des `switch`-Blocks. Was bedeutet das für die Ausführung?",
+   "code": "class SwitchChar {\n  public static void main(String[] s) {\n    char c = 'x';\n    int summe = 0;\n    switch (c) {\n      case 'a':\n        summe += 1;\n      default:\n        summe += 100;\n      case 'x':\n        summe += 10;\n        break;\n      case 'z':\n        summe += 1000;\n    }\n    System.out.println(\"summe = \" + summe);\n\n    char d = 'q';\n    summe = 0;\n    switch (d) {\n      case 'a':\n        summe += 1;\n      default:\n        summe += 100;\n      case 'x':\n        summe += 10;\n        break;\n      case 'z':\n        summe += 1000;\n    }\n    System.out.println(\"summe = \" + summe);\n\n    char e = 'z';\n    summe = 0;\n    switch (e) {\n      case 'a':\n        summe += 1;\n      default:\n        summe += 100;\n      case 'x':\n        summe += 10;\n        break;\n      case 'z':\n        summe += 1000;\n    }\n    System.out.println(\"summe = \" + summe);\n  }\n}",
+   "solution": "**a) Ausgabe:**\n\n```\nsumme = 10\nsumme = 110\nsumme = 1000\n```\n\n**b) Begründung:**\n\n`switch` sucht zuerst unter **allen** `case`-Marken nach einem passenden Wert. Nur wenn keine passt, wird zu `default` gesprungen – ganz gleich, an welcher Stelle im Block `default` steht. `default` ist also keine „letzte Zeile“, sondern schlicht eine weitere **Einsprungmarke**.\n\n* `c == 'x'`: Die Marke `case 'x'` passt → Einstieg dort → `summe += 10` → `break` → **10**. Die davor stehenden Anweisungen (`case 'a'` und `default`) werden übersprungen, obwohl sie im Quelltext weiter oben stehen.\n* `d == 'q'`: Keine Marke passt → Einstieg bei `default` → `summe += 100`. Dort steht **kein** `break`, also läuft es per Fall-Through weiter in `case 'x'` → `summe += 10` → `break`. Ergebnis **110**.\n* `e == 'z'`: `case 'z'` passt → Einstieg ganz unten → `summe += 1000`. Ein `break` ist überflüssig, weil der Block endet. Ergebnis **1000**.\n\n**Bewertungsrubrik (6 P.):**\n* je 1 P. für die drei korrekten Werte 10, 110 und 1000 (3 P.)\n* 1 P. – `default` wird nur angesprungen, wenn **keine** `case`-Marke passt\n* 1 P. – die Position von `default` im Block ist für die Auswahl irrelevant\n* 1 P. – nach `default` läuft die Ausführung ohne `break` per Fall-Through in `case 'x'` weiter",
+   "explanation": "Zwei Eigenschaften von `switch` greifen hier ineinander:\n\n**1. Auswahl der Einsprungstelle.** Erst werden alle `case`-Werte mit dem Selektor verglichen; `default` kommt nur zum Zug, wenn keiner passt. Deshalb darf `default` syntaktisch überall stehen – üblicherweise (und lesbarer) am Ende, aber eben nicht zwingend.\n\n**2. Fall-Through.** Ab der Einsprungstelle läuft die Ausführung linear weiter, bis ein `break` kommt. Genau das erzeugt bei `d == 'q'` die Summe `100 + 10 = 110`.\n\nDass der Selektor hier ein `char` ist, ist übrigens völlig regelkonform: `char` ist in Java ein **ganzzahliger** Typ (16-Bit-Unicode-Nummer), und das Skript verlangt nur „ganzzahlig“. Die Marken `'a'`, `'x'`, `'z'` sind Zeichenkonstanten und damit zur Übersetzungszeit bekannt. Der typische Denkfehler ist, `default` wie einen `else`-Zweig ganz am Ende zu lesen, der „sowieso zuletzt“ kommt. Merkregel: **`default` ist die Marke für „nichts passte“ – ihre Position entscheidet nur, wo es danach weiterläuft.**",
+   "hints": [
+    "Trennen Sie zwei Fragen: (1) Wo wird eingesprungen? (2) Wo hört die Ausführung auf?",
+    "Für `d == 'q'`: Gibt es eine passende `case`-Marke? Wenn nein – wohin springt Java?",
+    "Suchen Sie ab jeder Einsprungstelle das nächste `break` und addieren Sie alles dazwischen."
+   ],
+   "pitfalls": [
+    "Annehmen, `default` werde immer zuletzt (oder immer zusätzlich) ausgeführt.",
+    "Bei `c == 'x'` die 100 aus dem `default`-Zweig mitzählen, obwohl dort gar nicht eingestiegen wurde.",
+    "Bei `e == 'z'` ein fehlendes `break` für einen Fehler halten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 56,
+     "label": "4.4.2. Die switch-Anweisung – default: Falls keiner dieser Fälle"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen – char sym = '?'; (char ist ganzzahlig)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 351,
+     "label": "Überblick 4. Anweisungen (1/2) – switch mit default"
+    }
+   ],
+   "tags": [
+    "switch",
+    "default",
+    "fall-through",
+    "char"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-019"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "while gegen do while – wer läuft mindestens einmal?",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class DoWhile01 {\n  public static void main(String[] s) {\n    int i = 100;\n    while (i < 10) {\n      System.out.println(\"while: \" + i);\n      i++;\n    }\n    System.out.println(\"nach while: i = \" + i);\n\n    int j = 100;\n    do {\n      System.out.println(\"do: \" + j);\n      j++;\n    } while (j < 10);\n    System.out.println(\"nach do: j = \" + j);\n\n    int summe = 0, k = 1;\n    do {\n      summe += k;\n      k++;\n    } while (k <= 10);\n    System.out.println(\"summe = \" + summe + \", k = \" + k);\n  }\n}",
+   "expectedOutput": "nach while: i = 100\ndo: 100\nnach do: j = 101\nsumme = 55, k = 11",
+   "explanation": "Der einzige, aber entscheidende Unterschied zwischen den beiden Schleifen ist der **Zeitpunkt der Bedingungsprüfung**:\n\n* Die `while`-Schleife ist **kopfgesteuert**: Sie prüft *vor* jedem Durchlauf. Mit `i == 100` ist `i < 10` sofort falsch – der Rumpf wird **nie** betreten, `i` bleibt 100.\n* Die `do while`-Schleife ist **fußgesteuert**: Sie prüft erst *nach* dem Durchlauf. Der Rumpf läuft deshalb garantiert **mindestens einmal**. `do: 100` wird ausgegeben, `j` wird auf 101 erhöht, und erst dann stellt sich heraus, dass `j < 10` falsch ist.\n\nDer dritte Block zeigt die typische Zählschleife von Folie 58: 1+2+…+10 = 55; danach steht `k` auf **11**, weil die Erhöhung noch stattfand, bevor die Bedingung `k <= 10` scheiterte. Diese Frage – „welchen Wert hat die Laufvariable *nach* der Schleife?“ – ist ein Klassiker.\n\nDas Skript gibt auch die Entwurfsregel: `do while` nimmt man, *„wenn der Schleifenrumpf mindestens einmal ausgeführt werden soll“* – etwa beim Einlesen einer Benutzereingabe, die man ja erst prüfen kann, nachdem man sie gelesen hat. Merkregel: **`while` fragt vorher, `do while` fragt hinterher – deshalb läuft `do while` mindestens einmal.**",
+   "hints": [
+    "Prüfen Sie für jede Schleife zuerst, ob die Bedingung beim Eintritt überhaupt erfüllt ist.",
+    "Bei welcher der beiden Schleifen wird der Rumpf ausgeführt, *bevor* die Bedingung das erste Mal geprüft wird?",
+    "Vergessen Sie die Werte nach der Schleife nicht: Wurde die Laufvariable im letzten (gescheiterten) Anlauf noch erhöht?"
+   ],
+   "pitfalls": [
+    "Die `while`-Schleife trotzdem einmal ausführen lassen.",
+    "Nach der `do`-Schleife `j = 100` angeben statt 101.",
+    "`summe = 55` mit `k = 10` statt `k = 11` kombinieren."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 57,
+     "label": "4.5.1. Die while-Schleife"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 58,
+     "label": "4.5.2. Die do while-Schleife – mindestens einmal ausgeführt"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 60,
+     "label": "4.5. Wann welche Schleife?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4. Anweisungen (2/2)"
+    }
+   ],
+   "tags": [
+    "while",
+    "do-while",
+    "schleife",
+    "laufvariable"
+   ],
+   "solution": "class DoWhile01 {\n  public static void main(String[] s) {\n    int i = 100;\n    while (i < 10) {\n      System.out.println(\"while: \" + i);\n      i++;\n    }\n    System.out.println(\"nach while: i = \" + i);\n\n    int j = 100;\n    do {\n      System.out.println(\"do: \" + j);\n      j++;\n    } while (j < 10);\n    System.out.println(\"nach do: j = \" + j);\n\n    int summe = 0, k = 1;\n    do {\n      summe += k;\n      k++;\n    } while (k <= 10);\n    System.out.println(\"summe = \" + summe + \", k = \" + k);\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-020"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Finde die 3 Compiler-Fehler (Schleifen, break, continue)",
+   "prompt": "Der folgende Code enthält genau **3** Fehler. Benennen Sie sie mit Zeilennummer und geben Sie jeweils die Korrektur an.",
+   "code": "class SchleifenFehler {\n  public static void main(String[] str) {\n    int zaehler = 0;\n    while (zaehler = 0) {\n      zaehler++;\n    }\n    do {\n      zaehler++;\n    } while (zaehler < 3);\n    switch (zaehler) {\n      case 3:\n        System.out.println(\"drei\");\n        continue;\n      default:\n        System.out.println(\"?\");\n    }\n    System.out.println(zaehler);\n    break;\n  }\n}",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "while (zaehler = 0) {",
+     "fix": "while (zaehler == 0) {",
+     "why": "`zaehler = 0` ist eine Zuweisung vom Typ `int`; die Bedingung einer Schleife muss aber `boolean` sein. javac meldet *incompatible types: int cannot be converted to boolean*. Gemeint war der Vergleich `==`."
+    },
+    {
+     "line": 13,
+     "wrong": "continue;",
+     "fix": "break;",
+     "why": "`continue` bedeutet „verlasse den Block und beginne den nächsten Schleifendurchlauf“ – es ist deshalb **nur innerhalb einer Schleife** erlaubt. Ein `switch` ist keine Schleife. javac meldet *continue outside of loop*. Um den `switch`-Block zu verlassen, braucht man `break`."
+    },
+    {
+     "line": 18,
+     "wrong": "break;",
+     "fix": "// ersatzlos streichen (oder durch return; ersetzen)",
+     "why": "`break` verlässt die innerste Schleife **oder** einen `switch`-Block. An dieser Stelle steht es direkt im Methodenrumpf, also weder in einer Schleife noch in einem `switch`. javac meldet *break outside switch or loop*."
+    }
+   ],
+   "solution": "class SchleifenFehler {\n  public static void main(String[] str) {\n    int zaehler = 0;\n    while (zaehler == 0) {\n      zaehler++;\n    }\n    do {\n      zaehler++;\n    } while (zaehler < 3);\n    switch (zaehler) {\n      case 3:\n        System.out.println(\"drei\");\n        break;\n      default:\n        System.out.println(\"?\");\n    }\n    System.out.println(zaehler);\n  }\n}",
+   "expectedOutput": "drei\n3",
+   "explanation": "Die drei Fehler prüfen genau die Randbedingungen aus Kapitel 4.5:\n\n**1. Bedingungen sind `boolean`.** In C wäre `while (zaehler = 0)` eine (nie laufende) Schleife mit stillem Bug. Java lehnt das ab, weil `int` und `boolean` nicht ineinander umgewandelt werden.\n\n**2. `continue` gehört zu Schleifen.** Das Skript listet `continue` und `break` ausdrücklich als *„spezielle Anweisungen (in einem Block)“* bei `while`, `do while` und `for`. `continue` überspringt den Rest des Rumpfes und beginnt den nächsten Durchlauf – außerhalb einer Schleife gibt es keinen „nächsten Durchlauf“.\n\n**3. `break` gehört zu Schleifen oder zu `switch`.** Frei im Methodenrumpf ist es sinnlos.\n\nNach der Korrektur: `zaehler` startet bei 0, die `while`-Schleife läuft genau einmal und macht daraus 1. Die `do while`-Schleife erhöht auf 2, dann auf 3 und bricht ab. `switch (3)` trifft `case 3` → `drei`, `break`. Danach `3`. Merkregel: **`continue` nur in Schleifen, `break` in Schleifen und `switch` – und Bedingungen sind immer `boolean`.**",
+   "hints": [
+    "Zeile 4: Vergleichen Sie `=` und `==`. Welchen Typ liefert jeder der beiden?",
+    "In welchen Konstrukten sind `break` bzw. `continue` überhaupt erlaubt? Das Skript nennt sie bei den Wiederholungs-Anweisungen.",
+    "Ist ein `switch`-Block eine Schleife?"
+   ],
+   "pitfalls": [
+    "Das `continue` im `switch` für zulässig halten, weil es „ja auch aussteigt“.",
+    "Nur zwei Fehler finden und den letzten `break` übersehen.",
+    "Die `do while`-Schleife für fehlerhaft halten – das Semikolon nach `while (zaehler < 3)` ist korrekt und notwendig."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 57,
+     "label": "4.5.1. while – Spezielle Anweisungen: continue, break"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 58,
+     "label": "4.5.2. do while – continue, break"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 56,
+     "label": "4.4.2. switch – break verlässt den switch-Block"
+    },
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "label": "Klausur-Übungsaufgabe: Finde die Compiler-Fehler"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "break",
+    "continue",
+    "while",
+    "do-while",
+    "boolean"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-021"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Fakultät mit for- und do while-Schleife",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass das Programm `6!` berechnet und zusätzlich zählt, wie viele **Dezimalstellen** das Ergebnis hat (je 2 P.).\n\nErwartete Ausgabe:\n\n```\n6! = 720\nStellen: 3\n```",
+   "code": "class Fakultaet {\n  public static void main(String[] str) {\n    int n = 6;\n    int fakultaet = ____(1)____;      // neutrales Element der Multiplikation\n    int stellen = 0;\n    for (int i = 2; ____(2)____; i____(3)____) {\n      fakultaet ____(4)____ i;        // i in das Produkt aufnehmen\n    }\n    int rest = fakultaet;\n    ____(5)____ {                     // mindestens eine Stelle hat jede Zahl\n      rest /= 10;\n      stellen++;\n    } ____(6)____ (rest > 0);\n    System.out.println(n + \"! = \" + fakultaet);\n    System.out.println(\"Stellen: \" + stellen);\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "1"
+     ],
+     "explanation": "Bei einem Produkt ist `1` das neutrale Element. Mit `0` bliebe das Ergebnis für immer 0 – der häufigste Fehler bei Akkumulatoren."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "i <= n",
+      "i<=n",
+      "n >= i",
+      "i < n + 1",
+      "i < n+1"
+     ],
+     "explanation": "`6!` ist `2 * 3 * 4 * 5 * 6`, also muss `i` den Wert `n` noch **einschließen**. Mit `i < n` fehlte der Faktor 6 und das Ergebnis wäre 120 statt 720 – ein klassischer *off by one*."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "++",
+      "+= 1",
+      "+=1"
+     ],
+     "explanation": "Der dritte Teil des `for`-Kopfes zählt die Schleifenvariable weiter. Ohne diese Erhöhung würde die Schleife nie terminieren."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "*="
+     ],
+     "explanation": "`fakultaet *= i` ist die Kurzform von `fakultaet = fakultaet * i`. Mit `=` statt `*=` würde das Produkt bei jedem Durchlauf überschrieben und am Ende stünde nur `6` darin."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "do"
+     ],
+     "explanation": "Die Stellenzählung muss **mindestens einmal** laufen (auch die Zahl 0 hat eine Stelle). Genau dafür gibt es die fußgesteuerte `do while`-Schleife."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "while"
+     ],
+     "explanation": "`do { … } while (<Bedingung>);` – die Bedingung steht am Fuß und wird erst **nach** dem ersten Durchlauf geprüft. Das abschließende Semikolon gehört zwingend dazu."
+    }
+   ],
+   "solution": "class Fakultaet {\n  public static void main(String[] str) {\n    int n = 6;\n    int fakultaet = 1;\n    int stellen = 0;\n    for (int i = 2; i <= n; i++) {\n      fakultaet *= i;\n    }\n    int rest = fakultaet;\n    do {\n      rest /= 10;\n      stellen++;\n    } while (rest > 0);\n    System.out.println(n + \"! = \" + fakultaet);\n    System.out.println(\"Stellen: \" + stellen);\n  }\n}",
+   "expectedOutput": "6! = 720\nStellen: 3",
+   "explanation": "Die Aufgabe kombiniert die beiden Schleifenarten, für die das Skript klare Empfehlungen gibt:\n\n* Die **`for`-Schleife** ist die Zählschleife („für alle i = 2 … n“). Ihr Kopf enthält alle drei Teile an einer Stelle: Initialisierung `int i = 2`, Wiederholungsbedingung `i <= n` und Weiterzählen `i++`. Das macht Off-by-one-Fehler leicht überprüfbar.\n* Die **`do while`-Schleife** nimmt man, *„wenn der Schleifenrumpf mindestens einmal ausgeführt werden soll“*. Genau das ist beim Zählen von Dezimalstellen nötig: Auch die Zahl 0 hat eine Stelle. Mit einer `while`-Schleife `while (rest > 0)` käme für `rest == 0` fälschlich `0` heraus.\n\nDer Ablauf des Stellenzählers: 720 → 72 (1 Stelle) → 7 (2) → 0 (3), dann ist `rest > 0` falsch. Beachten Sie die Initialisierung des Akkumulators: bei Summen `0`, bei Produkten `1`. Merkregel: **`for` zum Zählen, `do while` fürs „mindestens einmal“.**",
+   "hints": [
+    "Welchen Startwert braucht ein Produkt, damit der erste Faktor nicht verfälscht wird?",
+    "Rechnen Sie `6!` von Hand und prüfen Sie, ob die Bedingung in Lücke 2 den Faktor 6 noch einschließt.",
+    "Für Lücke 5 und 6: Welche Schleifenart wird geprüft, *nachdem* der Rumpf gelaufen ist?",
+    "Verfolgen Sie `rest` Schritt für Schritt: 720 → ? → ? → ?"
+   ],
+   "pitfalls": [
+    "`fakultaet = 0` als Startwert – dann bleibt das Produkt 0.",
+    "`i < n` statt `i <= n` – dann fehlt der letzte Faktor und es kommt 120 statt 720 heraus.",
+    "In Lücke 4 ein einfaches `=` statt `*=` schreiben oder das Semikolon hinter `while (rest > 0)` vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 59,
+     "label": "4.5.3. Die for-Schleife – Initialisierung, Wiederholungsbedingung, Weiterzählen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 58,
+     "label": "4.5.2. Die do while-Schleife"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 60,
+     "label": "4.5. Wann welche Schleife?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4. Anweisungen (2/2) – for und do while"
+    }
+   ],
+   "tags": [
+    "for",
+    "do-while",
+    "akkumulator",
+    "off-by-one",
+    "zusammengesetzte-zuweisung"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-022"
+  },
+  {
+   "type": "mc",
+   "difficulty": 4,
+   "points": 2,
+   "examStyle": false,
+   "title": "for-Schleife mit Komma-Ausdrücken und leerem Rumpf",
+   "prompt": "Was gibt das folgende Programm aus? (Beachten Sie das Semikolon am Ende der ersten `for`-Zeile.)",
+   "code": "class ForKomma {\n  public static void main(String[] s) {\n    int i, summe;\n    for (i = 1, summe = 0; i <= 10; summe += i, i++) ;\n    System.out.println(\"summe = \" + summe + \", i = \" + i);\n\n    int j, produkt;\n    for (j = 1, produkt = 1; j <= 4; j++)\n      produkt *= j;\n    System.out.println(\"produkt = \" + produkt + \", j = \" + j);\n\n    int z = 0;\n    for (; z < 3; ) {\n      z += 2;\n    }\n    System.out.println(\"z = \" + z);\n  }\n}",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`summe = 55, i = 11`\n`produkt = 24, j = 5`\n`z = 4`",
+     "correct": true,
+     "why": "Richtig. Der Rumpf der ersten Schleife ist leer (`;`); die Arbeit passiert im Weiterzähl-Teil: `summe += i` läuft für i = 1…10, danach steht `i` auf 11. `produkt` ist 1·1·2·3·4 = 24 mit `j == 5`. Die dritte Schleife läuft mit leerem Init- und Weiterzähl-Teil, bis `z` von 0 über 2 auf 4 springt."
+    },
+    {
+     "id": "b",
+     "text": "`summe = 55, i = 10`\n`produkt = 24, j = 4`\n`z = 3`",
+     "correct": false,
+     "why": "Falsch. Nach einer `for`-Schleife steht die Laufvariable immer auf dem **ersten** Wert, für den die Bedingung scheitert – also 11 bzw. 5. Und `z` wird in Zweierschritten erhöht, trifft die 3 also nie."
+    },
+    {
+     "id": "c",
+     "text": "`summe = 66, i = 11`\n`produkt = 24, j = 5`\n`z = 4`",
+     "correct": false,
+     "why": "Falsch. `summe += i` steht im Weiterzähl-Teil und wird **vor** `i++` ausgeführt, addiert also 1…10 = 55. Die 11 kommt nicht mehr dazu, weil nach dem letzten Weiterzählen die Bedingung scheitert."
+    },
+    {
+     "id": "d",
+     "text": "Das Programm läuft in eine Endlosschleife, weil der erste Schleifenrumpf leer ist.",
+     "correct": false,
+     "why": "Falsch. Ein leerer Rumpf ist völlig zulässig; das Weiterzählen `i++` findet im Kopf statt und stellt die Terminierung sicher. Das Skript zeigt genau dieses Beispiel als *„schlechter Stil, nur zur Demonstration“*."
+    }
+   ],
+   "solution": "a — die Ausgabe ist `summe = 55, i = 11`, `produkt = 24, j = 5` und `z = 4`.",
+   "explanation": "Der Kopf `for (<Ausdruck1>; <Bedingung>; <Ausdruck2>)` besteht aus drei **unabhängigen** Teilen, und jeder davon darf mehrere durch Komma getrennte Ausdrücke enthalten oder ganz leer bleiben:\n\n1. `<Ausdruck1>` – einmalig vor dem ersten Durchlauf,\n2. `<Bedingung>` – vor **jedem** Durchlauf (leer bedeutet `true`),\n3. `<Ausdruck2>` – nach **jedem** Durchlauf, vor der nächsten Prüfung.\n\nDie erste Schleife ist genau das Beispiel von Folie 59, das das Skript selbst als *„schlechter Stil, nur zur Demonstration“* kennzeichnet: Der Rumpf ist das einzelne Semikolon, die eigentliche Rechnung `summe += i` steckt im Weiterzähl-Teil. Ablauf: Bedingung prüfen → leerer Rumpf → `summe += i`, `i++` (in dieser Reihenfolge, von links nach rechts). Für i = 1…10 ergibt das 55; danach ist `i == 11` und die Bedingung scheitert.\n\nWichtig für Klausuren: Nach einer `for`-Schleife hat die Laufvariable **den ersten Wert, für den die Bedingung nicht mehr gilt** – nicht den letzten gültigen. Und `z` erreicht die 3 nie, weil es in Zweierschritten wächst: Eine Bedingung `z != 3` wäre hier eine Endlosschleife gewesen. Merkregel: **Ein `;` direkt hinter dem `for`-Kopf ist der leere Rumpf – kein Syntaxfehler, aber eine gemeine Falle.**",
+   "hints": [
+    "Was ist der Rumpf der ersten Schleife? Achten Sie auf das Semikolon direkt hinter der schließenden Klammer.",
+    "In welcher Reihenfolge werden `summe += i` und `i++` abgearbeitet?",
+    "Welchen Wert hat eine Laufvariable direkt *nach* dem Verlassen einer `for`-Schleife?"
+   ],
+   "pitfalls": [
+    "Das `;` hinter dem `for`-Kopf übersehen und den `println` für den Rumpf halten.",
+    "Nach der Schleife `i = 10` statt `i = 11` angeben.",
+    "Glauben, ein leerer Init- oder Weiterzähl-Teil sei ein Syntaxfehler."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 59,
+     "label": "4.5.3. Die for-Schleife – mehrere, mit Komma getrennte Ausdrücke und ein leerer Rumpf sind möglich"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 61,
+     "label": "4.5. Häufige Fehler: Off by one, falsche Abbruchbedingung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4. Anweisungen (2/2) – for"
+    }
+   ],
+   "tags": [
+    "for",
+    "komma-ausdruck",
+    "leerer-rumpf",
+    "laufvariable",
+    "off-by-one"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-023"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Finde die 3 Compiler-Fehler (for-Schleife und Gültigkeitsbereich)",
+   "prompt": "Der folgende Code enthält genau **3** Fehler. In welchen Zeilen befinden sie sich? Benennen Sie jeden Fehler und geben Sie die Korrektur an.",
+   "code": "class ForFehler {\n  public static void main(String[] str) {\n    int summe = 0;\n    for (int i = 0.5; i < 5; i++) {\n      summe += i;\n    }\n    System.out.println(\"i = \" + i);\n    for (int k = 0; k < 3; k++) {\n      int k = 10;\n      summe += k;\n    }\n    System.out.println(summe);\n  }\n}",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "for (int i = 0.5; i < 5; i++) {",
+     "fix": "for (i = 0; i < 5; i++) {   // zusammen mit der Deklaration int i; vor der Schleife",
+     "why": "`0.5` ist ein `double`-Literal und lässt sich nicht ohne Genauigkeitsverlust an ein `int` zuweisen. javac meldet *incompatible types: possible lossy conversion from double to int*. Eine Umwandlung müsste man ausdrücklich mit `(int)` verlangen."
+    },
+    {
+     "line": 7,
+     "wrong": "System.out.println(\"i = \" + i);",
+     "fix": "int i;  vor die Schleife ziehen und im Kopf nur noch i = 0; schreiben",
+     "why": "Eine im `for`-Kopf deklarierte Variable ist **nur innerhalb der Schleife** gültig; nach der schließenden Klammer existiert sie nicht mehr. javac meldet *cannot find symbol – variable i*. Wer den Wert danach noch braucht, muss die Variable vor der Schleife deklarieren."
+    },
+    {
+     "line": 9,
+     "wrong": "int k = 10;",
+     "fix": "int m = 10;   und entsprechend summe += m;",
+     "why": "Im Rumpf ist `k` aus dem Schleifenkopf bereits sichtbar; eine zweite Deklaration desselben Namens im selben Gültigkeitsbereich ist verboten. javac meldet *variable k is already defined in method main(String[])*. In Java darf man – anders als in manchen anderen Sprachen – lokale Variablen **nicht** verschatten."
+    }
+   ],
+   "solution": "class ForFehler {\n  public static void main(String[] str) {\n    int summe = 0;\n    int i;\n    for (i = 0; i < 5; i++) {\n      summe += i;\n    }\n    System.out.println(\"i = \" + i);\n    for (int k = 0; k < 3; k++) {\n      int m = 10;\n      summe += m;\n    }\n    System.out.println(summe);\n  }\n}",
+   "expectedOutput": "i = 5\n40",
+   "explanation": "Alle drei Fehler drehen sich um **Typen und Gültigkeitsbereiche** im `for`-Kopf:\n\n**1. `int i = 0.5`** – Java wandelt `double` nie stillschweigend nach `int` um, weil dabei Information verloren ginge. Erlaubt ist nur die umgekehrte Richtung (implizite *Erweiterung*) oder ein ausdrücklicher Cast `(int) 0.5`.\n\n**2. Gültigkeitsbereich der Laufvariablen.** `for (int i = …)` deklariert `i` *innerhalb* der Schleife. Das ist meistens erwünscht (die Variable „verschmutzt“ die Methode nicht), aber es heißt eben auch: nach der Schleife ist sie weg. Das Skript zeigt auf Folie 59 genau deshalb beide Schreibweisen – `int i, summe;` vor der Schleife und `for (i = 1; …)`, wenn man den Endwert noch braucht.\n\n**3. Verschattung ist verboten.** In Java darf eine lokale Variable eine andere lokale Variable im umschließenden Block nicht überdecken.\n\nNach der Korrektur läuft die erste Schleife für i = 0…4 (Summe 10) und endet mit `i == 5`; die zweite addiert dreimal 10 dazu → `40`. Merkregel: **Was im `for`-Kopf deklariert wird, stirbt mit der Schleife.**",
+   "hints": [
+    "Zeile 4: Welchen Typ hat das Literal `0.5`, und welchen Typ soll `i` haben? In welche Richtung wandelt Java automatisch um?",
+    "Zeile 7: Wo genau beginnt und endet der Gültigkeitsbereich einer im `for`-Kopf deklarierten Variablen?",
+    "Zeile 9: Wie viele Variablen mit dem Namen `k` wären an dieser Stelle gleichzeitig sichtbar?"
+   ],
+   "pitfalls": [
+    "Zeile 4 durch `for (double i = 0.5; …)` korrigieren – dann bricht `summe += i` (`double` nach `int`).",
+    "Den Gültigkeitsbereichs-Fehler in Zeile 4 statt in Zeile 7 verorten. Gemeldet wird die Zeile, in der der Name *benutzt* wird.",
+    "Die doppelte Deklaration von `k` für zulässig halten, weil sie in einem inneren Block steht."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 59,
+     "label": "4.5.3. Die for-Schleife – int i, summe; for (i = 1; i <= 10; i++)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 51,
+     "label": "4.3. Anweisungsfolge / Block"
+    },
+    {
+     "file": "11_Ueberblick/Klausur04.java",
+     "label": "Klausur-Übungsaufgabe: In welchen 3 Zeilen befinden sich Compiler-Fehler?"
+    },
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "label": "Klausur-Übungsaufgabe: Gültigkeitsbereich in Blöcken"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "for",
+    "gueltigkeitsbereich",
+    "typkonversion"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-024"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "break und continue in Schleifen",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class BreakContinue {\n  public static void main(String[] s) {\n    int summe = 0;\n    for (int i = 1; i <= 10; i++) {\n      if (i % 3 == 0) continue;\n      if (i > 7) break;\n      summe += i;\n      System.out.print(i + \",\");\n    }\n    System.out.println();\n    System.out.println(\"summe = \" + summe);\n\n    int i = 0;\n    while (true) {\n      i++;\n      if (i % 2 == 0) continue;\n      System.out.print(i + \",\");\n      if (i >= 7) break;\n    }\n    System.out.println();\n  }\n}",
+   "expectedOutput": "1,2,4,5,7,\nsumme = 19\n1,3,5,7,",
+   "explanation": "Das Skript definiert die beiden Anweisungen knapp:\n\n* **`continue`** – *„verlasse den Block und beginne mit dem nächsten Durchlauf“*. Bei einer `for`-Schleife wird dabei der Weiterzähl-Teil `i++` **noch ausgeführt**.\n* **`break`** – *„verlasse die Schleife“* – sofort und endgültig.\n\nErste Schleife, Durchlauf für Durchlauf: i = 1 → Ausgabe, summe 1. i = 2 → Ausgabe, summe 3. i = 3 → `continue`, nichts passiert. i = 4 → summe 7. i = 5 → summe 12. i = 6 → `continue`. i = 7 → `7 > 7` ist **falsch**, also weiter → summe 19. i = 8 → `8 % 3` ist 2, aber `8 > 7` → `break`. Ausgegeben wird `1,2,4,5,7,` und `summe = 19`.\n\nZweite Schleife: `while (true)` ist bewusst endlos – der Ausstieg erfolgt allein über `break`. Weil `i++` **am Anfang** des Rumpfes steht, ist das `continue` hier ungefährlich; stünde die Erhöhung hinter dem `continue`, hätte man eine echte Endlosschleife. Gerade Zahlen werden übersprungen, bei 7 wird abgebrochen: `1,3,5,7,`.\n\nMerkregel: **`continue` überspringt den Rest des Rumpfes, `break` überspringt den Rest der Schleife.**",
+   "hints": [
+    "Legen Sie eine Tabelle mit den Spalten `i`, „continue?“, „break?“ und `summe` an und füllen Sie sie Zeile für Zeile.",
+    "Achten Sie bei i = 7 genau auf `>` – ist 7 größer als 7?",
+    "Bei der zweiten Schleife: An welcher Stelle im Rumpf steht `i++`? Was hieße es, wenn es hinter dem `continue` stünde?"
+   ],
+   "pitfalls": [
+    "Bei `continue` in einer `for`-Schleife annehmen, das Weiterzählen `i++` falle aus (dann entstünde eine Endlosschleife).",
+    "Bei i = 7 abbrechen statt bei i = 8.",
+    "`break` so lesen, dass nur der aktuelle Durchlauf endet – das tut `continue`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 57,
+     "label": "4.5.1. while – continue: verlasse den Block und beginne mit dem nächsten Durchlauf; break: verlasse die Schleife"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 59,
+     "label": "4.5.3. Die for-Schleife – continue, break"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 58,
+     "label": "4.5.2. Die do while-Schleife – continue, break"
+    }
+   ],
+   "tags": [
+    "break",
+    "continue",
+    "for",
+    "while",
+    "endlosschleife"
+   ],
+   "solution": "class BreakContinue {\n  public static void main(String[] s) {\n    int summe = 0;\n    for (int i = 1; i <= 10; i++) {\n      if (i % 3 == 0) continue;\n      if (i > 7) break;\n      summe += i;\n      System.out.print(i + \",\");\n    }\n    System.out.println();\n    System.out.println(\"summe = \" + summe);\n\n    int i = 0;\n    while (true) {\n      i++;\n      if (i % 2 == 0) continue;\n      System.out.print(i + \",\");\n      if (i >= 7) break;\n    }\n    System.out.println();\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-025"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": false,
+   "title": "Verschachtelte Schleifen: was verlässt break?",
+   "prompt": "**a)** Was gibt das folgende Programm aus?\n\n**b)** Erklären Sie, welche Schleife das `break` im ersten Block verlässt.\n\n**c)** Wie erreicht man mit den Mitteln aus Kapitel 4, dass **beide** Schleifen auf einmal verlassen werden? Geben Sie eine Möglichkeit an.",
+   "code": "class Verschachtelt {\n  public static void main(String[] s) {\n    for (int i = 1; i <= 3; i++) {\n      for (int j = 1; j <= 3; j++) {\n        if (j == 2) break;\n        System.out.print(i + \"\" + j + \",\");\n      }\n    }\n    System.out.println();\n\n    int zaehler = 0;\n    for (int i = 1; i <= 3; i++) {\n      for (int j = 1; j <= 3; j++) {\n        if (i == j) continue;\n        zaehler++;\n      }\n    }\n    System.out.println(\"zaehler = \" + zaehler);\n\n    for (int i = 3; i >= 1; i--) {\n      for (int j = 1; j <= i; j++) {\n        System.out.print(\"X\");\n      }\n      System.out.println();\n    }\n  }\n}",
+   "solution": "**a) Ausgabe:**\n\n```\n11,21,31,\nzaehler = 6\nXXX\nXX\nX\n```\n\n**b) Welche Schleife verlässt `break`?**\n\n`break` verlässt immer nur die **innerste** Schleife, in der es steht – hier also die `j`-Schleife. Die äußere `i`-Schleife läuft ganz normal weiter. Deshalb wird für jedes `i` genau einmal `j == 1` ausgegeben und bei `j == 2` abgebrochen: `11,`, `21,`, `31,`.\n\nZum Vergleich der zweite Block: `continue` überspringt ebenfalls nur den Rest des **inneren** Rumpfes. Von 3 × 3 = 9 Durchläufen fallen die drei mit `i == j` weg → `zaehler == 6`.\n\n**c) Beide Schleifen verlassen** – zwei Wege mit den Mitteln aus Kapitel 4:\n\n1. **Laufvariable manipulieren** (das Verfahren, das der Dozent im Primzahl-Beispiel benutzt):\n\n```java\nfor (int i = 1; i <= 3; i++) {\n  for (int j = 1; j <= 3; j++) {\n    if (j == 2) { i = 4; break; }   // i über die Grenze setzen\n  }\n}\n```\n\n2. **Abbruch-Flag in der Bedingung der äußeren Schleife:**\n\n```java\nboolean fertig = false;\nfor (int i = 1; i <= 3 && !fertig; i++) {\n  for (int j = 1; j <= 3; j++) {\n    if (j == 2) { fertig = true; break; }\n  }\n}\n```\n\n**Bewertungsrubrik (6 P.):**\n* 2 P. – vollständig korrekte Ausgabe (je 1 P. für `11,21,31,` und für `zaehler = 6` + Dreieck)\n* 2 P. – `break`/`continue` wirken nur auf die innerste Schleife, die äußere läuft weiter\n* 2 P. – eine korrekte, lauffähige Möglichkeit, beide Schleifen zu verlassen",
+   "explanation": "`break` und `continue` beziehen sich **immer auf die innerste umgebende Schleife**. Das ist der häufigste Irrtum bei verschachtelten Schleifen: Man erwartet, mit einem `break` „aus allem herauszuspringen“, verlässt aber nur eine Ebene.\n\nDer zweite Block zeigt den Unterschied zu `continue`: Es beendet nicht die Schleife, sondern nur den aktuellen Durchlauf – deshalb werden 6 statt 9 Zählungen ausgeführt. Der dritte Block ist das Standardmuster für Muster-Ausgaben: Die äußere Schleife zählt die Zeilen, die innere die Zeichen pro Zeile, und `System.out.println()` ohne Argument beendet die Zeile – genau die Technik, die in `Klausur02.java` und `Schleife06.java` verlangt wird.\n\nJava kennt zwar `break <label>;`, aber das Skript führt es nicht ein. Der vom Dozenten gezeigte Weg ist stattdessen das **Manipulieren der Laufvariablen**: Im Primzahl-Beispiel steht `teiler = zahl; // verlasse die for-teiler-Schleife`. Merkregel: **`break` springt genau eine Ebene heraus – für mehr braucht es ein Flag oder eine gesetzte Laufvariable.**",
+   "hints": [
+    "Verfolgen Sie den ersten Block mit einer Tabelle für `i` und `j`. Wie oft wird die innere Schleife komplett neu gestartet?",
+    "Zählen Sie im zweiten Block zuerst alle Kombinationen und ziehen Sie dann die mit `i == j` ab.",
+    "Für Teil c: Wie könnte man die Bedingung der **äußeren** Schleife von innen heraus falsch machen?"
+   ],
+   "pitfalls": [
+    "Annehmen, `break` beende beide Schleifen (dann käme nur `11,` heraus).",
+    "`continue` mit `break` verwechseln und im zweiten Block 3 statt 6 zählen.",
+    "Im dritten Block das `println()` ohne Argument übersehen und alle X in eine Zeile schreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 71,
+     "label": "4.6. Primzahlen-Beispiel – teiler = zahl; // verlasse die for-teiler-Schleife"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 57,
+     "label": "4.5.1. while – break: verlasse die Schleife"
+    },
+    {
+     "file": "11_Ueberblick/Klausur02.java",
+     "label": "Klausur-Übungsaufgabe: Dreieck mit verschachtelten Schleifen"
+    },
+    {
+     "file": "04_Anweisungen/Schleife06.java",
+     "label": "Beispielaufgabe des Dozenten"
+    }
+   ],
+   "tags": [
+    "verschachtelte-schleifen",
+    "break",
+    "continue",
+    "for",
+    "muster"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-026"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Schleifenabbruch durch Manipulation der Laufvariable",
+   "prompt": "Was ist die Ausgabe dieses Programms? (Es ist das Primzahl-Beispiel aus den Programmier-Konventionen, hier mit der Obergrenze 20.)",
+   "code": "class Primzahlen {\n  public static void main(String[] s) {\n    int zahl, teiler;\n    boolean prim;\n    System.out.println(2);\n    for (zahl = 3; zahl < 20; zahl += 2) {\n      prim = true;\n      for (teiler = 3; teiler < zahl; teiler += 2) {\n        if (zahl % teiler == 0) {\n          prim = false;\n          teiler = zahl;\n        }\n      }\n      if (prim)\n        System.out.println(zahl);\n    }\n  }\n}",
+   "expectedOutput": "2\n3\n5\n7\n11\n13\n17\n19",
+   "explanation": "Das Programm gibt die Primzahlen unter 20 aus. Interessant sind drei Kniffe:\n\n**1. Die 2 wird vorab ausgegeben**, danach läuft die äußere Schleife nur über **ungerade** Zahlen (`zahl += 2` ab 3). Gerade Zahlen müssen deshalb gar nicht geprüft werden – und die inneren Teiler ebenfalls nur ungerade (`teiler += 2` ab 3).\n\n**2. Der Abbruch der inneren Schleife erfolgt durch Manipulation der Laufvariablen**: `teiler = zahl;` setzt den Teiler auf die Grenze, sodass die Bedingung `teiler < zahl` beim nächsten Test scheitert. Der Dozent kommentiert diese Zeile im Skript ausdrücklich mit *„verlasse die for-teiler-Schleife“*. Das ist eine Alternative zu `break` – und genau deshalb ein beliebtes Klausurmotiv. Wichtig: Der Weiterzähl-Teil `teiler += 2` läuft nach dem Rumpf trotzdem noch, `teiler` ist danach also sogar `zahl + 2`.\n\n**3. Der Fall `zahl == 3`**: Die innere Schleife startet mit `teiler = 3`, und `3 < 3` ist sofort falsch – der Rumpf läuft **null**-mal, `prim` bleibt `true`. Kopfgesteuerte Schleifen können eben auch gar nicht laufen.\n\nAusgeschlossen werden 9 (durch 3), 15 (durch 3) – übrig bleiben 3, 5, 7, 11, 13, 17, 19. Merkregel: **Wer die Laufvariable über die Grenze setzt, beendet die Schleife genauso wie `break`.**",
+   "hints": [
+    "Prüfen Sie zuerst, welche Zahlen die äußere Schleife überhaupt durchläuft.",
+    "Was bewirkt die Zeile `teiler = zahl;` für die Bedingung der inneren Schleife?",
+    "Behandeln Sie `zahl == 3` gesondert: Wie oft läuft die innere Schleife dort?",
+    "Welche der Zahlen 3, 5, 7, 9, 11, 13, 15, 17, 19 haben einen ungeraden Teiler kleiner als sie selbst?"
+   ],
+   "pitfalls": [
+    "Die vorab ausgegebene 2 vergessen.",
+    "Annehmen, `teiler = zahl;` habe keine Wirkung, weil es keine `break`-Anweisung ist.",
+    "Bei `zahl == 3` glauben, die innere Schleife laufe mindestens einmal, und 3 fälschlich als „nicht prim“ einstufen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 71,
+     "label": "4.6. Programmier-Konventionen – Primzahlen mit teiler = zahl;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 70,
+     "label": "4.6. Programmier-Konventionen – unleserliche Variante desselben Programms"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 352,
+     "label": "Überblick 4. Anweisungen (2/2) – Primzahlbeispiel"
+    }
+   ],
+   "tags": [
+    "verschachtelte-schleifen",
+    "for",
+    "laufvariable",
+    "abbruch",
+    "primzahlen"
+   ],
+   "solution": "class Primzahlen {\n  public static void main(String[] s) {\n    int zahl, teiler;\n    boolean prim;\n    System.out.println(2);\n    for (zahl = 3; zahl < 20; zahl += 2) {\n      prim = true;\n      for (teiler = 3; teiler < zahl; teiler += 2) {\n        if (zahl % teiler == 0) {\n          prim = false;\n          teiler = zahl;\n        }\n      }\n      if (prim)\n        System.out.println(zahl);\n    }\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-027"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 10,
+   "examStyle": true,
+   "title": "hop, pla, hoppla (nach Klausur01)",
+   "prompt": "Schreiben Sie ein vollständiges Java-Programm in der Datei `Hoppla.java`.\n\nGib alle Zahlen von 5 bis `max` (`max` inklusive) aus, jeweils eine pro Zeile. Ersetze jede Zahl, die durch 7 teilbar ist, durch `hop`. Ersetze jede Zahl, die durch 9 teilbar ist, durch `pla`. Ist eine Zahl durch **beide** teilbar, gib beides aus (`hoppla`).\n\nZähle außerdem mit, wie oft `hop`, `pla` oder `hoppla` vorkam, und gib das am Ende in der Form `Anzahl: n` aus.\n\nVerwenden Sie `max = 30`. Die Ausgabe beginnt also mit `5`, `6`, `hop`, `8`, `pla`, … und endet mit `30` und `Anzahl: 7`.",
+   "starterCode": "class Hoppla {\n  public static void main( String[] str ) {\n    int max = 30;\n\n    // Gib alle Zahlen von 5 bis max (max inklusive) aus, jeweils eine pro Zeile.\n    // Ersetze Vielfache von 7 durch \"hop\", Vielfache von 9 durch \"pla\",\n    // Vielfache von beiden durch \"hoppla\".\n\n    // Zähle, wie oft \"hop\", \"pla\" oder \"hoppla\" vorkam, und gib \"Anzahl: n\" aus.\n\n  }\n}",
+   "constraints": [
+    "Klasse heißt Hoppla (Datei Hoppla.java)",
+    "max = 30",
+    "genau eine Ausgabe pro Zahl, danach eine Zeile Anzahl: n",
+    "keine Arrays, keine eigenen Methoden nötig"
+   ],
+   "required": [
+    "class Hoppla",
+    "for",
+    "%"
+   ],
+   "solution": "class Hoppla {\n  public static void main( String[] str ) {\n    int max = 30;\n    int anzahl = 0;\n    for (int i = 5; i <= max; i++) {\n      boolean ersetzt = false;\n      if (i % 7 == 0) {          // Vielfaches von 7\n        System.out.print(\"hop\");\n        ersetzt = true;\n      }\n      if (i % 9 == 0) {          // Vielfaches von 9 -- kein else, damit \"hoppla\" möglich ist\n        System.out.print(\"pla\");\n        ersetzt = true;\n      }\n      if (ersetzt) {             // mindestens eine Ersetzung: Zeile abschließen und zählen\n        anzahl++;\n        System.out.println();\n      } else {\n        System.out.println(i);   // keine Ersetzung: die Zahl selbst ausgeben\n      }\n    }\n    System.out.println(\"Anzahl: \" + anzahl);\n  }\n}",
+   "expectedOutput": "5\n6\nhop\n8\npla\n10\n11\n12\n13\nhop\n15\n16\n17\npla\n19\n20\nhop\n22\n23\n24\n25\n26\npla\nhop\n29\n30\nAnzahl: 7",
+   "explanation": "Das ist die Klausur-Übungsaufgabe `Klausur01.java` des Dozenten (ohne den `Scanner`-Teil). Der entscheidende Entwurfsschritt ist die Behandlung des Doppelfalls:\n\n**Falsch** wäre `if (i % 7 == 0) … else if (i % 9 == 0) …`, denn dann käme bei einer Zahl, die durch beide teilbar ist, nur `hop` heraus. Richtig sind **zwei unabhängige `if`-Anweisungen** plus `System.out.print` (ohne `ln`), sodass sich `hop` und `pla` in derselben Zeile zu `hoppla` aneinanderreihen. Ein `boolean`-Merker hält fest, ob überhaupt etwas ersetzt wurde – daraus ergeben sich der Zähler und die Entscheidung, ob stattdessen die Zahl gedruckt wird.\n\nDer zweite typische Fehler ist die Schleifengrenze: „bis `max` inklusive“ heißt `i <= max`, nicht `i < max`. Die Teilbarkeitsprüfung selbst ist der Modulo-Operator: `i % 7 == 0`.\n\nIm Bereich 5…30 gibt es vier Vielfache von 7 (7, 14, 21, 28) und drei von 9 (9, 18, 27), also sieben Ersetzungen; ein echtes `hoppla` käme erst bei 63. Merkregel: **„beides möglich“ heißt zwei getrennte `if`, nicht `else if`.**",
+   "hints": [
+    "Wie prüft man „ist durch 7 teilbar“? Der passende Operator steht bei den arithmetischen Operatoren.",
+    "Überlegen Sie zuerst, wie `hoppla` überhaupt entstehen kann. Was passiert bei `else if`?",
+    "Verwenden Sie `System.out.print` für die Teilstücke und ein `System.out.println()` ohne Argument, um die Zeile abzuschließen.",
+    "Ein `boolean`-Merker sagt Ihnen am Ende jedes Durchlaufs, ob Sie ersetzt haben – daraus folgt sowohl der Zähler als auch die Alternative „Zahl ausgeben“."
+   ],
+   "pitfalls": [
+    "`else if` statt zweier unabhängiger `if` – dann kann `hoppla` nie entstehen.",
+    "`i < max` statt `i <= max` – die 30 fehlt.",
+    "`System.out.println(\"hop\")` statt `print` – dann steht `pla` in der nächsten Zeile."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur01.java",
+     "label": "Offizielle Klausur-Übungsaufgabe des Dozenten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 353,
+     "label": "Überblick – Klausur01"
+    },
+    {
+     "file": "04_Anweisungen/Schleife03.java",
+     "label": "Beispielaufgabe: hoppla bei Vielfachen von 7"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 64,
+     "label": "4. Anweisungen – Beispiel Schleife03"
+    }
+   ],
+   "tags": [
+    "for",
+    "if",
+    "modulo",
+    "klausuraufgabe",
+    "zaehler"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-028"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "Dreieck aus X-Zeichen (nach Klausur02)",
+   "prompt": "Schreiben Sie ein vollständiges Java-Programm in der Datei `Dreieck.java`, das ein Dreieck aus `X`-Zeichen ausgibt:\n\n```\nsize = 3:     size = 4:      size = 5:\n  XXX          XXXX           XXXXX\n   XX           XXX            XXXX\n    X            XX             XXX\n                  X              XX\n                                  X\n```\n\nVorgaben:\n* Zuerst wird `Dreieck von Groesse <size>:` ausgegeben.\n* Ist `size < 3`, wird stattdessen nur `zu klein` ausgegeben und kein Dreieck gezeichnet.\n* In jeder Zeile stehen zuerst die passende Anzahl **Leerzeichen**, danach die `X`.\n* Verwenden Sie `size = 6` und ausschließlich `System.out.print` bzw. `System.out.println()`.\n\nErwartete Ausgabe für `size = 6`:\n\n```\nDreieck von Groesse 6:\nXXXXXX\n XXXXX\n  XXXX\n   XXX\n    XX\n     X\n```",
+   "starterCode": "class Dreieck {\n  public static void main( String[] str ) {\n    int size = 6;\n    System.out.println(\"Dreieck von Groesse \" + size + \":\");\n\n    // 1. Überprüfe, ob size >= 3 ist. Wenn nicht, gib \"zu klein\" aus.\n\n    // 2. Schleife über die Zeilen von 0 bis size-1\n    //    Gib zuerst in jeder Zeile eine passende Anzahl an Leerzeichen aus\n    //    Gib dann (size - Zeilenindex) viele X aus\n\n  }\n}",
+   "constraints": [
+    "Klasse heißt Dreieck (Datei Dreieck.java)",
+    "size = 6",
+    "bei size < 3 nur die Zeile 'zu klein'",
+    "verschachtelte Schleifen, keine Arrays und keine String-Hilfsmethoden"
+   ],
+   "required": [
+    "class Dreieck",
+    "for",
+    "System.out.print("
+   ],
+   "solution": "class Dreieck {\n  public static void main( String[] str ) {\n    int size = 6;\n    System.out.println(\"Dreieck von Groesse \" + size + \":\");\n    if (size < 3) {\n      System.out.println(\"zu klein\");\n    } else {\n      for (int zeile = 0; zeile < size; zeile++) {       // eine Zeile pro Durchlauf\n        for (int leer = 0; leer < zeile; leer++) {       // zeile viele Leerzeichen\n          System.out.print(\" \");\n        }\n        for (int x = 0; x < size - zeile; x++) {         // size-zeile viele X\n          System.out.print(\"X\");\n        }\n        System.out.println();                            // Zeile abschließen\n      }\n    }\n  }\n}",
+   "expectedOutput": "Dreieck von Groesse 6:\nXXXXXX\n XXXXX\n  XXXX\n   XXX\n    XX\n     X",
+   "explanation": "Das ist die Klausur-Übungsaufgabe `Klausur02.java`. Das Grundmuster jeder Zeichen-Grafik lautet:\n\n* **äußere Schleife = Zeilen**, **innere Schleife(n) = Zeichen innerhalb einer Zeile**,\n* `System.out.print` für die einzelnen Zeichen, ein `System.out.println()` **ohne Argument** am Ende jeder Zeile.\n\nDer eigentliche Denkschritt ist der Zusammenhang zwischen Zeilenindex und Zeichenanzahl. Mit `zeile` von 0 bis `size-1` gilt: **`zeile` Leerzeichen, danach `size - zeile` X-Zeichen.** Man prüft das an den Rändern: In Zeile 0 stehen 0 Leerzeichen und `size` X, in der letzten Zeile (`zeile == size-1`) genau `size-1` Leerzeichen und 1 X. Diese Randprobe erspart die meisten Off-by-one-Fehler.\n\nDie Prüfung `size < 3` steht bewusst **vor** der Schleife; in der Originalaufgabe heißt es *„Überprüfe, ob size >= 3 ist. Wenn nicht, verlasse die Methode.“* – mit `return;` ginge das ebenso. Merkregel: **Außen die Zeilen, innen die Zeichen, und `println()` schließt die Zeile.**",
+   "hints": [
+    "Wie viele Zeilen hat das Dreieck bei `size = 6`? Und wie viele X stehen in der ersten, wie viele in der letzten Zeile?",
+    "Stellen Sie eine kleine Tabelle auf: Zeilenindex 0,1,2,… gegen Anzahl Leerzeichen und Anzahl X. Welche Formel verbindet beides?",
+    "Sie brauchen zwei innere Schleifen nacheinander: erst Leerzeichen, dann X.",
+    "`System.out.println()` ohne Argument erzeugt genau den Zeilenumbruch am Ende jeder Zeile."
+   ],
+   "pitfalls": [
+    "Die Zeilen mit `zeile = 1` beginnen lassen und dadurch eine Zeile zu wenig oder zu viel zeichnen.",
+    "`System.out.println(\"X\")` statt `print(\"X\")` – dann steht jedes X in einer eigenen Zeile.",
+    "Nach den X noch Leerzeichen ausgeben – die Ausgabe stimmt dann optisch, aber nicht zeichengenau."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur02.java",
+     "label": "Offizielle Klausur-Übungsaufgabe des Dozenten"
+    },
+    {
+     "file": "04_Anweisungen/Schleife06.java",
+     "label": "Beispielaufgabe: Dreieck der Größe size"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 67,
+     "label": "4. Anweisungen – Beispiel Schleife06"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 68,
+     "label": "4. Anweisungen – Beispiel Schleife07"
+    }
+   ],
+   "tags": [
+    "for",
+    "verschachtelte-schleifen",
+    "muster",
+    "klausuraufgabe",
+    "if"
+   ],
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-029"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "Härtetest: Inkremente und Kurzschluss in Schleifenbedingungen",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Haerte01 {\n  public static void main(String[] s) {\n    int i = 0;\n    while (i++ < 3) {\n      System.out.print(\"i=\" + i + \" \");\n    }\n    System.out.println(\"| ende i=\" + i);\n\n    int j = 0;\n    while (++j < 3) {\n      System.out.print(\"j=\" + j + \" \");\n    }\n    System.out.println(\"| ende j=\" + j);\n\n    int a = 0, b = 0;\n    for (int k = 0; k < 4 && a++ < 2; k++) {\n      b++;\n    }\n    System.out.println(\"a=\" + a + \" b=\" + b);\n  }\n}",
+   "expectedOutput": "i=1 i=2 i=3 | ende i=4\nj=1 j=2 | ende j=3\na=3 b=2",
+   "explanation": "Hier steckt der Seiteneffekt in der **Schleifenbedingung** – sie wird also bei *jedem* Test ausgeführt, auch beim letzten, gescheiterten.\n\n**`while (i++ < 3)`** – verglichen wird der **alte** Wert, erhöht wird trotzdem. Tests: `0 < 3` wahr (i = 1) → Ausgabe `i=1`; `1 < 3` wahr (i = 2) → `i=2`; `2 < 3` wahr (i = 3) → `i=3`; `3 < 3` falsch (i = 4) → Ende. Man sieht drei Durchläufe, aber `i` steht am Ende auf **4**, weil auch der gescheiterte Test hochgezählt hat.\n\n**`while (++j < 3)`** – hier wird **vor** dem Vergleich erhöht: `j` wird 1, `1 < 3` wahr → `j=1`; `j` wird 2, wahr → `j=2`; `j` wird 3, `3 < 3` falsch → Ende mit `j == 3`. Ein Durchlauf weniger als oben, obwohl sich nur die Position von `++` unterscheidet.\n\n**`for (int k = 0; k < 4 && a++ < 2; k++)`** – die Bedingung kombiniert Kurzschluss und Seiteneffekt. Tests: k = 0: `0 < 4` wahr, also wird `a++ < 2` ausgewertet → `0 < 2` wahr (a = 1) → b = 1. k = 1: wahr, `1 < 2` wahr (a = 2) → b = 2. k = 2: `2 < 4` wahr, `2 < 2` falsch (a = 3) → Abbruch. Ergebnis `a == 3`, `b == 2` – `a` ist um eins größer als die Zahl der Durchläufe plus eins, weil der letzte, erfolglose Test ebenfalls hochgezählt hat. Wäre die linke Bedingung schon vorher `false` geworden, hätte der Kurzschluss von `&&` das `a++` verhindert.\n\nMerkregel: **Die Bedingung läuft einmal öfter als der Rumpf – Seiteneffekte darin zählen mit.**",
+   "hints": [
+    "Zählen Sie für jede Schleife getrennt: Wie oft wird der **Rumpf** ausgeführt, und wie oft die **Bedingung**?",
+    "Bei `i++ < 3`: Welcher Wert wird verglichen – der vor oder der nach der Erhöhung? Und was steht danach in `i`?",
+    "Vergessen Sie den letzten, gescheiterten Bedingungstest nicht – auch er hat einen Seiteneffekt.",
+    "Bei der `for`-Schleife: Wird `a++` überhaupt ausgewertet, wenn `k < 4` schon `false` wäre?"
+   ],
+   "pitfalls": [
+    "Nach `while (i++ < 3)` den Wert `i == 3` angeben statt 4.",
+    "`i++` und `++j` als gleichwertig behandeln – sie unterscheiden sich hier um einen ganzen Durchlauf.",
+    "Bei der `for`-Schleife `a == 2` angeben und den letzten Test vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 50,
+     "label": "4.2. Präfix und Postfix Inkrement / Dekrement"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 47,
+     "label": "4.1. Logische Operatoren – Kurzschlussauswertung bei &&"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 57,
+     "label": "4.5.1. Die while-Schleife"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 59,
+     "label": "4.5.3. Die for-Schleife"
+    },
+    {
+     "file": "11_Ueberblick/Klausur05.java",
+     "label": "Klausur-Übungsaufgabe: do-while mit Seiteneffekten in der Bedingung"
+    }
+   ],
+   "tags": [
+    "inkrement",
+    "kurzschluss",
+    "while",
+    "for",
+    "seiteneffekt",
+    "haertetest"
+   ],
+   "solution": "class Haerte01 {\n  public static void main(String[] s) {\n    int i = 0;\n    while (i++ < 3) {\n      System.out.print(\"i=\" + i + \" \");\n    }\n    System.out.println(\"| ende i=\" + i);\n\n    int j = 0;\n    while (++j < 3) {\n      System.out.print(\"j=\" + j + \" \");\n    }\n    System.out.println(\"| ende j=\" + j);\n\n    int a = 0, b = 0;\n    for (int k = 0; k < 4 && a++ < 2; k++) {\n      b++;\n    }\n    System.out.println(\"a=\" + a + \" b=\" + b);\n  }\n}",
+   "lang": "java",
+   "topicId": "java-statements",
+   "id": "java-statements-030"
+  }
+ ]
+}

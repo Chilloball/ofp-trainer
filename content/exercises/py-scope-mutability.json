@@ -1,0 +1,1692 @@
+{
+ "topicId": "py-scope-mutability",
+ "exercises": [
+  {
+   "id": "py-scope-mutability-001",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Welche Aufzählung enthält nur immutable Typen?",
+   "prompt": "In der Vorlesung wurden die Datentypen in **veränderbare (mutable)** und **unveränderbare (immutable)** eingeteilt. Welche der folgenden Aufzählungen enthält *ausschließlich* immutable Typen?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`int, float, bool, str, tuple`",
+     "correct": true,
+     "why": "Genau diese fünf nennt die Vorlesungsfolie als unveränderbar (dort zusätzlich `unicode`)."
+    },
+    {
+     "id": "b",
+     "text": "`int, list, str, tuple`",
+     "correct": false,
+     "why": "`list` ist der Prototyp einer mutable Struktur: `liste[0] = 5`, `append`, `remove` ändern das Objekt an Ort und Stelle."
+    },
+    {
+     "id": "c",
+     "text": "`float, bool, set, tuple`",
+     "correct": false,
+     "why": "`set` ist mutable - `menge.add(3)` verändert die vorhandene Menge, es entsteht kein neues Objekt."
+    },
+    {
+     "id": "d",
+     "text": "`str, tuple, dict, int`",
+     "correct": false,
+     "why": "`dict` ist mutable - `d['schluessel'] = wert` verändert das bestehende Dictionary."
+    }
+   ],
+   "solution": "a) `int, float, bool, str, tuple`",
+   "explanation": "Die Vorlesung teilt die Typen strikt in zwei Gruppen ein.\n\n**Immutable (unveränderbar):** `int`, `float`, `bool`, `str`, `tuple`.\n**Mutable (veränderbar):** `list`, `dict`, `set` und selbstgeschriebene Klassen.\n\nDer Unterschied ist *nicht*, ob man einen Namen neu belegen darf – das darf man immer. Der Unterschied ist, ob man das **Objekt selbst** ändern kann, auf das der Name zeigt. `liste[0] = 9` ändert das vorhandene Listenobjekt; `text[0] = 'a'` ist bei Strings dagegen ein `TypeError`. Typischer Denkfehler: Weil `a = a + 1` funktioniert, halten viele `int` für veränderbar. Dabei entsteht dort ein *neues* int-Objekt, und nur der Name `a` wird umgehängt. Merkregel: **Container mit eckigen/geschweiften Klammern sind veränderbar – Zahlen, Wahrheitswerte, Text und Tupel nicht.**",
+   "hints": [
+    "Überlege bei jedem Typ: Gibt es einen Befehl, der das Objekt ändert, *ohne* ein neues zu erzeugen?",
+    "`append`, `add`, `remove`, `d[k] = v` - zu welchen Typen gehören diese Befehle?",
+    "Genau drei eingebaute Container sind mutable; alle drei tauchen in den falschen Antworten auf."
+   ],
+   "pitfalls": [
+    "`tuple` für veränderbar halten, weil es wie eine Liste aussieht.",
+    "`set` mit `frozenset` verwechseln – nur letzteres wäre immutable."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 12,
+     "label": "Überblick VL 3: Gültigkeitsbereiche, Mutability"
+    }
+   ],
+   "tags": [
+    "mutable",
+    "immutable",
+    "typen",
+    "kurzfrage"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-002",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Globale Variable in einer Funktion lesen",
+   "prompt": "Was wird auf der Kommandozeile ausgegeben, oder tritt ein Fehler auf? Begründen Sie Ihre Antwort in einem Satz.",
+   "code": "punktestand = 12\n\ndef zeige_punkte():\n    print(punktestand)\n\nzeige_punkte()",
+   "expectedOutput": "12",
+   "solution": "12 - `punktestand` ist eine globale Variable und darf innerhalb jeder Funktion **gelesen** werden, ohne dass sie Argument ist oder mit `global` deklariert werden muss.",
+   "explanation": "Eine Variable, die auf der obersten Ebene des Programms (also außerhalb jeder Funktion) angelegt wird, nennt die Vorlesung eine **globale Variable**. Sie ist überall bekannt, also auch innerhalb von Funktionen. Beim **Lesen** braucht man deshalb weder ein Eingabeargument noch das Schlüsselwort `global`. Erst wenn eine Funktion einer globalen Variablen einen *neuen Wert zuweisen* will, wird es kompliziert (dann braucht man `global`, sonst entsteht eine lokale Variable oder ein `UnboundLocalError`). Aus Sicht der funktionalen Programmierung ist dieses Lesen zwar erlaubt, aber unschön: Eine Funktion, die globale Variablen liest, ist **nicht pure**, weil sie nicht mehr nur von ihren Eingabeargumenten abhängt. Merkregel: **Lesen ist immer erlaubt, Schreiben nicht.**",
+   "hints": [
+    "Wo wurde `punktestand` definiert – innerhalb oder außerhalb der Funktion?",
+    "Muss man eine Variable an eine Funktion übergeben, damit die Funktion sie *lesen* kann?",
+    "In der Funktion steht nur ein `print`, keine Zuweisung an `punktestand`."
+   ],
+   "pitfalls": [
+    "Annehmen, es gäbe einen Fehler, weil `punktestand` kein Parameter der Funktion ist.",
+    "`global` für das bloße Lesen für nötig halten."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 5,
+     "label": "Geltungsbereich und Lebensdauer von Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 6,
+     "label": "Globale vs. lokale Variablen"
+    }
+   ],
+   "tags": [
+    "scope",
+    "global",
+    "lesen",
+    "funktion"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-003",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Eine globale Liste in einer Funktion verändern",
+   "prompt": "Die Funktion hat weder ein Eingabeargument noch eine Rückgabe. Was wird ausgegeben, oder tritt ein Fehler auf? Begründen Sie Ihre Antwort in einem Satz.",
+   "code": "preiskarten = [1, 2, 3, 4]\n\ndef karte_ziehen():\n    preiskarten.pop()\n\nkarte_ziehen()\nkarte_ziehen()\nprint(preiskarten)",
+   "expectedOutput": "[1, 2]",
+   "solution": "[1, 2] - `preiskarten` ist eine globale **mutable** Liste; `pop()` verändert genau dieses Listenobjekt, sodass beide Aufrufe zusammen die beiden letzten Elemente entfernen.",
+   "explanation": "Die Vorlesung zeigt genau diesen Fall am Goofspiel: 'Hier wird eine Funktion definiert, die weder Eingabe noch Ausgabe hat, aber den ersten Eintrag in *liste* manipuliert.' Der Name `preiskarten` innerhalb der Funktion zeigt auf dasselbe Listenobjekt wie draußen. `pop()` ist eine Methode, die das Objekt **an Ort und Stelle** verändert – es entsteht keine neue Liste und der Name `preiskarten` wird nirgends neu zugewiesen. Deshalb braucht man hier **kein** `global`. Zwei Aufrufe entfernen erst die 4, dann die 3. Genau solche unsichtbaren Nebeneffekte sind der Grund, warum die Vorlesung anschließend funktionale Programmierung motiviert: Beim Lesen des Aufrufs `karte_ziehen()` sieht man der Zeile nicht an, dass sich `preiskarten` ändert. Merkregel: **Methode aufrufen = Objekt ändern; Gleichheitszeichen = Namen umhängen.**",
+   "hints": [
+    "`pop()` ohne Argument entfernt das *letzte* Element – und verändert dabei die Liste selbst.",
+    "Steht in der Funktion irgendwo `preiskarten = ...`? Nur dann entstünde eine lokale Variable.",
+    "Die Funktion wird zweimal aufgerufen."
+   ],
+   "pitfalls": [
+    "Denken, ohne `global` könne die Funktion die globale Liste nicht anfassen.",
+    "Nur einen der beiden Aufrufe berücksichtigen und `[1, 2, 3]` antworten."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 5,
+     "label": "Geltungsbereich und Lebensdauer von Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Mutable: Veränderung wirkt global, Neuzuweisung nicht"
+    }
+   ],
+   "tags": [
+    "scope",
+    "mutable",
+    "liste",
+    "pop",
+    "nebeneffekt",
+    "goofspiel"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-004",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Shadowing bei einer Zahl",
+   "prompt": "Was passiert, wenn folgender Code ausgeführt wird?",
+   "code": "a = 1\n\ndef meine_funktion():\n    a = 5\n\nmeine_funktion()\nprint(a)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Es wird `1` ausgegeben.",
+     "correct": true,
+     "why": "Richtig: `a = 5` legt eine **lokale** Variable `a` an, die nur innerhalb der Funktion lebt. Das globale `a` bleibt unberührt."
+    },
+    {
+     "id": "b",
+     "text": "Es wird `5` ausgegeben.",
+     "correct": false,
+     "why": "Das wäre nur mit `global a` als erster Zeile der Funktion der Fall."
+    },
+    {
+     "id": "c",
+     "text": "Es gibt einen `UnboundLocalError`.",
+     "correct": false,
+     "why": "Der Fehler entstünde nur, wenn die Funktion `a` *liest*, bevor sie es lokal zuweist – z. B. bei `a = a + 1`. Hier steht rechts nur die Konstante 5."
+    },
+    {
+     "id": "d",
+     "text": "Es wird `None` ausgegeben, weil die Funktion nichts zurückgibt.",
+     "correct": false,
+     "why": "Der Rückgabewert der Funktion wird gar nicht verwendet; `print(a)` gibt die globale Variable `a` aus."
+    }
+   ],
+   "solution": "a) Es wird `1` ausgegeben.",
+   "explanation": "Dies ist das Standardbeispiel der Vorlesungsfolie: 'a ist sowohl globale Variable als auch lokale Variable mit einem anderen Wert, da a eine Zahl und damit unveränderbar (immutable) ist. Innerhalb von meine_funktion() hat a den Wert 5. Außerhalb der Funktion hat und behält a den Wert 1.' Sobald in einer Funktion **irgendwo** eine Zuweisung an einen Namen steht, behandelt Python diesen Namen für die **ganze** Funktion als lokal – das nennt man *Shadowing*: Der lokale Name verdeckt den globalen. Die lokale Variable stirbt am Ende des Funktionsaufrufs (Lebensdauer!). Merkregel: **Ein `=` in der Funktion erzeugt eine lokale Variable, es sei denn, `global` sagt etwas anderes.**",
+   "hints": [
+    "Was passiert mit der lokalen Variablen, wenn die Funktion zu Ende ist?",
+    "Vergleiche: Würde `a.append(5)` bei einer Liste etwas anderes bewirken als `a = [5]`?",
+    "Es fehlt ein Schlüsselwort, mit dem man den Geltungsbereich erweitern könnte."
+   ],
+   "pitfalls": [
+    "Glauben, eine Zuweisung in der Funktion ändere automatisch die gleichnamige globale Variable.",
+    "Shadowing mit dem `UnboundLocalError` verwechseln – der tritt nur beim *Lesen vor* dem lokalen Zuweisen auf."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 7,
+     "label": "Immutable: lokale Zuweisung überschreibt die globale Variable nicht"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 11,
+     "label": "Übung 3, Aufgabe A2: Was gibt der Code aus?"
+    }
+   ],
+   "tags": [
+    "scope",
+    "shadowing",
+    "immutable",
+    "int",
+    "lokal"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-005",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "short-answer",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Kurzfrage: Typen in mutable und immutable einordnen",
+   "prompt": "Ordnen Sie die folgenden Python-Typen in **mutable (veränderbar)** und **immutable (unveränderbar)** ein:\n\n`int, list, tuple, dict, string, set, float, bool`\n\nNennen Sie zusätzlich eine weitere Art von Objekten, die die Vorlesung ausdrücklich zu den mutable Typen zählt, und geben Sie in einem Satz an, woran man den Unterschied im Code praktisch merkt. (2 P)",
+   "solution": "**Immutable (unveränderbar):** `int`, `tuple`, `string`, `float`, `bool`\n**Mutable (veränderbar):** `list`, `dict`, `set`\n**Zusätzlich mutable:** selbstgeschriebene Klassen (Objekte eigener Klassen).\n\nPraktischer Unterschied: Bei mutable Objekten kann man den Inhalt ändern, ohne ein neues Objekt zu erzeugen (`liste[0] = 9`, `d['a'] = 1`, `menge.add(3)`); bei immutable Objekten führt jeder 'Änderungsversuch' entweder zu einem `TypeError` (`t[0] = 9`) oder erzeugt still ein **neues** Objekt (`text = text.upper()`, `t = t + (3,)`).\n\n**Bewertungsrubrik (2 P):**\n- 1 P: alle acht Typen korrekt eingeordnet (bei 1-2 Fehlern 0,5 P)\n- 0,5 P: selbstgeschriebene Klassen als mutable genannt\n- 0,5 P: tragfähige Begründung des praktischen Unterschieds",
+   "explanation": "Diese Frage kam in der Probeklausur wörtlich als Aufgabe 1b vor – es sind geschenkte Punkte, wenn man die Liste der Vorlesungsfolie auswendig kann. Die Folie nennt als **immutable**: `int`, `float`, `bool`, `string`, `unicode`, `tuple`; als **mutable**: `list`, `dict`, `set` und *selbstgeschriebene Klassen*. Wichtig für das Verständnis: 'immutable' heißt nicht, dass sich der *Name* nicht ändern kann - `a = a + 1` funktioniert selbstverständlich. Es heißt, dass das *Objekt*, auf das der Name zeigt, nicht verändert werden kann; stattdessen entsteht ein neues Objekt. Genau daraus folgt das ganze Verhalten in Funktionen: Übergibt man ein mutable Objekt, kann die Funktion es verändern; übergibt man ein immutable Objekt, kann sie es nicht – sie kann nur ihren eigenen lokalen Namen umhängen.",
+   "hints": [
+    "Die Vorlesung nennt genau drei eingebaute mutable Container.",
+    "Zähle die immutable Typen ab: Zahlen (zwei Sorten), Wahrheitswerte, Text, und eine Klammerstruktur.",
+    "Die vierte mutable 'Kategorie' hat nichts mit eingebauten Typen zu tun, sondern mit `class`."
+   ],
+   "pitfalls": [
+    "`tuple` bei mutable einordnen, weil es indizierbar ist wie eine Liste.",
+    "`string` bei mutable einordnen, weil `text.upper()` scheinbar den Text ändert – tatsächlich entsteht ein neuer String."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1b: mutable/immutable einordnen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    }
+   ],
+   "tags": [
+    "mutable",
+    "immutable",
+    "typen",
+    "kurzfrage",
+    "klausur"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-006",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Element einer globalen Liste in der Funktion erhöhen",
+   "prompt": "Geben Sie an, was auf der Kommandozeile ausgegeben wird oder ob ein Fehler auftritt. Begründen Sie Ihre Antwort in einem Satz. (2 P)",
+   "code": "punkte = [0, 0]\n\ndef gutschrift():\n    punkte[1] = punkte[1] + 5\n\ngutschrift()\ngutschrift()\nprint(punkte)",
+   "expectedOutput": "[0, 10]",
+   "solution": "[0, 10] - `punkte` wird nicht neu zugewiesen, sondern nur ein *Element* der globalen mutable Liste geändert; deshalb wirken beide Aufrufe auf dasselbe Listenobjekt.",
+   "explanation": "Entscheidend ist die linke Seite der Zuweisung: Dort steht **`punkte[1]`**, nicht `punkte`. Eine Zuweisung an ein *Element* ist gar keine Namenszuweisung, sondern ein Methodenaufruf am Listenobjekt (intern `punkte.__setitem__(1, ...)`). Der Name `punkte` wird also nirgends lokal gebunden – Python schaut ihn im globalen Geltungsbereich nach und verändert genau dieses Objekt. Deshalb braucht man hier kein `global`, und deshalb sammeln sich die beiden Aufrufe auf: 0 → 5 → 10. Würde dagegen `punkte = [0, 5]` in der Funktion stehen, wäre `punkte` lokal und die Ausgabe wäre `[0, 0]`. Merkregel: **`name = ...` ist lokal, `name[i] = ...` ist eine Änderung am globalen Objekt.**",
+   "hints": [
+    "Achte genau darauf, was links vom `=` steht: der Name selbst oder ein Index?",
+    "Wäre ein `global punkte` nötig, damit `punkte[1] = ...` funktioniert?",
+    "Die Funktion wird zweimal aufgerufen – die Wirkung addiert sich."
+   ],
+   "pitfalls": [
+    "`UnboundLocalError` vermuten, weil `punkte[1]` auf der rechten Seite gelesen wird. Der Name `punkte` wird jedoch nie lokal zugewiesen.",
+    "Nur einen Aufruf zählen und `[0, 5]` antworten."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse Geltungsbereiche und Mutability"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Mutable: Veränderung wirkt global, Neuzuweisung nicht"
+    }
+   ],
+   "tags": [
+    "scope",
+    "mutable",
+    "liste",
+    "index-zuweisung",
+    "klausur"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-007",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Dictionary in der Funktion neu zuweisen und dann verändern",
+   "prompt": "Geben Sie an, was auf der Kommandozeile ausgegeben wird oder ob ein Fehler auftritt. Begründen Sie Ihre Antwort in einem Satz. (2 P)",
+   "code": "zaehler = {'runden': 1}\n\ndef neue_runde():\n    zaehler = {'runden': 99}\n    zaehler['runden'] = zaehler['runden'] + 1\n\nneue_runde()\nprint(zaehler)",
+   "expectedOutput": "{'runden': 1}",
+   "solution": "{'runden': 1} – durch `zaehler = {...}` entsteht eine **lokale** Variable; die anschließende Veränderung trifft nur dieses lokale Dictionary, das globale bleibt unangetastet.",
+   "explanation": "Hier ist die Reihenfolge die Falle. Die erste Zeile der Funktion ist eine **Namenszuweisung** – damit ist `zaehler` für die gesamte Funktion lokal und zeigt auf ein *neues* Dictionary. Die zweite Zeile verändert dann zwar ein mutable Objekt, aber eben das **lokale**. Am Ende des Aufrufs stirbt die lokale Variable, das neue Dictionary wird weggeworfen, und `print(zaehler)` zeigt das unveränderte globale `{'runden': 1}`. Genau dieselbe Struktur hat die Probeklausur mit einer Liste (`a = [5]` gefolgt von `a.append(7)` → Ausgabe `[1]`). Merkregel: **Erst schauen, ob der Name in der Funktion zugewiesen wird – wenn ja, betrifft alles Weitere nur noch das lokale Objekt.**",
+   "hints": [
+    "Frage 1: Ist `zaehler` innerhalb der Funktion lokal oder global?",
+    "Frage 2: *Welches* Dictionary verändert die zweite Zeile?",
+    "Vergleiche mit einer Version, in der die erste Zeile der Funktion fehlt."
+   ],
+   "pitfalls": [
+    "`{'runden': 100}` antworten, weil man nur die zweite Zeile betrachtet.",
+    "`{'runden': 2}` antworten, weil man die Neuzuweisung übersieht und die Änderung dem globalen Dictionary zuschreibt."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse Geltungsbereiche und Mutability"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Mutable: Veränderung wirkt global, Neuzuweisung nicht"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 11,
+     "label": "Übung 3, Aufgabe A2: Was gibt der Code aus?"
+    }
+   ],
+   "tags": [
+    "scope",
+    "shadowing",
+    "dictionary",
+    "mutable",
+    "klausur"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-008",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "punkte = punkte + 3 ohne global",
+   "prompt": "Geben Sie an, was auf der Kommandozeile ausgegeben wird oder ob ein Fehler auftritt. Falls ein Fehler auftritt, nennen Sie den **Fehlertyp**. Begründen Sie Ihre Antwort in einem Satz. (2 P)",
+   "code": "punkte = 0\n\ndef gewinne():\n    punkte = punkte + 3\n    return punkte\n\nprint(gewinne())",
+   "expectedOutput": "UnboundLocalError",
+   "solution": "`UnboundLocalError` - weil `punkte` in der Funktion zugewiesen wird, gilt der Name dort als **lokal**; auf der rechten Seite wird er aber gelesen, bevor ihm jemals ein Wert zugewiesen wurde.",
+   "explanation": "Die Vorlesungsfolie formuliert es so: *'Funktioniert nicht: Der Interpreter versteht a als lokale Variable, die aber noch nicht initialisiert ist.'* Python entscheidet **vor** der Ausführung, welche Namen lokal sind: Jeder Name, dem irgendwo im Funktionskörper etwas zugewiesen wird, ist für die ganze Funktion lokal. In `punkte = punkte + 3` steht `punkte` sowohl links als auch rechts – links macht es den Namen lokal, rechts wird er gelesen, obwohl die lokale Variable noch keinen Wert hat. Ergebnis: `UnboundLocalError: cannot access local variable 'punkte' where it is not associated with a value`. Zwei Korrekturen: (1) `global punkte` als erste Zeile, dann wird die globale Variable erhöht; (2) sauberer und funktional korrekt: `def gewinne(punkte): return punkte + 3` und der Aufrufer schreibt `punkte = gewinne(punkte)`. Merkregel: **Lesen *und* Schreiben derselben globalen Variablen in einer Funktion geht nur mit `global`.**",
+   "hints": [
+    "Der Name `punkte` steht links *und* rechts vom Gleichheitszeichen – was bedeutet das linke Vorkommen für den Geltungsbereich?",
+    "Vergleiche mit Aufgabe zum reinen *Lesen*: dort gab es keine Zuweisung an denselben Namen.",
+    "Es gibt ein Schlüsselwort, das genau dieses Problem löst."
+   ],
+   "pitfalls": [
+    "`3` antworten, weil man annimmt, `punkte` sei die globale 0.",
+    "`NameError` statt `UnboundLocalError` nennen – der `NameError` tritt auf, wenn es gar keine Variable dieses Namens gibt."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse Geltungsbereiche und Mutability"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    }
+   ],
+   "tags": [
+    "scope",
+    "unboundlocalerror",
+    "global",
+    "fehler",
+    "klausur"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-009",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Das Schlüsselwort global",
+   "prompt": "Geben Sie an, was auf der Kommandozeile ausgegeben wird oder ob ein Fehler auftritt. Begründen Sie Ihre Antwort in einem Satz. (2 P)",
+   "code": "x = 3\n\ndef h():\n    global x\n    x = x * 2\n\nh()\nh()\nprint(x)",
+   "expectedOutput": "12",
+   "solution": "12 - `global x` erweitert den Geltungsbereich, sodass die Funktion die globale Variable wirklich überschreibt; zweimal verdoppeln ergibt 3 → 6 → 12.",
+   "explanation": "Mit `global x` sagt man Python ausdrücklich: *In dieser Funktion ist `x` nicht lokal, sondern der globale Name.* Damit ist die Zuweisung `x = x * 2` erlaubt und wirkt nach außen – genau das, was die Folie mit 'Mit dem Schlüsselwort global ist es möglich, den Geltungsbereich einer Variablen zu erweitern' meint. Weil `x` global ist, ist der Effekt **kumulativ**: Der zweite Aufruf startet mit dem Ergebnis des ersten. Wichtig für die Klausur: `global` ist nur nötig, wenn dem Namen etwas **zugewiesen** wird. Zum bloßen Lesen und zum Verändern eines mutable Objekts (`liste.append(...)`) braucht man es nicht. Aus Sicht der funktionalen Programmierung ist `global` allerdings genau das, was man vermeiden will: Die Funktion hat einen Nebeneffekt und ist nicht pure.",
+   "hints": [
+    "Was genau bewirkt die Zeile `global x` für den Rest der Funktion?",
+    "Die Funktion wird zweimal aufgerufen – baut der zweite Aufruf auf dem ersten auf?",
+    "3 → ? → ?"
+   ],
+   "pitfalls": [
+    "`6` antworten, weil man nur einen Aufruf zählt.",
+    "Glauben, `global` mache die Variable konstant oder unveränderbar."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse Geltungsbereiche und Mutability"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    }
+   ],
+   "tags": [
+    "scope",
+    "global",
+    "klausur",
+    "nebeneffekt"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-010",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Tupel erweitern: v = v + (eintrag,)",
+   "prompt": "Geben Sie an, was auf der Kommandozeile ausgegeben wird oder ob ein Fehler auftritt. Begründen Sie Ihre Antwort in einem Satz. (2 P)",
+   "code": "verlauf = ('start',)\n\ndef merke(v, eintrag):\n    v = v + (eintrag,)\n    return v\n\nneu = merke(verlauf, 'runde1')\nprint(verlauf)\nprint(neu)\nprint(len(verlauf), len(neu))",
+   "expectedOutput": "('start',)\n('start', 'runde1')\n1 2",
+   "solution": "`('start',)`, dann `('start', 'runde1')`, dann `1 2` - Tupel sind immutable, `v + (eintrag,)` erzeugt ein **neues** Tupel und hängt nur den lokalen Namen `v` daran um; das Original bleibt unverändert.",
+   "explanation": "Diese Aufgabe stand fast wörtlich in der Probeklausur. Ein `tuple` ist **immutable**: Es gibt kein `append`, und `+` ist keine Veränderung, sondern eine **Konkatenation**, die ein neues Tupel-Objekt liefert. Innerhalb der Funktion zeigt der Parameter `v` zunächst auf dasselbe Objekt wie `verlauf`; nach `v = v + (eintrag,)` zeigt `v` auf das neue Objekt, `verlauf` weiterhin auf das alte. Nur weil die Funktion das neue Tupel **zurückgibt** und der Aufrufer es in `neu` speichert, ist es überhaupt nutzbar. Beachten Sie außerdem das Komma in `(eintrag,)`: Ohne Komma wäre `('runde1')` einfach ein String und `v + 'runde1'` ein `TypeError`. Genau dieses Muster nutzt der Prof, um in der funktionalen Goofspiel-Variante alle states als Tupel zu sammeln – ohne Mutation. Merkregel: **Immutable + Operator = neues Objekt; wer es behalten will, muss es zuweisen.**",
+   "hints": [
+    "Gibt es bei Tupeln ein `append`? Was macht `+` stattdessen?",
+    "Zeigt der Name `verlauf` nach dem Funktionsaufruf noch auf dasselbe Objekt wie vorher?",
+    "Warum steht in `(eintrag,)` ein Komma?"
+   ],
+   "pitfalls": [
+    "`('start', 'runde1')` für *beide* prints angeben, weil man annimmt, die Funktion ändere das übergebene Tupel.",
+    "Das Komma im Ein-Element-Tupel vergessen und `('runde1')` für ein Tupel halten."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse Geltungsbereiche und Mutability"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    }
+   ],
+   "tags": [
+    "immutable",
+    "tupel",
+    "konkatenation",
+    "klausur",
+    "state"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-011",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Aliasing gegen copy()",
+   "prompt": "Was gibt der folgende Code aus? Achten Sie besonders auf die letzte Zeile.",
+   "code": "hand = [7, 9, 11]\nalias = hand\nkopie = hand.copy()\n\nhand.append(13)\n\nprint(alias)\nprint(kopie)\nprint(alias is hand, kopie is hand)",
+   "expectedOutput": "[7, 9, 11, 13]\n[7, 9, 11]\nTrue False",
+   "solution": "```\n[7, 9, 11, 13]\n[7, 9, 11]\nTrue False\n```\n`alias = hand` erzeugt **keine** neue Liste, sondern nur einen zweiten Namen für dasselbe Objekt; `hand.copy()` erzeugt dagegen ein neues Listenobjekt mit denselben Einträgen.",
+   "explanation": "In Python zeigen Namen auf Objekte – eine Zuweisung `alias = hand` kopiert **nichts**, sie hängt nur ein zweites Namensschild an dasselbe Listenobjekt (*Aliasing*). Verändert man das Objekt über einen der beiden Namen (`hand.append(13)`), sieht man die Änderung selbstverständlich auch über den anderen. `hand.copy()` legt dagegen ein **neues** Objekt an, das denselben Inhalt hat, aber ein anderes Objekt *ist*. Der Operator `is` prüft genau das: Identität (dasselbe Objekt), nicht Gleichheit (`==` vergleicht Inhalte). Genau deswegen steht `copy()` auf der 'Was haben wir gelernt'-Folie der Vorlesung – es ist das Standardwerkzeug, um Funktionen pure zu halten. Merkregel: **`=` kopiert nie, `copy()` schon.**",
+   "hints": [
+    "Wie viele Listenobjekte existieren nach den ersten drei Zeilen wirklich?",
+    "`append` verändert das Objekt – welche Namen zeigen darauf?",
+    "`is` fragt 'dasselbe Objekt?', `==` fragt 'derselbe Inhalt?'."
+   ],
+   "pitfalls": [
+    "Annehmen, `alias = hand` erzeuge eine unabhängige Kopie.",
+    "`is` und `==` verwechseln: `kopie == hand` wäre vor dem `append` `True` gewesen, `kopie is hand` nie."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Übung 3, Stufe B5: Die mutable-Falle"
+    }
+   ],
+   "tags": [
+    "aliasing",
+    "copy",
+    "mutable",
+    "liste",
+    "is"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-012",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Lebensdauer: lokale Variable außerhalb der Funktion",
+   "prompt": "Was passiert, wenn folgender Code ausgeführt wird?",
+   "code": "a = 3\n\ndef meine_funktion():\n    b = 7\n    print(a)\n    print(b)\n\nmeine_funktion()\nprint(b)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Es werden `3`, `7` und danach nochmal `7` ausgegeben.",
+     "correct": false,
+     "why": "`b` existiert nach dem Funktionsaufruf nicht mehr – lokale Variablen haben nur die Lebensdauer des Aufrufs."
+    },
+    {
+     "id": "b",
+     "text": "Es werden `3` und `7` ausgegeben, danach gibt es einen `NameError`.",
+     "correct": true,
+     "why": "Richtig: Innerhalb der Funktion ist die globale Variable `a` lesbar und `b` lokal bekannt. Außerhalb ist `b` unbekannt - `NameError: name 'b' is not defined`."
+    },
+    {
+     "id": "c",
+     "text": "Sofort ein Fehler, weil `a` in der Funktion nicht bekannt ist.",
+     "correct": false,
+     "why": "Globale Variablen dürfen in Funktionen ohne Weiteres *gelesen* werden; die Folie sagt ausdrücklich 'Funktioniert!'."
+    },
+    {
+     "id": "d",
+     "text": "Es werden `3`, `7` und danach `None` ausgegeben.",
+     "correct": false,
+     "why": "`None` wäre der Rückgabewert der Funktion; `print(b)` greift aber auf einen Namen zu, den es global gar nicht gibt."
+    }
+   ],
+   "solution": "b) `3` und `7` werden ausgegeben, anschließend `NameError` bei `print(b)`.",
+   "explanation": "Die Folie zur Lebensdauer zeigt genau dieses Paar: *'Funktioniert! a ist globale Variable, b ist lokal und wird auch lokal mittels print gedruckt.'* und daneben *'Dies erzeugt einen Fehler – b ist nur lokal bekannt.'* Der **Geltungsbereich** beschreibt, *wo* ein Name sichtbar ist; die **Lebensdauer** beschreibt, *wie lange* er existiert. Eine lokale Variable entsteht beim Aufruf und verschwindet mit dem `return`. Beim Zugriff auf einen Namen, den es weder lokal noch global gibt, wirft Python einen `NameError` - im Unterschied zum `UnboundLocalError`, bei dem der Name lokal *existiert*, aber noch keinen Wert hat. Merkregel: **Von außen nach innen sehen ist erlaubt, von innen nach außen nicht.**",
+   "hints": [
+    "Trenne die drei `print`-Aufrufe: Zwei stehen in der Funktion, einer davor/danach.",
+    "Wie lange lebt eine Variable, die in einer Funktion angelegt wurde?",
+    "Es gibt zwei verschiedene Fehlertypen für 'Name nicht da' und 'Name lokal, aber ohne Wert'."
+   ],
+   "pitfalls": [
+    "Denken, eine Funktion mache ihre lokalen Variablen nach dem Aufruf global verfügbar.",
+    "`NameError` und `UnboundLocalError` verwechseln."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 6,
+     "label": "Globale vs. lokale Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 7,
+     "label": "Immutable: lokale Zuweisung überschreibt die globale Variable nicht"
+    }
+   ],
+   "tags": [
+    "scope",
+    "lebensdauer",
+    "lokal",
+    "nameerror"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-013",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Menge und String in derselben Funktion",
+   "prompt": "Die Funktion bekommt zwei Argumente: eine Menge und einen String. Was wird ausgegeben? Begründen Sie den Unterschied in einem Satz.",
+   "code": "gesehen = {1, 2}\nname = \"anna\"\n\ndef runde(menge, wort):\n    menge.add(3)\n    wort = wort.upper()\n    return wort\n\nergebnis = runde(gesehen, name)\nprint(sorted(gesehen))\nprint(name)\nprint(ergebnis)",
+   "expectedOutput": "[1, 2, 3]\nanna\nANNA",
+   "solution": "```\n[1, 2, 3]\nanna\nANNA\n```\n`set` ist mutable - `add` verändert die übergebene Menge selbst; `str` ist immutable - `wort.upper()` erzeugt einen neuen String, der nur an den lokalen Namen `wort` gebunden wird.",
+   "explanation": "Die beiden Zeilen im Funktionskörper sehen ähnlich harmlos aus, tun aber völlig Verschiedenes. `menge.add(3)` ist ein **Methodenaufruf, der das Objekt verändert** – da `menge` und `gesehen` auf dasselbe Set-Objekt zeigen, ist die Änderung auch draußen sichtbar. `wort = wort.upper()` ist eine **Zuweisung**: `upper()` liefert einen neuen String (Strings sind immutable), und der lokale Name `wort` wird auf diesen neuen String umgehängt. Der globale Name `name` zeigt weiterhin auf `\"anna\"`. `sorted(...)` wird hier nur benutzt, damit die Ausgabe der Menge eine feste Reihenfolge hat – Mengen sind unsortiert. Merkregel: **Wenn eine Methode etwas *zurückgibt*, das man zuweisen muss, war das Objekt immutable.**",
+   "hints": [
+    "Steht bei `menge.add(3)` ein Gleichheitszeichen? Und bei `wort.upper()`?",
+    "Zu welcher Gruppe gehört `set`, zu welcher `str`?",
+    "Warum ist `sorted(...)` um die Menge herum nötig?"
+   ],
+   "pitfalls": [
+    "Denken, `wort.upper()` verändere den String an Ort und Stelle (Strings sind immutable!).",
+    "Denken, `menge.add(3)` wirke nur lokal, weil die Menge als Argument übergeben wurde."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Mutable: Veränderung wirkt global, Neuzuweisung nicht"
+    }
+   ],
+   "tags": [
+    "mutable",
+    "immutable",
+    "set",
+    "string",
+    "argumentuebergabe"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-014",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Warum ändert `erhoehe_um_1` die Variable `a` nicht?",
+   "prompt": "Dieser Code stammt aus der Vorlesung. Welche Aussage beschreibt Ausgabe **und** Ursache korrekt?",
+   "code": "def erhoehe_um_1(zahl):\n    zahl = zahl + 1\n\na = 5\nerhoehe_um_1(a)\nprint(a)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`6` - die Funktion erhöht die übergebene Variable.",
+     "correct": false,
+     "why": "Das würde nur bei einem mutable Objekt funktionieren, und auch dort nur, wenn das Objekt *verändert* statt neu zugewiesen wird."
+    },
+    {
+     "id": "b",
+     "text": "`5` - `int` ist immutable, `zahl = zahl + 1` erzeugt ein neues int-Objekt und bindet nur den lokalen Parameter `zahl` daran.",
+     "correct": true,
+     "why": "Richtig: Der Parameter `zahl` ist eine lokale Variable. Die Zuweisung hängt nur diesen lokalen Namen um; `a` zeigt weiter auf die 5."
+    },
+    {
+     "id": "c",
+     "text": "`None` - die Funktion hat kein `return`, deshalb wird `a` zu `None`.",
+     "correct": false,
+     "why": "Der Rückgabewert wird gar nicht zugewiesen. `print(a)` gibt die unveränderte globale Variable aus."
+    },
+    {
+     "id": "d",
+     "text": "`UnboundLocalError` - `zahl` wurde nicht mit `global` deklariert.",
+     "correct": false,
+     "why": "`zahl` ist ein **Parameter** und damit beim Betreten der Funktion bereits mit einem Wert belegt – es gibt nichts Uninitialisiertes."
+    }
+   ],
+   "solution": "b) Ausgabe `5`; `int` ist immutable, die Zuweisung bindet nur den lokalen Parameternamen neu.",
+   "explanation": "Der Prof zeigt in der Vorlesung genau diese drei Varianten hintereinander: (1) ohne `return` - `a` bleibt 5; (2) mit `return zahl` und `print(erhoehe_um_1(a))` - es wird 6 gedruckt, `a` bleibt aber 5; (3) mit `a = erhoehe_um_1(a)` - jetzt ist `a` wirklich 6. Der Kern: Beim Aufruf wird der Parameter `zahl` als **lokaler Name** an dasselbe Objekt gebunden, auf das `a` zeigt. Da `int` immutable ist, kann die Funktion dieses Objekt gar nicht verändern; `zahl = zahl + 1` erzeugt ein neues int und hängt nur `zahl` daran um. Der einzige Weg, das Ergebnis nach draußen zu bekommen, ist ein `return` **und** eine Zuweisung beim Aufrufer – genau so, wie es die funktionale Programmierung will. Merkregel: **Bei immutable Argumenten kann eine Funktion nur über ihre Rückgabe wirken.**",
+   "hints": [
+    "Was ist `zahl` innerhalb der Funktion – lokal oder global?",
+    "Kann man ein `int`-Objekt überhaupt verändern?",
+    "Wie müsste der Aufruf lauten, damit `a` danach 6 ist?"
+   ],
+   "pitfalls": [
+    "Aus Java/C das Bild 'call by reference' mitbringen und Änderungen am Argument erwarten.",
+    "Vergessen, dass ohne `return` *und* ohne Zuweisung beim Aufrufer nichts nach außen dringt."
+   ],
+   "sources": [
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Live-Code: erhoehe_um_1 verändert das globale a nicht"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 7,
+     "label": "Immutable: lokale Zuweisung überschreibt die globale Variable nicht"
+    }
+   ],
+   "tags": [
+    "immutable",
+    "int",
+    "argumentuebergabe",
+    "parameter",
+    "return"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-015",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Wieso wirft dieser Code einen Fehler?",
+   "prompt": "Wieso wirft der folgende Code einen Fehler? Nennen Sie den **Fehlertyp**, erklären Sie die Ursache in zwei Sätzen und geben Sie **zwei verschiedene** Korrekturen an (eine mit und eine ohne `global`).",
+   "code": "runde = 0\n\ndef naechste_runde():\n    runde = runde + 1\n    print(runde)\n\nnaechste_runde()",
+   "solution": "**Fehlertyp:** `UnboundLocalError` (`cannot access local variable 'runde' where it is not associated with a value`).\n\n**Ursache:** Weil im Funktionskörper eine Zuweisung an `runde` steht, stuft Python den Namen für die *gesamte* Funktion als lokal ein. Auf der rechten Seite von `runde = runde + 1` wird dieser lokale Name aber gelesen, bevor ihm je ein Wert zugewiesen wurde – die globale `runde` wird dabei gar nicht erst herangezogen.\n\n**Korrektur 1 (mit `global`):**\n```python\nrunde = 0\n\ndef naechste_runde():\n    global runde\n    runde = runde + 1\n    print(runde)\n\nnaechste_runde()   # gibt 1 aus\n```\n\n**Korrektur 2 (ohne `global`, pure function):**\n```python\ndef naechste_runde(runde):\n    return runde + 1\n\nrunde = 0\nrunde = naechste_runde(runde)\nprint(runde)       # gibt 1 aus\n```\n\n**Bewertungsrubrik (3 P):**\n- 1 P: Fehlertyp `UnboundLocalError` korrekt benannt\n- 1 P: Ursache korrekt (Zuweisung macht den Namen lokal, Lesen vor Initialisierung)\n- 0,5 P: Korrektur mit `global`\n- 0,5 P: Korrektur über Parameter + Rückgabe",
+   "explanation": "Diese Frage ist die klassische Variante von *'Wieso wirft der folgende Code einen Fehler?'*. Der entscheidende Punkt, den viele nicht wissen: Python entscheidet **statisch beim Kompilieren der Funktion**, welche Namen lokal sind – nämlich alle, denen im Körper irgendwo etwas zugewiesen wird. Es gibt also keinen 'Mischmodus', in dem rechts die globale und links die lokale Variable gemeint wäre. Die zweite Korrektur ist die, die der Prof im weiteren Verlauf der Vorlesung bevorzugt: Alle Abhängigkeiten offenlegen, Nebeneffekte vermeiden, Werte über `return` transportieren – so entsteht eine **pure function**. `global` löst das Problem zwar, macht die Funktion aber unrein und schwerer zu testen. Merkregel: **Wenn eine Funktion einen globalen Wert erhöhen soll, gib ihn lieber als Argument hinein und den neuen Wert zurück.**",
+   "hints": [
+    "Was macht das Vorkommen von `runde` auf der *linken* Seite der Zuweisung mit dem Geltungsbereich?",
+    "Beim Betreten der Funktion: Hat die lokale Variable `runde` schon einen Wert?",
+    "Die zweite Korrektur soll ohne `global` auskommen – was könnte man stattdessen übergeben und zurückgeben?"
+   ],
+   "pitfalls": [
+    "Als Fehler `NameError` angeben (der täte es nur, wenn es gar kein `runde` gäbe).",
+    "Als 'zweite Korrektur' nur `runde = 0` in die Funktion schreiben – dann läuft der Code zwar, zählt aber nichts mehr hoch."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Nebeneffekte vermeiden, keine globalen Variablen in Funktionen ändern"
+    }
+   ],
+   "tags": [
+    "unboundlocalerror",
+    "global",
+    "scope",
+    "pure-function",
+    "fehlersuche"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-016",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "verarbeite_liste und verarbeite_zahl im Vergleich",
+   "prompt": "Betrachten Sie den folgenden Code.\n\n1. Was wird durch die beiden `print`-Befehle ausgegeben?\n2. Erklären Sie, warum sich das Verhalten der beiden Funktionen unterscheidet.\n3. Wie könnte man `copy` benutzen, um Änderungen der Eingabe in `verarbeite_liste` zu vermeiden?\n4. Wie müsste man den Aufruf von `verarbeite_zahl` ändern, damit sich `meine_zahl` auch außerhalb der Funktion ändert?",
+   "code": "def verarbeite_liste(liste):\n    liste.append(99)\n    return liste\n\ndef verarbeite_zahl(zahl):\n    zahl = zahl + 99\n    return zahl\n\nmeine_liste = [1, 2, 3]\nmeine_zahl = 1\n\nverarbeite_liste(meine_liste)\nverarbeite_zahl(meine_zahl)\n\nprint(meine_liste)\nprint(meine_zahl)",
+   "solution": "**1. Ausgabe:**\n```\n[1, 2, 3, 99]\n1\n```\n\n**2. Begründung:** `list` ist **mutable**. Der Parameter `liste` zeigt auf dasselbe Objekt wie `meine_liste`, und `append` verändert genau dieses Objekt – die Rückgabe wird gar nicht gebraucht. `int` ist dagegen **immutable**: `zahl = zahl + 99` erzeugt ein neues int-Objekt und bindet nur den lokalen Parameternamen `zahl` daran; `meine_zahl` zeigt unverändert auf die 1. Zusätzlich wird der Rückgabewert beim Aufruf nicht zugewiesen.\n\n**3. Mit `copy`:**\n```python\ndef verarbeite_liste(liste):\n    kopie = liste.copy()\n    kopie.append(99)\n    return kopie\n\nneue_liste = verarbeite_liste(meine_liste)   # meine_liste bleibt [1, 2, 3]\n```\nDamit wird `verarbeite_liste` zu einer **pure function**: kein Nebeneffekt, das Ergebnis kommt nur über `return`.\n\n**4. Aufruf ändern:**\n```python\nmeine_zahl = verarbeite_zahl(meine_zahl)   # jetzt 100\n```\nAlternative (unschön, aber möglich): `global meine_zahl` in der Funktion. Bei immutable Typen gibt es keinen anderen Weg – man muss den Rückgabewert zuweisen.\n\n**Bewertungsrubrik (4 P):**\n- 1 P: beide Ausgabezeilen korrekt\n- 1 P: Begründung über mutable/immutable\n- 1 P: `copy()`-Lösung mit Rückgabe der Kopie\n- 1 P: Zuweisung des Rückgabewerts beim Aufruf",
+   "explanation": "Diese Aufgabe ist die Beispielaufgabe zur 3. Vorlesung und bündelt das ganze Kapitel. Wichtig ist die Einsicht, dass beide Funktionen 'dasselbe' zu tun scheinen (99 dazu), sich aber völlig unterschiedlich verhalten – **nur wegen des Typs**. Der zweite wichtige Punkt: `verarbeite_liste` hat einen **Nebeneffekt** und ist damit nicht pure. Genau davor warnt der Prof später: 'Gibt es Funktionen mit Nebeneffekten, so kann ab Erstellung einer veränderbaren Variable jede nachfolgende Funktion ein falsches Ergebnis verursachen.' Die Standardreparatur ist immer dieselbe: **erst kopieren, dann verändern, dann zurückgeben** (`kopie = liste.copy()`). Merkregel: **Eine Funktion, die ihr Argument verändert, muss man am Aufrufort mitdenken – eine pure function nicht.**",
+   "hints": [
+    "Überlege für jede Funktion getrennt: Wird das *Objekt* verändert oder nur ein *Name* umgehängt?",
+    "Beim Aufruf `verarbeite_zahl(meine_zahl)` wird das Ergebnis nirgends gespeichert – fällt das ins Gewicht?",
+    "Für Teil 3: Die Kopie muss *vor* dem `append` entstehen und am Ende zurückgegeben werden."
+   ],
+   "pitfalls": [
+    "Bei Teil 1 `100` für `meine_zahl` angeben, weil man den Rückgabewert mit der Variablen verwechselt.",
+    "Bei Teil 3 `liste = liste.copy()` schreiben und danach `liste` zurückgeben – das funktioniert zwar, wirkt aber verwirrend, weil derselbe Name zwei Objekte bezeichnet.",
+    "Bei Teil 4 die Funktion ändern statt den Aufruf."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL3.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Mutable und Immutable Variables"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    }
+   ],
+   "tags": [
+    "mutable",
+    "immutable",
+    "copy",
+    "pure-function",
+    "nebeneffekt",
+    "argumentuebergabe"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-017",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Spielstand hochzählen mit global",
+   "prompt": "Füllen Sie die Lücken so aus, dass das Programm am Ende `12` ausgibt. Die Funktion soll die globale Variable `spielstand` tatsächlich erhöhen und hat **keine** Rückgabe.",
+   "code": "spielstand = 0\n\ndef punkte_addieren(wert):\n    ## Lücke 1 ##\n    spielstand = ## Lücke 2 ##\n\npunkte_addieren(5)\npunkte_addieren(7)\nprint(spielstand)   # soll 12 ausgeben",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "global spielstand"
+     ],
+     "explanation": "Ohne `global spielstand` würde Python den Namen als lokal einstufen; da er in Lücke 2 auch gelesen wird, gäbe es einen `UnboundLocalError`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "spielstand + wert",
+      "wert + spielstand",
+      "spielstand+wert",
+      "wert+spielstand"
+     ],
+     "explanation": "Der neue Wert ist der alte Spielstand plus dem übergebenen Wert. Dank `global` wird hier wirklich die globale Variable gelesen und neu gesetzt."
+    }
+   ],
+   "solution": "spielstand = 0\n\ndef punkte_addieren(wert):\n    global spielstand\n    spielstand = spielstand + wert\n\npunkte_addieren(5)\npunkte_addieren(7)\nprint(spielstand)   # 12",
+   "explanation": "Hier wird das Schlüsselwort `global` genau so eingesetzt, wie es die Vorlesungsfolie zeigt: Es erweitert den Geltungsbereich, sodass eine Zuweisung in der Funktion die globale Variable trifft. `spielstand` ist ein `int` und damit **immutable** – man kann das Objekt nicht verändern, sondern nur den Namen auf ein neues Objekt umhängen. Genau deshalb ist `global` hier unverzichtbar, während man bei einer Liste (`punkte.append(...)`) ohne auskommen würde. Beachten Sie, dass `spielstand += wert` in Lücke 2 nicht passt, weil in der Vorlage bereits `spielstand = ` vorgegeben ist. Aus Sicht der funktionalen Programmierung ist diese Lösung ein bewusster Regelbruch: Die Funktion hat einen Nebeneffekt und ist nicht pure – schöner wäre `def punkte_addieren(spielstand, wert): return spielstand + wert`.",
+   "hints": [
+    "In Lücke 1 fehlt eine Deklaration – ohne sie gäbe es beim Ausführen einen `UnboundLocalError`.",
+    "In Lücke 2 muss der alte Wert weiterverwendet werden, sonst zählt nichts hoch.",
+    "Die Funktion wird zweimal aufgerufen: 0 + 5 = 5, dann 5 + 7 = 12."
+   ],
+   "pitfalls": [
+    "In Lücke 1 `spielstand = 0` schreiben – dann startet jeder Aufruf wieder bei 0.",
+    "In Lücke 2 nur `wert` schreiben – dann steht am Ende 7 statt 12."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    }
+   ],
+   "tags": [
+    "global",
+    "scope",
+    "luecken",
+    "immutable",
+    "int"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-018",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Mischen ohne das Original zu verändern",
+   "prompt": "`random.shuffle` mischt die übergebene Liste **an Ort und Stelle** und hat damit einen Nebeneffekt. Füllen Sie die Lücken so, dass `gemischt` eine gemischte **Kopie** zurückgibt und die übergebene Liste unverändert bleibt.",
+   "code": "import random\n\ndef gemischt(liste):\n    kopie = ## Lücke 1 ##\n    random.shuffle(## Lücke 2 ##)\n    return kopie\n\noriginal = [1, 2, 3, 4, 5]\nneu = gemischt(original)\nprint(original)   # soll [1, 2, 3, 4, 5] sein\nprint(sorted(neu))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "liste.copy()",
+      "list(liste)",
+      "liste[:]",
+      "liste[0:]",
+      "liste[::]"
+     ],
+     "explanation": "Alle drei Schreibweisen erzeugen ein *neues* Listenobjekt mit demselben Inhalt. `liste.copy()` ist die Variante von der 'Was haben wir gelernt'-Folie."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "kopie"
+     ],
+     "explanation": "Gemischt werden darf nur die Kopie. Stünde hier `liste`, wäre die Kopie sinnlos und das Original wieder verändert."
+    }
+   ],
+   "solution": "import random\n\ndef gemischt(liste):\n    kopie = liste.copy()\n    random.shuffle(kopie)\n    return kopie\n\noriginal = [1, 2, 3, 4, 5]\nneu = gemischt(original)\nprint(original)   # [1, 2, 3, 4, 5]\nprint(sorted(neu))  # [1, 2, 3, 4, 5]",
+   "explanation": "`random.shuffle` ist das Paradebeispiel für eine Funktion mit Nebeneffekt: Sie gibt `None` zurück und verändert stattdessen die übergebene Liste – genau wie im Goofspiel des Profs, wo `random.shuffle(preiskarten)` den globalen Kartenstapel mischt. Wer `neu = random.shuffle(liste)` schreibt, bekommt `None` und wundert sich. Das Standardrezept, um daraus eine **pure function** zu machen, steht auf der Lernfolie: `copy()`. Erst kopieren, dann den Nebeneffekt auf der Kopie ausführen, dann die Kopie zurückgeben. Das `sorted(neu)` in der letzten Zeile dient nur dazu, den Test reproduzierbar zu machen – die Mischung selbst ist ja zufällig. Merkregel: **Nebeneffekt unvermeidbar? Dann wenigstens nur auf einer Kopie.**",
+   "hints": [
+    "Welcher Befehl von der 'Was haben wir gelernt'-Folie erzeugt ein neues Listenobjekt?",
+    "`random.shuffle` gibt nichts zurück – es verändert das, was man ihm gibt.",
+    "Welche der beiden Listen darf gemischt werden, damit `original` unangetastet bleibt?"
+   ],
+   "pitfalls": [
+    "In Lücke 1 `liste` schreiben – dann ist `kopie` nur ein zweiter Name für dieselbe Liste (Aliasing), und `original` wird doch gemischt.",
+    "In Lücke 2 `liste` schreiben – dann wird das Original gemischt und die Kopie bleibt unsortiert liegen.",
+    "`kopie = random.shuffle(liste)` versuchen – das ergibt `None`."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Übung 3, Stufe B5: Die mutable-Falle"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    }
+   ],
+   "tags": [
+    "copy",
+    "shuffle",
+    "nebeneffekt",
+    "pure-function",
+    "luecken",
+    "aliasing"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-019",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Karte ablegen, ohne die Hand zu verändern",
+   "prompt": "Schreiben Sie eine **pure function** `ohne_karte(hand, karte)`, die eine **neue** Liste zurückgibt, in der das erste Vorkommen von `karte` fehlt. Die übergebene Liste `hand` darf dabei **nicht verändert** werden.\n\nBeispiel:\n```python\nhand = [1, 5, 7, 9]\nrest = ohne_karte(hand, 7)\nprint(rest)   # [1, 5, 9]\nprint(hand)   # [1, 5, 7, 9]  - unverändert!\n```\nSie dürfen davon ausgehen, dass `karte` in `hand` enthalten ist.",
+   "starterCode": "def ohne_karte(hand, karte):\n    # Tipp: erst kopieren, dann entfernen\n    pass",
+   "constraints": [
+    "kein global",
+    "die übergebene Liste darf nicht verändert werden"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "ohne_karte([1, 5, 7, 9], 7)",
+     "expected": "[1, 5, 9]"
+    },
+    {
+     "name": "letzte Karte",
+     "call": "ohne_karte([3], 3)",
+     "expected": "[]"
+    },
+    {
+     "name": "nur das erste Vorkommen wird entfernt",
+     "call": "ohne_karte([4, 4, 5], 4)",
+     "expected": "[4, 5]"
+    },
+    {
+     "name": "Original bleibt unverändert (pure)",
+     "call": "(lambda h: (ohne_karte(h, 2), h))([1, 2, 3])",
+     "expected": "([1, 3], [1, 2, 3])"
+    },
+    {
+     "name": "Rückgabe ist ein neues Objekt",
+     "call": "(lambda h: ohne_karte(h, 1) is h)([1, 2])",
+     "expected": "False"
+    }
+   ],
+   "forbidden": [
+    "global "
+   ],
+   "required": [
+    "def ohne_karte"
+   ],
+   "solution": "def ohne_karte(hand, karte):\n    \"\"\"\n    Gibt eine neue Liste ohne das erste Vorkommen von 'karte' zurück.\n    Eingabe: hand (Liste), karte (Element der Liste)\n    Ausgabe: neue Liste; 'hand' bleibt unverändert\n    \"\"\"\n    kopie = hand.copy()\n    kopie.remove(karte)\n    return kopie",
+   "explanation": "Die Methode `remove` verändert die Liste **an Ort und Stelle** und gibt `None` zurück – genau wie `spiele_zufaellige_karte` im `helper.py` des Profs, das die übergebene Liste als Nebeneffekt verkürzt. Für eine pure function darf das nicht passieren. Das Rezept lautet immer gleich: **kopieren, verändern, zurückgeben**. Wichtig sind zwei typische Fallen: (1) `kopie = hand` kopiert nichts, sondern erzeugt nur einen zweiten Namen (Aliasing) - `hand` würde trotzdem verändert. (2) `return hand.remove(karte)` gibt `None` zurück, weil `remove` nichts liefert. Alternativ zu `hand.copy()` funktionieren `hand[:]` oder `list(hand)`. Merkregel: **Wer eine Liste hereinbekommt und verändern will, kopiert sie zuerst.**",
+   "hints": [
+    "Welche Methode erzeugt ein neues Listenobjekt mit demselben Inhalt?",
+    "`remove` gibt `None` zurück – man muss die veränderte Liste selbst zurückgeben, nicht das Ergebnis von `remove`.",
+    "Reihenfolge: kopieren, dann auf der Kopie `remove` aufrufen, dann die Kopie zurückgeben."
+   ],
+   "pitfalls": [
+    "`kopie = hand` statt `kopie = hand.copy()` - das ist Aliasing und verändert das Original.",
+    "`return hand.remove(karte)` - liefert `None` und verändert obendrein das Original."
+   ],
+   "sources": [
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "spiele_zufaellige_karte / runde_auswerten: Mutation der übergebenen Liste"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Pure functions: nur von Eingabeargumenten abhängig, keine Nebeneffekte"
+    }
+   ],
+   "tags": [
+    "copy",
+    "pure-function",
+    "liste",
+    "remove",
+    "aliasing",
+    "goofspiel"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-020",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler rund um Geltungsbereiche",
+   "prompt": "Im folgenden Programm stecken genau **3 Fehler**, die alle mit Geltungsbereichen oder Mutability zu tun haben. Geben Sie die Zeilennummern an, beschreiben Sie den Fehler und korrigieren Sie ihn.",
+   "code": " 1  karten = [1, 2, 3]\n 2  punkte = 0\n 3\n 4  def karte_entfernen(liste):\n 5      liste = liste.remove(liste[0])\n 6      return liste\n 7\n 8  def punkte_addieren(wert):\n 9      punkte = punkte + wert\n10\n11  def zeige_summe():\n12      summe = punkte + 10\n13\n14  print(karte_entfernen(karten))\n15  punkte_addieren(5)\n16  zeige_summe()\n17  print(summe)",
+   "errors": [
+    {
+     "line": 5,
+     "wrong": "liste = liste.remove(liste[0])",
+     "fix": "liste.remove(liste[0])   # Rückgabe von remove nicht zuweisen",
+     "why": "`remove` verändert die Liste an Ort und Stelle und gibt `None` zurück. Durch die Zuweisung zeigt der lokale Name `liste` anschließend auf `None`, und `return liste` liefert `None` statt der verkürzten Liste."
+    },
+    {
+     "line": 9,
+     "wrong": "punkte = punkte + wert",
+     "fix": "global punkte\n    punkte = punkte + wert   # oder: return punkte + wert und beim Aufrufer zuweisen",
+     "why": "Die Zuweisung macht `punkte` für die ganze Funktion lokal; rechts wird der noch nicht initialisierte lokale Name gelesen → `UnboundLocalError`. `int` ist immutable, deshalb hilft hier nur `global` oder Parameter + Rückgabe."
+    },
+    {
+     "line": 17,
+     "wrong": "print(summe)",
+     "fix": "def zeige_summe():\n    return punkte + 10\n...\nprint(zeige_summe())",
+     "why": "`summe` ist eine lokale Variable von `zeige_summe` und existiert nach dem Aufruf nicht mehr. Der Zugriff von außen ergibt einen `NameError`."
+    }
+   ],
+   "solution": "**Zeile 5:** `liste = liste.remove(liste[0])` → `liste.remove(liste[0])`.\n`remove` gibt `None` zurück; die Zuweisung überschreibt den lokalen Namen mit `None`, sodass `return liste` ebenfalls `None` liefert. (Wollte man zusätzlich das Original schonen, müsste man zuerst `liste = liste.copy()` bilden – so wie es ist, wird `karten` als Nebeneffekt verkürzt.)\n\n**Zeile 9:** `punkte = punkte + wert` → `global punkte` als erste Zeile der Funktion ergänzen, oder besser: `def punkte_addieren(punkte, wert): return punkte + wert` und beim Aufruf `punkte = punkte_addieren(punkte, 5)`.\nOhne `global` ist `punkte` lokal und wird gelesen, bevor es einen Wert hat → `UnboundLocalError`.\n\n**Zeile 17:** `print(summe)` → `summe` ist nur innerhalb von `zeige_summe` bekannt. Korrektur: `zeige_summe` gibt den Wert zurück (`return punkte + 10`) und man schreibt `print(zeige_summe())`.\n\n**Korrigierte Fassung:**\n```python\nkarten = [1, 2, 3]\npunkte = 0\n\ndef karte_entfernen(liste):\n    kopie = liste.copy()\n    kopie.remove(kopie[0])\n    return kopie\n\ndef punkte_addieren(punkte, wert):\n    return punkte + wert\n\ndef zeige_summe(punkte):\n    return punkte + 10\n\nprint(karte_entfernen(karten))   # [2, 3]\npunkte = punkte_addieren(punkte, 5)\nprint(zeige_summe(punkte))       # 15\n```",
+   "explanation": "Alle drei Fehler sind Varianten desselben Missverständnisses: Man verwechselt *Namen* mit *Objekten* und *lokal* mit *global*. Zeile 5 zeigt die 'None-Falle' der verändernden Listenmethoden (`append`, `remove`, `insert`, `sort`, `shuffle` geben alle `None` zurück). Zeile 9 ist der klassische `UnboundLocalError` bei immutable Typen. Zeile 17 verletzt die Lebensdauer lokaler Variablen. Beachten Sie die Asymmetrie, die die Klausur gern abfragt: In Zeile 5 *kann* die Funktion die globale Liste verändern (mutable, kein `global` nötig), in Zeile 9 *kann* sie die globale Zahl nicht verändern (immutable, `global` nötig). Merkregel für die Fehlersuche: **Erst fragen 'welcher Typ?', dann 'wird der Name zugewiesen oder das Objekt verändert?'**",
+   "hints": [
+    "Was gibt `liste.remove(x)` eigentlich zurück?",
+    "Suchen Sie nach einer Funktion, die einer globalen Zahl etwas zuweisen will.",
+    "Die letzte Zeile greift auf einen Namen zu, den es nur innerhalb einer Funktion gibt."
+   ],
+   "pitfalls": [
+    "`print(karte_entfernen(karten))` für den Fehler halten – der Aufruf ist korrekt, der Fehler steckt in Zeile 5.",
+    "In Zeile 9 `global` vergessen und stattdessen nur die Reihenfolge der Summanden ändern."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 6,
+     "label": "Globale vs. lokale Variablen"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "spiele_zufaellige_karte / runde_auswerten: Mutation der übergebenen Liste"
+    }
+   ],
+   "tags": [
+    "fehlersuche",
+    "unboundlocalerror",
+    "nameerror",
+    "global",
+    "remove",
+    "none"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-021",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 3,
+   "examStyle": true,
+   "title": "append gegen += bei einer globalen Liste",
+   "prompt": "Beide Funktionen wollen dieselbe globale Liste erweitern. Was wird ausgegeben, und tritt irgendwo ein Fehler auf? Begründen Sie den Unterschied.",
+   "code": "liste = [1, 2]\n\ndef anhaengen():\n    liste.append(3)\n\ndef erweitern():\n    liste += [4]\n\nanhaengen()\nprint(liste)\nerweitern()\nprint(liste)",
+   "expectedOutput": "[1, 2, 3]\nUnboundLocalError",
+   "solution": "Zuerst wird `[1, 2, 3]` ausgegeben, danach bricht `erweitern()` mit einem `UnboundLocalError` ab.\n\n`liste.append(3)` ist ein reiner Methodenaufruf – der Name `liste` wird nicht zugewiesen, also bleibt er global. `liste += [4]` ist dagegen eine **Zuweisung** (Kurzform für `liste = liste.__iadd__([4])`), macht `liste` damit lokal und liest den noch nicht initialisierten lokalen Namen.",
+   "explanation": "Das ist eine der gemeinsten Fallen des Themas, weil `liste += [4]` und `liste.append(4)` bei einer *lokalen* Liste exakt dasselbe tun. Der Unterschied liegt allein im Geltungsbereich: Python stuft einen Namen genau dann als lokal ein, wenn er im Funktionskörper irgendwo **zugewiesen** wird – und `+=` ist eine Zuweisung (`augmented assignment`). Damit gilt `liste` in `erweitern` als lokal, wird aber auf der rechten Seite gelesen, bevor sie einen Wert hat: `UnboundLocalError`. In `anhaengen` steht dagegen kein `=`, also sucht Python `liste` global, findet die Liste und verändert sie. Reparieren kann man `erweitern` entweder mit `global liste` oder – besser – mit `liste.extend([4])`, was ohne Zuweisung auskommt. Merkregel: **`+=` ist ein `=` in Verkleidung.**",
+   "hints": [
+    "Zählen Sie in jeder Funktion die Gleichheitszeichen – auch versteckte.",
+    "Wie schreibt Python `liste += [4]` intern aus?",
+    "Die erste `print`-Ausgabe erfolgt noch, bevor der Fehler auftritt."
+   ],
+   "pitfalls": [
+    "Annehmen, `+=` verhalte sich bei Listen wie `append` und deshalb `[1, 2, 3, 4]` antworten.",
+    "Den ersten `print` vergessen und nur den Fehler nennen."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Mutable: Veränderung wirkt global, Neuzuweisung nicht"
+    }
+   ],
+   "tags": [
+    "scope",
+    "unboundlocalerror",
+    "augmented-assignment",
+    "liste",
+    "append",
+    "falle"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-022",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 3,
+   "examStyle": true,
+   "title": "copy() bei einer verschachtelten Liste",
+   "prompt": "Was gibt der folgende Code aus? Achten Sie darauf, welche Objekte tatsächlich kopiert werden.",
+   "code": "runden = [[1, 2], [3, 4]]\nkopie = runden.copy()\n\nkopie.append([5, 6])\nkopie[0].append(99)\n\nprint(runden)\nprint(kopie)\nprint(runden[0] is kopie[0])",
+   "expectedOutput": "[[1, 2, 99], [3, 4]]\n[[1, 2, 99], [3, 4], [5, 6]]\nTrue",
+   "solution": "```\n[[1, 2, 99], [3, 4]]\n[[1, 2, 99], [3, 4], [5, 6]]\nTrue\n```\n`copy()` erzeugt nur eine **flache** Kopie: Die äußere Liste ist neu (deshalb wirkt `kopie.append([5, 6])` nicht auf `runden`), aber die inneren Listen sind dieselben Objekte (deshalb erscheint die 99 in beiden).",
+   "explanation": "`liste.copy()` legt ein neues Listenobjekt an und trägt dort **dieselben Verweise** ein, die auch in der Originalliste stehen. Das nennt man eine *flache Kopie* (shallow copy). Konsequenz: Änderungen an der **Struktur** der äußeren Liste (`append`, `remove`, `kopie[0] = ...`) sind unabhängig, Änderungen **innerhalb** der Elemente (`kopie[0].append(99)`) schlagen dagegen durch, sofern diese Elemente selbst mutable sind. Bei Listen aus Zahlen oder Strings fällt das nie auf, weil diese immutable sind – deshalb erlebt man die Falle erst bei Listen von Listen oder Listen von Dictionaries. Wer wirklich alles trennen will, muss die inneren Listen einzeln kopieren (`kopie.append(r.copy())` in einer Schleife) oder `copy.deepcopy` verwenden. Merkregel: **`copy()` kopiert die Kiste, nicht ihren Inhalt.**",
+   "hints": [
+    "Wie viele *neue* Listenobjekte entstehen durch `runden.copy()` - eines oder drei?",
+    "`kopie.append([5, 6])` ändert die äußere Struktur, `kopie[0].append(99)` den Inhalt eines Elements.",
+    "`is` fragt nach Objektidentität."
+   ],
+   "pitfalls": [
+    "Denken, `copy()` erzeuge eine vollständig unabhängige Kopie (das wäre `deepcopy`).",
+    "Die 99 nur bei `kopie` erwarten und `[[1, 2], [3, 4]]` für `runden` angeben."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    }
+   ],
+   "tags": [
+    "copy",
+    "shallow-copy",
+    "verschachtelte-listen",
+    "aliasing",
+    "mutable"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-023",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 3,
+   "examStyle": true,
+   "title": "Objekte selbstgeschriebener Klassen sind mutable",
+   "prompt": "Die Vorlesung zählt selbstgeschriebene Klassen zu den mutable Typen. Was gibt der folgende Code aus?",
+   "code": "class Spieler:\n    def __init__(self, name):\n        self.name = name\n        self.punkte = 0\n\ndef gewinnt(s, wert):\n    s.punkte = s.punkte + wert\n\ndef zuruecksetzen(s):\n    s = Spieler(s.name)\n\nanna = Spieler(\"Anna\")\ngewinnt(anna, 7)\nzuruecksetzen(anna)\nprint(anna.name, anna.punkte)",
+   "expectedOutput": "Anna 7",
+   "solution": "`Anna 7` - `gewinnt` verändert ein **Attribut** des übergebenen Objekts (Objekte eigener Klassen sind mutable), während `zuruecksetzen` nur den lokalen Namen `s` an ein neues Spieler-Objekt bindet und damit wirkungslos bleibt.",
+   "explanation": "Hier steckt derselbe Gegensatz wie bei `liste[0] = ...` gegen `liste = [...]`, nur mit einem Objekt statt einer Liste. In `gewinnt` steht links vom `=` **`s.punkte`**, also ein Attribut – das ist eine Veränderung am Objekt selbst (intern `s.__setattr__`), und weil `s` und `anna` auf dasselbe Objekt zeigen, ist die Änderung auch draußen sichtbar. In `zuruecksetzen` steht links vom `=` dagegen **`s`** selbst: Der lokale Parametername wird auf ein frisch erzeugtes Objekt umgehängt, das Original bleibt unberührt und das neue Objekt wird nach dem Aufruf sofort weggeworfen. Genau deshalb nennt die Vorlesungsfolie 'selbstgeschriebene Klassen' in einem Atemzug mit `list`, `dict` und `set`. Merkregel: **Punkt vor dem Gleichheitszeichen = Objekt ändert sich; nackter Name vor dem Gleichheitszeichen = nur der Name ändert sich.**",
+   "hints": [
+    "Vergleichen Sie, was in den beiden Funktionen jeweils links vom `=` steht.",
+    "Welcher Typgruppe ordnet die Vorlesung selbstgeschriebene Klassen zu?",
+    "Was passiert mit dem in `zuruecksetzen` erzeugten neuen Objekt nach dem Aufruf?"
+   ],
+   "pitfalls": [
+    "`Anna 0` antworten, weil man `zuruecksetzen` für wirksam hält.",
+    "Annehmen, ein Objekt werde bei der Übergabe an eine Funktion kopiert."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Mutable: Veränderung wirkt global, Neuzuweisung nicht"
+    }
+   ],
+   "tags": [
+    "mutable",
+    "klasse",
+    "objekt",
+    "attribut",
+    "argumentuebergabe"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-024",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "multi-mc",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": false,
+   "title": "Welche Aussagen über Geltungsbereiche sind richtig?",
+   "prompt": "Kreuzen Sie **alle** zutreffenden Aussagen an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Eine Variable, die innerhalb einer Funktion zugewiesen wird, ist nach dem Funktionsaufruf außerhalb nicht mehr bekannt.",
+     "correct": true,
+     "why": "Richtig – lokale Variablen leben nur während des Aufrufs. Ein Zugriff von außen ergibt einen `NameError`."
+    },
+    {
+     "id": "b",
+     "text": "Globale Variablen können innerhalb einer Funktion ohne weitere Vorkehrung *gelesen* werden.",
+     "correct": true,
+     "why": "Richtig – die Folie sagt ausdrücklich 'Funktioniert!'. Nur das Zuweisen ist problematisch."
+    },
+    {
+     "id": "c",
+     "text": "Um einer globalen Variablen in einer Funktion einen neuen Wert zuzuweisen, braucht man das Schlüsselwort `global`.",
+     "correct": true,
+     "why": "Richtig – ohne `global` erzeugt die Zuweisung eine neue lokale Variable (oder einen `UnboundLocalError`, wenn der Name vorher gelesen wird)."
+    },
+    {
+     "id": "d",
+     "text": "Um ein Element einer globalen Liste in einer Funktion zu ändern, braucht man das Schlüsselwort `global`.",
+     "correct": false,
+     "why": "Falsch - `liste[0] = 9` oder `liste.append(9)` sind keine Namenszuweisungen. Die Vorlesung zeigt genau das an ihrem Kartenspiel-Beispiel."
+    },
+    {
+     "id": "e",
+     "text": "`global` funktioniert nur bei immutable Typen.",
+     "correct": false,
+     "why": "Falsch - `global` bezieht sich auf den *Namen*, nicht auf den Typ. Man braucht es nur häufiger bei immutable Typen, weil man diese nicht verändern kann."
+    },
+    {
+     "id": "f",
+     "text": "Ein Parameter einer Funktion ist immer eine lokale Variable.",
+     "correct": true,
+     "why": "Richtig – beim Aufruf wird der Parametername lokal an das übergebene Objekt gebunden. Eine Zuweisung an ihn wirkt nie nach außen."
+    },
+    {
+     "id": "g",
+     "text": "Eine Funktion, die eine globale Variable nur liest, ist trotzdem keine pure function.",
+     "correct": true,
+     "why": "Richtig – pure functions dürfen 'weder auf globale Variablen noch auf irgendwelche anderen externen Daten zugreifen'."
+    }
+   ],
+   "solution": "Richtig sind **a, b, c, f und g**. Falsch sind d und e.",
+   "explanation": "Die Aussagen d und e sind die typischen Halbwahrheiten. Zu **d**: Entscheidend ist nicht, ob etwas 'verändert' wird, sondern ob ein **Name zugewiesen** wird. `liste[0] = 9`, `liste.append(9)` und `d['k'] = v` weisen dem Namen nichts zu – sie rufen Methoden am Objekt auf, das über den globalen Namen gefunden wird. Zu **e**: `global` ist eine reine Namensdeklaration und funktioniert für jeden Typ; bei mutable Objekten braucht man es nur selten, weil man sie direkt verändern kann. Aussage **g** verbindet das Kapitel mit der funktionalen Programmierung: Die Folie definiert pure functions über zwei Bedingungen – nur von den Eingabeargumenten abhängen und keine Nebeneffekte haben. Schon reines Lesen einer globalen Variablen verletzt die erste Bedingung (die Funktion ist dann nicht mehr *referentially transparent*).",
+   "hints": [
+    "Trennen Sie sauber zwischen 'Name zuweisen' und 'Objekt verändern'.",
+    "Eine der Aussagen über `global` verwechselt Namen mit Typen.",
+    "Was genau fordert die Definition einer pure function – reicht 'keine Nebeneffekte'?"
+   ],
+   "pitfalls": [
+    "d) für richtig halten, weil man `global` mit 'Zugriff auf globale Daten' gleichsetzt.",
+    "g) für falsch halten, weil Lesen ja nichts kaputt macht – die Definition verlangt aber Unabhängigkeit von allem außer den Argumenten."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 6,
+     "label": "Globale vs. lokale Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Pure functions: nur von Eingabeargumenten abhängig, keine Nebeneffekte"
+    }
+   ],
+   "tags": [
+    "scope",
+    "global",
+    "theorie",
+    "pure-function",
+    "mutable"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-025",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "multi-mc",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": false,
+   "title": "Welche Funktionen verändern ihr Argument?",
+   "prompt": "Gegeben sind sechs Funktionen. Bei welchen von ihnen ist das **übergebene Objekt** nach dem Aufruf verändert (Nebeneffekt auf das Argument)? Kreuzen Sie alle zutreffenden an.",
+   "code": "def f1(l):\n    l.append(0)\n\ndef f2(l):\n    l = l + [0]\n    return l\n\ndef f3(d):\n    d['x'] = 1\n\ndef f4(t):\n    return t + (0,)\n\ndef f5(l):\n    kopie = l.copy()\n    kopie.sort()\n    return kopie\n\ndef f6(s):\n    s.add(0)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`f1` (Liste, `append`)",
+     "correct": true,
+     "why": "`append` verändert die Liste an Ort und Stelle – klassischer Nebeneffekt."
+    },
+    {
+     "id": "b",
+     "text": "`f2` (Liste, `l = l + [0]`)",
+     "correct": false,
+     "why": "`l + [0]` erzeugt eine **neue** Liste; die Zuweisung hängt nur den lokalen Namen `l` um. Das Original bleibt unverändert - `f2` ist pure."
+    },
+    {
+     "id": "c",
+     "text": "`f3` (Dictionary, `d['x'] = 1`)",
+     "correct": true,
+     "why": "Eine Zuweisung an einen *Schlüssel* verändert das Dictionary-Objekt selbst."
+    },
+    {
+     "id": "d",
+     "text": "`f4` (Tupel, `t + (0,)`)",
+     "correct": false,
+     "why": "Tupel sind immutable; `+` erzeugt ein neues Tupel, das zurückgegeben wird. `f4` ist pure."
+    },
+    {
+     "id": "e",
+     "text": "`f5` (Liste, `copy` und `sort`)",
+     "correct": false,
+     "why": "`sort` verändert zwar an Ort und Stelle, aber nur die **Kopie**. Das Original bleibt unangetastet – genau das Rezept für pure functions."
+    },
+    {
+     "id": "f",
+     "text": "`f6` (Menge, `add`)",
+     "correct": true,
+     "why": "`set` ist mutable; `add` fügt dem übergebenen Mengenobjekt ein Element hinzu."
+    }
+   ],
+   "solution": "Verändert werden die Argumente bei **f1, f3 und f6**. `f2`, `f4` und `f5` sind pure functions.",
+   "explanation": "Die Frage 'Ist diese Funktion pure?' steht wörtlich auf der Überblicksfolie zur Klausur. Das Prüfschema ist immer dasselbe: (1) Wird auf dem Argument eine **verändernde Methode** aufgerufen (`append`, `add`, `remove`, `sort`, `shuffle`) oder eine **Element-/Schlüssel-/Attributzuweisung** vorgenommen (`l[0] = ...`, `d['x'] = ...`, `obj.a = ...`)? Dann gibt es einen Nebeneffekt. (2) Wird nur der **Parametername** neu zugewiesen (`l = ...`)? Dann passiert nach außen nichts. Achtung bei `f5`: `sort()` ist zwar verändernd, trifft aber nur die vorher angelegte Kopie – der Nebeneffekt bleibt in der Funktion eingeschlossen und ist damit nach außen unsichtbar. Und Achtung bei `f2`: Wäre dort `l += [0]` statt `l = l + [0]` gestanden, wäre die Liste sehr wohl verändert worden, denn `+=` ruft bei Listen intern `extend` auf.",
+   "hints": [
+    "Prüfen Sie für jede Funktion: Steht links vom `=` der nackte Parametername oder etwas mit Index/Schlüssel?",
+    "Zwei Funktionen arbeiten mit immutable Typen bzw. mit einer Kopie.",
+    "`sort()` verändert – aber was genau?"
+   ],
+   "pitfalls": [
+    "`f5` ankreuzen, weil dort `sort()` vorkommt – die Kopie übersehen.",
+    "`f2` ankreuzen und `l = l + [0]` mit `l += [0]` verwechseln."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Pure functions: nur von Eingabeargumenten abhängig, keine Nebeneffekte"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 13,
+     "label": "Überblick VL 3: Pure functions, 'Ist diese Funktion pure?'"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "nebeneffekt",
+    "mutable",
+    "immutable",
+    "copy",
+    "theorie"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-026",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler im Goofspiel-Punktezähler",
+   "prompt": "Das Programm soll die Preiskarten mischen, dem Spieler die oberste Karte gutschreiben und danach die *restlichen* Karten bestimmen – ohne den ursprünglichen Stapel `preiskarten` anzutasten. Es enthält genau **3 Fehler** rund um Geltungsbereiche und Mutability. Nennen Sie Zeile, Fehler und Korrektur.",
+   "code": " 1  import random\n 2\n 3  preiskarten = [1, 2, 3, 4, 5]\n 4  punkte_spieler1 = 0\n 5\n 6  def mische(liste):\n 7      random.shuffle(liste)\n 8      return liste\n 9\n10  def runde_spielen(gewinnkarte):\n11      punkte_spieler1 += gewinnkarte\n12\n13  def restliche_karten(liste, karte):\n14      liste.remove(karte)\n15      return liste\n16\n17  gemischt = mische(preiskarten)\n18  runde_spielen(gemischt[0])\n19  rest = restliche_karten(preiskarten, gemischt[0])\n20  print(punkte_spieler1, len(preiskarten), len(rest))",
+   "errors": [
+    {
+     "line": 7,
+     "wrong": "random.shuffle(liste)",
+     "fix": "kopie = liste.copy()\n    random.shuffle(kopie)\n    return kopie",
+     "why": "`random.shuffle` mischt die übergebene Liste an Ort und Stelle. Damit wird der globale Stapel `preiskarten` mitgemischt, und `gemischt` ist nur ein zweiter Name für dasselbe Objekt (Aliasing)."
+    },
+    {
+     "line": 11,
+     "wrong": "punkte_spieler1 += gewinnkarte",
+     "fix": "global punkte_spieler1\n    punkte_spieler1 += gewinnkarte   # oder: return punkte_spieler1 + gewinnkarte",
+     "why": "`+=` ist eine Zuweisung und macht `punkte_spieler1` lokal; der Name wird gelesen, bevor er einen Wert hat → `UnboundLocalError`. Bei einem `int` hilft nur `global` oder Parameter + Rückgabe."
+    },
+    {
+     "line": 14,
+     "wrong": "liste.remove(karte)",
+     "fix": "kopie = liste.copy()\n    kopie.remove(karte)\n    return kopie",
+     "why": "`remove` verändert die übergebene Liste. Dadurch verliert auch der globale Stapel `preiskarten` eine Karte, und `rest` ist wieder dasselbe Objekt wie `preiskarten` - `len(preiskarten)` und `len(rest)` wären beide 4 statt 5 und 4."
+    }
+   ],
+   "solution": "**Zeile 7:** `random.shuffle(liste)` mischt das Original. Korrektur: erst kopieren.\n```python\ndef mische(liste):\n    kopie = liste.copy()\n    random.shuffle(kopie)\n    return kopie\n```\n\n**Zeile 11:** `punkte_spieler1 += gewinnkarte` ohne `global` → `UnboundLocalError`, weil `+=` eine Zuweisung ist. Korrektur mit `global`:\n```python\ndef runde_spielen(gewinnkarte):\n    global punkte_spieler1\n    punkte_spieler1 += gewinnkarte\n```\nSchöner (pure): `def runde_spielen(punkte, gewinnkarte): return punkte + gewinnkarte` und `punkte_spieler1 = runde_spielen(punkte_spieler1, gemischt[0])`.\n\n**Zeile 14:** `liste.remove(karte)` entfernt die Karte aus dem Original. Korrektur: auf einer Kopie arbeiten.\n```python\ndef restliche_karten(liste, karte):\n    kopie = liste.copy()\n    kopie.remove(karte)\n    return kopie\n```\n\nNach allen drei Korrekturen gibt Zeile 20 z. B. `3 5 4` aus (die erste Zahl hängt von der zufälligen Mischung ab): `preiskarten` hat weiterhin 5 Karten, `rest` hat 4.",
+   "explanation": "Dieses Programm demonstriert, warum der Prof funktionale Programmierung motiviert: Zwei der drei Fehler sind **stille** Nebeneffekte – das Programm stürzt dort nicht ab, es rechnet nur falsch, und der Fehler zeigt sich erst viel später an einer ganz anderen Stelle ('Gibt es Funktionen mit Nebeneffekten, so kann jede nachfolgende Funktion ein falsches Ergebnis verursachen'). Nur Fehler 2 wirft sofort eine Exception. Das gemeinsame Heilmittel ist immer dasselbe Muster: **kopieren, verändern, zurückgeben** – so werden `mische` und `restliche_karten` zu pure functions. Für den `int`-Zähler gibt es keine Kopier-Lösung, weil man ein `int` gar nicht verändern kann; hier muss man entweder `global` benutzen oder den Wert sauber hinein- und wieder herausreichen.",
+   "hints": [
+    "Was macht `random.shuffle` mit dem, was man ihm übergibt – und was gibt es zurück?",
+    "Ist `+=` eine Zuweisung? Was folgt daraus für den Geltungsbereich?",
+    "Nach Zeile 19: Wie viele Karten hat `preiskarten` noch, und ist `rest` wirklich eine andere Liste?"
+   ],
+   "pitfalls": [
+    "Nur den `UnboundLocalError` finden und die beiden stillen Mutationen übersehen.",
+    "In Zeile 8 `return liste` für den Fehler halten – das ist Folge, nicht Ursache; die Ursache ist das Mischen des Originals."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Nebeneffekte vermeiden, keine globalen Variablen in Funktionen ändern"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 13,
+     "label": "Vorteile funktionaler Programmierung: Fehlersuche"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "spiele_zufaellige_karte / runde_auswerten: Mutation der übergebenen Liste"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Übung 3, Stufe B5: Die mutable-Falle"
+    }
+   ],
+   "tags": [
+    "fehlersuche",
+    "goofspiel",
+    "shuffle",
+    "copy",
+    "unboundlocalerror",
+    "nebeneffekt",
+    "aliasing"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-027",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "short-answer",
+   "difficulty": 4,
+   "points": 10,
+   "examStyle": true,
+   "title": "Klausursimulation: Code-Analyse Geltungsbereiche und Mutability (10 P)",
+   "prompt": "**Aufgabe 2 im Klausurformat.** Geben Sie für jedes der fünf Programme an, was auf der Kommandozeile ausgegeben wird **oder ob ein Fehler auftritt**. Begründen Sie Ihre Antwort jeweils in einem Satz. (je 2 P)\n\n**a)**\n```python\nkarten = [10, 20, 30]\ndef f():\n    karten[2] = karten[2] - 5\nf()\nprint(karten)\n```\n\n**b)**\n```python\nd = {'a': 1}\ndef g():\n    d = {'a': 2}\n    d['b'] = 3\ng()\nprint(d)\n```\n\n**c)**\n```python\nzaehler = 5\ndef h():\n    global zaehler\n    zaehler = zaehler - 2\nh()\nh()\nprint(zaehler)\n```\n\n**d)**\n```python\nwert = 10\ndef k():\n    wert = wert * 2\n    return wert\nprint(k())\n```\n\n**e)**\n```python\nt = ('a',)\ndef m(t):\n    t = t + ('b',)\n    return t\nu = m(t)\nprint(t, u)\n```",
+   "solution": "**a) `[10, 20, 25]`** – Es wird kein Name zugewiesen, sondern ein *Element* der globalen mutable Liste geändert; dafür ist kein `global` nötig. (2 P)\n\n**b) `{'a': 1}`** - `d = {'a': 2}` macht `d` in der Funktion lokal, sodass auch die anschließende Veränderung nur das lokale Dictionary trifft. (2 P)\n\n**c) `1`** - `global zaehler` erweitert den Geltungsbereich, die beiden Aufrufe wirken kumulativ: 5 → 3 → 1. (2 P)\n\n**d) `UnboundLocalError`** – Durch die Zuweisung gilt `wert` in der Funktion als lokal, wird rechts aber gelesen, bevor die lokale Variable einen Wert hat. (2 P)\n\n**e) `('a',) ('a', 'b')`** – Tupel sind immutable; `t + ('b',)` erzeugt ein neues Tupel und bindet nur den lokalen Namen `t` daran, das Original bleibt unverändert. (2 P)\n\n**Bewertungsrubrik:** pro Teilaufgabe 1 P für die korrekte Ausgabe bzw. den korrekten Fehlertyp und 1 P für eine tragfähige Begründung. Eine richtige Ausgabe ohne Begründung gibt höchstens 1 P.",
+   "explanation": "Das ist die vollständige Aufgabe 2 der Klausur im Original-Zuschnitt: fünf Snippets a 2 Punkte, jeweils Ausgabe **plus** Begründung. Alle fünf Fälle lassen sich mit einem einzigen Entscheidungsbaum lösen:\n\n1. **Steht der Name links von einem `=` (auch `+=`)?**\n   - Nein → globales Objekt wird gelesen/verändert (Fall a).\n   - Ja, mit `global` → globale Variable wird wirklich neu gesetzt (Fall c).\n   - Ja, ohne `global`, und der Name wird vorher **nicht** gelesen → lokale Variable, global bleibt alles beim Alten (Fall b).\n   - Ja, ohne `global`, und der Name wird rechts **gelesen** → `UnboundLocalError` (Fall d).\n2. **Ist der Typ immutable?** Dann kann die Funktion das Objekt gar nicht ändern; sie kann nur ein neues erzeugen und zurückgeben (Fall e).\n\nÜben Sie, diese fünf Muster in unter zwei Minuten zu erkennen – in der Klausur sind das 10 von 49 Punkten.",
+   "hints": [
+    "Fragen Sie bei jedem Snippet zuerst: Wird der *Name* zugewiesen oder das *Objekt* verändert?",
+    "In genau einem der fünf Fälle wird der Name in der Funktion zugewiesen *und* vorher gelesen – dort liegt der Fehler.",
+    "Bei c) wird die Funktion zweimal aufgerufen; bei e) achten Sie darauf, was `print(t, u)` mit zwei Argumenten ausgibt."
+   ],
+   "pitfalls": [
+    "Bei a) `UnboundLocalError` vermuten, weil `karten[2]` auch rechts gelesen wird – der *Name* `karten` wird jedoch nie zugewiesen.",
+    "Bei b) `{'a': 2, 'b': 3}` antworten und die Neuzuweisung als 'Änderung des globalen Dictionaries' missverstehen.",
+    "Bei c) nur einen Aufruf zählen (`3` statt `1`)."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse Geltungsbereiche und Mutability"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 7,
+     "label": "Immutable: lokale Zuweisung überschreibt die globale Variable nicht"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Mutable: Veränderung wirkt global, Neuzuweisung nicht"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    }
+   ],
+   "tags": [
+    "klausur",
+    "scope",
+    "mutable",
+    "immutable",
+    "global",
+    "unboundlocalerror",
+    "tupel"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-028",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": true,
+   "title": "global in einer verschachtelten Funktion",
+   "prompt": "Härtetest zum Geltungsbereich. Was gibt der folgende Code aus?",
+   "code": "zaehler = 0\n\ndef aussen():\n    zaehler = 10\n    def innen():\n        global zaehler\n        zaehler = zaehler + 1\n    innen()\n    innen()\n    return zaehler\n\nprint(aussen())\nprint(zaehler)",
+   "expectedOutput": "10\n2",
+   "solution": "```\n10\n2\n```\n`global zaehler` bezieht sich immer auf die **Modulebene**, nie auf die umgebende Funktion. `innen` erhöht daher zweimal die globale 0 auf 2, während das lokale `zaehler = 10` von `aussen` davon völlig unberührt bleibt.",
+   "explanation": "Hier gibt es drei Dinge, die `zaehler` heißen könnten – und `global` wählt kompromisslos das globale. Die lokale Variable `zaehler = 10` in `aussen` und die globale Variable `zaehler = 0` sind zwei **verschiedene** Variablen. `innen` deklariert `global zaehler` und arbeitet damit ausschließlich auf der globalen: 0 → 1 → 2. `return zaehler` in `aussen` liest dagegen die *lokale* Variable von `aussen`, die nie angefasst wurde – also 10. Wollte man wirklich die Variable der umgebenden Funktion ändern, bräuchte man `nonlocal` statt `global`. Merkregel: **`global` springt immer ganz nach außen, nicht eine Ebene hoch.**",
+   "hints": [
+    "Wie viele verschiedene Variablen mit dem Namen `zaehler` gibt es in diesem Programm?",
+    "Auf welche Ebene bezieht sich `global` - auf `aussen` oder auf die Modulebene?",
+    "`innen()` wird zweimal aufgerufen; `return zaehler` in `aussen` liest welche der Variablen?"
+   ],
+   "pitfalls": [
+    "`12` für den ersten `print` erwarten, weil man annimmt, `global` beziehe sich auf `aussen`.",
+    "Annehmen, das lokale `zaehler = 10` verstecke die globale Variable auch vor `innen`."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global; nicht initialisierte lokale Variable"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 6,
+     "label": "Globale vs. lokale Variablen"
+    }
+   ],
+   "tags": [
+    "scope",
+    "global",
+    "verschachtelte-funktionen",
+    "haertetest"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-029",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": true,
+   "title": "Die mutable-Falle beim Default-Argument",
+   "prompt": "Härtetest zur Mutability. Was gibt der folgende Code aus?",
+   "code": "def anhaengen(element, liste=[]):\n    liste.append(element)\n    return liste\n\nprint(anhaengen(1))\nprint(anhaengen(2))\nprint(anhaengen(3, []))\nprint(anhaengen(4))",
+   "expectedOutput": "[1]\n[1, 2]\n[3]\n[1, 2, 4]",
+   "solution": "```\n[1]\n[1, 2]\n[3]\n[1, 2, 4]\n```\nDer Default-Wert `[]` wird **einmal** bei der Definition der Funktion erzeugt und danach bei jedem Aufruf ohne zweites Argument wiederverwendet; da Listen mutable sind, sammeln sich die Elemente darin an.",
+   "explanation": "Dies ist der berühmteste Mutability-Stolperstein von Python. Ein Default-Wert wird **einmalig ausgewertet**, nämlich wenn die `def`-Zeile ausgeführt wird – nicht bei jedem Aufruf. Die leere Liste ist also ein einziges Objekt, das an der Funktion 'hängen bleibt'. `anhaengen(1)` und `anhaengen(2)` verändern dieses gemeinsame Objekt, `anhaengen(3, [])` bekommt eine frische Liste übergeben und berührt es nicht, und `anhaengen(4)` landet wieder auf dem alten Objekt, das inzwischen `[1, 2]` enthält. Mit einem immutable Default (`def f(x, n=0)`) kann das nie passieren, weil man ein `int` nicht verändern kann. Die übliche Reparatur:\n```python\ndef anhaengen(element, liste=None):\n    if liste is None:\n        liste = []\n    liste.append(element)\n    return liste\n```\nMerkregel: **Niemals ein mutable Objekt als Default-Wert verwenden.**",
+   "hints": [
+    "Wann genau wird der Ausdruck `[]` in der `def`-Zeile ausgewertet – bei jedem Aufruf oder nur einmal?",
+    "Der dritte Aufruf übergibt ausdrücklich eine eigene Liste – was heißt das für den Default?",
+    "Der vierte Aufruf trifft wieder auf dasselbe Objekt wie die ersten beiden."
+   ],
+   "pitfalls": [
+    "Viermal eine frische Liste erwarten (`[1]`, `[2]`, `[3]`, `[4]`).",
+    "Annehmen, `anhaengen(3, [])` setze den Default-Wert zurück."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Übung 3, Stufe B5: Die mutable-Falle"
+    }
+   ],
+   "tags": [
+    "mutable",
+    "default-argument",
+    "falle",
+    "liste",
+    "haertetest"
+   ]
+  },
+  {
+   "id": "py-scope-mutability-030",
+   "lang": "python",
+   "topicId": "py-scope-mutability",
+   "type": "code",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": false,
+   "title": "Eine wirklich unabhängige Kopie einer Rundenliste",
+   "prompt": "In `runden` steht für jede Runde eine Liste der geworfenen Zahlen, z. B. `[[1, 2], [3]]`. Schreiben Sie eine Funktion `sichere_kopie(runden)`, die eine Kopie zurückgibt, bei der **weder die äußere Liste noch eine der inneren Listen** mit dem Original geteilt wird. Nach\n```python\nkopie = sichere_kopie(runden)\nkopie.append([9])\nkopie[0].append(99)\n```\nmuss `runden` also völlig unverändert sein.\n\nDas Modul `copy` (und damit `copy.deepcopy`) darf **nicht** benutzt werden.",
+   "starterCode": "def sichere_kopie(runden):\n    # Achtung: runden.copy() allein reicht nicht!\n    pass",
+   "constraints": [
+    "kein import copy",
+    "kein deepcopy",
+    "das Original darf nicht verändert werden"
+   ],
+   "tests": [
+    {
+     "name": "gleicher Inhalt",
+     "call": "sichere_kopie([[1, 2], [3]])",
+     "expected": "[[1, 2], [3]]"
+    },
+    {
+     "name": "leere Liste",
+     "call": "sichere_kopie([])",
+     "expected": "[]"
+    },
+    {
+     "name": "leere innere Listen",
+     "call": "sichere_kopie([[], [1]])",
+     "expected": "[[], [1]]"
+    },
+    {
+     "name": "äußere Liste ist neu",
+     "call": "(lambda o: (lambda k: (k.append([9]), len(o))[1])(sichere_kopie(o)))([[1]])",
+     "expected": "1"
+    },
+    {
+     "name": "innere Listen sind neu",
+     "call": "(lambda o: (lambda k: (k[0].append(99), o[0])[1])(sichere_kopie(o)))([[1], [2]])",
+     "expected": "[1]"
+    },
+    {
+     "name": "Original bleibt unverändert",
+     "call": "(lambda o: (sichere_kopie(o), o))([[1, 2]])",
+     "expected": "([[1, 2]], [[1, 2]])"
+    }
+   ],
+   "forbidden": [
+    "import copy",
+    "deepcopy"
+   ],
+   "required": [
+    "def sichere_kopie"
+   ],
+   "solution": "def sichere_kopie(runden):\n    \"\"\"\n    Erzeugt eine Kopie einer Liste von Listen, bei der auch die inneren\n    Listen neue Objekte sind (händische 'tiefe' Kopie).\n    Eingabe: runden (Liste, deren Elemente Listen sind)\n    Ausgabe: neue Liste mit neuen inneren Listen\n    \"\"\"\n    kopie = []\n    for runde in runden:\n        kopie.append(runde.copy())\n    return kopie",
+   "explanation": "`runden.copy()` liefert nur eine **flache** Kopie: Die äußere Liste ist neu, die Einträge sind aber weiterhin Verweise auf dieselben inneren Listenobjekte. Ein `kopie[0].append(99)` würde also auch im Original sichtbar. Weil Python keine eingebaute 'tiefe' Kopie ohne das Modul `copy` anbietet, muss man sie händisch bauen: eine neue äußere Liste anlegen und **jede** innere Liste einzeln kopieren. Wichtig ist, dass die Kopie der inneren Liste passiert (`runde.copy()`), nicht nur ein `append(runde)` - sonst hätte man wieder nur die flache Variante. Kompakter geht es mit `list(map(lambda r: r.copy(), runden))` oder der List Comprehension `[r.copy() for r in runden]`; beides ist ebenfalls korrekt. Merkregel: **So tief, wie das Objekt verschachtelt ist, so tief muss man kopieren.**",
+   "hints": [
+    "Was genau steht nach `runden.copy()` in der neuen Liste – neue Listen oder Verweise auf die alten?",
+    "Bauen Sie die neue Liste Element für Element auf.",
+    "Für jede innere Liste `runde` brauchen Sie ebenfalls ein `runde.copy()`."
+   ],
+   "pitfalls": [
+    "Nur `return runden.copy()` schreiben – dann teilen sich Original und Kopie die inneren Listen.",
+    "`kopie.append(runde)` statt `kopie.append(runde.copy())` - derselbe Fehler, nur ausgeschrieben.",
+    "Die äußere Liste vergessen und das Original in der Schleife verändern."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: global, copy()"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Pure functions: nur von Eingabeargumenten abhängig, keine Nebeneffekte"
+    }
+   ],
+   "tags": [
+    "copy",
+    "shallow-copy",
+    "verschachtelte-listen",
+    "pure-function",
+    "haertetest",
+    "aliasing"
+   ]
+  }
+ ]
+}

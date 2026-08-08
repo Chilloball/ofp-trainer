@@ -1,0 +1,621 @@
+{
+ "id": "probeklausur-java-original",
+ "lang": "java",
+ "title": "Probeklausur Objektorientierte Programmierung (Java)",
+ "subtitle": "Originalklausur des Lehrstuhls — 54 Punkte",
+ "minutes": 60,
+ "totalPoints": 54,
+ "origin": "original",
+ "note": "Punkteverteilung wie im Original: Aufgabe 1 = 12 P, Aufgabe 2 = 4 P, Aufgabe 3 = 12 P, Aufgabe 4 = 12 P, Aufgabe 5 = 14 P.",
+ "tasks": [
+  {
+   "id": "j1",
+   "label": "Aufgabe 1",
+   "title": "Theorie & Fehlersuche",
+   "points": 12,
+   "instructions": "**a)** Multiple Choice (6 P) — kreuzen Sie jeweils genau eine richtige Antwort an.\n**b)** Fehlersuche (6 P) — der Code enthält genau 3 Fehler.",
+   "inline": [
+    {
+     "id": "pk-java-1a1",
+     "lang": "java",
+     "topicId": "java-types",
+     "type": "mc",
+     "difficulty": 1,
+     "points": 1,
+     "examStyle": true,
+     "title": "Größenreihenfolge der Ganzzahltypen",
+     "prompt": "Bringen Sie die Ganzzahl-Datentypen nach ihrer Größe (Speicherbedarf) in die richtige Reihenfolge — vom kleinsten zum größten:",
+     "choices": [
+      {
+       "id": "a",
+       "text": "`byte < short < int < long`",
+       "correct": true,
+       "why": "1 Byte < 2 Byte < 4 Byte < 8 Byte."
+      },
+      {
+       "id": "b",
+       "text": "`byte < int < short < long`",
+       "correct": false,
+       "why": "`short` (2 B) ist kleiner als `int` (4 B)."
+      },
+      {
+       "id": "c",
+       "text": "`short < byte < int < long`",
+       "correct": false,
+       "why": "`byte` ist mit 1 Byte der kleinste Typ."
+      },
+      {
+       "id": "d",
+       "text": "`int < long < short < byte`",
+       "correct": false,
+       "why": "Genau umgekehrt."
+      }
+     ],
+     "solution": "a) `byte < short < int < long`",
+     "explanation": "Die Speichergrößen: `byte` 1 Byte (8 Bit, −128…127), `short` 2 Byte, `int` 4 Byte (≈ ±2,1 Mrd.), `long` 8 Byte. Bei den Gleitkommatypen gilt entsprechend `float` (4 B) < `double` (8 B); `char` belegt 2 Byte. Merkhilfe: die Größen verdoppeln sich der Reihe nach.",
+     "hints": [
+      "Wie viele Bit hat ein Byte-Wert?"
+     ],
+     "sources": [
+      {
+       "file": "OFP_Java.pdf",
+       "page": 350
+      }
+     ],
+     "tags": [
+      "datentypen"
+     ]
+    },
+    {
+     "id": "pk-java-1a2",
+     "lang": "java",
+     "topicId": "java-objects",
+     "type": "mc",
+     "difficulty": 1,
+     "points": 1,
+     "examStyle": true,
+     "title": "Wirkung von private",
+     "prompt": "Was bewirkt das Schlüsselwort `private` bei einem Attribut?",
+     "choices": [
+      {
+       "id": "a",
+       "text": "Zugriff von überall im Programm",
+       "correct": false,
+       "why": "Das wäre `public`."
+      },
+      {
+       "id": "b",
+       "text": "Zugriff nur innerhalb derselben Klasse",
+       "correct": true,
+       "why": "Genau das ist die Definition von `private`."
+      },
+      {
+       "id": "c",
+       "text": "Zugriff nur in Unterklassen",
+       "correct": false,
+       "why": "Unterklassen erreichen `protected`-Mitglieder, nicht `private`."
+      },
+      {
+       "id": "d",
+       "text": "Es macht das Attribut unveränderlich",
+       "correct": false,
+       "why": "Unveränderlich macht `final`."
+      }
+     ],
+     "solution": "b) Zugriff nur innerhalb derselben Klasse",
+     "explanation": "Die vier Sichtbarkeiten in Java: `private` (nur eigene Klasse), package-private (ohne Angabe: eigenes Paket), `protected` (Paket **und** Unterklassen), `public` (überall). `private` ist die Grundlage der **Kapselung**: Attribute privat halten und den Zugriff über `get`-/`set`-Methoden kontrollieren. Verwechslungsgefahr besteht vor allem mit `final`, das die erneute Zuweisung verbietet, mit der Sichtbarkeit aber nichts zu tun hat.",
+     "sources": [
+      {
+       "file": "OFP_Java.pdf",
+       "page": 355
+      }
+     ],
+     "tags": [
+      "kapselung"
+     ],
+     "hints": [
+      "Welche der vier Sichtbarkeiten ist die engste?",
+      "Nicht verwechseln mit `final` — das betrifft die Änderbarkeit, nicht die Sichtbarkeit."
+     ]
+    },
+    {
+     "id": "pk-java-1a3",
+     "lang": "java",
+     "topicId": "java-objects",
+     "type": "mc",
+     "difficulty": 2,
+     "points": 1,
+     "examStyle": true,
+     "title": "Wozu dient this()?",
+     "prompt": "Wozu dient `this()` als erste Anweisung in einem Konstruktor?",
+     "choices": [
+      {
+       "id": "a",
+       "text": "Es ruft den Konstruktor der Oberklasse auf",
+       "correct": false,
+       "why": "Das macht `super()`."
+      },
+      {
+       "id": "b",
+       "text": "Es ruft einen anderen Konstruktor derselben Klasse auf",
+       "correct": true,
+       "why": "Konstruktor-Verkettung innerhalb einer Klasse."
+      },
+      {
+       "id": "c",
+       "text": "Es erzeugt ein neues Objekt",
+       "correct": false,
+       "why": "Objekte entstehen mit `new`."
+      },
+      {
+       "id": "d",
+       "text": "Es gibt die aktuelle Instanz zurück",
+       "correct": false,
+       "why": "Das täte `return this;` — aber Konstruktoren haben keinen Rückgabewert."
+      }
+     ],
+     "solution": "b) Es ruft einen anderen Konstruktor derselben Klasse auf",
+     "explanation": "`this(...)` und `super(...)` müssen beide die **erste** Anweisung im Konstruktor sein und schließen sich deshalb gegenseitig aus. Typische Anwendung: ein Konstruktor mit wenigen Parametern reicht Standardwerte an den ausführlichen weiter:\n\n```java\npublic Student() { this(1000000); }\npublic Student(long mNr) { this.mNr = mNr; }\n```\n\nDavon zu unterscheiden ist `this.attribut`, das die Verdeckung durch einen gleichnamigen Parameter auflöst.",
+     "sources": [
+      {
+       "file": "OFP_Java.pdf",
+       "page": 355
+      }
+     ],
+     "tags": [
+      "konstruktor"
+     ],
+     "hints": [
+      "`this` und `super` sind ein Gegensatzpaar — welches zeigt auf die eigene Klasse?",
+      "Konstruktoren haben keinen Rückgabewert, das schließt eine Antwort aus."
+     ]
+    },
+    {
+     "id": "pk-java-1a4",
+     "lang": "java",
+     "topicId": "java-inheritance",
+     "type": "mc",
+     "difficulty": 1,
+     "points": 1,
+     "examStyle": true,
+     "title": "Konstruktor der Oberklasse aufrufen",
+     "prompt": "Womit ruft eine Unterklasse den Konstruktor ihrer Oberklasse auf?",
+     "choices": [
+      {
+       "id": "a",
+       "text": "`this()`",
+       "correct": false,
+       "why": "Ruft einen Konstruktor derselben Klasse."
+      },
+      {
+       "id": "b",
+       "text": "`super()`",
+       "correct": true,
+       "why": "`super(...)` ruft den Konstruktor der Oberklasse."
+      },
+      {
+       "id": "c",
+       "text": "`base()`",
+       "correct": false,
+       "why": "Gibt es in Java nicht (das ist C#)."
+      },
+      {
+       "id": "d",
+       "text": "`parent()`",
+       "correct": false,
+       "why": "Existiert in Java nicht."
+      }
+     ],
+     "solution": "b) `super()`",
+     "explanation": "`super(...)` muss die erste Anweisung im Konstruktor der Unterklasse sein. Fehlt sie, fügt der Compiler automatisch ein parameterloses `super()` ein — das schlägt fehl, wenn die Oberklasse **keinen** parameterlosen Konstruktor besitzt. Genau deshalb braucht die `Auto`-Klasse in Aufgabe 5 ein explizites `super(name)`.\n\nDaneben gibt es `super.methode()` und `super.attribut` für den Zugriff auf überschriebene bzw. verdeckte Mitglieder.",
+     "sources": [
+      {
+       "file": "OFP_Java.pdf",
+       "page": 369
+      }
+     ],
+     "tags": [
+      "vererbung",
+      "super"
+     ],
+     "hints": [
+      "Das Gegenstück zu `this()` innerhalb derselben Klasse.",
+      "Zwei der Antworten gibt es in Java gar nicht."
+     ]
+    },
+    {
+     "id": "pk-java-1a5",
+     "lang": "java",
+     "topicId": "java-inheritance",
+     "type": "mc",
+     "difficulty": 2,
+     "points": 1,
+     "examStyle": true,
+     "title": "Was ist Polymorphie?",
+     "prompt": "Was beschreibt Polymorphie am besten?",
+     "choices": [
+      {
+       "id": "a",
+       "text": "Eine Methode kann mehrere Parameter haben",
+       "correct": false,
+       "why": "Das ist einfach eine Parameterliste."
+      },
+      {
+       "id": "b",
+       "text": "Eine Variable des Obertyps kann auf Objekte verschiedener Unterklassen verweisen; der Aufruf richtet sich nach dem tatsächlichen Objekt",
+       "correct": true,
+       "why": "Genau das ist Polymorphie mit dynamischer Bindung."
+      },
+      {
+       "id": "c",
+       "text": "Eine Klasse kann mehrere Attribute besitzen",
+       "correct": false,
+       "why": "Trivial und hat nichts mit Polymorphie zu tun."
+      },
+      {
+       "id": "d",
+       "text": "Ein Attribut kann Werte verschiedener Typen speichern",
+       "correct": false,
+       "why": "Java ist statisch typisiert — das geht so nicht."
+      }
+     ],
+     "solution": "b)",
+     "explanation": "Der entscheidende Halbsatz ist „der Aufruf richtet sich nach dem **tatsächlichen** Objekt\" — das nennt man **dynamische Bindung**. Der Compiler prüft anhand des Variablentyps, ob die Methode existiert; zur Laufzeit wird die Implementierung des echten Objekttyps ausgeführt.\n\nWichtige Ausnahme: **Attribute** werden **nicht** dynamisch gebunden. Bei gleichnamigen Feldern in Ober- und Unterklasse entscheidet der Variablentyp.\n\nNicht verwechseln mit **Überladen** (gleicher Methodenname, verschiedene Parameterlisten) — das wird schon beim Kompilieren aufgelöst.",
+     "sources": [
+      {
+       "file": "OFP_Java.pdf",
+       "page": 372
+      }
+     ],
+     "tags": [
+      "polymorphie"
+     ],
+     "hints": [
+      "Welche Antwort spricht davon, dass der Aufruf sich nach dem tatsächlichen Objekt richtet?",
+      "Nicht verwechseln mit Überladen (gleicher Name, andere Parameter)."
+     ]
+    },
+    {
+     "id": "pk-java-1a6",
+     "lang": "java",
+     "topicId": "java-inheritance",
+     "type": "mc",
+     "difficulty": 2,
+     "points": 1,
+     "examStyle": true,
+     "title": "Klasse mit abstrakter Methode",
+     "prompt": "Eine Klasse, die mindestens eine abstrakte Methode enthält, …",
+     "choices": [
+      {
+       "id": "a",
+       "text": "kann direkt mit `new` instanziiert werden",
+       "correct": false,
+       "why": "Abstrakte Klassen lassen sich nicht instanziieren."
+      },
+      {
+       "id": "b",
+       "text": "muss selbst als `abstract` deklariert sein",
+       "correct": true,
+       "why": "Sonst ist es ein Compiler-Fehler."
+      },
+      {
+       "id": "c",
+       "text": "darf keine Attribute besitzen",
+       "correct": false,
+       "why": "Abstrakte Klassen dürfen Attribute und fertige Methoden haben."
+      },
+      {
+       "id": "d",
+       "text": "erbt automatisch von allen Interfaces",
+       "correct": false,
+       "why": "Ergibt keinen Sinn — Interfaces werden explizit implementiert."
+      }
+     ],
+     "solution": "b) muss selbst als `abstract` deklariert sein",
+     "explanation": "Eine abstrakte Methode hat nur eine Signatur und keinen Rumpf. Enthält eine Klasse eine solche Methode, ist sie unvollständig und muss `abstract` heißen; `new` ist dann verboten. Erst eine Unterklasse, die **alle** abstrakten Methoden implementiert, ist instanziierbar.\n\nUnterschied zum Interface: Eine abstrakte Klasse darf Attribute und fertige Methoden enthalten, und man kann nur **eine** Klasse erweitern — Interfaces dagegen beliebig viele implementieren.",
+     "sources": [
+      {
+       "file": "OFP_Java.pdf",
+       "page": 368
+      }
+     ],
+     "tags": [
+      "abstrakt"
+     ],
+     "hints": [
+      "Was passiert, wenn eine Klasse eine Methode ohne Rumpf enthält — ist sie dann vollständig?",
+      "Kann man von etwas Unvollständigem ein Objekt erzeugen?"
+     ]
+    },
+    {
+     "id": "pk-java-1b",
+     "lang": "java",
+     "topicId": "java-objects",
+     "type": "find-errors",
+     "difficulty": 3,
+     "points": 6,
+     "examStyle": true,
+     "title": "b) Fehlersuche — genau 3 Fehler",
+     "prompt": "Der folgende Code enthält **genau 3 Fehler**. Benennen Sie sie und geben Sie die Korrektur an. (6 P)",
+     "code": "class Auto {\n  private String marke;\n  public Auto(String marke) {\n    marke = marke;\n  }\n  public string getMarke() {\n    return marke;\n  }\n}\n\nclass Test {\n  public static void main(String[] s) {\n    Auto a = Auto(\"VW\");\n    System.out.println(a.getMarke());\n  }\n}",
+     "errors": [
+      {
+       "line": 4,
+       "wrong": "marke = marke;",
+       "fix": "this.marke = marke;",
+       "why": "Der Parameter verdeckt das Attribut. Ohne `this.` weist sich der Parameter nur selbst zu, das Attribut bleibt `null`. Das ist kein Compiler-Fehler, aber ein logischer Fehler — die Ausgabe wäre `null`."
+      },
+      {
+       "line": 6,
+       "wrong": "public string getMarke()",
+       "fix": "public String getMarke()",
+       "why": "Java ist case-sensitive. Der Klassentyp heißt `String` mit großem S; `string` existiert nicht."
+      },
+      {
+       "line": 12,
+       "wrong": "Auto a = Auto(\"VW\");",
+       "fix": "Auto a = new Auto(\"VW\");",
+       "why": "Ein Objekt wird mit `new` erzeugt. Ohne `new` sucht der Compiler nach einer Methode namens `Auto`."
+      }
+     ],
+     "solution": "**Fehler 1 (Zeile 4):** `marke = marke;` → `this.marke = marke;`\nDer Parameter verdeckt das Attribut; ohne `this.` bleibt das Attribut `null`.\n\n**Fehler 2 (Zeile 6):** `public string getMarke()` → `public String getMarke()`\n`String` wird großgeschrieben — Java ist case-sensitive.\n\n**Fehler 3 (Zeile 12):** `Auto a = Auto(\"VW\");` → `Auto a = new Auto(\"VW\");`\nObjekte werden mit `new` erzeugt.",
+     "explanation": "Alle drei Fehler gehören zu den absoluten Klassikern und stehen fast immer in dieser Kombination in Klausuren:\n\n1. **Verdeckung durch gleichnamigen Parameter.** Java erlaubt `marke = marke;` — es ist syntaktisch korrekt, aber wirkungslos. Nur `this.marke` bezeichnet das Attribut. Aufpassen: Das ist der einzige der drei Fehler, den der Compiler **nicht** meldet.\n2. **Groß-/Kleinschreibung bei Typnamen.** `String` ist eine Klasse aus `java.lang`; primitive Typen wie `int` schreibt man klein, Klassennamen groß.\n3. **`new` vergessen.** Der Konstruktor ist keine normale Methode.\n\nIn der Klausur gibt es 2 Punkte pro Fehler — je 1 Punkt für das Benennen und 1 für die Korrektur. Es lohnt sich also, immer beides hinzuschreiben.",
+     "hints": [
+      "Einer der Fehler ist kein Compiler-Fehler, sondern ein logischer — der Code würde `null` ausgeben.",
+      "Achte auf Groß- und Kleinschreibung bei Typen.",
+      "Wie erzeugt man in Java ein Objekt?"
+     ],
+     "pitfalls": [
+      "`private String marke;` als Fehler zu markieren — das ist völlig korrekt.",
+      "`String[] s` statt `String[] args` zu bemängeln: der Parametername ist frei wählbar."
+     ],
+     "sources": [
+      {
+       "file": "Probeklausur_Java_ausfuellbar.pdf",
+       "page": 2
+      }
+     ],
+     "tags": [
+      "fehlersuche",
+      "this",
+      "new"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "j2",
+   "label": "Aufgabe 2",
+   "title": "Ausgabe vorhersagen",
+   "points": 4,
+   "instructions": "Was gibt der folgende Code-Ausschnitt auf der Konsole aus?",
+   "inline": [
+    {
+     "id": "pk-java-2",
+     "lang": "java",
+     "topicId": "java-arrays-strings",
+     "type": "predict-output",
+     "difficulty": 2,
+     "points": 4,
+     "examStyle": true,
+     "title": "Array-Schleife mit Modulo",
+     "prompt": "Was gibt der folgende Code-Ausschnitt auf der Konsole aus?",
+     "code": "int[] a = {2, 4, 6, 8};\nint s = 0;\nfor (int i = 0; i < a.length; i++) {\n  if (a[i] % 4 == 0) s += a[i];\n  else               s -= a[i];\n}\nSystem.out.println(s);",
+     "expectedOutput": "4",
+     "solution": "`4`\n\nRechenweg Schritt für Schritt:\n\n| i | a[i] | a[i] % 4 | Operation | s danach |\n|---|---|---|---|---|\n| 0 | 2 | 2 | `s -= 2` | −2 |\n| 1 | 4 | 0 | `s += 4` | 2 |\n| 2 | 6 | 2 | `s -= 6` | −4 |\n| 3 | 8 | 0 | `s += 8` | **4** |",
+     "explanation": "Die Aufgabe prüft drei Dinge gleichzeitig: **Modulo**, den **Umgang mit `a.length`** (ohne Klammern, weil Arrays ein Feld und keine Methode haben) und sorgfältiges Mitrechnen.\n\nDie Falle liegt darin, dass alle Zahlen gerade sind — man ist versucht, alle zu addieren. Teilbar durch **4** sind aber nur 4 und 8; 2 und 6 werden abgezogen. Ergebnis: (4 + 8) − (2 + 6) = 12 − 8 = 4.\n\nIn der Klausur unbedingt eine kleine Tabelle nebenher führen — das ist schneller und sicherer als im Kopf zu rechnen.",
+     "hints": [
+      "Schreib eine Tabelle mit i, a[i] und dem Wert von s.",
+      "Achtung: `% 4`, nicht `% 2`."
+     ],
+     "pitfalls": [
+      "`a.length` mit `a.length()` verwechseln (Letzteres gilt nur für Strings).",
+      "2 % 4 ist 2, nicht 0."
+     ],
+     "sources": [
+      {
+       "file": "Probeklausur_Java_ausfuellbar.pdf",
+       "page": 2
+      }
+     ],
+     "tags": [
+      "array",
+      "modulo"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "j3",
+   "label": "Aufgabe 3",
+   "title": "Code-Lücken ausfüllen",
+   "points": 12,
+   "instructions": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass eine lauffähige Klasse entsteht (je 2 P).",
+   "inline": [
+    {
+     "id": "pk-java-3",
+     "lang": "java",
+     "topicId": "java-objects",
+     "type": "fill-gaps",
+     "difficulty": 3,
+     "points": 12,
+     "examStyle": true,
+     "title": "Klasse Rechteck vervollständigen",
+     "prompt": "Ergänzen Sie die 6 Lücken, sodass eine lauffähige Klasse entsteht.",
+     "code": "class Rechteck {\n  private double laenge;\n  private double breite;\n  private static int anzahl = 0;      // zählt erzeugte Rechtecke\n\n  public Rechteck(double laenge, double breite) {\n    ____(1)____.laenge = laenge;\n    this.breite = ____(2)____;\n    anzahl____(3)____;\n  }\n\n  public double flaeche() {\n    return ____(4)____;\n  }\n\n  public static int getAnzahl() {\n    return ____(5)____;\n  }\n\n  public static void main(String[] s) {\n    Rechteck r = ____(6)____ Rechteck(3.0, 4.0);\n    System.out.println(\"Flaeche: \" + r.flaeche());\n    System.out.println(\"Anzahl:  \" + Rechteck.getAnzahl());\n  }\n}",
+     "gaps": [
+      {
+       "id": 1,
+       "accept": [
+        "this"
+       ],
+       "explanation": "`this.laenge` bezeichnet das Attribut und unterscheidet es vom gleichnamigen Parameter."
+      },
+      {
+       "id": 2,
+       "accept": [
+        "breite"
+       ],
+       "explanation": "Rechts steht der Parameter `breite`, links das Attribut `this.breite`."
+      },
+      {
+       "id": 3,
+       "accept": [
+        "++",
+        "+= 1",
+        "+=1"
+       ],
+       "explanation": "Der statische Zähler wird bei jedem erzeugten Objekt um eins erhöht."
+      },
+      {
+       "id": 4,
+       "accept": [
+        "laenge * breite",
+        "this.laenge * this.breite",
+        "breite * laenge",
+        "laenge*breite"
+       ],
+       "explanation": "Fläche eines Rechtecks = Länge mal Breite."
+      },
+      {
+       "id": 5,
+       "accept": [
+        "anzahl",
+        "Rechteck.anzahl"
+       ],
+       "explanation": "Eine statische Methode darf nur auf statische Attribute zugreifen."
+      },
+      {
+       "id": 6,
+       "accept": [
+        "new"
+       ],
+       "explanation": "Objekte werden mit `new` erzeugt."
+      }
+     ],
+     "solution": "class Rechteck {\n  private double laenge;\n  private double breite;\n  private static int anzahl = 0;\n\n  public Rechteck(double laenge, double breite) {\n    this.laenge = laenge;\n    this.breite = breite;\n    anzahl++;\n  }\n\n  public double flaeche() {\n    return laenge * breite;\n  }\n\n  public static int getAnzahl() {\n    return anzahl;\n  }\n\n  public static void main(String[] s) {\n    Rechteck r = new Rechteck(3.0, 4.0);\n    System.out.println(\"Flaeche: \" + r.flaeche());\n    System.out.println(\"Anzahl:  \" + Rechteck.getAnzahl());\n  }\n}",
+     "expectedOutput": "Flaeche: 12.0\nAnzahl:  1",
+     "explanation": "Die Aufgabe deckt in sechs Lücken die wichtigsten Konzepte von Kapitel 6 ab:\n\n- **Lücken 1+2 — `this`:** Parameter und Attribut heißen gleich; der Parameter verdeckt das Attribut. Links muss `this.` stehen, rechts der reine Parametername. Genau dieser Punkt war schon in Aufgabe 1b der erste Fehler.\n- **Lücke 3 — statischer Zähler:** `anzahl++` erhöht ein **Klassenattribut**, das für alle Objekte gemeinsam existiert. Ein klassisches Muster („wie viele Objekte wurden erzeugt?\").\n- **Lücke 4 — Instanzmethode:** Innerhalb einer Instanzmethode darf man die Attribute ohne `this.` ansprechen, solange kein Parameter sie verdeckt.\n- **Lücke 5 — static-Regel:** Eine **Klassenmethode** hat kein `this` und kann daher nur auf **statische** Attribute zugreifen. `return laenge;` wäre hier ein Compiler-Fehler.\n- **Lücke 6 — `new`:** Objekterzeugung.\n\nDie Ausgabe lautet `Flaeche: 12.0` — mit `.0`, weil `double` gedruckt wird.",
+     "hints": [
+      "Bei Lücke 1 und 2: welche Seite ist das Attribut, welche der Parameter?",
+      "Lücke 3: der Zähler soll um genau eins wachsen.",
+      "Lücke 5: was darf eine `static`-Methode überhaupt sehen?"
+     ],
+     "pitfalls": [
+      "Lücke 2 mit `this.breite` füllen — dann steht auf beiden Seiten dasselbe Attribut und der Wert bleibt 0.0.",
+      "Lücke 5 mit `laenge` füllen: statische Methoden können nicht auf Instanzattribute zugreifen.",
+      "`anzahl = anzahl + 1` ist inhaltlich richtig, passt aber nicht in die Lücke, weil `anzahl` schon davorsteht."
+     ],
+     "sources": [
+      {
+       "file": "Probeklausur_Java_ausfuellbar.pdf",
+       "page": 3
+      }
+     ],
+     "tags": [
+      "this",
+      "static",
+      "konstruktor"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "j4",
+   "label": "Aufgabe 4",
+   "title": "Klasse mit Methoden schreiben",
+   "points": 12,
+   "instructions": "Schreiben Sie eine Klasse `TextTools` mit zwei **Instanzmethoden** (ohne `static`). Ergänzen Sie außerdem eine Klassenmethode `main`, die ein Objekt der Klasse erzeugt und beide Methoden testet.",
+   "inline": [
+    {
+     "id": "pk-java-4",
+     "lang": "java",
+     "topicId": "java-objects",
+     "type": "code",
+     "difficulty": 4,
+     "points": 12,
+     "examStyle": true,
+     "title": "Klasse TextTools",
+     "prompt": "Schreiben Sie eine Klasse `TextTools` mit den beiden folgenden **Instanzmethoden** (ohne `static`). Ergänzen Sie außerdem eine Klassenmethode `main`, die ein Objekt der Klasse erzeugt und beide Methoden testet.\n\n**a) (6 P)** Eine Methode `zaehleGrossbuchstaben(String text)`, die zurückgibt, wie viele Großbuchstaben (A–Z) in `text` vorkommen. Beispiel: `\"Hallo Welt\"` → `2`.\n\n**b) (6 P)** Eine Methode, die den größten Wert eines Integer-Arrays zurückgibt (das Array ist nicht leer). Wählen Sie Rückgabetyp, Methodennamen und Parameter selbst passend.\n\n*Damit die automatische Prüfung greift, gib in `main` genau diese zwei Zeilen aus:*\n```\n2\n8\n```\n*(erst das Ergebnis für `\"Hallo Welt\"`, dann das Maximum von `{3, 8, 1, 7}`)*",
+     "starterCode": "class TextTools {\n\n  // a) Großbuchstaben zählen\n\n\n  // b) Maximum eines int-Arrays\n\n\n  public static void main(String[] s) {\n    TextTools t = new TextTools();\n\n  }\n}",
+     "expectedOutput": "2\n8",
+     "solution": "class TextTools {\n\n  // a) zählt die Großbuchstaben A-Z\n  public int zaehleGrossbuchstaben(String text) {\n    int anzahl = 0;\n    for (int i = 0; i < text.length(); i++) {\n      char c = text.charAt(i);\n      if (c >= 'A' && c <= 'Z') {\n        anzahl++;\n      }\n    }\n    return anzahl;\n  }\n\n  // b) größter Wert eines nicht leeren int-Arrays\n  public int maximum(int[] zahlen) {\n    int max = zahlen[0];\n    for (int i = 1; i < zahlen.length; i++) {\n      if (zahlen[i] > max) {\n        max = zahlen[i];\n      }\n    }\n    return max;\n  }\n\n  public static void main(String[] s) {\n    TextTools t = new TextTools();\n    System.out.println(t.zaehleGrossbuchstaben(\"Hallo Welt\"));\n    System.out.println(t.maximum(new int[]{3, 8, 1, 7}));\n  }\n}",
+     "explanation": "Diese Aufgabe prüft das Zusammenspiel von **Instanz- und Klassenmethoden** — der häufigste Stolperstein ist, dass `main` `static` ist und deshalb **nicht direkt** eine Instanzmethode aufrufen kann. Man muss erst ein Objekt erzeugen (`TextTools t = new TextTools();`) und dann `t.methode(...)` schreiben.\n\n**Zu a):** Der Vergleich `c >= 'A' && c <= 'Z'` nutzt aus, dass `char` in Java als Zahl behandelt wird und die Großbuchstaben im ASCII-Code lückenlos bei 65 beginnen. `Character.isUpperCase(c)` wäre ebenfalls korrekt, würde aber auch `Ä` zählen — die Aufgabe sagt ausdrücklich A–Z.\n\n**Zu b):** Das Standardmuster für ein Maximum: mit dem **ersten Element** initialisieren (nicht mit 0 — das wäre bei lauter negativen Zahlen falsch!) und ab Index 1 vergleichen.\n\nBeachte `text.length()` **mit** Klammern (String-Methode) gegenüber `zahlen.length` **ohne** Klammern (Array-Feld).",
+     "hints": [
+      "`main` ist `static` — wie kommst du an eine Instanzmethode heran?",
+      "Für a): Wie prüfst du, ob ein `char` zwischen 'A' und 'Z' liegt?",
+      "Für b): Womit initialisierst du das Maximum, damit es auch bei negativen Zahlen stimmt?"
+     ],
+     "pitfalls": [
+      "Die Methoden `static` machen — die Aufgabe verlangt ausdrücklich Instanzmethoden.",
+      "Maximum mit `int max = 0;` starten: falsch, sobald alle Werte negativ sind.",
+      "`text.length` statt `text.length()`.",
+      "Vergleich mit `==` bei Strings statt `.equals()` (hier nicht nötig, aber ein Dauerbrenner)."
+     ],
+     "sources": [
+      {
+       "file": "Probeklausur_Java_ausfuellbar.pdf",
+       "page": 3
+      }
+     ],
+     "tags": [
+      "klasse",
+      "instanzmethode",
+      "array"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "j5",
+   "label": "Aufgabe 5",
+   "title": "Klasse mit Vererbung",
+   "points": 14,
+   "instructions": "Gegeben ist die Basisklasse `Fahrzeug`:\n\n```java\nclass Fahrzeug {\n  protected String name;\n  public Fahrzeug(String name) { this.name = name; }\n  public void beschreibung() {\n    System.out.println(\"Fahrzeug: \" + name);\n  }\n}\n```",
+   "inline": [
+    {
+     "id": "pk-java-5",
+     "lang": "java",
+     "topicId": "java-inheritance",
+     "type": "code",
+     "difficulty": 4,
+     "points": 14,
+     "examStyle": true,
+     "title": "Unterklasse Auto + Polymorphie",
+     "prompt": "**a) (9 P)** Schreiben Sie eine Unterklasse `Auto`, die von `Fahrzeug` erbt, ein zusätzliches `int`-Attribut `anzahlTueren` besitzt, einen passenden Konstruktor hat (Name über `super`, Türen setzen) und `beschreibung()` so überschreibt, dass **zusätzlich** die Türanzahl ausgegeben wird.\n\n**b) (5 P)** Schreiben Sie eine `main`-Methode, die ein `Fahrzeug[]`-Array mit einem `Fahrzeug` und einem `Auto` füllt und in einer Schleife für jedes Element `beschreibung()` aufruft (Polymorphie).\n\n*Für die automatische Prüfung: verwende `new Fahrzeug(\"Fahrrad\")` und `new Auto(\"VW\", 5)` und gib in der überschriebenen Methode zuerst die Zeile der Oberklasse und danach `Tueren: <n>` aus.*",
+     "starterCode": "class Fahrzeug {\n  protected String name;\n  public Fahrzeug(String name) { this.name = name; }\n  public void beschreibung() {\n    System.out.println(\"Fahrzeug: \" + name);\n  }\n}\n\n// a) Unterklasse Auto\n\n\nclass Test {\n  public static void main(String[] s) {\n    // b) Array mit Fahrzeug und Auto, Schleife mit beschreibung()\n\n  }\n}",
+     "expectedOutput": "Fahrzeug: Fahrrad\nFahrzeug: VW\nTueren: 5",
+     "solution": "class Fahrzeug {\n  protected String name;\n  public Fahrzeug(String name) { this.name = name; }\n  public void beschreibung() {\n    System.out.println(\"Fahrzeug: \" + name);\n  }\n}\n\nclass Auto extends Fahrzeug {\n  private int anzahlTueren;\n\n  public Auto(String name, int anzahlTueren) {\n    super(name);\n    this.anzahlTueren = anzahlTueren;\n  }\n\n  public void beschreibung() {\n    super.beschreibung();\n    System.out.println(\"Tueren: \" + anzahlTueren);\n  }\n}\n\nclass Test {\n  public static void main(String[] s) {\n    Fahrzeug[] flotte = { new Fahrzeug(\"Fahrrad\"), new Auto(\"VW\", 5) };\n    for (int i = 0; i < flotte.length; i++) {\n      flotte[i].beschreibung();\n    }\n  }\n}",
+     "explanation": "Das ist die punktreichste Aufgabe der Java-Klausur und prüft die Kernidee der Objektorientierung. Vier Bausteine müssen sitzen:\n\n**1. `extends`** — `class Auto extends Fahrzeug`.\n\n**2. `super(name)` als erste Anweisung** im Konstruktor. Sie ist hier zwingend, weil `Fahrzeug` **keinen** parameterlosen Konstruktor besitzt: der Compiler würde sonst automatisch `super()` einfügen und das schlägt fehl.\n\n**3. Überschreiben mit `super.beschreibung()`** — so wird die Ausgabe der Oberklasse **wiederverwendet** statt kopiert. Der Aufruf `super.beschreibung()` ist der einzige Weg, die überschriebene Fassung zu erreichen; ein einfaches `beschreibung()` wäre eine Endlosrekursion.\n\n**4. Polymorphie im Array.** `Fahrzeug[] flotte` kann beide Objekte aufnehmen, weil `Auto` ein `Fahrzeug` **ist**. Beim Aufruf `flotte[i].beschreibung()` entscheidet die **dynamische Bindung** anhand des tatsächlichen Objekts: für das `Auto` läuft die überschriebene Methode. Genau darum geht es auch in `Klausur10.java` aus dem Repo des Profs.\n\nDie Ausgabe ist deshalb dreizeilig: eine Zeile für das Fahrrad, zwei für den VW.",
+     "hints": [
+      "Wie erbt eine Klasse in Java?",
+      "Warum ist `super(name)` hier zwingend nötig und nicht optional?",
+      "Wie rufst du in der überschriebenen Methode die Fassung der Oberklasse auf?",
+      "Welchen Typ muss das Array haben, damit beide Objekte hineinpassen?"
+     ],
+     "pitfalls": [
+      "`super(name)` weglassen → Compiler-Fehler, weil `Fahrzeug` keinen Standardkonstruktor hat.",
+      "In `beschreibung()` den Text der Oberklasse abtippen statt `super.beschreibung()` aufzurufen — funktioniert, verschenkt aber den Punkt für Wiederverwendung.",
+      "`Auto[] flotte` statt `Fahrzeug[] flotte` — damit ist die Polymorphie nicht gezeigt.",
+      "In der überschriebenen Methode `beschreibung()` statt `super.beschreibung()` aufrufen → Endlosrekursion und `StackOverflowError`."
+     ],
+     "sources": [
+      {
+       "file": "Probeklausur_Java_ausfuellbar.pdf",
+       "page": 4
+      },
+      {
+       "file": "Klausur10.java",
+       "path": "11_Ueberblick/Klausur10.java"
+      }
+     ],
+     "tags": [
+      "vererbung",
+      "polymorphie",
+      "super"
+     ]
+    }
+   ]
+  }
+ ]
+}

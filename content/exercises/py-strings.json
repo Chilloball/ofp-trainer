@@ -1,0 +1,1576 @@
+{
+ "topicId": "py-strings",
+ "exercises": [
+  {
+   "id": "py-strings-001",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "Anführungszeichen richtig wählen",
+   "prompt": "In Python kann man Strings mit einfachen `'`, doppelten `\"` oder dreifach-doppelten `\"\"\"` Anführungszeichen erzeugen.\n\nWelche der folgenden Zeilen erzeugt **ohne Fehler** einen String, der sowohl ein einfaches als auch ein doppeltes Anführungszeichen enthält?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`t = \"Er sagte \"Hallo\" zu 'mir'\"`",
+     "correct": false,
+     "why": "Der String wird beim zweiten `\"` beendet. Danach steht `Hallo` als freier Text im Code -> SyntaxError."
+    },
+    {
+     "id": "b",
+     "text": "`t = 'Er sagte \"Hallo\" zu 'mir''`",
+     "correct": false,
+     "why": "Innen kommen die gleichen einfachen Anführungszeichen vor wie außen, deshalb endet der String zu früh -> SyntaxError."
+    },
+    {
+     "id": "c",
+     "text": "`t = \"\"\"Er sagte \"Hallo\" zu 'mir'\"\"\"`",
+     "correct": true,
+     "why": "Dreifach-doppelte Anführungszeichen begrenzen den String. Einzelne `\"` und `'` im Inneren sind dadurch unproblematisch."
+    },
+    {
+     "id": "d",
+     "text": "`t = Er sagte \"Hallo\" zu 'mir'`",
+     "correct": false,
+     "why": "Ohne umschließende Anführungszeichen ist das gar kein String, sondern ungültiger Python-Code -> SyntaxError."
+    }
+   ],
+   "solution": "c) `t = \"\"\"Er sagte \"Hallo\" zu 'mir'\"\"\"`",
+   "explanation": "Ein String endet **immer** beim nächsten Auftreten genau der Anführungszeichen-Sorte, mit der er begonnen hat. Deshalb gilt die Grundregel: außen die Sorte wählen, die innen **nicht** vorkommt. Kommen beide Sorten im Text vor, helfen die dreifach-doppelten Anführungszeichen `\"\"\" \"\"\"` — sie enden erst bei drei aufeinanderfolgenden `\"` und dürfen zusätzlich über mehrere Zeilen gehen. Der typische Denkfehler ist, dass man das innere `\"` für harmlos hält, weil es \"im Text\" steht: Python sieht aber nur Zeichen, keinen Sinn. Merkregel: *Erst schauen, welche Anführungszeichen im Text stehen, dann die andere Sorte (oder `\"\"\"`) außen nehmen.*",
+   "hints": [
+    "Frage dich bei jeder Antwort: Wo genau endet der String für Python?",
+    "Der String endet beim ersten Wiederauftreten derselben Anführungszeichen-Sorte, mit der er begonnen wurde.",
+    "Es gibt eine Sorte Anführungszeichen, die im Beispieltext gar nicht vorkommt."
+   ],
+   "pitfalls": [
+    "Man denkt, Anführungszeichen im Inneren seien 'Text' — Python beendet den String aber trotzdem.",
+    "Man vergisst, dass `\"\"\" \"\"\"` auch für einzeilige Strings erlaubt ist und nicht nur für Docstrings."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 2,
+     "label": "Strings mit ' \" und \"\"\" \"\"\""
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "Kapitel strings: test1/test2/test3"
+    }
+   ],
+   "tags": [
+    "quotes",
+    "syntax",
+    "grundlagen"
+   ]
+  },
+  {
+   "id": "py-strings-002",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Zeilenumbruch, Tabulator und dreifache Anführungszeichen",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus?\n\n(Achten Sie genau darauf, welche Zeichen wirklich im String stehen.)",
+   "code": "a = \"Hallo\\nWelt\"\nb = \"\"\"Hallo\nWelt\"\"\"\nprint(a == b)\nprint(a != b)\nprint(\"Name:\\tMichael\")\nprint('Er sagte \"Hallo\"')",
+   "expectedOutput": "True\nFalse\nName:\tMichael\nEr sagte \"Hallo\"",
+   "solution": "True\nFalse\nName:\tMichael\nEr sagte \"Hallo\"",
+   "explanation": "`\\n` ist die *Escape-Sequenz* für einen Zeilenumbruch: sie sind zwei Zeichen im Quelltext, aber **ein** Zeichen im String. Genau dasselbe eine Zeichen entsteht, wenn man in einem `\"\"\" \"\"\"`-String wirklich die Zeilentaste drückt. Deshalb sind `a` und `b` Zeichen für Zeichen identisch und `a == b` ergibt `True`, `a != b` folglich `False`. `\\t` erzeugt analog einen Tabulator, der die Ausgabe bis zur nächsten Tabulatorposition auffüllt. Die letzte Zeile zeigt die Regel für Anführungszeichen: Weil außen einfache stehen, dürfen innen doppelte unverändert im Text stehen. Typischer Denkfehler: Man zählt `\\n` als zwei Zeichen und hält die Strings deshalb für unterschiedlich.",
+   "hints": [
+    "Überlege zuerst, welches Zeichen `\\n` im fertigen String erzeugt.",
+    "Ein `\"\"\" \"\"\"`-String speichert einen echten Zeilenumbruch — welches Zeichen ist das?",
+    "`==` vergleicht Strings zeichenweise; wenn `==` True liefert, muss `!=` False liefern."
+   ],
+   "pitfalls": [
+    "`len(\"Hallo\\nWelt\")` für 11 halten — es sind 10 Zeichen, weil `\\n` ein einziges Zeichen ist.",
+    "Vergessen, dass `!=` immer das genaue Gegenteil von `==` liefert."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 2,
+     "label": "Der Ausdruck \\n erzeugt eine neue Zeile"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "a = \"Hallo\\n Michael\" / b = \"\"\"...\"\"\""
+    }
+   ],
+   "tags": [
+    "escape",
+    "newline",
+    "tab",
+    "quotes",
+    "vergleich"
+   ]
+  },
+  {
+   "id": "py-strings-003",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "len, Konkatenation und Wiederholung",
+   "prompt": "Was gibt der folgende Code aus?",
+   "code": "name = \" Michael \"\nprint(len(name))\ngruss = \"hi\"\nprint(gruss * 3)\nprint(\"-\" * 5 + \">\")\nprint(len(gruss * 3))",
+   "expectedOutput": "9\nhihihi\n----->\n6",
+   "solution": "9\nhihihi\n----->\n6",
+   "explanation": "`len` zählt **alle** Zeichen eines Strings, auch das 'unsichtbare' Leerzeichen: `\" Michael \"` besteht aus Leerzeichen + 7 Buchstaben + Leerzeichen = 9 Zeichen. Der Operator `*` wiederholt einen String: `\"hi\" * 3` ergibt `\"hihihi\"`. Der Operator `+` hängt zwei Strings aneinander (Konkatenation), wobei `*` wie in der Mathematik **vor** `+` ausgewertet wird — deshalb entstehen erst fünf Bindestriche und dann wird `>` angehängt. Da `\"hi\" * 3` sechs Zeichen hat, gibt `len` am Ende 6 aus. Typischer Denkfehler: Leerzeichen beim Zählen zu übersehen. Merkregel: *Was man tippen kann, ist ein Zeichen — auch das Leerzeichen.*",
+   "hints": [
+    "Zählen Sie bei `len` wirklich jedes Zeichen mit, auch das, was man nicht sieht.",
+    "`*` wiederholt einen String, `+` klebt zwei Strings aneinander.",
+    "Punkt vor Strich gilt auch hier: `*` wird vor `+` ausgewertet."
+   ],
+   "pitfalls": [
+    "Die Leerzeichen am Anfang und Ende bei `len` nicht mitzählen (Ergebnis 7 statt 9).",
+    "`\"hi\" + 3` statt `\"hi\" * 3` schreiben — `+` zwischen String und Zahl ist ein TypeError."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 3,
+     "label": "Konkatenieren, len, Strings wiederholen"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "name = \" Michael \" / a*5"
+    }
+   ],
+   "tags": [
+    "len",
+    "konkatenation",
+    "wiederholung",
+    "grundlagen"
+   ]
+  },
+  {
+   "id": "py-strings-004",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "Banner um einen Text bauen",
+   "prompt": "Schreiben Sie eine Funktion `banner(text, n)`, die den übergebenen `text` links und rechts mit jeweils `n` Sternchen umrahmt. Zwischen Sternchen und Text steht genau ein Leerzeichen.\n\nBeispiel: `banner(\"OFP\", 3)` liefert `\"*** OFP ***\"`.\n\nVerwenden Sie dafür nur Wiederholung `*` und Konkatenation `+` — **keine Schleife**.",
+   "starterCode": "def banner(text, n):\n    # Ihr Code hier\n    pass\n",
+   "constraints": [
+    "keine Schleifen",
+    "nur * und + verwenden"
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "*"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "banner('OFP', 3)",
+     "expected": "'*** OFP ***'"
+    },
+    {
+     "name": "ein Sternchen",
+     "call": "banner('Klausur', 1)",
+     "expected": "'* Klausur *'"
+    },
+    {
+     "name": "kein Sternchen",
+     "call": "banner('a', 0)",
+     "expected": "' a '"
+    },
+    {
+     "name": "leerer Text",
+     "call": "banner('', 2)",
+     "expected": "'**  **'"
+    }
+   ],
+   "solution": "def banner(text, n):\n    return \"*\" * n + \" \" + text + \" \" + \"*\" * n\n",
+   "explanation": "Die Aufgabe kombiniert die zwei String-Operatoren aus der Vorlesung: `*` wiederholt einen String n-mal, `+` fügt Strings aneinander. Wichtig ist die Auswertungsreihenfolge — `\"*\" * n` wird zuerst berechnet, danach mit `+` zusammengesetzt. Bei `n = 0` entsteht der leere String `\"\"`, deshalb bleiben nur die beiden Leerzeichen übrig; das ist kein Sonderfall, den man extra behandeln müsste. Ein häufiger Fehler ist, `n` als String zu behandeln (`\"*\" * \"3\"` ist ein TypeError) oder die Leerzeichen zu vergessen. Merkregel: *String mal Zahl geht, String plus Zahl geht nicht.*",
+   "hints": [
+    "Wie erzeugt man einen String aus genau n Sternchen, ohne zu zählen?",
+    "Setzen Sie das Ergebnis aus vier Teilen zusammen: Sterne, Leerzeichen, Text, Leerzeichen, Sterne.",
+    "Der linke und der rechte Sternblock sind derselbe Ausdruck — Sie dürfen ihn zweimal hinschreiben."
+   ],
+   "pitfalls": [
+    "Die Leerzeichen zwischen Sternen und Text vergessen.",
+    "`print` statt `return` verwenden — die Tests prüfen den Rückgabewert."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 3,
+     "label": "Konkatenieren / Strings wiederholen durch Multiplikation"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 13,
+     "label": "Klausurrelevante Dinge/Befehle"
+    }
+   ],
+   "tags": [
+    "wiederholung",
+    "konkatenation",
+    "funktion"
+   ]
+  },
+  {
+   "id": "py-strings-005",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Slicing: was gibt der Code aus?",
+   "prompt": "Was wird auf der Kommandozeile ausgegeben?\n\nHinweis: Der String `\"Dies ist mein Lieblingssatz!\"` hat 28 Zeichen.",
+   "code": "mein_string = \"Dies ist mein Lieblingssatz!\"\nprint(mein_string[7:10])\nprint(mein_string[7:])\nprint(mein_string[7:-1])\nprint(mein_string[::2])",
+   "expectedOutput": "t m\nt mein Lieblingssatz!\nt mein Lieblingssatz\nDe s enLelnsaz",
+   "solution": "t m\nt mein Lieblingssatz!\nt mein Lieblingssatz\nDe s enLelnsaz",
+   "explanation": "Slicing hat die Form `[a:b:c]` = ab Index `a` (**einschließlich**) bis Index `b` (**ausschließlich**) in Schritten von `c`. Python zählt ab 0, also ist `mein_string[7]` das `t` von `ist`. Deshalb liefert `[7:10]` die Zeichen 7, 8, 9 = `\"t m\"` (mit dem Leerzeichen!). Fehlt `b`, geht der Slice bis zum Ende; `-1` als Ende bedeutet 'bis zum letzten Zeichen, ohne dieses' — das Ausrufezeichen fällt also weg. Fehlen `a` und `b` und steht nur die Schrittweite da, läuft der Slice über den ganzen String und nimmt jedes zweite Zeichen. Typischer Denkfehler: die obere Grenze für eingeschlossen halten und Leerzeichen beim Abzählen zu überspringen. Merkregel: *Anfang mit, Ende ohne.*",
+   "hints": [
+    "Schreiben Sie den String mit Indizes darunter auf — inklusive der Leerzeichen.",
+    "Bei `[a:b]` gehört `b` selbst nicht mehr dazu.",
+    "Ein negativer Index zählt von hinten: -1 ist das letzte Zeichen."
+   ],
+   "pitfalls": [
+    "Die Leerzeichen beim Indexzählen überspringen.",
+    "`[7:10]` für vier Zeichen halten (7,8,9,10) statt für drei."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 3,
+     "label": "Slicing: Indizierung ab 0, 0:3 schließt die 3 nicht ein"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "mein_string = \"Dies ist mein Lieblingssatz!\""
+    }
+   ],
+   "tags": [
+    "slicing",
+    "index",
+    "schrittweite"
+   ]
+  },
+  {
+   "id": "py-strings-006",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Negative Indizes und negative Schrittweite",
+   "prompt": "Was gibt der folgende Code aus? Begründen Sie für die vierte Zeile in einem Satz, warum das Ergebnis so aussieht.",
+   "code": "wort = \"Programmierung\"\nprint(wort[-1])\nprint(wort[-5:])\nprint(wort[:-5])\nprint(wort[::-1])\nprint(wort[-6:-2])\nprint(wort[::3])",
+   "expectedOutput": "g\nerung\nProgrammi\ngnureimmargorP\nieru\nPgmen",
+   "solution": "g\nerung\nProgrammi\ngnureimmargorP\nieru\nPgmen",
+   "explanation": "Negative Indizes zählen zyklisch von hinten: `-1` ist das letzte Zeichen, `-2` das vorletzte usw. `wort[-5:]` heißt daher 'die letzten fünf Zeichen', `wort[:-5]` heißt 'alles **außer** den letzten fünf Zeichen' — die beiden Slices ergeben zusammen wieder das ganze Wort. `wort[-6:-2]` läuft weiterhin von links nach rechts, nur sind beide Grenzen von hinten gezählt (Ende ausgeschlossen). Eine **negative Schrittweite** kehrt die Laufrichtung um: `[::-1]` beginnt hinten und geht rückwärts, ist also die Standardformulierung zum Umdrehen eines Strings. `[::3]` nimmt jedes dritte Zeichen ab Index 0 (P, g, m, e, n). Typischer Denkfehler: bei `[-6:-2]` erwarten viele eine Rückwärtsausgabe — die Richtung bestimmt aber ausschließlich das Vorzeichen der **Schrittweite**, nicht das der Indizes.",
+   "hints": [
+    "Nummerieren Sie das Wort zweimal: von links mit 0..13 und von rechts mit -1..-14.",
+    "`[-5:]` und `[:-5]` zerlegen den String in genau zwei Teile.",
+    "Nur die dritte Zahl im Slice entscheidet über die Laufrichtung."
+   ],
+   "pitfalls": [
+    "Glauben, negative Indizes würden den String rückwärts durchlaufen.",
+    "`[::-1]` mit `[:-1]` verwechseln — Letzteres schneidet nur das letzte Zeichen ab."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 3,
+     "label": "Negative Indizes verhalten sich zyklisch / Schrittweite"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "mein_string[len(mein_string)-1::(-1)]"
+    }
+   ],
+   "tags": [
+    "slicing",
+    "negative-indizes",
+    "schrittweite",
+    "umkehren"
+   ]
+  },
+  {
+   "id": "py-strings-007",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "code",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": false,
+   "title": "String umkehren mit Slicing",
+   "prompt": "Schreiben Sie eine Funktion `umkehren(text)`, die die übergebene Zeichenkette rückwärts zurückgibt.\n\nBeispiel: `umkehren(\"hallo\")` liefert `\"ollah\"`.\n\nVerwenden Sie **ausschließlich Slicing** — keine Schleife, keine Rekursion, kein `reversed`.",
+   "starterCode": "def umkehren(text):\n    # Ihr Code hier\n    pass\n",
+   "constraints": [
+    "keine Schleifen",
+    "keine Rekursion",
+    "nur Slicing"
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "reversed",
+    "umkehren(text["
+   ],
+   "required": [
+    "[::-1]"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "umkehren('hallo')",
+     "expected": "'ollah'"
+    },
+    {
+     "name": "leerer String",
+     "call": "umkehren('')",
+     "expected": "''"
+    },
+    {
+     "name": "ein Zeichen",
+     "call": "umkehren('x')",
+     "expected": "'x'"
+    },
+    {
+     "name": "mit Leerzeichen",
+     "call": "umkehren('ab cd')",
+     "expected": "'dc ba'"
+    },
+    {
+     "name": "Palindrom bleibt gleich",
+     "call": "umkehren('otto')",
+     "expected": "'otto'"
+    }
+   ],
+   "solution": "def umkehren(text):\n    return text[::-1]\n",
+   "explanation": "`text[::-1]` ist der kürzeste Weg, einen String umzudrehen: Anfang und Ende bleiben leer (also der ganze String), und die Schrittweite `-1` lässt Python rückwärts laufen. In der Vorlesung stand dafür zunächst die ausführliche Variante `text[len(text)-1::-1]` — sie liefert dasselbe, ist aber fehleranfälliger, weil man leicht `len(text)` statt `len(text)-1` schreibt (dann ist der Startindex außerhalb, das Ergebnis ist aber trotzdem korrekt, weil Slicing nicht abstürzt). Der leere String funktioniert automatisch mit, weil Slicing niemals einen IndexError wirft. Merkregel: *Doppelpunkt, Doppelpunkt, minus eins — rückwärts durch alles.*",
+   "hints": [
+    "Die allgemeine Form ist `[a:b:c]` — welche der drei Zahlen bestimmt die Richtung?",
+    "Anfang und Ende dürfen leer bleiben, wenn Sie den ganzen String meinen.",
+    "Die gesuchte Schrittweite ist negativ."
+   ],
+   "pitfalls": [
+    "`text[::-1]` mit `text[:-1]` verwechseln.",
+    "Versuchen, den String mit `text[i] = ...` an Ort und Stelle umzusortieren — Strings sind immutable."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 3,
+     "label": "Slicing [a:b:c] / Schrittweite"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 4a: umkehren(\"hallo\")"
+    }
+   ],
+   "tags": [
+    "slicing",
+    "umkehren",
+    "funktion"
+   ]
+  },
+  {
+   "id": "py-strings-008",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ticketcode zerlegen (Slicing + format)",
+   "prompt": "Ein Ticketcode für das Kino ist ein String mit folgendem Aufbau:\n\n```\nJJMMTT-SSS-K\n```\n\n* `JJMMTT` = Datum des Films (Jahr, Monat, Tag, z. B. `250415` für den 15.04.2025)\n* `SSS` = Sitznummer (z. B. `045`)\n* `K` = Kategorie des Tickets (`N`, `E` oder `L`)\n\nSchreiben Sie eine Funktion `ticket_info(code)`, die genau diesen String zurückgibt:\n\n```\nFilm am 15.04.2025, Sitz 123, Kategorie: N\n```\n\nfür die Eingabe `\"250415-123-N\"`. Alle Jahreszahlen liegen im 21. Jahrhundert (`20` + `JJ`). Nutzen Sie Slicing und `.format()`; **keine Schleife**.",
+   "starterCode": "def ticket_info(code):\n    # Ihr Code hier\n    pass\n",
+   "constraints": [
+    "keine Schleifen",
+    ".format() verwenden"
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    ".format("
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "ticket_info('250415-123-N')",
+     "expected": "'Film am 15.04.2025, Sitz 123, Kategorie: N'"
+    },
+    {
+     "name": "Silvester 2099, Luxus",
+     "call": "ticket_info('991231-007-L')",
+     "expected": "'Film am 31.12.2099, Sitz 007, Kategorie: L'"
+    },
+    {
+     "name": "führende Null im Monat",
+     "call": "ticket_info('260901-045-E')",
+     "expected": "'Film am 01.09.2026, Sitz 045, Kategorie: E'"
+    }
+   ],
+   "solution": "def ticket_info(code):\n    jahr = code[0:2]\n    monat = code[2:4]\n    tag = code[4:6]\n    sitz = code[7:10]\n    kategorie = code[11]\n    return \"Film am {}.{}.20{}, Sitz {}, Kategorie: {}\".format(tag, monat, jahr, sitz, kategorie)\n",
+   "explanation": "Hier steckt der ganze Slicing-Stoff in einer praktischen Aufgabe: Man nummeriert den String einmal durch (`2`=0, `5`=1, `0`=2, ... `-`=6, `1`=7, ...) und liest dann die Blöcke mit `[a:b]` aus, wobei die obere Grenze **nicht** dazugehört. Für ein einzelnes Zeichen genügt `code[11]` — das liefert einen String der Länge 1, kein Slice. Wichtig: Die Teile bleiben **Strings**; würde man sie mit `int()` umwandeln, ginge die führende Null bei `045` oder `01` verloren. Die Ausgabe wird mit `.format()` zusammengebaut, `{}` sind die Platzhalter in der Reihenfolge der Argumente. Merkregel: *Erst indizieren, dann formatieren — und nur dort in Zahlen umwandeln, wo wirklich gerechnet wird.*",
+   "hints": [
+    "Schreiben Sie `250415-123-N` einmal auf und nummerieren Sie jedes Zeichen ab 0 durch.",
+    "Die Bindestriche stehen an festen Positionen — Sie können sie einfach überspringen.",
+    "Die Reihenfolge in der Ausgabe (Tag.Monat.Jahr) ist eine andere als im Code (Jahr Monat Tag)."
+   ],
+   "pitfalls": [
+    "Die Teile mit `int()` umwandeln und dadurch führende Nullen verlieren (`045` wird zu `45`).",
+    "Die obere Slice-Grenze zu klein wählen, z. B. `code[0:1]` statt `code[0:2]`.",
+    "`20` vor der Jahreszahl vergessen."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL0_undVL1.pdf",
+     "page": 2,
+     "label": "3. Aufgabenstellung: Ticketcode"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 6,
+     "label": "Strings formatieren"
+    }
+   ],
+   "tags": [
+    "slicing",
+    "format",
+    "funktion",
+    "transfer"
+   ]
+  },
+  {
+   "id": "py-strings-009",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Zeitdifferenz aus zwei Uhrzeit-Strings (Lücken füllen)",
+   "prompt": "Zwei Uhrzeiten werden im Format `hhmm` als String übergeben (z. B. `\"0830\"` oder `\"2215\"`). Die ersten zwei Zeichen sind die Stunden, die letzten zwei die Minuten. Die Endzeit ist immer später als die Startzeit.\n\nFüllen Sie die Lücken so, dass die Funktion die Zeitdifferenz in Minuten zurückgibt.",
+   "code": "def zeitdifferenz(start, ende):\n    start_minuten = int(start[:2]) * 60 + int(## Lücke 1 ##)\n    ende_minuten = ## Lücke 2 ##\n    return ## Lücke 3 ##\n\nprint(zeitdifferenz(\"0830\", \"1015\"))",
+   "expectedOutput": "105",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "start[2:]",
+      "start[2:4]",
+      "start[-2:]"
+     ],
+     "explanation": "Die Minuten sind die Zeichen ab Index 2 bis zum Ende, also `start[2:]` (gleichwertig: `start[2:4]` oder `start[-2:]`)."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "int(ende[:2]) * 60 + int(ende[2:])",
+      "int(ende[0:2]) * 60 + int(ende[2:4])",
+      "int(ende[:2])*60 + int(ende[-2:])"
+     ],
+     "explanation": "Genau dieselbe Umrechnung wie oben, nur mit `ende` statt `start`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "ende_minuten - start_minuten"
+     ],
+     "explanation": "Die Differenz in Minuten — Endzeit minus Startzeit, nicht umgekehrt."
+    }
+   ],
+   "solution": "def zeitdifferenz(start, ende):\n    start_minuten = int(start[:2]) * 60 + int(start[2:])\n    ende_minuten = int(ende[:2]) * 60 + int(ende[2:])\n    return ende_minuten - start_minuten\n\nprint(zeitdifferenz(\"0830\", \"1015\"))\n# Ausgabe: 105\n",
+   "explanation": "Die Aufgabe verbindet zwei Bausteine: Slicing zerlegt den String in Stunden- und Minutenteil, `int()` wandelt die Teilstrings in Zahlen um, mit denen man rechnen kann. Ohne `int()` würde `start[:2] * 60` den String 60-mal **wiederholen** statt zu multiplizieren — ein klassischer Klausurfehler. Der Trick besteht darin, beide Uhrzeiten zuerst in eine gemeinsame Einheit (Minuten seit Mitternacht) zu bringen und erst dann zu subtrahieren; 08:30 sind 510 Minuten, 10:15 sind 615 Minuten, die Differenz ist 105. Beachten Sie außerdem, dass `int(\"05\")` problemlos 5 ergibt — führende Nullen stören beim Umwandeln nicht. Merkregel: *Slicing liefert immer einen String; sobald gerechnet wird, muss `int` davor.*",
+   "hints": [
+    "Wie kommen Sie an die letzten beiden Zeichen eines vierstelligen Strings?",
+    "Rechnen Sie beide Uhrzeiten zuerst in 'Minuten seit Mitternacht' um.",
+    "Lücke 2 ist die exakte Kopie der Zeile darüber, nur mit `ende` statt `start`."
+   ],
+   "pitfalls": [
+    "`int()` vergessen — dann wiederholt `*60` den String, statt zu multiplizieren.",
+    "Start und Ende in der Subtraktion vertauschen (negatives Ergebnis).",
+    "`start[2:4]` als `start[2:3]` schreiben und nur eine Ziffer erwischen."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL0_undVL1.pdf",
+     "page": 2,
+     "label": "4. Aufgabenstellung: Zeitdifferenz hhmm"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 9,
+     "label": "Auch Strings lassen sich in Zahlen umwandeln"
+    }
+   ],
+   "tags": [
+    "slicing",
+    "int",
+    "typumwandlung",
+    "luecken"
+   ]
+  },
+  {
+   "id": "py-strings-010",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "split und der neue Datentyp Liste",
+   "prompt": "Was gibt der folgende Code aus?",
+   "code": "mein_string = \"Dies ist mein Lieblingssatz!\"\nwoerter = mein_string.split(\" \")\nprint(woerter)\nprint(type(woerter))\nprint(len(woerter))\nprint(len(mein_string.split(\"i\")))\nprint(woerter[-1])",
+   "expectedOutput": "['Dies', 'ist', 'mein', 'Lieblingssatz!']\n<class 'list'>\n4\n6\nLieblingssatz!",
+   "solution": "['Dies', 'ist', 'mein', 'Lieblingssatz!']\n<class 'list'>\n4\n6\nLieblingssatz!",
+   "explanation": "`.split(z)` zerlegt einen String am Trennzeichen `z` und liefert einen **neuen Datentyp** zurück: eine Liste (`<class 'list'>`), also eine Sammlung mehrerer Strings. Das Trennzeichen selbst kommt in den Teilen nicht mehr vor. `len` bedeutet deshalb je nach Objekt etwas anderes: Auf den String angewandt zählt es Zeichen, auf die Liste angewandt zählt es **Elemente** — hier vier Wörter. Beim Trennen an `\"i\"` entstehen fünf `i` im Satz (D**i**es, **i**st, me**i**n, L**i**ebl**i**ngssatz) und damit sechs Teile, denn n Trennzeichen erzeugen immer n+1 Teile. Wie bei Strings darf man auch bei Listen mit negativen Indizes von hinten zugreifen. Merkregel: *Anzahl der Teile = Anzahl der Trennzeichen + 1.*",
+   "hints": [
+    "Was für ein Objekt kommt aus `split` heraus — ein String oder etwas anderes?",
+    "Zählen Sie, wie oft der Buchstabe `i` im Satz vorkommt.",
+    "Bei n Trennzeichen entstehen n+1 Teile."
+   ],
+   "pitfalls": [
+    "Denken, `split` verändere `mein_string` — es liefert nur eine neue Liste zurück.",
+    "Bei `len` auf der Liste die Zeichen statt der Elemente zählen.",
+    "Vergessen, dass das Trennzeichen in den Teilstücken nicht mehr enthalten ist."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 4,
+     "label": "Aufteilen nach Trennzeichen — durch split entsteht eine Liste"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "woerter = mein_string.split(' ')"
+    }
+   ],
+   "tags": [
+    "split",
+    "liste",
+    "len",
+    "type"
+   ]
+  },
+  {
+   "id": "py-strings-011",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "split an den Rändern und Mehrfach-Trennzeichen",
+   "prompt": "Was gibt der folgende Code aus? Achten Sie besonders auf die Anzahl der Teile.",
+   "code": "zeile = \",Milch,,Brot,\"\nteile = zeile.split(\",\")\nprint(teile)\nprint(len(teile))\nprint(teile[0] == \"\")\ndaten = \"Milch:1.50\"\nname, preis = daten.split(\":\")\nprint(name, float(preis) * 2)\nprint(daten[::-1][:4])",
+   "expectedOutput": "['', 'Milch', '', 'Brot', '']\n5\nTrue\nMilch 3.0\n05.1",
+   "solution": "['', 'Milch', '', 'Brot', '']\n5\nTrue\nMilch 3.0\n05.1",
+   "explanation": "`split` arbeitet rein mechanisch: Es schneidet an **jedem** Vorkommen des Trennzeichens und liefert immer *Anzahl Trennzeichen + 1* Teile — auch dann, wenn das Ergebnis leere Strings sind. Vier Kommas ergeben also fünf Teile, und weil die Zeile mit einem Komma beginnt und endet, sind das erste und das letzte Teil der **leere String** `''` (nicht etwa gar nichts). Zwei aufeinanderfolgende Kommas erzeugen ebenso einen leeren String dazwischen. Im zweiten Teil sieht man das *Entpacken*: Weil `split(\":\")` genau zwei Teile liefert, dürfen sie in einem Schritt zwei Variablen zugewiesen werden; `preis` ist dabei der **String** `\"1.50\"` und muss erst mit `float` umgewandelt werden, bevor man rechnen kann — `print` zeigt das Ergebnis dann als `3.0`, weil Floats immer mit Nachkommastelle ausgegeben werden. Zuletzt werden zwei Slices hintereinander ausgewertet: erst wird der ganze String umgedreht (`\"05.1:hcliM\"`), dann davon die ersten vier Zeichen genommen.",
+   "hints": [
+    "Zählen Sie zuerst die Kommas — daraus ergibt sich die Anzahl der Teile.",
+    "Was steht links vom allerersten Komma? Genau dieser 'Nichts-Text' ist ein eigenes Element.",
+    "`float(\"1.50\") * 2` ergibt eine Gleitkommazahl — wie druckt Python die?",
+    "Bei `daten[::-1][:4]` wird von links nach rechts ausgewertet: erst umdrehen, dann abschneiden."
+   ],
+   "pitfalls": [
+    "Leere Strings am Rand einfach weglassen und 3 statt 5 Teile angeben.",
+    "`3.0` als `3` schreiben — Python gibt Floats immer mit Punkt und Nachkommastelle aus.",
+    "Vergessen, dass `split` einen String und keine Zahl liefert (`preis * 2` würde den String verdoppeln)."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 4,
+     "label": "Aufteilen nach Trennzeichen"
+    },
+    {
+     "file": "Beispielaufgaben_VL0_undVL1.pdf",
+     "page": 6,
+     "label": "7. Aufgabenstellung: split(\":\") in Name und Preis"
+    }
+   ],
+   "tags": [
+    "split",
+    "leerer-string",
+    "float",
+    "slicing",
+    "typumwandlung"
+   ]
+  },
+  {
+   "id": "py-strings-012",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "count und replace verkettet",
+   "prompt": "Was gibt der folgende Code aus?\n\n(Tipp aus der Vorlesung: Wenn die dritte Zeile kompliziert aussieht, speichern Sie `satz.replace(...)` gedanklich erst in einer eigenen Variablen.)",
+   "code": "satz = \"Wenn Robben hinter Robben robben, robben Robben Robben nach.\"\nprint(satz.count(\"Robben\"))\nprint(satz.count(\"robben\"))\nprint(satz.replace(\"Robben\", \"robben\").count(\"robben\"))\nprint(satz.count(\"bb\"))\nprint(satz)",
+   "expectedOutput": "4\n2\n6\n6\nWenn Robben hinter Robben robben, robben Robben Robben nach.",
+   "solution": "4\n2\n6\n6\nWenn Robben hinter Robben robben, robben Robben Robben nach.",
+   "explanation": "`.count(z)` zählt, wie oft der Teilstring `z` vorkommt — und zwar **exakt**, also unterscheidet es Groß- und Kleinschreibung: `\"Robben\"` steht viermal im Satz, `\"robben\"` zweimal. `.replace(z, s)` ersetzt **alle** Vorkommen und gibt einen **neuen** String zurück. Weil man Methoden direkt hintereinanderhängen darf, wird in Zeile 3 zuerst der ersetzte String gebildet (jetzt sechsmal klein `robben`) und dann darauf `.count` aufgerufen: 4 + 2 = 6. `\"bb\"` kommt in jedem der sechs Robben-Wörter genau einmal vor, also ebenfalls 6. Entscheidend ist die letzte Zeile: `satz` selbst ist **unverändert**, denn Strings sind immutable — `replace` hat den ursprünglichen String nie angefasst, sondern nur eine Kopie erzeugt. Merkregel: *String-Methoden liefern Neues, sie verändern nichts.*",
+   "hints": [
+    "Zählen Sie zuerst getrennt: Wie oft steht `Robben` groß, wie oft `robben` klein im Satz?",
+    "Zeile 3 wird von links nach rechts ausgewertet: erst `replace`, dann `count` auf dem Ergebnis.",
+    "Überlegen Sie für die letzte Zeile, ob `replace` den Originalstring verändert hat."
+   ],
+   "pitfalls": [
+    "`count` für unabhängig von Groß-/Kleinschreibung halten.",
+    "Denken, `replace` verändere `satz` dauerhaft (dann wäre die letzte Zeile falsch).",
+    "Bei `count(\"bb\")` überlappende Treffer vermuten — in `robben` steckt nur ein `bb`."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 5,
+     "label": "Zeichen zählen / Zeichenketten ersetzen"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "satz.replace(\"Fliegen\", \"fliegen\").count(\"fliegen\")"
+    }
+   ],
+   "tags": [
+    "count",
+    "replace",
+    "immutable",
+    "methodenverkettung"
+   ]
+  },
+  {
+   "id": "py-strings-013",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Zähler- und Ersetzer-Funktion vervollständigen",
+   "prompt": "Vervollständigen Sie den folgenden Code.\n\na) Füllen Sie Lücke 1 so, dass die Häufigkeit des im Eingabeargument `substring` gespeicherten Strings im String `text` gezählt und die Anzahl zurückgegeben wird.\n\nb) Füllen Sie Lücke 2 so, dass in `text` jedes Vorkommen von `alt` durch `neu` ersetzt zurückgegeben wird.\n\nc) Welche zwei Zahlen geben die beiden print-Befehle aus?",
+   "code": "satz = \"Wenn Robben hinter Robben robben, robben Robben Robben nach.\"\n\ndef zaehler(text, substring):\n    anzahl = ## Lücke 1 ##\n    return anzahl\n\ndef ersetzer(text, alt, neu):\n    return ## Lücke 2 ##\n\nprint(zaehler(satz, \"b\"))\nprint(zaehler(ersetzer(satz, \"Robben\", \"Seehunde\"), \"Robben\"))",
+   "expectedOutput": "12\n0",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "text.count(substring)"
+     ],
+     "explanation": "`.count(z)` ist die Methode zum Zählen von Teilstrings; sie wird auf `text` aufgerufen und bekommt `substring` als Argument."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "text.replace(alt, neu)"
+     ],
+     "explanation": "`.replace(z, s)` ersetzt alle Vorkommen von `z` durch `s` und gibt den neuen String zurück."
+    }
+   ],
+   "solution": "satz = \"Wenn Robben hinter Robben robben, robben Robben Robben nach.\"\n\ndef zaehler(text, substring):\n    anzahl = text.count(substring)\n    return anzahl\n\ndef ersetzer(text, alt, neu):\n    return text.replace(alt, neu)\n\nprint(zaehler(satz, \"b\"))                                    # 12\nprint(zaehler(ersetzer(satz, \"Robben\", \"Seehunde\"), \"Robben\"))  # 0\n",
+   "explanation": "Beide Lücken sind Methodenaufrufe auf dem **Parameter** `text`, nicht auf der globalen Variablen `satz` — nur so bleibt die Funktion allgemein verwendbar. `text.count(substring)` zählt Teilstrings beliebiger Länge, hier den einzelnen Buchstaben `b`: Die sechs Wörter `Robben`/`robben` enthalten je zwei `b`, macht 12. Im zweiten print wird zuerst `ersetzer` ausgewertet — nach dem Ersetzen kommt kein `Robben` mehr vor, deshalb liefert `zaehler` den Wert 0. Das zeigt zugleich, dass `replace` einen **neuen** String zurückgibt, den man direkt weiterverwenden kann. Typischer Fehler: `count` ohne Argument oder als eigenständige Funktion `count(text, substring)` schreiben — es ist eine Methode der Klasse `str` und wird mit Punktnotation aufgerufen.",
+   "hints": [
+    "Beide Lücken sind Methodenaufrufe mit Punktnotation auf `text`.",
+    "Die Methodennamen stehen auf der Folie 'Klausurrelevante Dinge/Befehle'.",
+    "Für c): Zählen Sie, wie viele `b` in einem `Robben` stecken, und wie viele solcher Wörter es gibt."
+   ],
+   "pitfalls": [
+    "`satz.count(...)` statt `text.count(...)` schreiben — die Funktion wäre dann nicht mehr allgemein.",
+    "`replace` als Mutation missverstehen und `text.replace(alt, neu)` ohne `return` hinschreiben.",
+    "Bei c) das `b` in Wörtern wie `hinter` suchen, statt sauber die Robben-Wörter zu zählen."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 4,
+     "label": "a) Häufigkeit des Wortes zählen, b) welche Zahl gibt print aus?"
+    },
+    {
+     "file": "final_lecture_examples.ipynb",
+     "page": 1,
+     "label": "def zaehler(text, substring) mit Lücke"
+    }
+   ],
+   "tags": [
+    "count",
+    "replace",
+    "funktion",
+    "luecken"
+   ]
+  },
+  {
+   "id": "py-strings-014",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "count auf dem String vs. count auf der Wortliste",
+   "prompt": "Gegeben ist:\n\n```python\nsatz = \"ist das ist Mist ist\"\nprint(satz.count(\"ist\"))\nprint(satz.split(\" \").count(\"ist\"))\n```\n\na) Welche Zahl gibt jeder der beiden print-Befehle aus?\n\nb) Erklären Sie in ein bis zwei Sätzen, worin der Unterschied zwischen den beiden Zählweisen besteht.\n\nc) Wann würden Sie welche Variante verwenden?",
+   "code": "satz = \"ist das ist Mist ist\"\nprint(satz.count(\"ist\"))\nprint(satz.split(\" \").count(\"ist\"))",
+   "solution": "**a)** Der erste print gibt `4` aus, der zweite `3`.\n\n**b)** `satz.count(\"ist\")` arbeitet auf dem **String** und zählt jedes Vorkommen der Zeichenfolge `i`,`s`,`t` — also auch das `ist` innerhalb von `Mist`. `satz.split(\" \").count(\"ist\")` zerlegt den Satz erst mit `split` in die Liste `['ist', 'das', 'ist', 'Mist', 'ist']` und zählt dann, wie viele **Listenelemente** exakt gleich `\"ist\"` sind; `\"Mist\"` ist als ganzes Element ungleich `\"ist\"` und zählt nicht mit.\n\n**c)** Teilstrings zählt man mit `str.count` (z. B. wie oft ein Buchstabe vorkommt); ganze Wörter zählt man über `split` + `count` auf der Liste.\n\n**Bewertungsrubrik (4 P):**\n* 1 P: beide Zahlen korrekt (4 und 3)\n* 1 P: erkannt, dass `str.count` Teilstrings zählt und deshalb `Mist` mitzählt\n* 1 P: erkannt, dass `split` eine Liste liefert und dort auf **exakte Gleichheit** ganzer Elemente geprüft wird\n* 1 P: sinnvolle Einsatzempfehlung für beide Varianten",
+   "explanation": "Der entscheidende Punkt ist, dass `count` hier zweimal auf **verschiedenen Datentypen** aufgerufen wird. Bei `str.count(z)` ist `z` ein Teilstring — es wird buchstabenweise im gesamten Text gesucht, Wortgrenzen sind Python völlig egal, deshalb wird das `ist` in `Mist` mitgezählt (4 Treffer). Nach `split(\" \")` liegt eine Liste von Wörtern vor, und `list.count(x)` prüft für jedes Element `element == x`, also **exakte Gleichheit** des ganzen Wortes (3 Treffer). Beide Zählweisen sind korrekt, sie beantworten nur verschiedene Fragen. Ein häufiger Denkfehler in der Klausur ist, `count` automatisch als 'Wörter zählen' zu lesen. Merkregel: *count auf dem String zählt Zeichenfolgen, count auf der Liste zählt ganze Elemente.*",
+   "hints": [
+    "Schreiben Sie zuerst hin, was `satz.split(\" \")` genau zurückgibt.",
+    "Suchen Sie die Buchstabenfolge `ist` einmal Zeichen für Zeichen im ganzen Satz — auch in längeren Wörtern.",
+    "Bei der Liste wird auf Gleichheit ganzer Elemente geprüft, nicht auf 'enthält'."
+   ],
+   "pitfalls": [
+    "Das `ist` in `Mist` übersehen und beim ersten print 3 angeben.",
+    "Annehmen, `split` würde Groß-/Kleinschreibung angleichen — `Mist` bleibt `Mist`.",
+    "Glauben, `count` gäbe es nur für Strings."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 5,
+     "label": "Zeichen zählen (.count)"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 4,
+     "label": "Durch split entsteht eine Liste"
+    }
+   ],
+   "tags": [
+    "count",
+    "split",
+    "liste",
+    "konzept"
+   ]
+  },
+  {
+   "id": "py-strings-015",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "find und der Rückgabewert -1",
+   "prompt": "Was gibt der folgende Code aus?",
+   "code": "satz = \"Goofspiel ist ein Kartenspiel\"\nprint(satz.find(\"spiel\"))\nprint(satz.find(\"Spiel\"))\nprint(satz.find(\" \"))\nprint(satz.count(\"spiel\"))\nprint(satz.find(\"spiel\") == satz.count(\"spiel\"))",
+   "expectedOutput": "4\n-1\n9\n2\nFalse",
+   "solution": "4\n-1\n9\n2\nFalse",
+   "explanation": "`.find(z)` liefert den **Index des ersten Vorkommens** von `z` — nicht die Anzahl! Da Python ab 0 zählt, beginnt `spiel` in `Goofspiel` bei Index 4 (G=0, o=1, o=2, f=3, s=4). Das zweite `spiel` in `Kartenspiel` wird ignoriert, weil `find` nach dem ersten Treffer aufhört. Wird der Teilstring **gar nicht** gefunden, gibt `find` den Sonderwert `-1` zurück und wirft *keinen* Fehler — genau deshalb muss man Groß-/Kleinschreibung beachten: `\"Spiel\"` mit großem S kommt nicht vor. Das Leerzeichen steht an Index 9 (direkt hinter dem neunbuchstabigen `Goofspiel`). Die letzte Zeile macht den Unterschied zwischen `find` und `count` explizit: 4 ist ein Index, 2 ist eine Anzahl. Merkregel: *find sagt WO, count sagt WIE OFT — und 'nicht da' heißt bei find minus eins.*",
+   "hints": [
+    "Nummerieren Sie den Satz ab 0 durch.",
+    "`find` liefert eine Position, `count` eine Anzahl — verwechseln Sie die beiden Rückgabewerte nicht.",
+    "Was passiert bei `find`, wenn der Teilstring gar nicht vorkommt? Ein Fehler oder ein Wert?"
+   ],
+   "pitfalls": [
+    "Bei nicht gefundenem Teilstring `0` oder einen Fehler erwarten statt `-1`.",
+    "`find` als 'zähle die Vorkommen' lesen.",
+    "Bei `-1` fälschlich denken, das bedeute 'letztes Zeichen' wie beim Slicing."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 5,
+     "label": "Substrings finden (.find)"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 4,
+     "label": ".count, .replace, .find"
+    }
+   ],
+   "tags": [
+    "find",
+    "index",
+    "count",
+    "minus-eins"
+   ]
+  },
+  {
+   "id": "py-strings-016",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Erstes Wort eines Satzes mit find bestimmen",
+   "prompt": "Schreiben Sie eine Funktion `erstes_wort(satz)`, die das erste Wort des übergebenen Satzes zurückgibt, also alles bis zum ersten Leerzeichen (ohne dieses).\n\nEnthält der Satz **gar kein** Leerzeichen, soll der komplette Satz zurückgegeben werden.\n\nBeispiele:\n* `erstes_wort(\"Hallo Welt\")` liefert `\"Hallo\"`\n* `erstes_wort(\"Hallo\")` liefert `\"Hallo\"`\n\nVerwenden Sie `.find()` und Slicing — **kein** `split`, keine Schleife.",
+   "starterCode": "def erstes_wort(satz):\n    # Ihr Code hier\n    pass\n",
+   "constraints": [
+    "kein split",
+    "keine Schleifen",
+    ".find() verwenden"
+   ],
+   "forbidden": [
+    "split",
+    "for ",
+    "while "
+   ],
+   "required": [
+    ".find("
+   ],
+   "tests": [
+    {
+     "name": "zwei Wörter",
+     "call": "erstes_wort('Hallo Welt')",
+     "expected": "'Hallo'"
+    },
+    {
+     "name": "kein Leerzeichen",
+     "call": "erstes_wort('Hallo')",
+     "expected": "'Hallo'"
+    },
+    {
+     "name": "leerer String",
+     "call": "erstes_wort('')",
+     "expected": "''"
+    },
+    {
+     "name": "beginnt mit Leerzeichen",
+     "call": "erstes_wort(' x y')",
+     "expected": "''"
+    },
+    {
+     "name": "ganzer Satz",
+     "call": "erstes_wort('Wenn Robben hinter Robben robben')",
+     "expected": "'Wenn'"
+    }
+   ],
+   "solution": "def erstes_wort(satz):\n    position = satz.find(\" \")\n    if position == -1:\n        return satz\n    return satz[:position]\n",
+   "explanation": "Der Kern der Aufgabe ist der Sonderwert **-1**: Findet `.find(\" \")` kein Leerzeichen, liefert es nicht etwa `None` oder einen Fehler, sondern `-1`. Würde man diesen Fall nicht abfangen, wäre `satz[:-1]` gültiger Code — er würde aber stillschweigend das **letzte Zeichen abschneiden** (`\"Hallo\"` würde zu `\"Hall\"`). Genau solche Fehler sind besonders tückisch, weil das Programm nicht abstürzt. Deshalb: erst das Ergebnis von `find` in einer Variablen speichern, dann auf `-1` prüfen und erst danach slicen. Der Slice `satz[:position]` endet **vor** dem Leerzeichen, weil die obere Grenze nie mitgenommen wird. Beginnt der Satz mit einem Leerzeichen, ist `position` gleich 0 und der leere String ist die korrekte Antwort. Merkregel: *Nach jedem find gehört die Frage 'und wenn -1?'*",
+   "hints": [
+    "Speichern Sie das Ergebnis von `.find(\" \")` zuerst in einer Variablen.",
+    "Was liefert `find`, wenn nichts gefunden wird — und was würde `satz[:-1]` dann tun?",
+    "Fangen Sie den Fall `-1` mit einer if-Abfrage ab, bevor Sie slicen."
+   ],
+   "pitfalls": [
+    "Den Fall `-1` nicht abfangen — dann verschwindet bei Sätzen ohne Leerzeichen das letzte Zeichen.",
+    "`satz[:position+1]` schreiben und das Leerzeichen mit zurückgeben.",
+    "Trotz Verbot `split(\" \")[0]` verwenden."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 5,
+     "label": "Substrings finden (.find)"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 3,
+     "label": "Slicing [a:b:c]"
+    }
+   ],
+   "tags": [
+    "find",
+    "minus-eins",
+    "slicing",
+    "funktion",
+    "transfer"
+   ]
+  },
+  {
+   "id": "py-strings-017",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "format mit und ohne Namen",
+   "prompt": "Füllen Sie die Lücken so, dass beide print-Befehle exakt die Zeile\n\n```\nSpieler Michael hat 12 Punkte.\n```\n\nausgeben. In Lücke 1 werden die Platzhalter **ohne Namen** befüllt, in Lücke 2 die Platzhalter **mit Namen**.",
+   "code": "name = \"Michael\"\npunkte = 12\n\nvorlage_ohne_namen = \"Spieler {} hat {} Punkte.\"\nprint(vorlage_ohne_namen.format(## Lücke 1 ##))\n\nvorlage_mit_namen = \"Spieler {spieler} hat {p} Punkte.\"\nprint(vorlage_mit_namen.format(## Lücke 2 ##))",
+   "expectedOutput": "Spieler Michael hat 12 Punkte.\nSpieler Michael hat 12 Punkte.",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "name, punkte"
+     ],
+     "explanation": "Namenlose Platzhalter `{}` werden **der Reihe nach** mit den Argumenten befüllt: erstes `{}` bekommt `name`, zweites `{}` bekommt `punkte`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "spieler=name, p=punkte",
+      "p=punkte, spieler=name"
+     ],
+     "explanation": "Bei benannten Platzhaltern übergibt man `platzhaltername=wert`. Die Reihenfolge der Argumente ist dann egal, die Namen müssen aber exakt zu `{spieler}` und `{p}` passen."
+    }
+   ],
+   "solution": "name = \"Michael\"\npunkte = 12\n\nvorlage_ohne_namen = \"Spieler {} hat {} Punkte.\"\nprint(vorlage_ohne_namen.format(name, punkte))\n\nvorlage_mit_namen = \"Spieler {spieler} hat {p} Punkte.\"\nprint(vorlage_mit_namen.format(spieler=name, p=punkte))\n",
+   "explanation": "`.format()` ist der in der Vorlesung gezeigte Weg, Werte in einen Text einzusetzen. Es gibt zwei Varianten: **ohne Namen** (`{}`) werden die Argumente strikt der Reihe nach eingesetzt — vertauscht man sie, steht die Zahl beim Namen; **mit Namen** (`{spieler}`) übergibt man Schlüsselwortargumente `spieler=...`, dann spielt die Reihenfolge keine Rolle, aber die Namen müssen exakt übereinstimmen (sonst `KeyError`). Ein großer Vorteil von `format` gegenüber der Konkatenation mit `+` ist, dass Zahlen **nicht** mit `str()` umgewandelt werden müssen: `format` erledigt das automatisch, während `\"... \" + 12` einen TypeError wirft. Merkregel: *Geschweifte Klammern sind Platzhalter — leer heißt Reihenfolge, benannt heißt Zuordnung.*",
+   "hints": [
+    "Zählen Sie, wie viele Platzhalter in der Vorlage stehen — genauso viele Werte braucht `format`.",
+    "In Lücke 1 entscheidet allein die Reihenfolge der Argumente.",
+    "In Lücke 2 müssen die Namen links vom `=` exakt so heißen wie in den geschweiften Klammern."
+   ],
+   "pitfalls": [
+    "Bei benannten Platzhaltern die Anführungszeichen setzen (`spieler=\"name\"`) und dadurch den Variablennamen als Text ausgeben.",
+    "Bei Lücke 2 die Namen erfinden statt `{spieler}` und `{p}` aus der Vorlage abzulesen.",
+    "`str(punkte)` für nötig halten — `format` wandelt selbst um."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 6,
+     "label": "Formatieren von Strings"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 4,
+     "label": ".format und Platzhalter mit und ohne Namen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 3,
+     "label": "print(\"...{}...\".format(x,y,...))"
+    }
+   ],
+   "tags": [
+    "format",
+    "platzhalter",
+    "luecken"
+   ]
+  },
+  {
+   "id": "py-strings-018",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Welcher format-Aufruf erzeugt die Ausgabe?",
+   "prompt": "Gesucht ist ein Ausdruck, der exakt die folgende Zeichenkette erzeugt:\n\n```\nSpieler 1 gegen Spieler 2: Spieler 1 gewinnt!\n```\n\nWelche der folgenden Möglichkeiten leistet das?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`\"{0} gegen {1}: {0} gewinnt!\".format(\"Spieler 1\", \"Spieler 2\")`",
+     "correct": true,
+     "why": "Mit nummerierten Platzhaltern darf man dasselbe Argument mehrfach verwenden: `{0}` steht zweimal für das erste Argument."
+    },
+    {
+     "id": "b",
+     "text": "`\"{} gegen {}: {} gewinnt!\".format(\"Spieler 1\", \"Spieler 2\")`",
+     "correct": false,
+     "why": "Drei namenlose Platzhalter verlangen drei Argumente. Mit nur zwei Argumenten gibt es einen `IndexError: Replacement index 2 out of range`."
+    },
+    {
+     "id": "c",
+     "text": "`\"{a} gegen {b}: {a} gewinnt!\".format(\"Spieler 1\", \"Spieler 2\")`",
+     "correct": false,
+     "why": "Benannte Platzhalter brauchen Schlüsselwortargumente. Positionsargumente führen hier zu einem `KeyError: 'a'`."
+    },
+    {
+     "id": "d",
+     "text": "`\"{a} gegen {b}: {a} gewinnt!\".format(b=\"Spieler 1\", a=\"Spieler 2\")`",
+     "correct": false,
+     "why": "Der Aufruf läuft zwar fehlerfrei, `a` und `b` sind aber vertauscht: Es entsteht `Spieler 2 gegen Spieler 1: Spieler 2 gewinnt!`."
+    }
+   ],
+   "solution": "a) `\"{0} gegen {1}: {0} gewinnt!\".format(\"Spieler 1\", \"Spieler 2\")`",
+   "explanation": "In den geschweiften Klammern darf entweder **nichts** stehen (dann werden die Argumente streng der Reihe nach verbraucht), eine **Nummer** (dann greift man gezielt auf das n-te Argument zu, ab 0 gezählt) oder ein **Name** (dann braucht man Schlüsselwortargumente). Nur die nummerierte oder die benannte Variante erlaubt es, denselben Wert **mehrfach** einzusetzen — mit leeren `{}` bräuchte man dreimal ein Argument. Antwort d zeigt die zweite große Falle bei benannten Platzhaltern: Der Code ist syntaktisch fehlerfrei, aber inhaltlich falsch, weil die Zuordnung über den Namen und nicht über die Position läuft. Merkregel: *Leer = Reihenfolge, Zahl = Position, Name = Zuordnung.*",
+   "hints": [
+    "Zählen Sie, wie oft jeder Wert in der Zielzeichenkette vorkommt.",
+    "Wie viele Argumente werden jeweils übergeben, und wie viele Platzhalter müssen gefüllt werden?",
+    "Prüfen Sie bei der benannten Variante genau, welcher Name welchen Wert bekommt."
+   ],
+   "pitfalls": [
+    "Annehmen, `{}` würde bei zu wenigen Argumenten einfach leer bleiben — es gibt einen IndexError.",
+    "Bei benannten Platzhaltern die Zuordnung über die Reihenfolge statt über den Namen lesen."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 6,
+     "label": "Formatieren von Strings"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 4,
+     "label": ".format und Platzhalter mit und ohne Namen"
+    }
+   ],
+   "tags": [
+    "format",
+    "platzhalter",
+    "fehler"
+   ]
+  },
+  {
+   "id": "py-strings-019",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Vergleichen mit == und != , upper und lower",
+   "prompt": "Ein Ratespiel prüft die Eingabe des Benutzers. Was gibt der folgende Code aus?",
+   "code": "zu_erratendes_wort = \"elefant\"\neingabe = \"Elefant\"\nprint(eingabe == zu_erratendes_wort)\nprint(eingabe.lower() == zu_erratendes_wort)\nprint(eingabe != zu_erratendes_wort)\nprint(eingabe.upper())\nprint(eingabe)",
+   "expectedOutput": "False\nTrue\nTrue\nELEFANT\nElefant",
+   "solution": "False\nTrue\nTrue\nELEFANT\nElefant",
+   "explanation": "`==` vergleicht Strings **zeichenweise und dabei streng nach Groß-/Kleinschreibung**: `\"Elefant\"` und `\"elefant\"` unterscheiden sich im ersten Zeichen, also `False`. `!=` ist genau die Negation davon und liefert deshalb `True`. Mit `.lower()` (bzw. `.upper()`) macht man beide Seiten vergleichbar — das ist das Standardrezept, wenn eine Benutzereingabe unabhängig von der Schreibweise akzeptiert werden soll. Die letzten zwei Zeilen sind der eigentliche Prüfstein: `.upper()` **gibt einen neuen String zurück** und verändert `eingabe` nicht; da das Ergebnis nirgends gespeichert wurde, ist `eingabe` weiterhin `\"Elefant\"`. Merkregel: *Vergleich ist streng, `lower()` macht ihn tolerant — aber nur auf einer Kopie.*",
+   "hints": [
+    "Unterscheidet `==` bei Strings zwischen Groß- und Kleinbuchstaben?",
+    "`!=` liefert immer genau das Gegenteil von `==`.",
+    "Wird `eingabe` durch `.upper()` dauerhaft verändert? Wo wäre das Ergebnis gespeichert?"
+   ],
+   "pitfalls": [
+    "Annehmen, Python vergleiche Strings ohne Berücksichtigung der Groß-/Kleinschreibung.",
+    "Denken, `eingabe.upper()` ändere `eingabe` selbst — dafür bräuchte man `eingabe = eingabe.upper()`.",
+    "`=` (Zuweisung) und `==` (Vergleich) verwechseln."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 6,
+     "label": "Strings vergleichen"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 13,
+     "label": "Sind zwei Dinge gleich? == / nicht gleich? !="
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "zu_erratendes_wort = \"elefant\""
+    }
+   ],
+   "tags": [
+    "vergleich",
+    "upper",
+    "lower",
+    "immutable"
+   ]
+  },
+  {
+   "id": "py-strings-020",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler im Ratespiel",
+   "prompt": "Der folgende Code soll prüfen, ob die Benutzereingabe (unabhängig von Groß-/Kleinschreibung) mit dem gesuchten Wort übereinstimmt, sonst die Wortlänge ausgeben und den ersten Buchstaben groß schreiben.\n\nIn diesem Programm stecken genau **3 Fehler** (Zeile 1 ist `zu_erratendes_wort = ...`, Zeile 3 ist die Leerzeile). Geben Sie an, in welchen Zeilen sie sich befinden, warum sie falsch sind und wie man sie korrigiert.",
+   "code": "zu_erratendes_wort = \"elefant\"\neingabe = \"Elefant\"\n\nif eingabe.upper == zu_erratendes_wort.upper:\n    print(\"Richtig!\")\nelse:\n    print(\"Falsch! Das Wort hat \" + len(zu_erratendes_wort) + \" Buchstaben.\")\n    zu_erratendes_wort[0] = \"E\"",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "if eingabe.upper == zu_erratendes_wort.upper:",
+     "fix": "if eingabe.upper() == zu_erratendes_wort.upper():",
+     "why": "Ohne runde Klammern wird die Methode nicht aufgerufen, sondern es werden zwei Methoden-Objekte verglichen. Das ergibt immer False, ohne dass ein Fehler gemeldet wird — der Vergleich läuft also stillschweigend falsch."
+    },
+    {
+     "line": 7,
+     "wrong": "print(\"Falsch! Das Wort hat \" + len(zu_erratendes_wort) + \" Buchstaben.\")",
+     "fix": "print(\"Falsch! Das Wort hat \" + str(len(zu_erratendes_wort)) + \" Buchstaben.\") oder print(\"Falsch! Das Wort hat {} Buchstaben.\".format(len(zu_erratendes_wort)))",
+     "why": "`len(...)` liefert einen int. Mit `+` darf man einen String nur mit einem String verketten, sonst TypeError: can only concatenate str (not \"int\") to str. Man muss die Zahl mit `str()` umwandeln oder `.format()` verwenden."
+    },
+    {
+     "line": 8,
+     "wrong": "zu_erratendes_wort[0] = \"E\"",
+     "fix": "zu_erratendes_wort = \"E\" + zu_erratendes_wort[1:]",
+     "why": "Strings sind immutable — einzelne Zeichen können nicht überschrieben werden. TypeError: 'str' object does not support item assignment. Man muss einen neuen String bauen und neu zuweisen."
+    }
+   ],
+   "solution": "zu_erratendes_wort = \"elefant\"\neingabe = \"Elefant\"\n\nif eingabe.upper() == zu_erratendes_wort.upper():\n    print(\"Richtig!\")\nelse:\n    print(\"Falsch! Das Wort hat \" + str(len(zu_erratendes_wort)) + \" Buchstaben.\")\n    zu_erratendes_wort = \"E\" + zu_erratendes_wort[1:]\n\n# Ausgabe des korrigierten Programms: Richtig!\n",
+   "explanation": "Die drei Fehler decken drei verschiedene Fehlerklassen ab. **Zeile 4** ist der gemeinste: `eingabe.upper` ohne Klammern ist ein gültiger Ausdruck (das Methodenobjekt selbst), der Vergleich liefert stumm `False` — es gibt keine Fehlermeldung, nur ein falsches Ergebnis. **Zeile 7** ist ein klassischer TypeError: `+` verlangt auf beiden Seiten Strings; `len` liefert aber einen `int`, deshalb braucht man `str(...)` — oder eleganter gleich `.format()`, das automatisch umwandelt. **Zeile 8** ist der Immutabilitäts-Klassiker: Anders als bei einer Liste kann man bei einem String kein Zeichen an Ort und Stelle überschreiben; man baut stattdessen mit Konkatenation und Slicing einen neuen String und weist ihn neu zu. Merkregeln: *Methode ohne Klammern wird nicht ausgeführt; String plus Zahl geht nicht; Strings sind unveränderbar.*",
+   "hints": [
+    "Schauen Sie sich Zeile 4 sehr genau an — fehlt dort etwas Kleines, das man leicht übersieht?",
+    "Welchen Datentyp liefert `len(...)`, und darf man diesen mit `+` an einen String hängen?",
+    "Was hat die Vorlesung über das Verändern einzelner Zeichen eines Strings gesagt?"
+   ],
+   "pitfalls": [
+    "Zeile 4 für richtig halten, weil sie ohne Fehlermeldung läuft.",
+    "In Zeile 7 `str()` an die falsche Stelle setzen (`str(len)` statt `str(len(...))`).",
+    "In Zeile 8 versuchen, mit `.replace()` an Ort und Stelle zu ändern, ohne das Ergebnis wieder zuzuweisen."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 6,
+     "label": "Strings vergleichen / formatieren"
+    },
+    {
+     "file": "final_lecture_examples.ipynb",
+     "page": 1,
+     "label": "s = \"hallo\"; s[0] = \"H\""
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Immutable: int, float, bool, string, tuple"
+    }
+   ],
+   "tags": [
+    "fehlersuche",
+    "immutable",
+    "typumwandlung",
+    "upper",
+    "vergleich"
+   ]
+  },
+  {
+   "id": "py-strings-021",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Rechenaufgabe aus einem String auswerten",
+   "prompt": "Der Benutzer gibt eine Additionsaufgabe als String ein, z. B. `\"12+7\"` (immer zwei nichtnegative ganze Zahlen, genau ein `+`, keine Leerzeichen).\n\nSchreiben Sie eine Funktion `rechnung(eingabe)`, die daraus den folgenden String erzeugt und zurückgibt:\n\n```\n12 + 7 = 19\n```\n\nVerwenden Sie `.split()`, `int()` und `.format()`. `eval` ist verboten.",
+   "starterCode": "def rechnung(eingabe):\n    # Ihr Code hier\n    pass\n",
+   "constraints": [
+    "kein eval",
+    "keine Schleifen",
+    ".format() verwenden"
+   ],
+   "forbidden": [
+    "eval",
+    "for ",
+    "while "
+   ],
+   "required": [
+    ".split(",
+    "int(",
+    ".format("
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "rechnung('12+7')",
+     "expected": "'12 + 7 = 19'"
+    },
+    {
+     "name": "Nullen",
+     "call": "rechnung('0+0')",
+     "expected": "'0 + 0 = 0'"
+    },
+    {
+     "name": "große Zahlen",
+     "call": "rechnung('100+250')",
+     "expected": "'100 + 250 = 350'"
+    },
+    {
+     "name": "einstellig",
+     "call": "rechnung('3+4')",
+     "expected": "'3 + 4 = 7'"
+    }
+   ],
+   "solution": "def rechnung(eingabe):\n    teile = eingabe.split(\"+\")\n    a = int(teile[0])\n    b = int(teile[1])\n    return \"{} + {} = {}\".format(a, b, a + b)\n",
+   "explanation": "Der typische Ablauf ist: **zerlegen – umwandeln – zusammensetzen**. `split(\"+\")` liefert die Liste `['12', '7']`; beide Teile sind noch **Strings**, deshalb würde `teile[0] + teile[1]` die Zeichenketten aneinanderhängen (`'127'`) statt zu addieren. Erst `int()` macht Zahlen daraus, mit denen gerechnet werden kann. Für die Ausgabe geht es den umgekehrten Weg zurück in einen String: `.format()` setzt die Werte in die Platzhalter ein und übernimmt die Umwandlung `int -> str` automatisch — deshalb braucht man hier kein `str()`. Beachten Sie außerdem, dass die geforderte Ausgabe Leerzeichen um das `+` enthält, die Eingabe aber nicht; das Ergebnis wird also wirklich neu gebaut und nicht aus der Eingabe kopiert. Merkregel: *String rein, Zahl zum Rechnen, String wieder raus.*",
+   "hints": [
+    "Zerlegen Sie die Eingabe zuerst am `+`.",
+    "Die beiden Teile sind Strings — womit rechnet man nicht, bevor man sie umwandelt?",
+    "Die Ausgabe hat drei Platzhalter: die beiden Zahlen und die Summe."
+   ],
+   "pitfalls": [
+    "`int()` vergessen — dann ergibt `'12' + '7'` den String `'127'`.",
+    "Die Leerzeichen um das `+` in der Ausgabe vergessen.",
+    "`teile[1]` mit `teile[2]` verwechseln — die Liste hat nur die Indizes 0 und 1."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 9,
+     "label": "Auch Strings lassen sich in Zahlen umwandeln"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 6,
+     "label": "Formatieren von Strings"
+    },
+    {
+     "file": "pythonvorlesung_02.ipynb",
+     "page": 1,
+     "label": "str(int(zahl1)+int(zahl2))"
+    }
+   ],
+   "tags": [
+    "split",
+    "int",
+    "format",
+    "typumwandlung",
+    "funktion"
+   ]
+  },
+  {
+   "id": "py-strings-022",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "code",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": false,
+   "title": "Geldbetrag in Cent umrechnen",
+   "prompt": "Ein Preis wird als String übergeben und hat **immer genau zwei Nachkommastellen**, das Dezimaltrennzeichen ist aber mal ein Komma (deutsche Schreibweise) und mal ein Punkt.\n\nSchreiben Sie eine Funktion `euro_in_cent(text)`, die den Betrag als ganze Zahl in Cent zurückgibt.\n\nBeispiele:\n* `euro_in_cent(\"12,50\")` liefert `1250`\n* `euro_in_cent(\"12.50\")` liefert `1250`\n* `euro_in_cent(\"3,05\")` liefert `305`\n\nArbeiten Sie mit `.replace()`, `.split()` und `int()` — **nicht** mit `float()`, damit keine Rundungsfehler entstehen.",
+   "starterCode": "def euro_in_cent(text):\n    # Ihr Code hier\n    pass\n",
+   "constraints": [
+    "kein float()",
+    "keine Schleifen"
+   ],
+   "forbidden": [
+    "float(",
+    "for ",
+    "while ",
+    "eval"
+   ],
+   "required": [
+    ".replace(",
+    ".split(",
+    "int("
+   ],
+   "tests": [
+    {
+     "name": "deutsches Komma",
+     "call": "euro_in_cent('12,50')",
+     "expected": "1250"
+    },
+    {
+     "name": "englischer Punkt",
+     "call": "euro_in_cent('12.50')",
+     "expected": "1250"
+    },
+    {
+     "name": "unter einem Euro",
+     "call": "euro_in_cent('0,99')",
+     "expected": "99"
+    },
+    {
+     "name": "führende Null bei den Cent",
+     "call": "euro_in_cent('3,05')",
+     "expected": "305"
+    },
+    {
+     "name": "großer Betrag",
+     "call": "euro_in_cent('1000.00')",
+     "expected": "100000"
+    }
+   ],
+   "solution": "def euro_in_cent(text):\n    teile = text.replace(\",\", \".\").split(\".\")\n    return int(teile[0]) * 100 + int(teile[1])\n",
+   "explanation": "Der Trick besteht darin, die beiden möglichen Schreibweisen zuerst zu **vereinheitlichen**: `.replace(\",\", \".\")` macht aus jedem Komma einen Punkt, danach genügt ein einziges `split(\".\")`. Weil `replace` einen neuen String zurückgibt, kann man die Methoden direkt aneinanderhängen. Anschließend werden Euro- und Centteil getrennt mit `int()` umgewandelt und zusammengerechnet — dabei ist wichtig, dass `int(\"05\")` problemlos `5` ergibt, führende Nullen also nicht stören. Der Verzicht auf `float` ist bewusst: Gleitkommazahlen werden nur mit endlicher Präzision gespeichert, `int(12.50 * 100)` kann deshalb je nach Wert 1249 statt 1250 liefern — genau die Warnung von der Zahlen-Folie der Vorlesung. Merkregel: *Erst Format vereinheitlichen, dann zerlegen — und Geld nie über float rechnen.*",
+   "hints": [
+    "Sorgen Sie zuerst dafür, dass nur noch ein einziges Trennzeichen möglich ist.",
+    "`replace` liefert einen neuen String zurück — Sie können `.split()` direkt daran anhängen.",
+    "Euro-Teil mal 100 plus Cent-Teil; beide Teile müssen vorher in Zahlen umgewandelt werden."
+   ],
+   "pitfalls": [
+    "Zwei getrennte if-Zweige für Komma und Punkt bauen, statt einmal zu vereinheitlichen.",
+    "Den Centteil vergessen zu addieren oder ihn mit 10 statt den Euroteil mit 100 zu multiplizieren.",
+    "Trotz Verbot `float` verwenden und dadurch Rundungsfehler riskieren."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 5,
+     "label": "Zeichenketten ersetzen (.replace) / Zahlen in strings umwandeln"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 10,
+     "label": "Warnung: Floats werden nur mit endlicher Präzision gespeichert"
+    }
+   ],
+   "tags": [
+    "replace",
+    "split",
+    "int",
+    "typumwandlung",
+    "transfer"
+   ]
+  },
+  {
+   "id": "py-strings-023",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Wieso wirft dieser Code einen Fehler?",
+   "prompt": "Wieso wirft der folgende Code einen Fehler?\n\n```python\ns = \"hallo\"\ns[0] = \"H\"\nprint(s)\n```\n\na) Nennen Sie den Fehlertyp und begründen Sie in einem Satz, woran es liegt.\n\nb) Geben Sie **zwei verschiedene** korrekte Varianten an, mit denen am Ende `Hallo` ausgegeben wird.\n\nc) Warum funktioniert die analoge Zeile `l[0] = \"H\"` für `l = [\"h\", \"a\", \"l\", \"l\", \"o\"]` dagegen problemlos?",
+   "code": "s = \"hallo\"\ns[0] = \"H\"\nprint(s)",
+   "solution": "**a)** Es entsteht ein `TypeError: 'str' object does not support item assignment`. Strings sind in Python **immutable** (unveränderbar): Man kann sie lesen und mit `s[0]` auf einzelne Zeichen zugreifen, aber ein einzelnes Zeichen nicht überschreiben.\n\n**b)** Zwei mögliche Varianten:\n```python\n# Variante 1: neuen String aus Konkatenation und Slicing bauen\ns = \"hallo\"\ns = \"H\" + s[1:]\nprint(s)\n\n# Variante 2: mit replace einen neuen String erzeugen und neu zuweisen\ns = \"hallo\"\ns = s.replace(\"h\", \"H\")\nprint(s)\n```\n(Ebenfalls korrekt: `s = s[0].upper() + s[1:]`.)\n\n**c)** `list` ist ein **mutable** (veränderbarer) Datentyp. Bei einer Liste darf ein einzelnes Element an Ort und Stelle überschrieben werden, ohne dass ein neues Objekt entsteht. Immutable sind in Python u. a. `int`, `float`, `bool`, `string` und `tuple`; mutable sind u. a. `list`, `dict` und `set`.\n\n**Bewertungsrubrik (4 P):**\n* 1 P: `TypeError` genannt\n* 1 P: Begründung über Immutabilität von Strings\n* 1 P: zwei wirklich verschiedene, lauffähige Korrekturen (jeweils mit **Neuzuweisung** an `s`)\n* 1 P: Unterscheidung mutable (list) vs. immutable (str) korrekt erklärt",
+   "explanation": "Diese Aufgabe ist der Brückenkopf zum später ausführlich behandelten Thema mutable/immutable. Der Zugriff `s[0]` ist **lesend** völlig in Ordnung und liefert `\"h\"` — verboten ist nur die **Zuweisung** an eine Position, weil ein String nach seiner Erzeugung nicht mehr verändert werden kann. Alle String-Methoden umgehen das, indem sie einen **neuen** String zurückgeben; deshalb ist die Neuzuweisung `s = ...` bei jeder Korrektur zwingend — `s.replace(\"h\", \"H\")` allein als Anweisung hätte keinerlei Wirkung. Genau dieser Unterschied wird in der Klausur gern gegen Listen gestellt, bei denen `l[0] = \"H\"` funktioniert, weil Listen mutable sind. Merkregel: *Lesen ja, schreiben nein — immutable Objekte werden ersetzt, nicht verändert.*",
+   "hints": [
+    "Der Zugriff `s[0]` allein ist erlaubt — überlegen Sie, was genau die Zuweisung daran ändert.",
+    "Wie hieß in der Vorlesung die Eigenschaft von Typen wie int, float, string und tuple?",
+    "Jede String-Methode liefert etwas Neues zurück — was müssen Sie mit diesem Rückgabewert tun?"
+   ],
+   "pitfalls": [
+    "`s.replace(\"h\", \"H\")` ohne Zuweisung hinschreiben — der Rückgabewert verpufft und `s` bleibt `\"hallo\"`.",
+    "Den Fehler für einen IndexError halten; der Index 0 ist völlig gültig.",
+    "Behaupten, man könne Strings gar nicht per Index lesen — nur das Schreiben ist verboten."
+   ],
+   "sources": [
+    {
+     "file": "final_lecture_examples.ipynb",
+     "page": 1,
+     "label": "s = \"hallo\"; s[0] = \"H\""
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Unveränderbar (immutable) in Python: int, float, bool, string, unicode, tuple"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 4,
+     "label": "strings, die - wie besprochen - immutable sind"
+    }
+   ],
+   "tags": [
+    "immutable",
+    "typeerror",
+    "konzept",
+    "slicing",
+    "replace"
+   ]
+  },
+  {
+   "id": "py-strings-024",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "String-Methoden in einer Funktion — was bleibt übrig?",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Begründen Sie jeweils in einem Satz.",
+   "code": "def gross_machen(text):\n    text = text.upper()\n    return text\n\nwort = \"goofspiel\"\nergebnis = gross_machen(wort)\nprint(wort)\nprint(ergebnis)\nwort.replace(\"goof\", \"Goof\")\nprint(wort)\nprint(wort.replace(\"goof\", \"Goof\"))",
+   "expectedOutput": "goofspiel\nGOOFSPIEL\ngoofspiel\nGoofspiel",
+   "solution": "goofspiel\nGOOFSPIEL\ngoofspiel\nGoofspiel",
+   "explanation": "Hier greifen zwei Konzepte ineinander. Erstens: Strings sind **immutable**, jede Methode wie `.upper()` oder `.replace()` erzeugt einen **neuen** String und lässt das Original unangetastet. Zweitens: Die Zuweisung `text = text.upper()` innerhalb der Funktion bindet nur den **lokalen** Namen `text` an dieses neue Objekt — die globale Variable `wort` zeigt weiterhin auf den alten String. Deshalb ist `wort` nach dem Aufruf unverändert `\"goofspiel\"`, während `ergebnis` den zurückgegebenen neuen String enthält. Die Zeile `wort.replace(\"goof\", \"Goof\")` ohne Zuweisung ist ein **wirkungsloser Ausdruck**: Der neue String wird berechnet und sofort weggeworfen — Python meldet dabei keinen Fehler, was diesen Bug so tückisch macht. Erst `print(wort.replace(...))` zeigt das Ergebnis, ohne `wort` zu ändern. Merkregel: *Ohne Zuweisung passiert bei Strings gar nichts.*",
+   "hints": [
+    "Klären Sie zuerst: Verändert `.upper()` den Originalstring oder liefert es einen neuen?",
+    "Welche Variable wird in der Funktion neu zugewiesen — die globale oder eine lokale?",
+    "Eine Zeile, die nur aus `wort.replace(...)` besteht, speichert das Ergebnis nirgends."
+   ],
+   "pitfalls": [
+    "Annehmen, `text = text.upper()` in der Funktion ändere auch `wort`.",
+    "Die wirkungslose Zeile `wort.replace(...)` für eine Änderung an `wort` halten.",
+    "Denken, es gäbe eine Fehlermeldung, weil der Rückgabewert nicht verwendet wird."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 5,
+     "label": "Zeichenketten ersetzen (.replace)"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse Geltungsbereiche und Mutability"
+    }
+   ],
+   "tags": [
+    "immutable",
+    "upper",
+    "replace",
+    "scope",
+    "funktion"
+   ]
+  },
+  {
+   "id": "py-strings-025",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Welche Aussagen über Strings sind richtig?",
+   "prompt": "Kreuzen Sie **alle** zutreffenden Aussagen an. Gehen Sie dabei von `s = \"Goofspiel\"` aus.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`len(s)` liefert 9.",
+     "correct": true,
+     "why": "`Goofspiel` besteht aus 9 Zeichen — `len` zählt alle Zeichen, hier ohne Leerzeichen."
+    },
+    {
+     "id": "b",
+     "text": "`s.find(\"x\")` liefert `-1`, weil `x` nicht vorkommt.",
+     "correct": true,
+     "why": "`find` wirft bei erfolgloser Suche keinen Fehler, sondern gibt den Sonderwert -1 zurück."
+    },
+    {
+     "id": "c",
+     "text": "`s.upper()` verändert `s` dauerhaft in `\"GOOFSPIEL\"`.",
+     "correct": false,
+     "why": "Strings sind immutable: `.upper()` gibt einen neuen String zurück, `s` bleibt unverändert. Nur `s = s.upper()` würde `s` neu binden."
+    },
+    {
+     "id": "d",
+     "text": "`s[0] = \"g\"` ist erlaubt, weil Index 0 existiert.",
+     "correct": false,
+     "why": "Der Index existiert zwar, aber die Zuweisung schlägt fehl: TypeError: 'str' object does not support item assignment."
+    },
+    {
+     "id": "e",
+     "text": "`s.split(\"o\")` liefert eine Liste mit 3 Elementen.",
+     "correct": true,
+     "why": "`Goofspiel` enthält zwei `o`, und zwei Trennzeichen ergeben immer drei Teile: `['G', '', 'fspiel']`."
+    },
+    {
+     "id": "f",
+     "text": "`s * 2` ergibt `\"GoofspielGoofspiel\"`.",
+     "correct": true,
+     "why": "Der Operator `*` wiederholt einen String; das Ergebnis ist ein neuer String der doppelten Länge."
+    },
+    {
+     "id": "g",
+     "text": "`\"Goofspiel\" == \"goofspiel\"` ergibt `True`, weil es dasselbe Wort ist.",
+     "correct": false,
+     "why": "`==` vergleicht Strings streng zeichenweise und unterscheidet Groß- und Kleinschreibung — das Ergebnis ist False."
+    }
+   ],
+   "solution": "Richtig sind a, b, e und f. Falsch sind c (Strings sind immutable), d (item assignment nicht möglich) und g (`==` unterscheidet Groß-/Kleinschreibung).",
+   "explanation": "Die Aufgabe prüft die 'Klausurrelevante Dinge/Befehle'-Liste im Schnelldurchlauf. Drei Fallen wiederholen sich in fast jeder Klausur: (1) **Immutabilität** — String-Methoden geben immer ein neues Objekt zurück, sie verändern nie das Original (c, d); (2) der **Sonderwert -1** von `find`, der eben keine Fehlermeldung ist (b); (3) die **strenge Groß-/Kleinschreibung** bei `==` (g). Dazu kommt die Regel für `split`: n Trennzeichen ergeben n+1 Teile, und leere Teilstücke zählen mit — bei `Goofspiel` entsteht deshalb zwischen den beiden `o` ein leerer String (e). Merkregel: *Strings sind Nur-Lese-Objekte, jede Änderung ist in Wahrheit ein neuer String.*",
+   "hints": [
+    "Prüfen Sie bei jeder Aussage, ob eine Methode das Original verändert oder etwas Neues zurückgibt.",
+    "Zählen Sie für `split` die Trennzeichen und denken Sie an leere Teilstücke.",
+    "Bei `find` unterscheidet man 'nicht gefunden' und 'Fehler' — welches von beidem tritt ein?"
+   ],
+   "pitfalls": [
+    "Bei `split(\"o\")` das leere Element zwischen den beiden `o` vergessen und 2 Teile angeben.",
+    "`s.upper()` für eine Mutation halten.",
+    "`==` bei Strings mit einem 'sinngemäßen' Vergleich verwechseln."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 13,
+     "label": "Klausurrelevante Dinge/Befehle"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 5,
+     "label": "Zeichen zählen / Substrings finden"
+    }
+   ],
+   "tags": [
+    "ueberblick",
+    "immutable",
+    "find",
+    "split",
+    "vergleich"
+   ]
+  },
+  {
+   "id": "py-strings-026",
+   "lang": "python",
+   "topicId": "py-strings",
+   "type": "code",
+   "difficulty": 5,
+   "points": 7,
+   "examStyle": true,
+   "title": "Goofspiel-Protokoll auswerten",
+   "prompt": "Nach einer Partie Goofspiel liegt das Rundenprotokoll als **ein einziger String** vor. Die Runden sind durch Kommas getrennt, und jede Runde hat die Form `Spieler:Punkte`, wobei der Spieler entweder `S1` oder `S2` ist.\n\nBeispiel: `\"S1:12,S2:9,S1:4\"` bedeutet: Spieler 1 hat 12 und 4 Punkte gewonnen, Spieler 2 hat 9 Punkte gewonnen.\n\nSchreiben Sie eine Funktion `spielstand(protokoll)`, die die Punkte je Spieler aufsummiert und den Endstand als String zurückgibt:\n\n```\nSpieler 1: 16 Punkte, Spieler 2: 9 Punkte\n```\n\nSie dürfen eine Schleife verwenden. Das Protokoll enthält immer mindestens eine Runde. Die Ausgabe muss mit `.format()` erzeugt werden.",
+   "starterCode": "def spielstand(protokoll):\n    punkte_spieler1 = 0\n    punkte_spieler2 = 0\n    # Ihr Code hier\n    return \"\"\n",
+   "constraints": [
+    ".format() verwenden",
+    "kein eval"
+   ],
+   "forbidden": [
+    "eval"
+   ],
+   "required": [
+    ".split(",
+    ".format("
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "spielstand('S1:12,S2:9,S1:4')",
+     "expected": "'Spieler 1: 16 Punkte, Spieler 2: 9 Punkte'"
+    },
+    {
+     "name": "nur eine Runde für Spieler 2",
+     "call": "spielstand('S2:3')",
+     "expected": "'Spieler 1: 0 Punkte, Spieler 2: 3 Punkte'"
+    },
+    {
+     "name": "Unentschieden",
+     "call": "spielstand('S1:5,S2:5')",
+     "expected": "'Spieler 1: 5 Punkte, Spieler 2: 5 Punkte'"
+    },
+    {
+     "name": "viele Runden",
+     "call": "spielstand('S1:1,S1:2,S1:3,S2:10,S2:0')",
+     "expected": "'Spieler 1: 6 Punkte, Spieler 2: 10 Punkte'"
+    },
+    {
+     "name": "zweistellige Preiskarten",
+     "call": "spielstand('S2:13,S1:11,S2:12')",
+     "expected": "'Spieler 1: 11 Punkte, Spieler 2: 25 Punkte'"
+    }
+   ],
+   "solution": "def spielstand(protokoll):\n    punkte_spieler1 = 0\n    punkte_spieler2 = 0\n    for eintrag in protokoll.split(\",\"):\n        teile = eintrag.split(\":\")\n        if teile[0] == \"S1\":\n            punkte_spieler1 = punkte_spieler1 + int(teile[1])\n        else:\n            punkte_spieler2 = punkte_spieler2 + int(teile[1])\n    return \"Spieler 1: {} Punkte, Spieler 2: {} Punkte\".format(punkte_spieler1, punkte_spieler2)\n",
+   "explanation": "Dies ist eine typische Transferaufgabe: Der ganze String-Werkzeugkasten wird auf das Goofspiel angewendet. Entscheidend ist die **zweistufige Zerlegung** — erst am äußeren Trennzeichen (`,`) in Runden, dann jede Runde am inneren Trennzeichen (`:`) in Spielerkürzel und Punktzahl. Nach dem zweiten `split` sind beide Teile noch Strings: Das Kürzel wird mit `==` verglichen (streng, `\"S1\"` ist nicht `\"s1\"`), die Punktzahl muss mit `int()` umgewandelt werden, sonst würde `+` die Ziffern aneinanderhängen statt zu addieren. Am Ende geht es mit `.format()` zurück in einen String, wobei die Zahlen automatisch umgewandelt werden. Ein häufiger Fehler ist, `split(\",\")` und `split(\":\")` in einem Schritt erledigen zu wollen — man braucht beide, in dieser Reihenfolge. Merkregel: *Von außen nach innen zerlegen, in der Mitte rechnen, am Ende formatieren.*",
+   "hints": [
+    "Zerlegen Sie zuerst nur am Komma und schauen Sie sich an, was Sie erhalten.",
+    "Jeder einzelne Eintrag muss danach noch einmal zerlegt werden — an welchem Zeichen?",
+    "Der Punkteteil ist ein String; womit machen Sie daraus eine Zahl, die addiert werden kann?",
+    "Die Rückgabe hat zwei Platzhalter: die Gesamtpunkte von Spieler 1 und von Spieler 2."
+   ],
+   "pitfalls": [
+    "Die Punkte als Strings addieren (`'12' + '4'` ergibt `'124'`) statt vorher `int()` anzuwenden.",
+    "Nur einmal splitten und dann mit Slicing raten, wo die Zahl anfängt — bei zweistelligen Punkten geht das schief.",
+    "Das Ergebnis mit `+` zusammenkleben und dabei `str()` um die Zahlen vergessen."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 4,
+     "label": "Aufteilen nach Trennzeichen (.split)"
+    },
+    {
+     "file": "goofspiel26.py",
+     "page": 1,
+     "label": "punkte_spieler1 / punkte_spieler2, Runden auswerten"
+    },
+    {
+     "file": "Beispielaufgaben_VL0_undVL1.pdf",
+     "page": 6,
+     "label": "7. Aufgabenstellung: split(\":\") in Name und Preis"
+    }
+   ],
+   "tags": [
+    "split",
+    "int",
+    "format",
+    "vergleich",
+    "transfer",
+    "goofspiel"
+   ]
+  }
+ ]
+}

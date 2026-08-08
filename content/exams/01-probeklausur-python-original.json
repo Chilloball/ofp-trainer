@@ -1,0 +1,562 @@
+{
+  "id": "probeklausur-python-original",
+  "lang": "python",
+  "title": "Probeklausur Python & Funktionale Programmierung",
+  "subtitle": "Originalklausur des Lehrstuhls — 49 Punkte + 4 Bonuspunkte",
+  "minutes": 60,
+  "totalPoints": 49,
+  "bonusPoints": 4,
+  "origin": "original",
+  "note": "Hinweise aus der Originalklausur: Schreiben Sie Python-Code leserlich und mit korrekter Einrückung. Sofern nicht anders angegeben, dürfen Sie annehmen, dass `from functools import reduce` bereits ausgeführt wurde. Kleinere Syntaxfehler führen nicht automatisch zu Punktabzug, falsche Logik schon.",
+  "tasks": [
+    {
+      "id": "t1",
+      "label": "Aufgabe 1",
+      "title": "Kurzfragen",
+      "points": 8,
+      "instructions": "Vier Kurzfragen zu je 2 Punkten. Antworte knapp, aber vollständig — der Prof erwartet die Fachbegriffe.",
+      "inline": [
+        {
+          "id": "pk-py-1a",
+          "lang": "python",
+          "topicId": "py-funcprog",
+          "type": "short-answer",
+          "difficulty": 2,
+          "points": 2,
+          "examStyle": true,
+          "title": "Bedingungen einer pure function",
+          "prompt": "Nennen Sie die **zwei Bedingungen**, die eine Funktion erfüllen muss, um eine *pure function* zu sein. (2 P)",
+          "solution": "**1.** Die Funktion hängt **nur von ihren Eingabeargumenten** ab — sie greift weder auf globale Variablen noch auf andere externe Daten oder Zustände (states) zu.\n\n**2.** Die Funktion hat **keine Nebeneffekte** — ihr einziger Effekt ist die Rückgabe von Werten.\n\n*Bewertung: je 1 Punkt. Der Zusatz „referentially transparent\" für Bedingung 1 ist korrekt, aber nicht nötig.*",
+          "explanation": "Diese beiden Bedingungen stehen wörtlich so auf der Folie zur funktionalen Programmierung (VL 3, S. 10) und tauchen im Skript mehrfach auf. Typische Nebeneffekte, die eine Funktion unrein machen: ein `print`, das Ändern einer globalen Variablen, das Mutieren eines übergebenen mutable Arguments, `input()`, Datei- oder Datenbankzugriff und unkontrollierter Zufall. Merkhilfe: eine pure function verhält sich wie eine mathematische Funktion — gleiche Eingabe, immer gleiche Ausgabe, und die Welt bleibt unverändert.",
+          "hints": ["Denk an die Folie „Funktionale Programmierung\" — dort stehen genau zwei nummerierte Punkte."],
+          "pitfalls": [
+            "„Sie gibt immer denselben Wert zurück\" ist eine Folge, nicht die Bedingung — der Prof will die Abhängigkeit von den Eingabeargumenten hören.",
+            "Nur eine der beiden Bedingungen zu nennen kostet die Hälfte der Punkte."
+          ],
+          "sources": [{ "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf", "page": 10 }],
+          "tags": ["pure", "definition"]
+        },
+        {
+          "id": "pk-py-1b",
+          "lang": "python",
+          "topicId": "py-scope-mutability",
+          "type": "short-answer",
+          "difficulty": 2,
+          "points": 2,
+          "examStyle": true,
+          "title": "mutable oder immutable?",
+          "prompt": "Ordnen Sie die folgenden Python-Typen in **mutable** (veränderbar) und **immutable** (unveränderbar) ein:\n\n`int`, `list`, `tuple`, `dict`, `string`, `set`, `float`, `bool` (2 P)",
+          "solution": "**mutable:** `list`, `dict`, `set`\n\n**immutable:** `int`, `tuple`, `string`, `float`, `bool`\n\n*(Zur Vollständigkeit: auch selbstgeschriebene Klassen sind mutable, `complex` und `frozenset` sind immutable.)*",
+          "explanation": "Die Einteilung steht auf der Folie zu mutable/immutable Variablen. Merkregel: **Sammlungen mit eckigen oder geschweiften Klammern, deren Inhalt man einzeln austauschen kann** (`list`, `dict`, `set`), sind mutable. Alles, was einen einzelnen Wert darstellt, sowie das Tupel sind immutable. Praktische Konsequenz: `random.shuffle(x)` funktioniert nur für mutable Sequenzen, `t[0] = 5` scheitert bei Tupeln und Strings.",
+          "hints": ["Genau drei der acht Typen sind mutable."],
+          "pitfalls": [
+            "`tuple` wird oft fälschlich als mutable eingeordnet, weil `t1 + t2` funktioniert — dabei entsteht aber ein neues Tupel.",
+            "`bool` ist ein Spezialfall von `int` und damit ebenfalls immutable."
+          ],
+          "sources": [{ "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf", "page": 4 }],
+          "tags": ["mutable", "immutable"]
+        },
+        {
+          "id": "pk-py-1c",
+          "lang": "python",
+          "topicId": "py-recursion",
+          "type": "short-answer",
+          "difficulty": 2,
+          "points": 2,
+          "examStyle": true,
+          "title": "Rekursion: Voraussetzung und interne Struktur",
+          "prompt": "Worauf muss bei jeder rekursiven Funktion **zwingend** geachtet werden, und was passiert **intern** bei rekursiven Aufrufen (Stichwort: welche Struktur entsteht)? (2 P)",
+          "solution": "**1.** Es muss eine geeignete **Abbruchbedingung** (Basisfall) geben, die ohne weiteren rekursiven Aufruf auskommt — sonst terminiert die Rekursion nicht.\n\n**2.** Intern bildet sich ein **Stack (Stapel) von Funktionsaufrufen**, der erst abgearbeitet wird, wenn der Basisfall erreicht ist.",
+          "explanation": "Beides steht auf den Rekursionsfolien: die Abbruchbedingung am Beispiel „Baum fällen\" und der Aufrufstapel auf der Folie „Was geschieht hier?\". Der Stack erklärt auch den Nachteil der Rekursion: jeder offene Aufruf belegt Speicher, deshalb ist Rekursion oft speicherhungriger als eine Schleife und Python bricht bei etwa 1000 Ebenen mit einem `RecursionError` ab.",
+          "hints": ["Ein Stichwort betrifft das Terminieren, das andere den Speicher."],
+          "pitfalls": ["„Sie ruft sich selbst auf\" beantwortet die Frage nicht — das ist die Definition, nicht die Voraussetzung."],
+          "sources": [
+            { "file": "4_func_programming_and_recursion_26.pdf", "page": 6 },
+            { "file": "4_func_programming_and_recursion_26.pdf", "page": 7 }
+          ],
+          "tags": ["rekursion", "stack"]
+        },
+        {
+          "id": "pk-py-1d",
+          "lang": "python",
+          "topicId": "py-mfr",
+          "type": "short-answer",
+          "difficulty": 2,
+          "points": 2,
+          "examStyle": true,
+          "title": "Was gibt map zurück?",
+          "prompt": "Was gibt `map(f, liste)` zurück — eine Liste oder etwas anderes? (2 P)",
+          "solution": "**Keine Liste.** `map` gibt ein **map-Objekt** zurück, also einen **Iterator**. Über ihn kann man iterieren (`for x in ...`) oder `__next__()` aufrufen; er hat einen internen Zählerstand und lässt sich nur **einmal** durchlaufen.\n\nUm eine Liste zu erhalten, muss man ihn explizit umwandeln: `list(map(f, liste))`.",
+          "explanation": "Das ist eine der beliebtesten Fallen des Kurses. `print(map(lambda x: x*2, [1,2,3]))` gibt `<map object at 0x...>` aus, nicht `[2,4,6]`. Dasselbe gilt für `filter`. `reduce` dagegen liefert direkt einen Wert, weil es das Iterable auf ein einziges Element faltet. Praktische Folge: nach einem `list(m)` ist der Iterator `m` leer — ein zweites `list(m)` ergibt `[]`.",
+          "hints": ["Was passiert, wenn du `print(map(...))` schreibst?"],
+          "pitfalls": ["Ein zweites Mal über denselben map-Iterator zu laufen liefert nichts mehr."],
+          "sources": [{ "file": "5_map_filter_reduce_wrapup_26.pdf", "page": 6 }],
+          "tags": ["map", "iterator"]
+        }
+      ]
+    },
+    {
+      "id": "t2",
+      "label": "Aufgabe 2",
+      "title": "Code-Analyse — Geltungsbereiche und Mutability",
+      "points": 10,
+      "instructions": "Geben Sie für jedes Programm an, was auf der Kommandozeile ausgegeben wird oder ob ein Fehler auftritt. **Begründen Sie Ihre Antwort jeweils in einem Satz.** (je 2 P)\n\nSchreibe in das Antwortfeld zuerst die Ausgabe (bzw. den Fehlertyp) und danach deine Begründung.",
+      "inline": [
+        {
+          "id": "pk-py-2a",
+          "lang": "python",
+          "topicId": "py-scope-mutability",
+          "type": "predict-output",
+          "difficulty": 3,
+          "points": 2,
+          "examStyle": true,
+          "title": "a) Mutation einer globalen Liste",
+          "prompt": "Was wird ausgegeben?",
+          "code": "liste = [1, 2, 3]\ndef f():\n    liste[0] = liste[0] + 10\nf()\nprint(liste)",
+          "expectedOutput": "[11, 2, 3]",
+          "solution": "`[11, 2, 3]`\n\n**Begründung:** `liste` ist eine globale **mutable** Variable. Innerhalb von `f` wird sie nicht neu zugewiesen, sondern nur ein Element **in place** verändert — das wirkt sich auf das globale Objekt aus.",
+          "explanation": "Entscheidend ist der Unterschied zwischen **Zuweisung** und **Mutation**. `liste[0] = ...` ist keine Zuweisung an den Namen `liste`, sondern ein Methodenaufruf auf dem Objekt (intern `liste.__setitem__(0, ...)`). Der Name `liste` wird also nur gelesen — Python findet ihn im globalen Namensraum. Wäre stattdessen `liste = [99]` geschrieben worden, entstünde eine neue lokale Variable und die globale bliebe `[1, 2, 3]`.",
+          "hints": [
+            "Wird der Name `liste` in der Funktion zugewiesen oder nur benutzt?",
+            "Listen sind mutable — was heißt das für `liste[0] = ...`?"
+          ],
+          "pitfalls": ["Viele erwarten hier einen Fehler, weil `global` fehlt — das braucht es aber nur beim Zuweisen."],
+          "sources": [{ "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf", "page": 8 }],
+          "tags": ["scope", "mutation"]
+        },
+        {
+          "id": "pk-py-2b",
+          "lang": "python",
+          "topicId": "py-scope-mutability",
+          "type": "predict-output",
+          "difficulty": 3,
+          "points": 2,
+          "examStyle": true,
+          "title": "b) Lokale Neuzuweisung",
+          "prompt": "Was wird ausgegeben?",
+          "code": "a = [1]\ndef g():\n    a = [5]\n    a.append(7)\ng()\nprint(a)",
+          "expectedOutput": "[1]",
+          "solution": "`[1]`\n\n**Begründung:** Durch die Zuweisung `a = [5]` entsteht innerhalb von `g` eine **neue lokale** Variable `a`; alle weiteren Operationen (auch `append`) betreffen nur diese lokale Liste, die globale bleibt unverändert.",
+          "explanation": "Sobald ein Name irgendwo im Funktionsrumpf **zugewiesen** wird, behandelt Python ihn im ganzen Rumpf als lokal. `a.append(7)` mutiert also die lokale Liste `[5]` zu `[5, 7]` — und die verschwindet beim Verlassen der Funktion. Das ist der direkte Gegensatz zu Teilaufgabe a): dort gab es keine Zuweisung, hier gibt es eine.",
+          "hints": ["Vergleiche genau mit Teilaufgabe a) — was ist der eine entscheidende Unterschied?"],
+          "pitfalls": ["`append` sieht nach Mutation der globalen Liste aus — sie wirkt aber auf die lokale."],
+          "sources": [{ "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf", "page": 8 }],
+          "tags": ["scope", "shadowing"]
+        },
+        {
+          "id": "pk-py-2c",
+          "lang": "python",
+          "topicId": "py-scope-mutability",
+          "type": "predict-output",
+          "difficulty": 2,
+          "points": 2,
+          "examStyle": true,
+          "title": "c) global",
+          "prompt": "Was wird ausgegeben?",
+          "code": "x = 3\ndef h():\n    global x\n    x = x * 2\nh()\nprint(x)",
+          "expectedOutput": "6",
+          "solution": "`6`\n\n**Begründung:** Das Schlüsselwort `global` erweitert den Geltungsbereich: `x` bezeichnet innerhalb von `h` die globale Variable, die Zuweisung wirkt daher nach außen.",
+          "explanation": "`global x` sagt dem Interpreter: „Behandle `x` in dieser Funktion nicht als lokal, sondern als die globale Variable.\" Damit ist auch das Lesen von `x` auf der rechten Seite eindeutig (3), und das Ergebnis 6 landet in der globalen Variablen. Ohne `global` würde genau diese Zeile den `UnboundLocalError` aus Teilaufgabe d) auslösen.",
+          "hints": ["Was genau bewirkt `global`?"],
+          "pitfalls": ["`global` gehört an den Anfang der Funktion, vor die erste Verwendung."],
+          "sources": [{ "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf", "page": 9 }],
+          "tags": ["global"]
+        },
+        {
+          "id": "pk-py-2d",
+          "lang": "python",
+          "topicId": "py-scope-mutability",
+          "type": "predict-output",
+          "difficulty": 4,
+          "points": 2,
+          "examStyle": true,
+          "title": "d) UnboundLocalError",
+          "prompt": "Was wird ausgegeben — oder tritt ein Fehler auf?",
+          "code": "n = 1\ndef k():\n    n = n + 1\n    return n\nprint(k())",
+          "expectedOutput": "UnboundLocalError",
+          "solution": "**Fehler:** `UnboundLocalError: cannot access local variable 'n' where it is not associated with a value`\n\n**Begründung:** Durch die Zuweisung `n = ...` gilt `n` im ganzen Funktionsrumpf als **lokal**; auf der rechten Seite wird die noch nicht initialisierte lokale Variable gelesen.",
+          "explanation": "Python entscheidet beim Kompilieren der Funktion, welche Namen lokal sind — allein anhand der Frage, ob sie im Rumpf zugewiesen werden. Da `n = n + 1` eine Zuweisung ist, ist `n` lokal. Beim Ausführen wird zuerst die rechte Seite ausgewertet, dort ist die lokale `n` aber noch leer → Fehler. Zwei mögliche Reparaturen: `global n` ergänzen (dann Ausgabe 2 und `n` wird global geändert) oder `n` als Parameter übergeben — Letzteres ist die funktionale Lösung.",
+          "hints": [
+            "Ist `n` in `k` lokal oder global? Woran entscheidet Python das?",
+            "Was steht auf der rechten Seite von `n = n + 1` — und existiert das zu diesem Zeitpunkt schon?"
+          ],
+          "pitfalls": [
+            "Häufige Falschantwort: „2\" — das gilt nur, wenn `global n` dabeisteht.",
+            "Der Fehler heißt `UnboundLocalError`, nicht `NameError` (auch wenn er davon erbt)."
+          ],
+          "sources": [{ "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf", "page": 9 }],
+          "tags": ["scope", "error"]
+        },
+        {
+          "id": "pk-py-2e",
+          "lang": "python",
+          "topicId": "py-scope-mutability",
+          "type": "predict-output",
+          "difficulty": 3,
+          "points": 2,
+          "examStyle": true,
+          "title": "e) Tupel sind immutable",
+          "prompt": "Was wird ausgegeben?",
+          "code": "t = (1, 2)\ndef m(t):\n    t = t + (3,)\n    return t\ns = m(t)\nprint(t, s)",
+          "expectedOutput": "(1, 2) (1, 2, 3)",
+          "solution": "`(1, 2) (1, 2, 3)`\n\n**Begründung:** Tupel sind **immutable**; `t + (3,)` erzeugt ein **neues** Tupel, das nur an die lokale Variable gebunden und zurückgegeben wird. Das äußere `t` bleibt unverändert.",
+          "explanation": "Zwei Dinge greifen ineinander: Erstens ist der Parameter `t` eine eigene lokale Variable, zweitens kann ein Tupel gar nicht verändert werden. Selbst wenn `t` mutable wäre, würde `t = ...` nur die lokale Bindung ändern. Beachte die Schreibweise `(3,)` — ohne das Komma wäre `(3)` einfach die Zahl 3 und `t + 3` würde einen `TypeError` werfen.",
+          "hints": ["Was macht `+` bei Tupeln — ändern oder neu erzeugen?"],
+          "pitfalls": ["`(3)` ist kein Tupel, sondern die Zahl 3 in Klammern — für ein Ein-Element-Tupel braucht es `(3,)`."],
+          "sources": [{ "file": "4_func_programming_and_recursion_26.pdf", "page": 11 }],
+          "tags": ["tuple", "immutable"]
+        }
+      ]
+    },
+    {
+      "id": "t3",
+      "label": "Aufgabe 3",
+      "title": "Programmieren mit map, filter und reduce",
+      "points": 11,
+      "instructions": "Verwenden Sie in dieser Aufgabe **keine `for`- oder `while`-Schleifen**. Nutzen Sie `lambda`-Ausdrücke. `from functools import reduce` gilt als bereits ausgeführt.",
+      "inline": [
+        {
+          "id": "pk-py-3a",
+          "lang": "python",
+          "topicId": "py-mfr",
+          "type": "code",
+          "difficulty": 2,
+          "points": 2,
+          "examStyle": true,
+          "title": "a) Dritte Potenzen mit map",
+          "prompt": "Gegeben ist `zahlen = [1, 2, 3, 4, 5]`. Erzeugen Sie mit `map` **in einer Zeile** die Liste der dritten Potenzen `[1, 8, 27, 64, 125]`.\n\nSchreibe eine Funktion `potenzen(zahlen)`, die diese Liste zurückgibt.",
+          "starterCode": "from functools import reduce\n\ndef potenzen(zahlen):\n    return ",
+          "constraints": ["keine for-/while-Schleife", "map verwenden"],
+          "forbidden": ["for ", "while "],
+          "required": ["map("],
+          "tests": [
+            { "name": "Beispiel aus der Aufgabe", "call": "potenzen([1, 2, 3, 4, 5])", "expected": "[1, 8, 27, 64, 125]" },
+            { "name": "leere Liste", "call": "potenzen([])", "expected": "[]" },
+            { "name": "negative Zahl", "call": "potenzen([-2, 0, 3])", "expected": "[-8, 0, 27]" }
+          ],
+          "solution": "from functools import reduce\n\ndef potenzen(zahlen):\n    return list(map(lambda x: x**3, zahlen))",
+          "explanation": "`map` wendet die Funktion auf jedes Element an und liefert einen **Iterator** — deshalb ist `list(...)` nötig, wenn eine Liste verlangt ist. In der Klausur reicht der Ausdruck `list(map(lambda x: x**3, zahlen))`; wer das `list` vergisst, verliert typischerweise einen Punkt, weil die Aufgabe ausdrücklich „die Liste\" verlangt. `x**3` ist die Potenz — `x*x*x` wäre ebenfalls richtig.",
+          "hints": [
+            "`map(funktion, iterable)` — welche Funktion bildet x auf x hoch 3 ab?",
+            "Denk daran: `map` gibt keinen Listen-, sondern einen Iterator zurück."
+          ],
+          "pitfalls": ["`list(...)` vergessen.", "`x^3` ist in Python XOR, nicht Potenz — richtig ist `x**3`."],
+          "sources": [{ "file": "Probeklausur_Python_ausfuellbar.pdf", "page": 3 }],
+          "tags": ["map", "lambda"]
+        },
+        {
+          "id": "pk-py-3b",
+          "lang": "python",
+          "topicId": "py-mfr",
+          "type": "code",
+          "difficulty": 3,
+          "points": 3,
+          "examStyle": true,
+          "title": "b) Vektoraddition mit map",
+          "prompt": "Schreiben Sie eine Funktion `vektoraddition(v, w)`, die mit `map` zwei gleichlange Listen **elementweise** addiert und das Ergebnis als Liste zurückgibt.\n\nBeispiel: `vektoraddition([1,2],[10,20])` → `[11, 22]`",
+          "starterCode": "def vektoraddition(v, w):\n    return ",
+          "constraints": ["keine for-/while-Schleife", "map verwenden"],
+          "forbidden": ["for ", "while ", "zip("],
+          "required": ["map("],
+          "tests": [
+            { "name": "Beispiel aus der Aufgabe", "call": "vektoraddition([1,2],[10,20])", "expected": "[11, 22]" },
+            { "name": "längere Vektoren", "call": "vektoraddition([1,2,3,4],[4,3,2,1])", "expected": "[5, 5, 5, 5]" },
+            { "name": "leere Vektoren", "call": "vektoraddition([],[])", "expected": "[]" },
+            { "name": "negative Werte", "call": "vektoraddition([-1,5],[1,-5])", "expected": "[0, 0]" }
+          ],
+          "solution": "def vektoraddition(v, w):\n    return list(map(lambda a, b: a + b, v, w))",
+          "explanation": "`map` kann **mehrere Iterables** entgegennehmen, wenn die Funktion entsprechend viele Argumente hat: `map(f, l1, l2)` bildet `[f(l1[0], l2[0]), f(l1[1], l2[1]), ...]`. Genau dieses Beispiel steht auf der Folie zu `map` (VL 5, S. 6). Alternativ wäre `list(map(lambda p: p[0]+p[1], zip(v, w)))` möglich, aber der Prof zielt hier klar auf die Mehrfach-Iterable-Form. Kürzeste Variante: `list(map(int.__add__, v, w))` — funktioniert nur für ints und ist kein guter Stil.",
+          "hints": [
+            "`map` kann mehr als ein Iterable bekommen.",
+            "Wie viele Argumente muss das `lambda` dann haben?"
+          ],
+          "pitfalls": ["Der Versuch, zwei getrennte `map`-Aufrufe zu addieren, funktioniert nicht."],
+          "sources": [{ "file": "5_map_filter_reduce_wrapup_26.pdf", "page": 6 }],
+          "tags": ["map", "mehrere-iterables"]
+        },
+        {
+          "id": "pk-py-3c",
+          "lang": "python",
+          "topicId": "py-mfr",
+          "type": "code",
+          "difficulty": 2,
+          "points": 3,
+          "examStyle": true,
+          "title": "c) Lange Wörter mit filter",
+          "prompt": "Gegeben ist eine Liste von Wörtern `woerter`. Erzeugen Sie mit `filter` die Liste aller Wörter mit **mehr als vier** Buchstaben.\n\nSchreibe die Funktion `lange_woerter(woerter)`.",
+          "starterCode": "def lange_woerter(woerter):\n    return ",
+          "constraints": ["keine for-/while-Schleife", "filter verwenden"],
+          "forbidden": ["for ", "while "],
+          "required": ["filter("],
+          "tests": [
+            { "name": "Beispielsatz", "call": "lange_woerter(['hallo', 'hi', 'naaa', 'servus', 'huhu'])", "expected": "['hallo', 'servus']" },
+            { "name": "genau vier Buchstaben zählt nicht", "call": "lange_woerter(['abcd', 'abcde'])", "expected": "['abcde']" },
+            { "name": "leere Liste", "call": "lange_woerter([])", "expected": "[]" }
+          ],
+          "solution": "def lange_woerter(woerter):\n    return list(filter(lambda w: len(w) > 4, woerter))",
+          "explanation": "`filter(pred, iterable)` behält genau die Elemente, für die das Prädikat zu `True` auswertet, und liefert wieder einen **Iterator**. „Mehr als vier\" heißt strikt `> 4`, nicht `>= 4` — solche Details kosten in der Klausur Punkte. Dieses Beispiel („Finde alle Worte mit mehr als vier Buchstaben\") steht wörtlich auf der filter-Folie.",
+          "hints": ["Welche Bedingung liefert für ein Wort `True`?"],
+          "pitfalls": ["`>= 4` statt `> 4`.", "`list(...)` vergessen."],
+          "sources": [{ "file": "5_map_filter_reduce_wrapup_26.pdf", "page": 8 }],
+          "tags": ["filter", "lambda"]
+        },
+        {
+          "id": "pk-py-3d",
+          "lang": "python",
+          "topicId": "py-mfr",
+          "type": "code",
+          "difficulty": 3,
+          "points": 3,
+          "examStyle": true,
+          "title": "d) Durchschnitt mit reduce",
+          "prompt": "Berechnen Sie mit `reduce` den **Durchschnitt** einer nichtleeren Zahlenliste `zahlen`.\n\nSchreibe die Funktion `durchschnitt(zahlen)`.",
+          "starterCode": "from functools import reduce\n\ndef durchschnitt(zahlen):\n    return ",
+          "constraints": ["keine for-/while-Schleife", "reduce verwenden", "sum() ist nicht erlaubt"],
+          "forbidden": ["for ", "while ", "sum("],
+          "required": ["reduce("],
+          "tests": [
+            { "name": "einfacher Fall", "call": "durchschnitt([1, 2, 3, 4])", "expected": "2.5" },
+            { "name": "ein Element", "call": "durchschnitt([7])", "expected": "7.0" },
+            { "name": "negative Zahlen", "call": "durchschnitt([-3, 3])", "expected": "0.0" }
+          ],
+          "solution": "from functools import reduce\n\ndef durchschnitt(zahlen):\n    return reduce(lambda a, b: a + b, zahlen) / len(zahlen)",
+          "explanation": "`reduce(f, [x1,...,xn])` faltet von links: `f(...f(f(x1,x2),x3)...,xn)`. Mit `lambda a,b: a+b` ergibt das die Summe; geteilt durch `len(zahlen)` erhält man den Durchschnitt. Genau dieses Beispiel („Durchschnitt von Zahlen bilden\") nennt die reduce-Folie. Achtung auf den Rückgabetyp: `/` liefert in Python immer einen `float`, deshalb ist `durchschnitt([7])` gleich `7.0` und nicht `7`.\n\nEine elegante, aber schwerere Variante ohne `len` arbeitet mit Paaren: `reduce(lambda a,b: (a[0]+b, a[1]+1), zahlen, (0,0))` und teilt anschließend.",
+          "hints": [
+            "Erst summieren, dann teilen.",
+            "Welche zweistellige Funktion braucht `reduce`, um zu summieren?"
+          ],
+          "pitfalls": [
+            "`reduce(lambda a,b: (a+b)/2, zahlen)` ist falsch — das gewichtet die späteren Zahlen stärker.",
+            "`len` innerhalb des `lambda` verwenden zu wollen führt in die Irre."
+          ],
+          "sources": [{ "file": "5_map_filter_reduce_wrapup_26.pdf", "page": 7 }],
+          "tags": ["reduce"]
+        }
+      ]
+    },
+    {
+      "id": "t4",
+      "label": "Aufgabe 4",
+      "title": "Programmieren mit Rekursion",
+      "points": 12,
+      "instructions": "Verwenden Sie in dieser Aufgabe **keine Schleifen**, sondern ausschließlich **Rekursion**.",
+      "inline": [
+        {
+          "id": "pk-py-4a",
+          "lang": "python",
+          "topicId": "py-recursion",
+          "type": "code",
+          "difficulty": 3,
+          "points": 4,
+          "examStyle": true,
+          "title": "a) String rekursiv umkehren",
+          "prompt": "Schreiben Sie eine rekursive Funktion `umkehren(text)`, die eine Zeichenkette rückwärts zurückgibt.\n\nBeispiel: `umkehren(\"hallo\")` → `\"ollah\"`",
+          "starterCode": "def umkehren(text):\n    ",
+          "constraints": ["keine Schleifen", "rekursiv"],
+          "forbidden": ["for ", "while ", "[::-1]", "reversed("],
+          "tests": [
+            { "name": "Beispiel aus der Aufgabe", "call": "umkehren('hallo')", "expected": "'ollah'" },
+            { "name": "leerer String", "call": "umkehren('')", "expected": "''" },
+            { "name": "ein Zeichen", "call": "umkehren('x')", "expected": "'x'" },
+            { "name": "Palindrom", "call": "umkehren('otto')", "expected": "'otto'" },
+            { "name": "mit Leerzeichen", "call": "umkehren('ab cd')", "expected": "'dc ba'" }
+          ],
+          "solution": "def umkehren(text):\n    if text == \"\":\n        return \"\"\n    return umkehren(text[1:]) + text[0]",
+          "explanation": "Das Standardmuster für Rekursion auf Sequenzen: **Basisfall** ist der leere String, im **Rekursionsschritt** wird das erste Zeichen abgetrennt, der Rest umgekehrt und das Zeichen **hinten** angehängt. Wichtig ist die Reihenfolge — `text[0] + umkehren(text[1:])` gäbe den String unverändert zurück.\n\nGleichwertig: `if len(text) <= 1: return text` als Basisfall, oder von hinten aufbauen mit `text[-1] + umkehren(text[:-1])`.",
+          "hints": [
+            "Was ist der einfachste Fall, bei dem du sofort eine Antwort weißt?",
+            "Zerlege den String in `text[0]` und `text[1:]`.",
+            "An welche Seite muss `text[0]`, damit es rückwärts wird?"
+          ],
+          "pitfalls": [
+            "Kein Basisfall → `RecursionError`.",
+            "`text[0] + umkehren(text[1:])` dreht nichts um."
+          ],
+          "sources": [{ "file": "Probeklausur_Python_ausfuellbar.pdf", "page": 4 }],
+          "tags": ["rekursion", "string"]
+        },
+        {
+          "id": "pk-py-4b",
+          "lang": "python",
+          "topicId": "py-recursion",
+          "type": "code",
+          "difficulty": 4,
+          "points": 5,
+          "examStyle": true,
+          "title": "b) Verschachtelte Summe",
+          "prompt": "Schreiben Sie eine rekursive Funktion `verschachtelte_summe(liste)`, die alle Zahlen in einer **beliebig tief verschachtelten** Liste aufsummiert.\n\nBeispiel: `verschachtelte_summe([1, 2, [3, 4], [5, [6]], 7])` → `28`\n\n*Hinweis: Mit `isinstance(x, list)` prüfen Sie, ob `x` eine Liste ist.*",
+          "starterCode": "def verschachtelte_summe(liste):\n    ",
+          "constraints": ["keine Schleifen", "rekursiv"],
+          "forbidden": ["for ", "while "],
+          "tests": [
+            { "name": "Beispiel aus der Aufgabe", "call": "verschachtelte_summe([1, 2, [3, 4], [5, [6]], 7])", "expected": "28" },
+            { "name": "leere Liste", "call": "verschachtelte_summe([])", "expected": "0" },
+            { "name": "flache Liste", "call": "verschachtelte_summe([1, 2, 3])", "expected": "6" },
+            { "name": "tief verschachtelt", "call": "verschachtelte_summe([[[[5]]]])", "expected": "5" },
+            { "name": "leere Teillisten", "call": "verschachtelte_summe([[], [1, []], 2])", "expected": "3" }
+          ],
+          "solution": "def verschachtelte_summe(liste):\n    if liste == []:\n        return 0\n    kopf = liste[0]\n    if isinstance(kopf, list):\n        return verschachtelte_summe(kopf) + verschachtelte_summe(liste[1:])\n    return kopf + verschachtelte_summe(liste[1:])",
+          "explanation": "Hier braucht es eine **doppelte Rekursion**: einmal über den Rest der Liste (`liste[1:]`) und einmal *in die Tiefe*, wenn das erste Element selbst eine Liste ist. Das ist das klassische Muster für Baumstrukturen.\n\nBasisfall ist die leere Liste mit Summe 0 — sie fängt sowohl das Ende der äußeren Liste als auch leere Teillisten ab. Die Fallunterscheidung mit `isinstance` steht im Aufgabenhinweis, also darf man sie ohne Erklärung verwenden.",
+          "hints": [
+            "Zerlege in `liste[0]` und `liste[1:]` wie beim String.",
+            "Was tust du, wenn `liste[0]` selbst eine Liste ist?",
+            "Du brauchst zwei rekursive Aufrufe im Listen-Fall."
+          ],
+          "pitfalls": [
+            "Nur über den Rest zu rekursieren, ohne in die Tiefe zu gehen — dann kommt ein `TypeError` beim Addieren einer Liste.",
+            "Basisfall `len(liste) == 0` vergessen."
+          ],
+          "sources": [{ "file": "Probeklausur_Python_ausfuellbar.pdf", "page": 4 }],
+          "tags": ["rekursion", "verschachtelt"]
+        },
+        {
+          "id": "pk-py-4c",
+          "lang": "python",
+          "topicId": "py-recursion",
+          "type": "code",
+          "difficulty": 4,
+          "points": 3,
+          "examStyle": true,
+          "title": "c) Rekursive Funktion höherer Ordnung",
+          "prompt": "Schreiben Sie eine rekursive Funktion höherer Ordnung `wiederhole(f, x, abbruch)`, die die Funktion `f` so lange wiederholt auf `x` anwendet, bis `abbruch(x)` den Wert `True` liefert, und dann `x` zurückgibt.",
+          "starterCode": "def wiederhole(f, x, abbruch):\n    ",
+          "constraints": ["keine Schleifen", "rekursiv"],
+          "forbidden": ["for ", "while "],
+          "tests": [
+            { "name": "verdoppeln bis > 100", "call": "wiederhole(lambda n: n*2, 1, lambda n: n > 100)", "expected": "128" },
+            { "name": "Abbruch trifft sofort zu", "call": "wiederhole(lambda n: n+1, 5, lambda n: n >= 5)", "expected": "5" },
+            { "name": "String verlängern", "call": "wiederhole(lambda s: s+'a', '', lambda s: len(s) == 3)", "expected": "'aaa'" },
+            { "name": "abziehen bis 0", "call": "wiederhole(lambda n: n-3, 10, lambda n: n <= 0)", "expected": "-2" }
+          ],
+          "solution": "def wiederhole(f, x, abbruch):\n    if abbruch(x):\n        return x\n    return wiederhole(f, f(x), abbruch)",
+          "explanation": "Zwei Konzepte in drei Zeilen: **higher order function** (zwei der drei Parameter sind Funktionen) und **Rekursion statt Schleife**.\n\nDie Abbruchbedingung wird **zuerst** geprüft — genau wie bei einer `while`-Schleife, die den Rumpf gar nicht ausführt, wenn die Bedingung schon erfüllt ist (siehe Testfall 2). Beim rekursiven Aufruf wird `f(x)` übergeben, nicht `f` selbst — ein häufiger Flüchtigkeitsfehler.\n\nDas ist die funktionale Übersetzung von:\n```python\nwhile not abbruch(x):\n    x = f(x)\nreturn x\n```",
+          "hints": [
+            "Was ist der Basisfall? Wann hörst du auf?",
+            "Womit rufst du dich auf — mit `x` oder mit `f(x)`?"
+          ],
+          "pitfalls": [
+            "`wiederhole(f(x), ...)` statt `wiederhole(f, f(x), ...)` — die Funktion muss durchgereicht werden.",
+            "Abbruchbedingung erst nach dem Anwenden von `f` prüfen: dann wird einmal zu oft angewendet."
+          ],
+          "sources": [{ "file": "Probeklausur_Python_ausfuellbar.pdf", "page": 4 }],
+          "tags": ["rekursion", "hof"]
+        }
+      ]
+    },
+    {
+      "id": "t5",
+      "label": "Aufgabe 5",
+      "title": "Funktional umschreiben & Currying",
+      "points": 8,
+      "instructions": "",
+      "inline": [
+        {
+          "id": "pk-py-5a",
+          "lang": "python",
+          "topicId": "py-mfr",
+          "type": "code",
+          "difficulty": 5,
+          "points": 5,
+          "examStyle": true,
+          "title": "a) Imperativ → ein einziger funktionaler Ausdruck",
+          "prompt": "Gegeben ist folgender imperativer Code mit Schleife und Mutation:\n\n```python\nnamen = [\"anna\", \"ben\", \"christina\", \"dora\"]\ndoku = \"\"\nfor name in namen:\n    if len(name) > 3:\n        doku = doku + name.upper() + \"\\n\"\nprint(doku)\n```\n\nSchreiben Sie den Code so um, dass `doku` **ohne Schleife und ohne Mutation** in einem **einzigen Ausdruck** aus `map`, `filter` und `reduce` entsteht. Der `print`-Befehl bleibt als einziger Nebeneffekt erhalten.\n\nSchreibe dazu eine Funktion `doku(namen)`, die den fertigen String zurückgibt.",
+          "starterCode": "from functools import reduce\n\ndef doku(namen):\n    return ",
+          "constraints": ["keine Schleifen", "keine Mutation", "map, filter und reduce verwenden"],
+          "forbidden": ["for ", "while ", "+="],
+          "required": ["reduce(", "map(", "filter("],
+          "tests": [
+            { "name": "Beispiel aus der Aufgabe", "call": "doku(['anna', 'ben', 'christina', 'dora'])", "expected": "'ANNA\\nCHRISTINA\\nDORA\\n'" },
+            { "name": "alle zu kurz", "call": "doku(['ab', 'cd'])", "expected": "''" },
+            { "name": "genau drei Buchstaben zählt nicht", "call": "doku(['abc', 'abcd'])", "expected": "'ABCD\\n'" }
+          ],
+          "solution": "from functools import reduce\n\ndef doku(namen):\n    return reduce(lambda a, b: a + b,\n                  map(lambda n: n.upper() + \"\\n\",\n                      filter(lambda n: len(n) > 3, namen)),\n                  \"\")",
+          "explanation": "Das Umschreiben folgt einem festen Schema, das man sich für die Klausur merken sollte:\n\n| imperatives Element | funktionales Gegenstück |\n|---|---|\n| `if bedingung:` in der Schleife | `filter(lambda x: bedingung, iterable)` |\n| Transformation des Elements | `map(lambda x: transformation, ...)` |\n| Akkumulator `doku = doku + ...` | `reduce(lambda a, b: a + b, ..., startwert)` |\n\nDer **Startwert `\"\"`** ist hier entscheidend: ohne ihn wirft `reduce` bei einer leeren Sequenz einen `TypeError` (Testfall 2). Die Folie weist ausdrücklich darauf hin, dass reduce ein zusätzlicher Startwert übergeben werden kann.\n\nDie Reihenfolge liest man von innen nach außen: erst filtern, dann abbilden, dann falten.",
+          "hints": [
+            "Drei Bausteine, drei Zeilen: Was macht das `if`? Was macht `.upper() + \"\\n\"`? Was macht das `doku = doku + ...`?",
+            "Baue von innen nach außen: zuerst `filter`, das Ergebnis in `map`, das Ergebnis in `reduce`.",
+            "Was passiert bei `reduce` ohne Startwert, wenn nichts übrig bleibt?"
+          ],
+          "pitfalls": [
+            "Startwert `\"\"` bei `reduce` vergessen → Fehler bei leerer Eingabe.",
+            "`\\n` an der falschen Stelle: hier steht es hinter **jedem** Namen, auch dem letzten.",
+            "`filter` und `map` vertauschen — funktioniert hier zufällig auch, ist aber unsauber, wenn die Transformation die Bedingung verändert."
+          ],
+          "sources": [{ "file": "Probeklausur_Python_ausfuellbar.pdf", "page": 5 }],
+          "tags": ["umschreiben", "reduce", "map", "filter"]
+        },
+        {
+          "id": "pk-py-5b",
+          "lang": "python",
+          "topicId": "py-currying-decorators",
+          "type": "code",
+          "difficulty": 3,
+          "points": 3,
+          "examStyle": true,
+          "title": "b) Currying",
+          "prompt": "Gegeben ist:\n\n```python\ndef potenz(basis, exponent):\n    return basis ** exponent\n```\n\nErzeugen Sie durch **Binden eines Parameters** (wie beim Currying aus der Vorlesung) mit einem `lambda`-Ausdruck eine neue Funktion `quadrat`, sodass `quadrat(5)` → `25` gilt.\n\nGeben Sie außerdem an, was allgemein für die gecurryte Form `f_curry` einer zweistelligen Funktion `f` gilt: `f_curry(a1)(a2) = ?`\n\n*(Der Teil zur allgemeinen Formel wird nach dem Prüfen abgefragt.)*",
+          "starterCode": "def potenz(basis, exponent):\n    return basis ** exponent\n\nquadrat = ",
+          "required": ["lambda"],
+          "tests": [
+            { "name": "Beispiel aus der Aufgabe", "call": "quadrat(5)", "expected": "25" },
+            { "name": "Null", "call": "quadrat(0)", "expected": "0" },
+            { "name": "negative Basis", "call": "quadrat(-3)", "expected": "9" },
+            { "name": "quadrat ist eine Funktion", "call": "callable(quadrat)", "expected": "True" }
+          ],
+          "solution": "def potenz(basis, exponent):\n    return basis ** exponent\n\nquadrat = lambda b: potenz(b, 2)\n\n# Allgemein gilt:  f_curry(a1)(a2) = f(a1, a2)",
+          "explanation": "**Currying** heißt: eine Funktion mit mehreren Parametern als **Verkettung** von Funktionen mit je einem Parameter schreiben. Der zweite Teil der Frage ist reines Auswendigwissen und steht so auf der Folie:\n\n> **`f_curry(a1)(a2) = f(a1, a2)`**\n\nHier wird nur ein Parameter gebunden (der Exponent auf 2), das reicht für die Aufgabe. Die vollständig gecurryte Form wäre:\n\n```python\npotenz_curry = lambda basis: (lambda exponent: potenz(basis, exponent))\nquadrat = lambda b: potenz_curry(b)(2)\n```\n\nDer Name geht auf den Mathematiker Haskell Brooks Curry zurück.",
+          "hints": [
+            "`quadrat` soll **eine Funktion** sein, kein Wert — also `lambda ...: ...`.",
+            "Welcher der beiden Parameter von `potenz` wird fest auf 2 gesetzt?"
+          ],
+          "pitfalls": [
+            "`quadrat = potenz(b, 2)` ruft die Funktion auf, statt eine neue zu erzeugen.",
+            "Basis und Exponent vertauschen: `lambda b: potenz(2, b)` ergäbe 2 hoch b."
+          ],
+          "sources": [{ "file": "5_map_filter_reduce_wrapup_26.pdf", "page": 13 }],
+          "tags": ["currying", "lambda"]
+        }
+      ]
+    },
+    {
+      "id": "tb",
+      "label": "Bonusaufgabe",
+      "title": "Decorators",
+      "points": 4,
+      "instructions": "Bonus: +4 Punkte.",
+      "inline": [
+        {
+          "id": "pk-py-bonus",
+          "lang": "python",
+          "topicId": "py-currying-decorators",
+          "type": "code",
+          "difficulty": 4,
+          "points": 4,
+          "examStyle": true,
+          "title": "Decorator rufezeichen",
+          "prompt": "Schreiben Sie einen Decorator `rufezeichen`, der jede Funktion, die einen String zurückgibt, so verändert, dass an den Rückgabewert drei Ausrufezeichen (`\"!!!\"`) angehängt werden.\n\nDekorieren Sie damit anschließend per `@`-Syntax eine Funktion `begruessung(name)`, die `\"Hallo, <name>\"` zurückgibt.",
+          "starterCode": "def rufezeichen(f):\n    \n\n\n@rufezeichen\ndef begruessung(name):\n    ",
+          "required": ["@rufezeichen"],
+          "tests": [
+            { "name": "Beispiel", "call": "begruessung('Jakob')", "expected": "'Hallo, Jakob!!!'" },
+            { "name": "leerer Name", "call": "begruessung('')", "expected": "'Hallo, !!!'" },
+            { "name": "Decorator ist allgemein einsetzbar", "call": "rufezeichen(lambda: 'Test')()", "expected": "'Test!!!'" }
+          ],
+          "solution": "def rufezeichen(f):\n    def wrapper(*args, **kwargs):\n        return f(*args, **kwargs) + \"!!!\"\n    return wrapper\n\n\n@rufezeichen\ndef begruessung(name):\n    return \"Hallo, \" + name",
+          "explanation": "Ein Decorator ist eine **higher order function**, die eine Funktion entgegennimmt und eine neue, umhüllte („gewrappte\") Funktion zurückgibt. Das Grundgerüst ist immer gleich:\n\n```python\ndef deko(f):\n    def wrapper(*args, **kwargs):\n        # vorher etwas tun\n        ergebnis = f(*args, **kwargs)\n        # nachher etwas tun\n        return ergebnis\n    return wrapper\n```\n\n`@rufezeichen` über `def begruessung` ist nur Kurzschreibweise für `begruessung = rufezeichen(begruessung)`.\n\n`*args, **kwargs` machen den Decorator für **beliebige** Funktionen verwendbar — genau das verlangt die Aufgabe („jede Funktion, die einen String zurückgibt\"). Mit `@functools.wraps(f)` am `wrapper` blieben zusätzlich Name und Docstring des Originals erhalten (Folie 15).",
+          "hints": [
+            "Der Decorator bekommt eine Funktion und muss eine Funktion zurückgeben.",
+            "Die innere Funktion ruft das Original auf und hängt etwas an das Ergebnis an.",
+            "Damit der Decorator zu jeder Funktion passt: `*args, **kwargs`."
+          ],
+          "pitfalls": [
+            "`return f(...)` im Decorator selbst statt in der inneren Funktion — dann wird beim Dekorieren sofort aufgerufen.",
+            "`return wrapper()` statt `return wrapper` — die Funktion soll zurückgegeben, nicht aufgerufen werden.",
+            "Den Decorator nur für parameterlose Funktionen bauen."
+          ],
+          "sources": [{ "file": "5_map_filter_reduce_wrapup_26.pdf", "page": 14 }],
+          "tags": ["decorator"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2181 @@
+{
+ "topicId": "py-mfr",
+ "exercises": [
+  {
+   "type": "short-answer",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Was gibt map(f, liste) zurück?",
+   "prompt": "Was gibt `map(f, liste)` zurück — eine Liste oder etwas anderes? Erklären Sie Ihre Antwort und geben Sie an, wie man das Ergebnis als Liste sichtbar macht. (2 P)",
+   "solution": "**Musterlösung**\n\n`map(f, liste)` gibt **keine Liste** zurück, sondern ein **map-Objekt** — einen **Iterator**.\n\nEin Iterator ist ein iterierbares Objekt: Man kann mit `for element in obj` darüber laufen,\ner besitzt die Methode `__next__()` und einen internen Zählerstand. Die Funktion `f` wird\ndabei **lazy** (verzögert) erst dann auf ein Element angewendet, wenn dieses Element\ntatsächlich abgefragt wird.\n\nUm eine echte Liste zu bekommen, schreibt man `list(...)` darum:\n\n```python\nlist(map(f, liste))\n```\n\nDasselbe gilt für `filter`. Nur `reduce` liefert direkt einen einzelnen Wert (keinen Iterator).\n\n**Bewertungsrubrik (2 P)**\n- 1 P: \"keine Liste, sondern ein map-Objekt / ein Iterator\"\n- 1 P: `list(...)` darum schreiben (oder: darüber iterieren / `__next__()` aufrufen)\n- Abzug, wenn \"Liste\" als Antwort steht.",
+   "explanation": "Das ist wörtlich Aufgabe 1d der Probeklausur — eine der sichersten Punktequellen,\nwenn man die Antwort exakt kennt. Der Professor betont diesen Punkt zweimal: einmal auf der Folie\n\"Was haben wir im Beispiel neu gelernt?\" (VL 3) und einmal beim Einführen von `map` in VL 5:\n*\"Genauer, bekommen wir einen Iterator zurück, über welchen wir iterieren können oder Methoden wie `__next__()` aufrufen.\"*\n\nDer typische Denkfehler: Weil `list(map(...))` in fast allen Beispielen vorkommt, prägt man sich das\n`list` als Kosmetik ein statt als notwendigen Schritt. `print(map(lambda x: x*2, [1,2]))` gibt aber\n`<map object at 0x...>` aus, nicht `[2, 4]`.\n\nDer Grund für das Iterator-Design ist **lazy evaluation**: Bei `map(f, range(10**9))` wird nichts\ngerechnet und nichts gespeichert, solange niemand die Werte abholt. Das ist einer der Vorteile\nfunktionaler Programmierung, die in der Vorlesung genannt werden.\n\n**Merkregel:** map und filter geben Iteratoren, reduce gibt einen Wert.",
+   "hints": [
+    "Was passiert, wenn Sie `print(map(lambda x: x*2, [1,2,3]))` ausführen — sehen Sie Zahlen?",
+    "Der Professor nennt in VL 3 zwei Eigenschaften iterierbarer Objekte: `for element in obj` und `__next__()`.",
+    "Wie macht man aus dem Rückgabewert eine echte Liste?"
+   ],
+   "pitfalls": [
+    "Einfach 'eine Liste' antworten — das ist die Falle, auf die die Frage abzielt.",
+    "'Ein Generator' sagen: fachlich verwandt, aber der Prof erwartet 'map-Objekt / Iterator'.",
+    "Vergessen zu erwähnen, dass `list(...)` nötig ist."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1d: Was gibt map(f, liste) zurück?"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 17,
+     "label": "map gibt ein map-Objekt zurück, welches selbst iterierbar ist"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "Genauer bekommen wir einen Iterator zurück"
+    }
+   ],
+   "tags": [
+    "map",
+    "iterator",
+    "rückgabetyp",
+    "kurzfrage"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-001"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "map-Objekt, __next__() und der interne Zählerstand",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?",
+   "code": "zahlen = [1, 2, 3, 4]\nverdoppelt = map(lambda x: x * 2, zahlen)\nprint(type(verdoppelt).__name__)\nprint(verdoppelt.__next__())\nprint(verdoppelt.__next__())\nprint(list(verdoppelt))",
+   "expectedOutput": "map\n2\n4\n[6, 8]",
+   "solution": "```\nmap\n2\n4\n[6, 8]\n```\n\n`map` liefert ein **map-Objekt** (einen Iterator). `__next__()` gibt das jeweils nächste Element\nzurück **und erhöht den internen Zählerstand**. Nach zwei `__next__()`-Aufrufen steht der Zähler\nhinter der 2, deshalb enthält `list(verdoppelt)` nur noch die restlichen Elemente `[6, 8]`.",
+   "explanation": "Zwei Konzepte in einer Aufgabe, beide ausdrücklich aus der Vorlesung:\n\n1. **Rückgabetyp:** `type(verdoppelt).__name__` ist `map`, nicht `list`. Ohne `.__name__` stünde\n   dort `<class 'map'>` — der Typname allein ist hier kürzer.\n2. **Interner Zählerstand:** Der Prof schreibt in VL 3 explizit: *\"Außerdem haben sie alle die\n   Methode `__next__()` sowie einen internen 'Zählerstand'. Mit `__next__()` bekommt man das\n   nächste Element als Rückgabe und erhöht den internen Zähler.\"*\n\nGenau daraus folgt der Fallstrick: Ein Iterator ist **verbrauchbar**. Was einmal herausgegeben\nwurde, kommt nicht zurück. `list(verdoppelt)` sammelt nur noch, was ab dem aktuellen Zählerstand\nübrig ist.\n\nTypischer Denkfehler: Man stellt sich das map-Objekt als fertige Liste `[2, 4, 6, 8]` vor, aus der\nman beliebig oft lesen kann. Tatsächlich ist es eher ein Abspielkopf, der nur vorwärts läuft.\n\n**Merkregel:** Ein map-/filter-Objekt kann man genau **einmal** auslesen. Wer es mehrfach braucht,\nspeichert sich vorher `list(...)` in einer Variablen.",
+   "hints": [
+    "`type(x).__name__` gibt den Namen der Klasse als String aus — ist das hier `list`?",
+    "Was macht `__next__()` laut Vorlesung mit dem internen Zählerstand?",
+    "Der letzte `list(...)`-Aufruf beginnt nicht wieder bei vorne."
+   ],
+   "pitfalls": [
+    "`list` als erste Zeile erwarten statt `map`.",
+    "`[2, 4, 6, 8]` in der letzten Zeile erwarten — die ersten beiden Werte sind schon verbraucht.",
+    "Denken, `__next__()` liefere das Element ohne den Zähler zu bewegen."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 17,
+     "label": "__next__() und interner Zählerstand iterierbarer Objekte"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Das nächste Element in einem iterierbaren Objekt __next__()"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map gibt einen Iterator zurück"
+    }
+   ],
+   "tags": [
+    "map",
+    "iterator",
+    "next",
+    "predict-output",
+    "lazy"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-002"
+  },
+  {
+   "type": "mc",
+   "difficulty": 1,
+   "points": 2,
+   "title": "Was liefert filter(pred, liste)?",
+   "prompt": "Gegeben ist `zahlen = [1, 2, 3, 4]`. Welche Aussage über\n\n```python\nergebnis = filter(lambda x: x % 2 == 0, zahlen)\n```\n\nist **richtig**?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`ergebnis` ist die Liste `[2, 4]`.",
+     "correct": false,
+     "why": "Nein — `filter` gibt wie `map` einen Iterator zurück, keine Liste. Erst `list(ergebnis)` ergibt `[2, 4]`."
+    },
+    {
+     "id": "b",
+     "text": "`ergebnis` ist ein Iterator; `list(ergebnis)` ergibt `[2, 4]`.",
+     "correct": true,
+     "why": "Richtig. `filter` liefert ein filter-Objekt (Iterator) mit genau den Elementen, für die die Funktion zu True auswertet."
+    },
+    {
+     "id": "c",
+     "text": "`ergebnis` ist die Liste `[True, False, True, False]`.",
+     "correct": false,
+     "why": "Das wäre `list(map(lambda x: x % 2 == 0, zahlen))`. `filter` gibt die Elemente selbst zurück, nicht die Wahrheitswerte."
+    },
+    {
+     "id": "d",
+     "text": "`ergebnis` ist `[1, 3]`, weil filter die passenden Elemente herausfiltert (= entfernt).",
+     "correct": false,
+     "why": "Verwechslung der Filterrichtung: `filter` **behält** die Elemente, bei denen die Funktion `True` liefert."
+    }
+   ],
+   "solution": "b — `filter` gibt einen Iterator (filter-Objekt) zurück; `list(ergebnis)` ergibt `[2, 4]`.",
+   "explanation": "`filter(f, iterierbares_objekt)` nimmt eine Funktion, die ein Element auf einen\nbooleschen Wert abbildet, und gibt **einen Iterator** zurück, der nur diejenigen Elemente enthält,\nauf denen die Funktion zu `True` ausgewertet wurde.\n\nZwei Dinge muss man auseinanderhalten:\n- **Rückgabetyp:** Iterator, nicht Liste (genau wie bei `map`). Antwort a) ist die häufigste Falle.\n- **Filterrichtung:** `True` heißt **behalten**, nicht wegwerfen. Der deutsche Sprachgebrauch\n  (\"etwas herausfiltern\" = entfernen) ist hier genau umgekehrt zur Programmierbedeutung.\n\nDer Unterschied zu `map` ist der Rückgabewert der übergebenen Funktion: Bei `map` wird das\n**Ergebnis** von `f` in das Resultat übernommen, bei `filter` **das ursprüngliche Element**, sofern\n`f` `True` liefert.\n\n**Merkregel:** map ersetzt jedes Element, filter behält oder verwirft es.",
+   "hints": [
+    "Was ist der Rückgabetyp von `map` — und gilt für `filter` dasselbe?",
+    "Landen bei `filter` die Wahrheitswerte oder die ursprünglichen Elemente im Ergebnis?",
+    "Bedeutet `True` bei `filter` 'behalten' oder 'wegwerfen'?"
+   ],
+   "pitfalls": [
+    "Antwort a wählen, weil `[2, 4]` inhaltlich stimmt — der Typ stimmt aber nicht.",
+    "Filterrichtung umdrehen (Antwort d)."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "filter gibt einen Iterator zurück mit den Elementen, auf denen die Funktion True ergibt"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 1,
+     "label": "Aufgabe 1 — Textanalyse mit filter()"
+    }
+   ],
+   "tags": [
+    "filter",
+    "iterator",
+    "mc",
+    "rückgabetyp"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-003"
+  },
+  {
+   "type": "code",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Dritte Potenzen mit map (Klausuraufgabe 3a)",
+   "prompt": "Gegeben ist `zahlen = [1, 2, 3, 4, 5]`. Erzeugen Sie **mit `map` in einer Zeile** die Liste\nder dritten Potenzen `[1, 8, 27, 64, 125]` und speichern Sie sie in `dritte_potenzen`.\n\nVerwenden Sie keine `for`- oder `while`-Schleifen (auch keine List Comprehension) und nutzen Sie einen `lambda`-Ausdruck. (2 P)",
+   "starterCode": "zahlen = [1, 2, 3, 4, 5]\n\ndritte_potenzen = ...   # hier mit map und lambda ergänzen",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "keine List Comprehension",
+    "lambda verwenden",
+    "map verwenden"
+   ],
+   "solution": "zahlen = [1, 2, 3, 4, 5]\n\ndritte_potenzen = list(map(lambda x: x ** 3, zahlen))",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "dritte_potenzen",
+     "expected": "[1, 8, 27, 64, 125]"
+    },
+    {
+     "name": "Ergebnis ist wirklich eine Liste",
+     "call": "type(dritte_potenzen).__name__",
+     "expected": "'list'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "map(",
+    "lambda"
+   ],
+   "explanation": "Die Aufgabe testet zwei Dinge gleichzeitig: die Grundform von `map` und das Wissen,\ndass `list(...)` nötig ist.\n\n`map(f, iterierbares_objekt)` wendet `f` auf **jedes** Element an. Die Funktion wird hier als\nanonyme Funktion geschrieben: `lambda x: x ** 3`. Wichtig ist, dass die Lücke wirklich ein\n`lambda`-Ausdruck ist und kein Aufruf: `lambda x: x**3` (Funktion) statt `x**3` (Wert einer\nundefinierten Variablen).\n\nOhne `list(...)` steht in `dritte_potenzen` nur ein map-Objekt. In der Klausur ist das ein\nsicherer Punktabzug, weil ausdrücklich \"die Liste\" verlangt wird.\n\n`x ** 3` ist der Potenzoperator aus der Übersichtsfolie; `x*x*x` wäre ebenfalls korrekt.\n\n**Merkregel:** `list(map(lambda ...))` — dieses Sandwich ist die Standardform in der Klausur.",
+   "hints": [
+    "Die Grundform ist `map(funktion, iterierbares_objekt)`.",
+    "Die Funktion schreiben Sie anonym: `lambda x: ...` — was steht rechts vom Doppelpunkt?",
+    "map liefert einen Iterator. Was fehlt außen herum, damit wirklich eine Liste entsteht?"
+   ],
+   "pitfalls": [
+    "`list(...)` vergessen — dann steht ein map-Objekt in der Variablen, keine Liste.",
+    "Argumente vertauschen: `map(zahlen, lambda x: x**3)` ist falsch herum.",
+    "`lambda x: x ** 3` mit `x ** 3` verwechseln (Funktion vs. Wert)."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3a: dritte Potenzen mit map"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map wendet die Funktion auf jedes Element an"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "Aufgabe 3 — Quadrate mit map und lambda"
+    }
+   ],
+   "tags": [
+    "map",
+    "lambda",
+    "klausur",
+    "list"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-004"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Vektoraddition: map mit zwei Listen (Klausuraufgabe 3b)",
+   "prompt": "Schreiben Sie eine Funktion `vektoraddition(v, w)`, die **mit `map`** zwei gleichlange\nListen elementweise addiert und das Ergebnis **als Liste** zurückgibt.\n\nBeispiel: `vektoraddition([1,2], [10,20])` → `[11, 22]`\n\nKeine `for`-/`while`-Schleifen, kein `zip`. (3 P)",
+   "starterCode": "def vektoraddition(v, w):\n    # mit map ergänzen\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "kein zip",
+    "map verwenden",
+    "lambda verwenden"
+   ],
+   "solution": "def vektoraddition(v, w):\n    return list(map(lambda a, b: a + b, v, w))",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "vektoraddition([1, 2], [10, 20])",
+     "expected": "[11, 22]"
+    },
+    {
+     "name": "drei Komponenten",
+     "call": "vektoraddition([1, 2, 3], [1, 1, 1])",
+     "expected": "[2, 3, 4]"
+    },
+    {
+     "name": "negative Zahlen",
+     "call": "vektoraddition([5, -5], [-5, 5])",
+     "expected": "[0, 0]"
+    },
+    {
+     "name": "leere Vektoren",
+     "call": "vektoraddition([], [])",
+     "expected": "[]"
+    },
+    {
+     "name": "Rückgabe ist eine Liste",
+     "call": "type(vektoraddition([1], [2])).__name__",
+     "expected": "'list'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "zip("
+   ],
+   "required": [
+    "map(",
+    "lambda"
+   ],
+   "explanation": "Das ist das Beispiel von der Folie *\"Definiere eine Funktion vektoraddition, welche\nmap verwendet um zwei Listen elementweise zu addieren\"* — und es prüft die Mehr-Iterable-Form von `map`:\n\n> `map(f, liste1, liste2, …, liste_m) = [f(liste1[0], liste2[0], …), …, f(liste1[-1], liste2[-1], …)]`\n\nRegel: Die Funktion braucht **so viele Parameter, wie danach iterierbare Objekte folgen**. Deshalb\n`lambda a, b: a + b` mit zwei Parametern und danach `v, w`.\n\nZwei häufige Fehlversuche:\n- `map(lambda a, b: a + b, [v, w])` — hier wird nur **ein** iterierbares Objekt übergeben (eine Liste,\n  die zwei Listen enthält). Das gibt einen `TypeError`, weil das lambda zwei Argumente erwartet.\n- `map(lambda x: x[0] + x[1], zip(v, w))` — funktioniert, ist aber nicht das, was gefragt ist\n  (und `zip` kam in der Vorlesung nicht vor).\n\nSind die Listen unterschiedlich lang, stoppt `map` bei der **kürzesten** — es gibt keinen Fehler.\n\n**Merkregel:** So viele lambda-Parameter wie Listen hinter der Funktion.",
+   "hints": [
+    "`map` kann mehr als ein iterierbares Objekt entgegennehmen — was folgt dann alles hinter der Funktion?",
+    "Wie viele Parameter muss das lambda haben, wenn zwei Listen folgen?",
+    "Die Form ist `list(map(lambda a, b: ..., v, w))`."
+   ],
+   "pitfalls": [
+    "`map(lambda a, b: a + b, [v, w])` schreiben — das ist nur ein Iterable, kein zwei.",
+    "`v + w` benutzen: das hängt Listen aneinander, statt komponentenweise zu addieren.",
+    "`list(...)` vergessen und ein map-Objekt zurückgeben."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3b: vektoraddition"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map(f, liste1, liste2, ..., liste_m)"
+    }
+   ],
+   "tags": [
+    "map",
+    "mehrere-iterables",
+    "vektoraddition",
+    "klausur"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-005"
+  },
+  {
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "Lange Wörter mit filter (Klausuraufgabe 3c)",
+   "prompt": "Gegeben ist eine Liste von Wörtern `woerter`. Schreiben Sie eine Funktion\n`lange_woerter(woerter)`, die **mit `filter`** die Liste aller Wörter mit **mehr als vier**\nBuchstaben zurückgibt.\n\nBeispiel: `lange_woerter(['die', 'schnelle', 'braune', 'katze'])` → `['schnelle', 'braune', 'katze']`\n\nKeine `for`-/`while`-Schleifen. (3 P)",
+   "starterCode": "def lange_woerter(woerter):\n    # mit filter ergänzen\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "filter verwenden",
+    "lambda verwenden"
+   ],
+   "solution": "def lange_woerter(woerter):\n    return list(filter(lambda w: len(w) > 4, woerter))",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "lange_woerter(['die', 'schnelle', 'braune', 'katze'])",
+     "expected": "['schnelle', 'braune', 'katze']"
+    },
+    {
+     "name": "Satz aus der Vorlesung",
+     "call": "lange_woerter('die schnelle braune katze springt ueber den faulen hund'.split())",
+     "expected": "['schnelle', 'braune', 'katze', 'springt', 'ueber', 'faulen']"
+    },
+    {
+     "name": "Grenzfall: genau vier Buchstaben zählt nicht",
+     "call": "lange_woerter(['haus', 'hause'])",
+     "expected": "['hause']"
+    },
+    {
+     "name": "leere Liste",
+     "call": "lange_woerter([])",
+     "expected": "[]"
+    },
+    {
+     "name": "Rückgabe ist eine Liste",
+     "call": "type(lange_woerter(['abcde'])).__name__",
+     "expected": "'list'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "filter(",
+    "lambda"
+   ],
+   "explanation": "Direkt aus der Vorlesung: *\"Beispiel: Finde alle Worte mit mehr als vier Buchstaben\nin einem gegebenen Satz.\"* — und wörtlich Aufgabe 3c der Probeklausur.\n\n`filter(f, iterierbares_objekt)` erwartet eine Funktion, die ein Element auf einen **booleschen\nWert** abbildet, und behält genau die Elemente, bei denen `True` herauskommt. Das Prädikat ist hier\n`lambda w: len(w) > 4`.\n\nDer wichtigste Detailpunkt ist die Grenze: \"mehr als vier Buchstaben\" heißt `> 4`, **nicht** `>= 4`\nund nicht `> 5`. Ein Wort mit genau vier Buchstaben fliegt raus. In der Klausur ist das der\nUnterschied zwischen voller und halber Punktzahl.\n\nWie bei `map` gibt `filter` einen Iterator zurück — `list(...)` ist Pflicht, wenn \"die Liste\"\nverlangt wird.\n\n**Merkregel:** filter braucht ein **Prädikat** (Funktion nach `True`/`False`), map eine **Abbildung**.",
+   "hints": [
+    "`filter` erwartet eine Funktion, die `True` oder `False` liefert.",
+    "Wie bekommen Sie die Anzahl der Buchstaben eines Strings?",
+    "'mehr als vier' ist `> 4` — und außen fehlt noch `list(...)`."
+   ],
+   "pitfalls": [
+    "`>= 4` statt `> 4` schreiben — dann sind Wörter mit genau vier Buchstaben fälschlich dabei.",
+    "`list(...)` vergessen.",
+    "`map` statt `filter` verwenden — dann bekommt man `[False, True, ...]`."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3c: Wörter mit mehr als vier Buchstaben"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "Beispiel: Finde alle Worte mit mehr als vier Buchstaben"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 1,
+     "label": "Aufgabe 1 — Textanalyse mit filter()"
+    }
+   ],
+   "tags": [
+    "filter",
+    "lambda",
+    "strings",
+    "klausur"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-006"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 3,
+   "examStyle": true,
+   "title": "Durchschnitt mit reduce (Klausuraufgabe 3d)",
+   "prompt": "Schreiben Sie eine Funktion `durchschnitt(zahlen)`, die **mit `reduce`** den Durchschnitt\neiner **nichtleeren** Zahlenliste berechnet.\n\nBeispiel: `durchschnitt([1, 2, 3, 4])` → `2.5`\n\nKeine `for`-/`while`-Schleifen, kein `sum`. Sie dürfen annehmen, dass `from functools import reduce`\nbereits ausgeführt wurde (schreiben Sie den Import in Ihrer Lösung trotzdem mit hin). (3 P)",
+   "starterCode": "from functools import reduce\n\ndef durchschnitt(zahlen):\n    # mit reduce ergänzen\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "kein sum()",
+    "reduce verwenden"
+   ],
+   "solution": "from functools import reduce\n\n\ndef durchschnitt(zahlen):\n    return reduce(lambda a, b: a + b, zahlen) / len(zahlen)",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "durchschnitt([1, 2, 3, 4])",
+     "expected": "2.5"
+    },
+    {
+     "name": "glatter Durchschnitt",
+     "call": "durchschnitt([2, 4, 9])",
+     "expected": "5.0"
+    },
+    {
+     "name": "einelementige Liste",
+     "call": "durchschnitt([7])",
+     "expected": "7.0"
+    },
+    {
+     "name": "negative Zahlen",
+     "call": "durchschnitt([-2, 2, -4, 4])",
+     "expected": "0.0"
+    },
+    {
+     "name": "Ergebnis ist ein float",
+     "call": "type(durchschnitt([1, 2])).__name__",
+     "expected": "'float'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "sum("
+   ],
+   "required": [
+    "reduce("
+   ],
+   "explanation": "Das Beispiel *\"Durchschnitt von Zahlen bilden\"* steht wörtlich auf der reduce-Folie\nund ist Aufgabe 3d der Probeklausur.\n\nDer Trick: `reduce` allein kann den Durchschnitt **nicht** direkt bilden, weil es die Liste Schritt\nfür Schritt auf einen einzigen Wert zusammenfaltet und dabei die Länge nicht kennt. Man benutzt\n`reduce` also für die **Summe** und teilt anschließend durch `len(zahlen)`.\n\n`reduce(lambda a, b: a + b, [1,2,3,4])` rechnet nach der Regel\n`reduce(f, [x1,…,xn]) = f(…f(f(x1,x2),x3)…,xn)`, also `((1+2)+3)+4 = 10`; geteilt durch `4` ergibt `2.5`.\n\nEin beliebter, aber **falscher** Versuch ist `reduce(lambda a, b: (a + b) / 2, zahlen)`. Das ist ein\ngleitender Mittelwert und liefert für `[1, 2, 3, 4]` den Wert `2.375` statt `2.5`, weil frühe\nElemente bei jedem Schritt erneut halbiert werden.\n\nDa `/` in Python immer eine Gleitkommadivision ist, ist das Ergebnis ein `float` — auch bei `[7]`\nkommt `7.0` heraus.\n\n**Merkregel:** reduce faltet, die Division durch `len` steht **außerhalb** von reduce.",
+   "hints": [
+    "reduce kann nur zwei Elemente auf eines abbilden — welche Größe können Sie damit sinnvoll berechnen?",
+    "Die Division gehört nicht in das lambda hinein.",
+    "Woher bekommen Sie die Anzahl der Elemente, ohne zu zählen?"
+   ],
+   "pitfalls": [
+    "`reduce(lambda a, b: (a + b) / 2, zahlen)` schreiben — das ist ein gleitender Mittelwert, kein Durchschnitt.",
+    "Die Division ins lambda schreiben statt hinter den reduce-Aufruf.",
+    "`sum(zahlen)/len(zahlen)` benutzen — richtig, aber die Aufgabe verlangt ausdrücklich `reduce`."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3d: Durchschnitt mit reduce"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Beispiel: Durchschnitt von Zahlen bilden"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce(f, [x1,...,xn]) = f(...f(f(x1,x2),x3),...,xn)"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "durchschnitt",
+    "klausur",
+    "functools"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-007"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 3,
+   "title": "Strings mit reduce zu einem Text zusammenfügen",
+   "prompt": "Schreiben Sie eine Funktion `zusammenfuegen(zeilen)`, die eine **nichtleere** Liste von Strings\n**mit `reduce`** zu einem einzigen String zusammenfügt, wobei zwischen zwei Einträgen jeweils\nein Zeilenumbruch `\\n` steht.\n\nBeispiel: `zusammenfuegen(['Runde 1', 'Runde 2', 'Runde 3'])` → `'Runde 1\\nRunde 2\\nRunde 3'`\n\nKeine Schleifen, kein `.join`. (3 P)",
+   "starterCode": "from functools import reduce\n\ndef zusammenfuegen(zeilen):\n    # mit reduce ergänzen\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "kein .join()",
+    "reduce verwenden"
+   ],
+   "solution": "from functools import reduce\n\n\ndef zusammenfuegen(zeilen):\n    return reduce(lambda x1, x2: x1 + '\\n' + x2, zeilen)",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "zusammenfuegen(['Runde 1', 'Runde 2', 'Runde 3'])",
+     "expected": "'Runde 1\\nRunde 2\\nRunde 3'"
+    },
+    {
+     "name": "nur ein Eintrag - kein Umbruch",
+     "call": "zusammenfuegen(['allein'])",
+     "expected": "'allein'"
+    },
+    {
+     "name": "zwei Einträge",
+     "call": "zusammenfuegen(['a', 'b'])",
+     "expected": "'a\\nb'"
+    },
+    {
+     "name": "Anzahl der Umbrüche",
+     "call": "zusammenfuegen(['a', 'b', 'c', 'd']).count(chr(10))",
+     "expected": "3"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    ".join("
+   ],
+   "required": [
+    "reduce("
+   ],
+   "explanation": "Das ist genau der Baustein aus der `spieldokumentation` des Professors:\n\n```python\nreturn reduce(lambda x1, x2: x1 + '\\n' + x2, map(rundendokumentation, states[1:])) \\\n       + '\\n' + schlussdokumentation(states[-1])\n```\n\nDie Faltungsregel `reduce(f, [x1,…,xn]) = f(…f(f(x1,x2),x3)…,xn)` bedeutet hier: Das Zwischenergebnis\n`x1` ist immer der **schon zusammengebaute Text**, `x2` das **nächste** Element. Deshalb entstehen bei\nn Elementen genau n−1 Trennzeichen — vorne und hinten steht keins.\n\nWer stattdessen `lambda x1, x2: x1 + x2 + '\\n'` schreibt, bekommt am Ende einen überzähligen\nZeilenumbruch (und trotzdem keinen vor dem ersten Element) — ein klassischer Off-by-one-Fehler bei\nTrennzeichen.\n\nMit einem Startwert `reduce(f, zeilen, '')` würde man einen führenden Umbruch erzeugen; für diese\nAufgabe ist die Variante **ohne** Startwert richtig. Der Preis dafür: Bei einer leeren Liste wirft\n`reduce` einen `TypeError` — deshalb steht in der Aufgabe \"nichtleer\".\n\n**Merkregel:** Beim Falten ist das linke Argument das Zwischenergebnis, das rechte das neue Element.",
+   "hints": [
+    "Die Funktion in reduce bekommt zwei Strings: den bisher aufgebauten Text und den nächsten Eintrag.",
+    "Wo genau muss das `'\\n'` stehen, damit weder vorne noch hinten ein Umbruch übrig bleibt?",
+    "Die Form ist `reduce(lambda x1, x2: x1 + ... + x2, zeilen)`."
+   ],
+   "pitfalls": [
+    "`x1 + x2 + '\\n'` schreiben — dann hängt ein Umbruch am Ende.",
+    "Einen Startwert `''` angeben und damit einen führenden Umbruch erzeugen.",
+    "`'\\n'.join(zeilen)` benutzen — korrekt, aber hier ausdrücklich verboten."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Beispiel: Eine Liste von Strings zu einem einzigen String machen"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "spieldokumentation mit reduce und map"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "Aufgabe 2 — Satzbuilder mit reduce()"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "strings",
+    "goofspiel",
+    "faltung"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-008"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Summe der Quadrate aller geraden Zahlen (map + filter + reduce)",
+   "prompt": "Gegeben ist `zahlen = [3, 7, 2, 8, 5, 10, 1, 6]`.\n\nBerechnen Sie in **einem einzigen Ausdruck** aus `map`, `filter` und `reduce` die **Summe der\nQuadrate aller geraden Zahlen** und speichern Sie das Ergebnis in `ergebnis`.\n\nKeine Schleifen, kein `sum`. (4 P)",
+   "starterCode": "from functools import reduce\n\nzahlen = [3, 7, 2, 8, 5, 10, 1, 6]\n\nergebnis = ...   # ein Ausdruck aus map, filter und reduce",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "kein sum()",
+    "map, filter und reduce in einem Ausdruck"
+   ],
+   "solution": "from functools import reduce\n\nzahlen = [3, 7, 2, 8, 5, 10, 1, 6]\n\nergebnis = reduce(lambda a, b: a + b,\n                  map(lambda x: x * x,\n                      filter(lambda x: x % 2 == 0, zahlen)))",
+   "tests": [
+    {
+     "name": "Ergebnis stimmt",
+     "call": "ergebnis",
+     "expected": "204"
+    },
+    {
+     "name": "Ergebnis ist eine Zahl, kein Iterator",
+     "call": "type(ergebnis).__name__",
+     "expected": "'int'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "sum("
+   ],
+   "required": [
+    "reduce(",
+    "map(",
+    "filter("
+   ],
+   "explanation": "Das ist Aufgabe 3.4 vom Übungsblatt und die Standardkombination, die in der Klausur\nals Aufgabe 3 zu erwarten ist. Man liest den Ausdruck **von innen nach außen**:\n\n1. `filter(lambda x: x % 2 == 0, zahlen)` → `2, 8, 10, 6` (nur die geraden)\n2. `map(lambda x: x * x, …)` → `4, 64, 100, 36` (jedes quadriert)\n3. `reduce(lambda a, b: a + b, …)` → `4 + 64 + 100 + 36 = 204`\n\nDer entscheidende Punkt ist die **Reihenfolge**: erst filtern, dann abbilden, dann falten. Wer erst\nquadriert und dann filtert, bekommt zwar hier zufällig dasselbe (Quadrate gerader Zahlen sind\ngerade, Quadrate ungerader ungerade) — bei einer anderen Bedingung wie \"größer als 6\" wäre das\nErgebnis aber ein anderes.\n\nBeachten Sie außerdem: Weder um `filter` noch um `map` muss hier `list(...)` stehen, denn `map` und\n`reduce` können direkt über einen Iterator laufen. `list(...)` ist nur nötig, wenn man das Ergebnis\n**als Liste sehen** will.\n\n**Merkregel:** filter → map → reduce, von innen nach außen gelesen.",
+   "hints": [
+    "Bauen Sie den Ausdruck in drei Schritten: Welche Elemente überhaupt? Was wird daraus? Wie zusammenfassen?",
+    "`reduce` steht ganz außen, `filter` ganz innen.",
+    "Zwischen `filter` und `reduce` braucht es kein `list(...)` — Iteratoren reichen aus."
+   ],
+   "pitfalls": [
+    "Reihenfolge vertauschen (erst map, dann filter) — hier zufällig gleich, bei anderen Bedingungen falsch.",
+    "`reduce` ohne `from functools import reduce` verwenden — das gibt einen NameError.",
+    "Um jeden Zwischenschritt `list(...)` schreiben; erlaubt, aber unnötig und fehleranfällig."
+   ],
+   "sources": [
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "Aufgabe 3.4 — Summe der Quadrate aller geraden Zahlen"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 25,
+     "label": "Musterlösung Aufgabe A3: reduce(map(filter(...)))"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 5,
+     "label": "Dinge einzeln weiterverarbeiten, auswählen, auf ein Element reduzieren"
+    }
+   ],
+   "tags": [
+    "map",
+    "filter",
+    "reduce",
+    "kombination",
+    "klausur"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-009"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Imperativen Code funktional umschreiben (Klausuraufgabe 5a)",
+   "prompt": "Gegeben ist folgender imperativer Code mit Schleife und Mutation:\n\n```python\nnamen = [\"anna\", \"ben\", \"christina\", \"dora\"]\ndoku = \"\"\nfor name in namen:\n    if len(name) > 3:\n        doku = doku + name.upper() + \"\\n\"\nprint(doku)\n```\n\nSchreiben Sie den Code so um, dass `doku` **ohne Schleife und ohne Mutation** in einem\n**einzigen Ausdruck** aus `map`, `filter` und `reduce` entsteht. Der `print`-Befehl bleibt als\neinziger Nebeneffekt erhalten. (5 P)",
+   "code": "namen = [\"anna\", \"ben\", \"christina\", \"dora\"]\ndoku = \"\"\nfor name in namen:\n    if len(name) > 3:\n        doku = doku + name.upper() + \"\\n\"\nprint(doku)",
+   "starterCode": "from functools import reduce\n\nnamen = [\"anna\", \"ben\", \"christina\", \"dora\"]\n\ndoku = ...   # ein Ausdruck aus map, filter und reduce\n\nprint(doku)",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "keine Mutation",
+    "ein einziger Ausdruck",
+    "map, filter und reduce"
+   ],
+   "solution": "from functools import reduce\n\nnamen = [\"anna\", \"ben\", \"christina\", \"dora\"]\n\ndoku = reduce(lambda a, b: a + b,\n              map(lambda name: name.upper() + \"\\n\",\n                  filter(lambda name: len(name) > 3, namen)),\n              \"\")\n\nprint(doku)",
+   "tests": [
+    {
+     "name": "doku stimmt exakt mit der imperativen Version überein",
+     "call": "doku",
+     "expected": "'ANNA\\nCHRISTINA\\nDORA\\n'"
+    },
+    {
+     "name": "'ben' fällt raus",
+     "call": "'BEN' in doku",
+     "expected": "False"
+    },
+    {
+     "name": "drei Zeilenumbrüche",
+     "call": "doku.count(chr(10))",
+     "expected": "3"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "reduce(",
+    "map(",
+    "filter("
+   ],
+   "explanation": "Das ist Aufgabe 5a der Probeklausur — die Königsdisziplin, weil man die drei\nimperativen Bausteine einzeln übersetzen muss:\n\n| imperativ | funktional |\n|---|---|\n| `for name in namen:` | das iterierbare Objekt als letztes Argument |\n| `if len(name) > 3:` | `filter(lambda name: len(name) > 3, namen)` |\n| `name.upper() + \"\\n\"` | `map(lambda name: name.upper() + \"\\n\", …)` |\n| `doku = doku + …` (Mutation) | `reduce(lambda a, b: a + b, …, \"\")` |\n\nDie Zuweisung `doku = doku + …` ist die Mutation, die verschwinden muss: Statt eine Variable immer\nwieder zu überschreiben, faltet `reduce` die Teilstrings zu einem Ergebnis zusammen.\n\nDer **Startwert `\"\"`** entspricht der Zeile `doku = \"\"` aus dem imperativen Code. Er ist hier nicht\nnur schöner, sondern robuster: Ohne ihn würde der Code bei einer Liste ohne passende Namen (z. B.\n`[\"ab\", \"cd\"]`) mit `TypeError: reduce() of empty iterable with no initial value` abstürzen — die\nimperative Version hätte dort einfach `\"\"` geliefert.\n\nWichtig ist auch, dass das `\"\\n\"` **im map** angehängt wird und nicht im reduce: Im imperativen Code\nbekommt **jeder** Name einen Umbruch, auch der letzte.\n\n**Merkregel:** Schleifenkörper → map, `if` → filter, Akkumulator-Variable → reduce mit Startwert.",
+   "hints": [
+    "Übersetzen Sie die drei Zutaten einzeln: Wo steckt das `if`? Wo die Umwandlung? Wo das Aufsummieren?",
+    "Die Variable `doku` wird im imperativen Code immer wieder überschrieben — welches der drei Werkzeuge ersetzt so einen Akkumulator?",
+    "Was war der Startwert von `doku` vor der Schleife, und wo taucht dieser Wert im reduce-Aufruf wieder auf?"
+   ],
+   "pitfalls": [
+    "Das `\\n` in das reduce-lambda schreiben (`a + '\\n' + b`) — dann fehlt der Umbruch nach dem letzten Namen.",
+    "Den Startwert `\"\"` weglassen: funktioniert hier, stürzt aber ab, sobald filter nichts durchlässt.",
+    "`.upper()` als `upper(name)` schreiben — es ist eine Methode des Strings."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5a: funktional umschreiben ohne Schleife und Mutation"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 14,
+     "label": "Nutzen sie die Befehle filter und reduce um das Programm in einer einzigen Zeile zu schreiben"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 5,
+     "label": "Im Goofspiel folgt nur noch die Dokumentation - hier gibt es immer noch eine for-Schleife"
+    }
+   ],
+   "tags": [
+    "umschreiben",
+    "imperativ-funktional",
+    "reduce",
+    "startwert",
+    "klausur"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-010"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Lücken: map(## Lücke 1 ##, filter(## Lücke 2 ##, liste))",
+   "prompt": "Füllen Sie die drei Lücken so aus, dass `ergebnis` die Liste `[8, 24, 40]` enthält\n(die geraden Zahlen aus `zahlen`, jeweils verdoppelt) und `gesamt` deren Summe `72` ist.\nVerwenden Sie `lambda`-Ausdrücke und keine Schleifen. (je 1-2 P)",
+   "code": "from functools import reduce\n\nzahlen = [4, 7, 12, 3, 20, 9]\n\n# ergebnis soll [8, 24, 40] sein\nergebnis = list(map(## Lücke 1 ##, filter(## Lücke 2 ##, zahlen)))\n\n# gesamt soll 72 sein\ngesamt = reduce(## Lücke 3 ##, ergebnis)\n\nprint(ergebnis)\nprint(gesamt)",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "lambda x: x * 2",
+      "lambda x: 2 * x",
+      "lambda x: x + x",
+      "lambda z: z * 2"
+     ],
+     "explanation": "Die Abbildung für map: jedes durchgelassene Element wird verdoppelt."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "lambda x: x % 2 == 0",
+      "lambda x: x % 2 != 1",
+      "lambda x: not x % 2",
+      "lambda z: z % 2 == 0"
+     ],
+     "explanation": "Das Prädikat für filter: True genau für gerade Zahlen (Rest 0 bei Division durch 2)."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "lambda a, b: a + b",
+      "lambda x, y: x + y",
+      "lambda a, b: b + a",
+      "lambda x1, x2: x1 + x2"
+     ],
+     "explanation": "Die Faltungsfunktion für reduce: zwei Zahlen werden zu ihrer Summe zusammengefasst."
+    }
+   ],
+   "solution": "from functools import reduce\n\nzahlen = [4, 7, 12, 3, 20, 9]\n\nergebnis = list(map(lambda x: x * 2, filter(lambda x: x % 2 == 0, zahlen)))\n\ngesamt = reduce(lambda a, b: a + b, ergebnis)\n\nprint(ergebnis)   # [8, 24, 40]\nprint(gesamt)     # 72",
+   "expectedOutput": "[8, 24, 40]\n72",
+   "explanation": "Bei geschachtelten Ausdrücken hilft es, **von innen nach außen** zu lesen:\n\n- Lücke 2 gehört zu `filter` und muss ein **Prädikat** sein: eine Funktion, die pro Element `True`\n  oder `False` liefert. Gerade Zahlen erkennt man am Rest der Division durch 2: `x % 2 == 0`.\n  Durch gelassen werden `4, 12, 20`.\n- Lücke 1 gehört zu `map` und muss eine **Abbildung** sein, die aus jedem Element ein neues macht:\n  `x * 2`. Daraus wird `8, 24, 40`.\n- Lücke 3 gehört zu `reduce` und muss eine Funktion mit **zwei** Parametern sein, die zwei Werte auf\n  einen abbildet: `lambda a, b: a + b`.\n\nDer häufigste Fehler ist der Typ der Lücke: In Lücke 1 oder 2 gehört eine **Funktion** und kein\nWert — `x * 2` allein wäre ein Ausdruck über eine undefinierte Variable. Und in Lücke 3 braucht das\nlambda zwei Parameter, nicht einen: `lambda a: a + a` wirft `TypeError: <lambda>() takes 1 positional argument but 2 were given`.\n\n**Merkregel:** filter-lambda: ein Parameter → bool. map-lambda: ein Parameter → neuer Wert.\nreduce-lambda: **zwei** Parameter → ein Wert.",
+   "hints": [
+    "Welche der drei Lücken braucht ein lambda mit zwei Parametern?",
+    "Gerade Zahlen erkennt man mit dem Modulo-Operator `%`.",
+    "In jeder Lücke steht eine Funktion, nie ein fertiger Wert."
+   ],
+   "pitfalls": [
+    "In Lücke 3 nur einen Parameter schreiben (`lambda a: a + a`).",
+    "In Lücke 2 die Bedingung umdrehen (`x % 2 == 1`) und die ungeraden Zahlen behalten.",
+    "In Lücke 1 `x * 2` ohne `lambda x:` schreiben."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map, filter, reduce - Grundformen"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "Aufgabe 3 — map, filter, reduce kombinieren"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 7,
+     "label": "Vervollständigen sie die beiden Lücken"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "map",
+    "filter",
+    "reduce",
+    "lambda"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-011"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Lücken in der spieldokumentation aus der Vorlesung",
+   "prompt": "Die folgende Funktion aus dem Goofspiel baut aus allen `states` einen einzigen\nDokumentations-String: Jede Runde wird mit der übergebenen Funktion `rundendokumentation`\nin einen Text verwandelt, alle Runden-Texte werden mit `'\\n'` verbunden, und ganz am Ende\nhängt die Schlussdokumentation.\n\nFüllen Sie die beiden Lücken. (je 2 P)",
+   "code": "from functools import reduce\n\ndef spieldokumentation(states, rundendokumentation, schlussdokumentation):\n    return reduce(## Lücke 1 ##, map(## Lücke 2 ##, states[1:])) \\\n           + '\\n' + schlussdokumentation(states[-1])",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "lambda x1, x2: x1 + '\\n' + x2",
+      "lambda x1, x2: x1 + \"\\n\" + x2",
+      "lambda a, b: a + '\\n' + b",
+      "lambda a, b: a + \"\\n\" + b"
+     ],
+     "explanation": "Die Faltungsfunktion für reduce: das bisherige Ergebnis, ein Zeilenumbruch, der nächste Runden-Text."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "rundendokumentation",
+      "lambda state: rundendokumentation(state)",
+      "lambda s: rundendokumentation(s)"
+     ],
+     "explanation": "map bekommt die Funktion selbst übergeben - ohne Klammern, denn sie soll nicht aufgerufen, sondern weitergereicht werden."
+    }
+   ],
+   "solution": "from functools import reduce\n\n\ndef spieldokumentation(states, rundendokumentation, schlussdokumentation):\n    return reduce(lambda x1, x2: x1 + '\\n' + x2, map(rundendokumentation, states[1:])) \\\n           + '\\n' + schlussdokumentation(states[-1])",
+   "explanation": "Das ist die Originalfunktion von der reduce-Folie der Vorlesung — der Professor\nnennt sie *\"Besonders kompakte Version von spieldokumentation\"*. Sie ist ein Musterbeispiel dafür,\nwie `map` und `reduce` zusammenspielen:\n\n- `map(rundendokumentation, states[1:])` verwandelt **jeden** state in einen Text. Wichtig:\n  `rundendokumentation` wird **ohne Klammern** übergeben. Das ist der Kern einer *higher order\n  function* — die Funktion selbst ist das Argument, nicht ihr Ergebnis. `rundendokumentation(...)`\n  mit Klammern würde die Funktion sofort aufrufen und `map` einen fertigen String geben.\n- `reduce(lambda x1, x2: x1 + '\\n' + x2, …)` faltet die Texte mit Umbrüchen dazwischen zusammen.\n\nWarum `states[1:]`? Der erste Eintrag im states-Tupel ist der **Anfangszustand** vor der ersten\nRunde; seine `runden_doku` ist leer und würde nur einen überflüssigen Umbruch erzeugen.\n\n`states[-1]` ist der letzte Zustand — daraus wird der Schlusstext (wer gewonnen hat) gebaut. Der\n`\\` am Zeilenende ist nur ein Zeilenumbruch für die Lesbarkeit, wie in VL 4 eingeführt.\n\n**Merkregel:** Funktion als Argument = Name ohne Klammern.",
+   "hints": [
+    "Lücke 2: Soll die Funktion aufgerufen oder weitergereicht werden?",
+    "Lücke 1: reduce-lambdas haben immer zwei Parameter — was ist das Trennzeichen zwischen den Runden?",
+    "Vergleichen Sie mit der Aufgabe 'Strings mit reduce zusammenfügen'."
+   ],
+   "pitfalls": [
+    "In Lücke 2 `rundendokumentation(states)` schreiben — die Funktion wird damit sofort aufgerufen.",
+    "In Lücke 1 `x1 + x2` ohne Trennzeichen schreiben.",
+    "Vergessen, dass das reduce-lambda zwei Parameter braucht."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Besonders kompakte Version von spieldokumentation"
+    },
+    {
+     "file": "goofspiel26-4.py",
+     "page": 1,
+     "label": "reduce über alle states für die gesamte Doku"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "runde_dokumentieren und gewinner_ausgeben als pure functions"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "goofspiel",
+    "reduce",
+    "map",
+    "higher-order-function"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-012"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 2,
+   "points": 3,
+   "title": "Lücken: vektoraddition und Durchschnitt",
+   "prompt": "Füllen Sie die drei Lücken so aus, dass `vektoraddition` zwei gleichlange Listen\nelementweise addiert und `durchschnitt` den Mittelwert einer nichtleeren Zahlenliste liefert. (je 1 P)",
+   "code": "from functools import reduce\n\ndef vektoraddition(v, w):\n    return list(map(lambda a, b: a + b, ## Lücke 1 ##))\n\ndef durchschnitt(zahlen):\n    return reduce(## Lücke 2 ##, zahlen) / ## Lücke 3 ##\n\nprint(vektoraddition([1, 2, 3], [10, 20, 30]))\nprint(durchschnitt([1, 2, 3, 4]))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "v, w",
+      "v,w"
+     ],
+     "explanation": "map bekommt hinter der Funktion so viele iterierbare Objekte, wie das lambda Parameter hat - hier also beide Listen einzeln."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "lambda a, b: a + b",
+      "lambda x, y: x + y",
+      "lambda x1, x2: x1 + x2",
+      "lambda a, b: b + a"
+     ],
+     "explanation": "reduce faltet die Liste mit der Addition zur Summe zusammen."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "len(zahlen)"
+     ],
+     "explanation": "Die Summe wird durch die Anzahl der Elemente geteilt - das steht außerhalb von reduce."
+    }
+   ],
+   "solution": "from functools import reduce\n\n\ndef vektoraddition(v, w):\n    return list(map(lambda a, b: a + b, v, w))\n\n\ndef durchschnitt(zahlen):\n    return reduce(lambda a, b: a + b, zahlen) / len(zahlen)\n\n\nprint(vektoraddition([1, 2, 3], [10, 20, 30]))   # [11, 22, 33]\nprint(durchschnitt([1, 2, 3, 4]))                # 2.5",
+   "expectedOutput": "[11, 22, 33]\n2.5",
+   "explanation": "Die beiden Klausur-Klassiker als Lückentext — beide sind Beispiele direkt von den\nVorlesungsfolien.\n\n**Lücke 1** ist die typische Stolperstelle bei der Mehr-Iterable-Form von `map`: Es muss `v, w`\nheißen, **nicht** `[v, w]`. Die Regel lautet\n`map(f, liste1, liste2, …) = [f(liste1[0], liste2[0]), …]` — das lambda hat zwei Parameter, also\nfolgen zwei getrennte iterierbare Objekte. Mit `[v, w]` bekäme `map` nur **ein** Iterable (eine\nListe aus zwei Listen) und würde beim ersten Element `TypeError: <lambda>() missing 1 required\npositional argument` werfen.\n\n**Lücke 2** ist die Standard-Faltung mit zwei Parametern.\n\n**Lücke 3** zeigt: `reduce` kennt die Länge der Liste nicht. Die Division durch `len(zahlen)` steht\ndeshalb bewusst **hinter** dem reduce-Aufruf, nicht im lambda.\n\n**Merkregel:** map(f, v, w) — Kommas, keine Klammern.",
+   "hints": [
+    "Wie viele Parameter hat das lambda in `vektoraddition` — und wie viele Listen müssen deshalb folgen?",
+    "Für Lücke 2: dieselbe Faltungsfunktion wie beim Aufsummieren.",
+    "Woher kommt der Nenner beim Durchschnitt?"
+   ],
+   "pitfalls": [
+    "In Lücke 1 `[v, w]` mit eckigen Klammern schreiben.",
+    "In Lücke 3 `len(v)` oder eine feste Zahl einsetzen.",
+    "Die Division ins reduce-lambda ziehen."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map(f, liste1, liste2, ..., liste_m)"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Beispiel: Durchschnitt von Zahlen bilden"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3b und 3d"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "map",
+    "reduce",
+    "vektoraddition",
+    "durchschnitt"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-013"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Lücken: Summe der teilbaren Zahlen (Beispiel aus der Vorlesung)",
+   "prompt": "Aufgabe von der filter-Folie: *Gegeben zwei gleichlange Listen, finde die Summe derjenigen\nZahlen in der ersten Liste, die vom gleichen Element der zweiten Liste ohne Rest geteilt werden.*\n\nBeispiel: `summe_teilbarer([10, 7, 12, 9], [5, 2, 4, 3])` → `31`, denn `10 % 5 == 0`,\n`12 % 4 == 0` und `9 % 3 == 0`, aber `7 % 2 != 0`. Also `10 + 12 + 9 = 31`.\n\nFüllen Sie die drei Lücken. (je 1-2 P)",
+   "code": "from functools import reduce\n\ndef summe_teilbarer(liste1, liste2):\n    return reduce(## Lücke 1 ##,\n                  map(## Lücke 2 ##, liste1, liste2),\n                  ## Lücke 3 ##)\n\nprint(summe_teilbarer([10, 7, 12, 9], [5, 2, 4, 3]))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "lambda a, b: a + b",
+      "lambda x, y: x + y",
+      "lambda x1, x2: x1 + x2",
+      "lambda a, b: b + a"
+     ],
+     "explanation": "reduce summiert die von map gelieferten Werte auf."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "lambda x, y: x if x % y == 0 else 0",
+      "lambda a, b: a if a % b == 0 else 0",
+      "lambda x, y: x * (x % y == 0)",
+      "lambda x, y: 0 if x % y else x"
+     ],
+     "explanation": "map läuft über beide Listen gleichzeitig und liefert die Zahl selbst, wenn sie teilbar ist, sonst 0 (das neutrale Element der Addition)."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "0"
+     ],
+     "explanation": "Der Startwert sorgt dafür, dass auch bei leeren Listen 0 herauskommt statt eines TypeError."
+    }
+   ],
+   "solution": "from functools import reduce\n\n\ndef summe_teilbarer(liste1, liste2):\n    return reduce(lambda a, b: a + b,\n                  map(lambda x, y: x if x % y == 0 else 0, liste1, liste2),\n                  0)\n\n\nprint(summe_teilbarer([10, 7, 12, 9], [5, 2, 4, 3]))   # 31",
+   "expectedOutput": "31",
+   "explanation": "Dieses Beispiel steht auf der filter-Folie — und ist gerade deshalb lehrreich, weil\ndie naheliegende `filter`-Lösung hier **nicht** direkt funktioniert: `filter` sieht immer nur **ein**\nElement auf einmal, die Bedingung braucht aber ein **Paar** aus beiden Listen.\n\nDie Lösung nutzt deshalb die Mehr-Iterable-Form von `map`: `map(f, liste1, liste2)` ruft\n`f(liste1[i], liste2[i])` auf. Statt zu filtern, bildet man nicht passende Paare auf `0` ab — das\n**neutrale Element der Addition**, das die Summe nicht verändert. Dieser Trick (\"filtern durch\nAbbilden auf das neutrale Element\") ist ein sehr nützliches funktionales Muster.\n\nDer bedingte Ausdruck `x if x % y == 0 else 0` ist Pythons einzige Möglichkeit, in einem `lambda`\neine Fallunterscheidung zu machen — ein `if`-Statement ist dort nicht erlaubt.\n\nDer Startwert `0` macht die Funktion total: Auch `summe_teilbarer([], [])` liefert `0` statt einem\n`TypeError`.\n\nEine Alternative wäre `reduce(lambda a, b: a + b, map(lambda p: p[0], filter(lambda p: p[0] % p[1] == 0, zip(liste1, liste2))), 0)` —\nkorrekt, aber `zip` kam in der Vorlesung nicht vor.\n\n**Merkregel:** Wenn filter zwei Listen bräuchte, bilde stattdessen mit map auf das neutrale Element ab.",
+   "hints": [
+    "`filter` sieht immer nur ein Element — wie bekommen Sie beide Listen gleichzeitig in eine Funktion?",
+    "Wie kann man ein Element 'wegfiltern', ohne filter zu benutzen, wenn hinterher summiert wird?",
+    "Im lambda hilft der bedingte Ausdruck `wert_wenn_wahr if bedingung else wert_wenn_falsch`."
+   ],
+   "pitfalls": [
+    "Ein `if`-Statement statt eines bedingten Ausdrucks in das lambda schreiben — syntaktisch unmöglich.",
+    "In Lücke 2 nur einen Parameter angeben, obwohl zwei Listen folgen.",
+    "Den Startwert weglassen und bei leeren Listen einen TypeError bekommen."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "Beispiel: Gegeben zwei Listen, finde die Summe derjenigen Zahlen ..."
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map mit mehreren iterierbaren Objekten"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Der Funktion reduce kann zusätzlich ein Startwert gegeben werden"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "map",
+    "reduce",
+    "startwert",
+    "transfer"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-014"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler im map/filter/reduce-Code",
+   "prompt": "Ein Kommilitone hat folgenden Code geschrieben und bittet Sie um Hilfe bei der Fehlersuche.\nIm Code stecken **genau drei** Fehler. Benennen Sie die betroffene Zeile, den Fehler und die Korrektur.",
+   "code": "zahlen = [1, 2, 3, 4, 5, 6]\n\ngerade = filter(zahlen, lambda x: x % 2 == 0)\nquadrate = map(lambda x: x ** 2, gerade)\nsumme = reduce(lambda a, b: a + b, quadrate)\nprint(gerade[0], summe)",
+   "errors": [
+    {
+     "line": 3,
+     "wrong": "filter(zahlen, lambda x: x % 2 == 0)",
+     "fix": "filter(lambda x: x % 2 == 0, zahlen)",
+     "why": "Argumente vertauscht: Bei filter (und map) steht IMMER zuerst die Funktion, dann das iterierbare Objekt. So wie es dasteht, versucht Python das lambda als iterierbares Objekt zu durchlaufen: TypeError: 'function' object is not iterable."
+    },
+    {
+     "line": 5,
+     "wrong": "summe = reduce(lambda a, b: a + b, quadrate)",
+     "fix": "from functools import reduce  # ganz oben ergänzen",
+     "why": "reduce ist - anders als map und filter - keine eingebaute Funktion, sondern muss aus dem Modul functools importiert werden. Sonst: NameError: name 'reduce' is not defined."
+    },
+    {
+     "line": 6,
+     "wrong": "print(gerade[0], summe)",
+     "fix": "gerade_liste = list(filter(...)) ... print(gerade_liste[0], summe)",
+     "why": "gerade ist ein filter-Objekt (Iterator) und nicht indizierbar: TypeError: 'filter' object is not subscriptable. Man muss es erst mit list(...) materialisieren - und zwar VOR der Verwendung in map, weil ein Iterator nur einmal gelesen werden kann."
+    }
+   ],
+   "solution": "**Die drei Fehler**\n\n1. **Zeile 3** — `filter(zahlen, lambda x: x % 2 == 0)`: Argumente vertauscht.\n   Richtig: `filter(lambda x: x % 2 == 0, zahlen)`.\n2. **Zeile 5** — `reduce` ist nicht eingebaut. Es fehlt `from functools import reduce` am Dateianfang.\n3. **Zeile 6** — `gerade[0]`: Ein filter-Objekt ist ein Iterator und lässt sich nicht indizieren.\n\n**Korrigierte Fassung**\n\n```python\nfrom functools import reduce\n\nzahlen = [1, 2, 3, 4, 5, 6]\n\ngerade = list(filter(lambda x: x % 2 == 0, zahlen))\nquadrate = map(lambda x: x ** 2, gerade)\nsumme = reduce(lambda a, b: a + b, quadrate)\nprint(gerade[0], summe)     # 2 56\n```\n\nAusgabe: `2 56` (denn 4 + 16 + 36 = 56).",
+   "explanation": "Die drei Fehler decken die drei häufigsten Klausurfallen bei map/filter/reduce ab:\n\n1. **Argumentreihenfolge.** `map` und `filter` nehmen **immer zuerst die Funktion**. Merkhilfe: Man\n   liest \"wende *diese Funktion* auf *dieses Objekt* an\".\n2. **Der Import.** `map` und `filter` sind builtins, `reduce` **nicht** — es steht seit Python 3 in\n   `functools`. Die Probeklausur sagt sogar ausdrücklich, man dürfe annehmen, dass\n   `from functools import reduce` bereits ausgeführt wurde; das zeigt, wie bewusst der Prof diesen\n   Punkt behandelt.\n3. **Iterator ≠ Liste.** `gerade[0]`, `len(gerade)` und ein zweites Durchlaufen scheitern alle am\n   selben Grund: Ein filter-Objekt ist ein Iterator ohne Index.\n\nEin subtiler Zusatzpunkt in der korrigierten Fassung: `list(...)` steht bewusst **direkt** um\n`filter`. Würde man erst `quadrate` bilden und danach `list(gerade)` aufrufen, wäre der Iterator\nschon von `map` verbraucht.\n\n**Merkregel:** Funktion zuerst — reduce importieren — Iteratoren haben keine Indizes.",
+   "hints": [
+    "Vergleichen Sie die Reihenfolge der Argumente in Zeile 3 mit der in Zeile 4.",
+    "Welche der drei Funktionen ist keine eingebaute Funktion von Python?",
+    "Kann man auf ein filter-Objekt mit `[0]` zugreifen?"
+   ],
+   "pitfalls": [
+    "Nur die Argumentreihenfolge finden und die fehlende Import-Zeile übersehen.",
+    "`gerade[0]` für richtig halten, weil `zahlen[0]` ja auch funktioniert.",
+    "Die Reihenfolge auch in Zeile 4 'korrigieren' — dort ist sie bereits richtig."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map(funktion, iterierbares Objekt)"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "filter nimmt eine Funktion und ein iterierbares Objekt entgegen"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Hinweis: from functools import reduce darf als ausgeführt angenommen werden"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "filter",
+    "reduce",
+    "import",
+    "iterator"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-015"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 3,
+   "title": "Drei Fehler rund um verbrauchte Iteratoren",
+   "prompt": "In diesem Code stecken **genau drei** Fehler. Benennen Sie Zeile, Fehler und Korrektur.\nAchtung: Nicht alle Fehler führen zu einer Fehlermeldung — einer liefert einfach ein falsches Ergebnis.",
+   "code": "from functools import reduce\n\nwoerter = [\"haus\", \"auto\", \"fahrrad\", \"boot\", \"elefant\"]\nlange = filter(lambda w: len(w) > 4, woerter)\nprint(\"Anzahl langer Wörter:\", len(lange))\ngross = map(lambda w: w.upper(), lange)\nsatz = reduce(lambda a, b: a + \" \" + b)\nprint(satz)",
+   "errors": [
+    {
+     "line": 5,
+     "wrong": "len(lange)",
+     "fix": "lange = list(filter(lambda w: len(w) > 4, woerter))  in Zeile 4, dann len(lange)",
+     "why": "lange ist ein filter-Objekt. Iteratoren haben keine Länge: TypeError: object of type 'filter' has no len(). Man muss das Ergebnis erst mit list(...) materialisieren."
+    },
+    {
+     "line": 6,
+     "wrong": "gross = map(lambda w: w.upper(), lange)",
+     "fix": "lange in Zeile 4 einmalig als Liste speichern und diese Liste hier verwenden",
+     "why": "Selbst wenn man in Zeile 5 list(lange) schreibt, ist der Iterator danach VERBRAUCHT - map bekäme ein leeres Objekt und satz wäre leer. Dieser Fehler wirft keine Fehlermeldung, sondern liefert stillschweigend ein falsches Ergebnis."
+    },
+    {
+     "line": 7,
+     "wrong": "reduce(lambda a, b: a + \" \" + b)",
+     "fix": "reduce(lambda a, b: a + \" \" + b, gross)",
+     "why": "reduce fehlt das iterierbare Objekt als zweites Argument: TypeError: reduce expected at least 2 arguments, got 1."
+    }
+   ],
+   "solution": "**Die drei Fehler**\n\n1. **Zeile 5** — `len(lange)`: Ein filter-Objekt hat keine Länge (`TypeError: object of type 'filter' has no len()`).\n2. **Zeile 6** — Der Iterator `lange` wäre nach dem Materialisieren in Zeile 5 **verbraucht**; `gross`\n   und damit `satz` wären leer. Dieser Fehler erzeugt **keine** Fehlermeldung.\n3. **Zeile 7** — `reduce` fehlt das iterierbare Objekt: `reduce(f)` statt `reduce(f, gross)`.\n\n**Korrigierte Fassung**\n\n```python\nfrom functools import reduce\n\nwoerter = [\"haus\", \"auto\", \"fahrrad\", \"boot\", \"elefant\"]\nlange = list(filter(lambda w: len(w) > 4, woerter))\nprint(\"Anzahl langer Wörter:\", len(lange))\ngross = map(lambda w: w.upper(), lange)\nsatz = reduce(lambda a, b: a + \" \" + b, gross)\nprint(satz)\n```\n\nAusgabe:\n```\nAnzahl langer Wörter: 2\nFAHRRAD ELEFANT\n```",
+   "explanation": "Diese Aufgabe zielt auf den gefährlichsten Aspekt von Iteratoren: den Fehler, der\n**keine** Fehlermeldung erzeugt.\n\n`filter` und `map` liefern Iteratoren mit einem internen Zählerstand. Zwei Konsequenzen:\n- Sie haben **keine Länge** (`len` scheitert) und **keinen Index** (`[0]` scheitert). Diese Fehler\n  merkt man sofort.\n- Sie sind **einmalig lesbar**. Wer sie erst zählt und danach weiterverarbeitet, arbeitet auf einem\n  leeren Rest. Das Programm läuft durch und gibt eine leere Zeile aus — der Fehler fällt erst bei\n  genauem Hinsehen auf.\n\nDie saubere Lösung ist, das Ergebnis **einmal** mit `list(...)` festzuhalten, sobald man es mehrfach\nbraucht. Eine Liste kann man beliebig oft zählen, indizieren und durchlaufen.\n\nDer dritte Fehler ist die Signatur: `reduce(funktion, iterierbares_objekt)` — mit optionalem drittem\nArgument als Startwert. Mit nur einem Argument ist der Aufruf unvollständig.\n\n**Merkregel:** Alles, was man mehr als einmal braucht, gehört in ein `list(...)`.",
+   "hints": [
+    "Was passiert, wenn man `len()` auf ein filter-Objekt anwendet?",
+    "Wie oft kann man einen Iterator auslesen? Was steht danach noch drin?",
+    "Zählen Sie die Argumente von `reduce` in Zeile 7."
+   ],
+   "pitfalls": [
+    "Nur die beiden TypeErrors finden und den 'stillen' Fehler in Zeile 6 übersehen.",
+    "In Zeile 5 `len(list(lange))` schreiben und glauben, damit sei alles gelöst — der Iterator ist danach leer.",
+    "Denken, `reduce` habe einen Standardwert für das fehlende zweite Argument."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "filter gibt einen Iterator zurück"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 17,
+     "label": "Iteratoren haben einen internen Zählerstand"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "map gibt einen Iterator zurück, der erst beim Materialisieren rechnet"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "iterator",
+    "verbraucht",
+    "len",
+    "reduce"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-016"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "reduce ist nicht kommutativ: Reihenfolge der Faltung",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?\nBegründen Sie jede Zeile mit der Faltungsregel aus der Vorlesung.",
+   "code": "from functools import reduce\n\nzahlen = [10, 3, 2]\nprint(reduce(lambda a, b: a - b, zahlen))\nprint(reduce(lambda a, b: a - b, zahlen, 100))\nprint(reduce(lambda a, b: b - a, zahlen))",
+   "expectedOutput": "5\n85\n9",
+   "solution": "```\n5\n85\n9\n```\n\n**Begründung**\n\n- Zeile 1: `reduce(f, [x1,x2,x3]) = f(f(x1,x2),x3)` → `(10 - 3) - 2 = 7 - 2 = 5`\n- Zeile 2: Mit Startwert 100 kommt ein Schritt davor: `((100 - 10) - 3) - 2 = 90 - 3 - 2 = 85`\n- Zeile 3: Hier ist `b - a` gerechnet, das Zwischenergebnis steht also rechts:\n  `f(10, 3) = 3 - 10 = -7`, dann `f(-7, 2) = 2 - (-7) = 9`",
+   "explanation": "Die Faltungsregel von der Folie lautet:\n\n> `reduce(f, [x1, x2, x3, …, xn]) = f(…f(f(f(x1,x2),x3), …, xn)`\n\nWichtig sind zwei Dinge, die man an der Subtraktion sofort sieht (bei der Addition dagegen nicht):\n\n1. **reduce faltet von links.** Das Zwischenergebnis ist immer der **erste** Parameter der Funktion,\n   das nächste Listenelement der **zweite**. Deshalb `(10-3)-2` und nicht `10-(3-2)`.\n2. **Der Startwert kommt ganz nach vorn**, nicht ans Ende: `reduce(f, [x1,…,xn], s) = f(…f(f(s,x1),x2)…,xn)`.\n   Mit `100` wird also zuerst `100 - 10` gerechnet.\n\nZeile 3 zeigt, warum die Parameterreihenfolge im lambda zählt: `lambda a, b: b - a` dreht die\nRechnung um, das Zwischenergebnis steht nun rechts. Bei kommutativen Operationen wie `+` oder `*`\nfällt so ein Fehler nie auf — bei `-`, `/`, Stringkonkatenation oder Listenaufbau schon.\n\n**Merkregel:** Linker Parameter = Zwischenergebnis (der \"Eimer\"), rechter Parameter = neues Element.",
+   "hints": [
+    "Schreiben Sie die Faltungsregel für drei Elemente hin und setzen Sie ein.",
+    "Wo genau steht der Startwert in der Klammerkette — vorne oder hinten?",
+    "In Zeile 3 ist im lambda `b - a` statt `a - b` — welcher Parameter trägt das Zwischenergebnis?"
+   ],
+   "pitfalls": [
+    "`10 - (3 - 2) = 9` rechnen — reduce klammert von links, nicht von rechts.",
+    "Den Startwert am Ende einsetzen: `((10-3)-2)-100 = -95` ist falsch.",
+    "In Zeile 3 einfach `5` wiederholen, weil man `b - a` überliest."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce(f, [x1,x2,x3,...,xn]) = f(...f(f(f(x1,x2),x3),...,xn)"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Beachte: Der Funktion reduce kann zusätzlich ein Startwert gegeben werden"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "reduce(f, liste, startwert)"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "predict-output",
+    "faltung",
+    "startwert"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-017"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 2,
+   "title": "map mit zwei ungleich langen Listen",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?",
+   "code": "a = [1, 2, 3, 4]\nb = [10, 20, 30]\nc = list(map(lambda x, y: x + y, a, b))\nprint(c)\nprint(len(c))\nprint(a)",
+   "expectedOutput": "[11, 22, 33]\n3\n[1, 2, 3, 4]",
+   "solution": "```\n[11, 22, 33]\n3\n[1, 2, 3, 4]\n```\n\n`map` läuft parallel über beide Listen und stoppt, sobald das **kürzeste** iterierbare Objekt\nerschöpft ist — die `4` aus `a` hat keinen Partner und fällt einfach weg. Es gibt **keine**\nFehlermeldung. Die Eingabelisten bleiben unverändert, weil `map` eine pure Operation ist.",
+   "explanation": "Die Vorlesungsfolie definiert die Mehr-Iterable-Form als\n\n> `map(f, liste1, …, liste_m) = [f(liste1[0], …, liste_m[0]), …, f(liste1[-1], …, liste_m[-1])]`\n\nund setzt dabei **gleichlange** Listen voraus. Sind sie ungleich lang, wirft Python trotzdem keinen\nFehler, sondern stoppt beim kürzesten Iterable. Das ist die gefährlichste Variante eines Bugs:\nDas Programm läuft, aber ein Datensatz verschwindet stillschweigend.\n\nDeshalb steht in der Klausuraufgabe zur `vektoraddition` ausdrücklich \"zwei **gleichlange** Listen\" —\ndie Funktion prüft das nicht selbst.\n\nDie dritte Zeile prüft ein zweites Konzept: `map` verändert seine Eingaben **nicht**. Es ist eine\n*higher order function* ohne Nebeneffekte; `a` ist nach dem Aufruf unverändert. Nur die Funktion,\ndie man `map` übergibt, könnte Nebeneffekte haben — hier tut sie das nicht.\n\n**Merkregel:** map stoppt beim kürzesten Iterable — leise, ohne Fehlermeldung.",
+   "hints": [
+    "Was passiert mit dem Element `4` aus `a`, das keinen Partner in `b` hat?",
+    "Gibt es eine Fehlermeldung, oder wird einfach abgeschnitten?",
+    "Verändert `map` die übergebenen Listen?"
+   ],
+   "pitfalls": [
+    "Einen `ValueError` oder `IndexError` erwarten — Python schneidet stillschweigend ab.",
+    "`[11, 22, 33, 4]` erwarten und annehmen, das überzählige Element werde unverändert übernommen.",
+    "Glauben, `a` werde durch `map` geleert oder verändert."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map(f, liste1, liste2, ..., liste_m) mit gleichlangen Objekten"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3b: zwei gleichlange Listen"
+    }
+   ],
+   "tags": [
+    "map",
+    "mehrere-iterables",
+    "predict-output",
+    "falle"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-018"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "title": "Reihenfolge von map und filter - und was reduce daraus macht",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?\nErklären Sie insbesondere den Unterschied zwischen `a` und `b`.",
+   "code": "from functools import reduce\n\nzahlen = [1, 2, 3, 4, 5, 6]\na = list(filter(lambda x: x > 6, map(lambda x: x * 2, zahlen)))\nb = list(map(lambda x: x * 2, filter(lambda x: x > 6, zahlen)))\nprint(a)\nprint(b)\nprint(reduce(lambda p, q: p + q, a, 0))\nprint(reduce(lambda p, q: p + q, b, 0))",
+   "expectedOutput": "[8, 10, 12]\n[]\n30\n0",
+   "solution": "```\n[8, 10, 12]\n[]\n30\n0\n```\n\n**`a`** — erst verdoppeln, dann filtern: `[2,4,6,8,10,12]` → nur `> 6` → `[8, 10, 12]`.\n\n**`b`** — erst filtern, dann verdoppeln: In `[1,…,6]` ist **keine** Zahl größer als 6, also bleibt\ndie Liste leer, und `map` auf einer leeren Liste bleibt leer → `[]`.\n\nDie letzten beiden Zeilen: `0+8+10+12 = 30` bzw. — weil `b` leer ist — der **Startwert** `0`.\nOhne den Startwert würde die letzte Zeile mit\n`TypeError: reduce() of empty iterable with no initial value` abstürzen.",
+   "explanation": "Zwei Erkenntnisse in einer Aufgabe.\n\n**1. Die Reihenfolge von map und filter ist nicht vertauschbar.** Beide Ausdrücke enthalten exakt\ndieselben zwei lambdas, nur in anderer Schachtelung — und liefern völlig verschiedene Ergebnisse.\nDer Grund: `filter` in `b` prüft die **Originalzahlen**, `filter` in `a` prüft die **schon\nverdoppelten** Werte. Deshalb gilt die Leseregel: Geschachtelte Ausdrücke werden **von innen nach\naußen** ausgewertet, das innerste Argument ist der erste Verarbeitungsschritt.\n\nAls Faustregel für die Klausur: Bezieht sich die Bedingung auf die **Originalwerte**, gehört `filter`\nnach innen; bezieht sie sich auf die **umgerechneten** Werte, gehört `filter` nach außen.\n\n**2. Der Startwert rettet reduce bei leerem Iterable.** `reduce` ohne Startwert braucht mindestens\nein Element, sonst `TypeError`. Mit Startwert ist das Ergebnis auf einer leeren Eingabe genau dieser\nStartwert. Deswegen ist die Startwert-Variante bei Daten unbekannter Größe fast immer die bessere —\nund deswegen fragt die Vorlesungsfolie extra: *\"Beachte: Der Funktion reduce kann zusätzlich ein\nStartwert gegeben werden.\"*\n\n**Merkregel:** Von innen nach außen lesen; Startwert = das neutrale Element der Operation.",
+   "hints": [
+    "Werten Sie beide Ausdrücke schrittweise aus — was ist jeweils der innerste Aufruf?",
+    "Gibt es in `[1,2,3,4,5,6]` überhaupt eine Zahl größer als 6?",
+    "Was liefert `reduce` mit Startwert, wenn das iterierbare Objekt leer ist?"
+   ],
+   "pitfalls": [
+    "Annehmen, map und filter seien vertauschbar, weil dieselben lambdas vorkommen.",
+    "Für die letzte Zeile einen `TypeError` erwarten — der Startwert `0` verhindert ihn genau hier.",
+    "In `b` `[2, 4, 6, 8, 10, 12]` erwarten und das Filter übersehen."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 5,
+     "label": "Dinge einzeln weiterverarbeiten, auswählen oder auf ein Element reduzieren"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Der Funktion reduce kann zusätzlich ein Startwert gegeben werden"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "reduce(f, liste, startwert)"
+    }
+   ],
+   "tags": [
+    "map",
+    "filter",
+    "reduce",
+    "reihenfolge",
+    "startwert",
+    "predict-output"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-019"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 3,
+   "examStyle": true,
+   "title": "reduce mit Startwert: die drei Sonderfälle",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?",
+   "code": "from functools import reduce\n\nprint(reduce(lambda a, b: a + b, [], 0))\nprint(reduce(lambda a, b: a * b, [7]))\nprint(reduce(lambda a, b: a * b, [7], 3))\nprint(reduce(lambda a, b: a + b, [\"x\"], \"start:\"))",
+   "expectedOutput": "0\n7\n21\nstart:x",
+   "solution": "```\n0\n7\n21\nstart:x\n```\n\n- Leeres Iterable **mit** Startwert → der Startwert selbst; die Funktion wird **nie** aufgerufen.\n- Ein Element **ohne** Startwert → genau dieses Element; die Funktion wird ebenfalls nie aufgerufen.\n- Ein Element **mit** Startwert → genau ein Funktionsaufruf: `f(3, 7) = 21`.\n- Dasselbe mit Strings: `f(\"start:\", \"x\") = \"start:x\"`.",
+   "explanation": "Diese vier Zeilen decken alle Randfälle von `reduce` ab — genau die, an denen in\nder Klausur Punkte hängen.\n\nDie allgemeine Regel lautet: `reduce` braucht insgesamt **mindestens einen** Wert. Startwert und\nListenelemente werden dabei zu einer einzigen Kette zusammengelegt:\n\n- `reduce(f, [x1,…,xn])` → `f(…f(f(x1,x2),x3)…,xn)` — **n−1** Funktionsaufrufe\n- `reduce(f, [x1,…,xn], s)` → `f(…f(f(s,x1),x2)…,xn)` — **n** Funktionsaufrufe\n\nDaraus folgt direkt: Bei genau einem Element und ohne Startwert gibt es **null** Aufrufe, das\nElement wird unverändert zurückgegeben — auch wenn die Funktion völlig unsinnig wäre. Und bei einer\nleeren Liste mit Startwert gibt es ebenfalls null Aufrufe.\n\nNur ein Fall bleibt fatal: **leeres Iterable ohne Startwert** → `TypeError: reduce() of empty\niterable with no initial value`.\n\nDie letzte Zeile zeigt außerdem, dass Startwert und Elemente denselben Typ haben sollten — hier\nStrings. Ein Startwert `0` mit einer Liste von Strings gäbe `TypeError: unsupported operand type(s)`.\n\n**Merkregel:** n Elemente ohne Startwert = n−1 Aufrufe; mit Startwert = n Aufrufe.",
+   "hints": [
+    "Wie oft wird die Funktion aufgerufen, wenn nur ein Element vorhanden ist?",
+    "Was passiert mit dem Startwert, wenn gar nichts zu falten ist?",
+    "Zählen Sie in jeder Zeile die Werte, die insgesamt in die Kette eingehen."
+   ],
+   "pitfalls": [
+    "Für die zweite Zeile einen Fehler erwarten, weil 'reduce zwei Elemente braucht'.",
+    "Für die dritte Zeile `7` erwarten und den Startwert ignorieren.",
+    "Glauben, der Startwert werde am Ende angehängt statt am Anfang."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Beachte: Der Funktion reduce kann zusätzlich ein Startwert gegeben werden"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "reduce kann auch einen Startwert als drittes Argument bekommen"
+    },
+    {
+     "file": "goofspiel26-4.py",
+     "page": 1,
+     "label": "reduce(..., states, \"\") mit Startwert Leerstring"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "startwert",
+    "randfälle",
+    "predict-output"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-020"
+  },
+  {
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "title": "reduce auf einer leeren Liste",
+   "prompt": "Was passiert beim Ausführen der folgenden Zeile?\n\n```python\nfrom functools import reduce\nprint(reduce(lambda a, b: a + b, []))\n```",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Es wird `0` ausgegeben.",
+     "correct": false,
+     "why": "Nein — `reduce` kennt kein neutrales Element und rät auch keins. `0` bekäme man nur mit einem expliziten Startwert: `reduce(f, [], 0)`."
+    },
+    {
+     "id": "b",
+     "text": "Es wird `None` ausgegeben.",
+     "correct": false,
+     "why": "Nein — `reduce` gibt in diesem Fall gar nichts zurück, sondern bricht mit einer Exception ab."
+    },
+    {
+     "id": "c",
+     "text": "Es gibt einen `TypeError`, weil reduce auf einem leeren Iterable keinen Startwert hat.",
+     "correct": true,
+     "why": "Richtig: `TypeError: reduce() of empty iterable with no initial value`. Mit `reduce(f, [], 0)` liefe es und gäbe `0` aus."
+    },
+    {
+     "id": "d",
+     "text": "Es wird eine leere Liste `[]` ausgegeben.",
+     "correct": false,
+     "why": "Nein — `reduce` gibt nie eine Liste zurück, sondern immer einen einzelnen Wert (oder wirft eine Exception)."
+    }
+   ],
+   "solution": "c — `TypeError: reduce() of empty iterable with no initial value`. Mit einem Startwert (`reduce(lambda a, b: a + b, [], 0)`) wird stattdessen `0` ausgegeben.",
+   "explanation": "`reduce` faltet ein iterierbares Objekt auf **einen** Wert zusammen. Wenn es weder\nein Element noch einen Startwert gibt, existiert schlicht kein Wert, den es zurückgeben könnte — und\nPython rät nicht. Es gibt keine \"Standard-Null\", denn `reduce` weiß nicht, ob gerade addiert\n(neutrales Element `0`), multipliziert (`1`) oder ein String gebaut wird (`''`).\n\nGenau deshalb ist der optionale dritte Parameter so wichtig: Er ist das **neutrale Element** der\nOperation und macht die Funktion total, also für **jede** Eingabe definiert.\n\nPraktische Konsequenz für die Klausur: Sobald das iterierbare Objekt aus einem `filter` kommt, kann\nes leer sein — auch wenn die Ausgangsliste voll war. In solchen Fällen gehört ein Startwert dazu.\nDeshalb steht in der Musterlösung zu Aufgabe 5a der Probeklausur der Startwert `\"\"`.\n\n**Merkregel:** Kommt die Eingabe von `filter`, gib `reduce` immer einen Startwert mit.",
+   "hints": [
+    "Welchen Wert sollte reduce zurückgeben, wenn es weder Elemente noch einen Startwert gibt?",
+    "Woher sollte Python wissen, ob `0`, `1` oder `''` das richtige neutrale Element ist?",
+    "Der dritte Parameter von reduce löst genau dieses Problem."
+   ],
+   "pitfalls": [
+    "`0` erwarten, weil Summen 'ja bei null anfangen' — reduce kennt die Operation nicht.",
+    "`None` erwarten, wie bei einer Funktion ohne return."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce mit optionalem Startwert"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5a: doku beginnt mit dem Startwert Leerstring"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "mc",
+    "startwert",
+    "typeerror",
+    "randfall"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-021"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 3,
+   "title": "Welche Aussagen über map, filter und reduce sind richtig?",
+   "prompt": "Welche der folgenden Aussagen sind **richtig**? (Mehrfachauswahl)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`map` und `filter` geben Iteratoren zurück, `reduce` gibt einen einzelnen Wert zurück.",
+     "correct": true,
+     "why": "Richtig. Deshalb braucht man bei map und filter oft `list(...)`, bei reduce nie."
+    },
+    {
+     "id": "b",
+     "text": "`reduce` muss aus dem Modul `functools` importiert werden, `map` und `filter` nicht.",
+     "correct": true,
+     "why": "Richtig. `map` und `filter` sind builtins; `reduce` steht seit Python 3 in functools."
+    },
+    {
+     "id": "c",
+     "text": "Die Funktion, die man `filter` übergibt, muss zu einem booleschen Wert auswerten.",
+     "correct": true,
+     "why": "Richtig — die Vorlesung formuliert es genau so. Praktisch reicht jeder Wert, der als wahr oder falsch interpretiert werden kann."
+    },
+    {
+     "id": "d",
+     "text": "`map` kann mehrere iterierbare Objekte bekommen; dann braucht die Funktion entsprechend viele Parameter.",
+     "correct": true,
+     "why": "Richtig: `map(f, liste1, ..., liste_m)` ruft `f(liste1[i], ..., liste_m[i])` auf."
+    },
+    {
+     "id": "e",
+     "text": "Die Funktion, die man `reduce` übergibt, bekommt genau ein Argument.",
+     "correct": false,
+     "why": "Falsch — sie muss zwei Elemente auf eines abbilden, hat also zwei Parameter."
+    },
+    {
+     "id": "f",
+     "text": "`map(f, liste)` verändert die übergebene Liste in place.",
+     "correct": false,
+     "why": "Falsch. `map` ist nebeneffektfrei und lässt die Eingabe unangetastet; das Ergebnis ist ein neues Objekt."
+    },
+    {
+     "id": "g",
+     "text": "`len(map(f, liste))` liefert die Anzahl der Elemente.",
+     "correct": false,
+     "why": "Falsch: `TypeError: object of type 'map' has no len()`. Erst `len(list(map(f, liste)))` funktioniert."
+    }
+   ],
+   "solution": "Richtig sind **a, b, c und d**. Falsch sind e (reduce-Funktion hat zwei Parameter), f (map verändert nichts) und g (Iteratoren haben keine Länge).",
+   "explanation": "Diese Sammlung fasst alle Eigenschaften zusammen, die auf den Folien\n\"map, filter, reduce\" stehen und in der Kurzfragen-Aufgabe der Klausur abgefragt werden können.\n\nDie vier korrekten Aussagen sind die Definition selbst:\n- **Rückgabetypen** (a): Iterator, Iterator, Wert.\n- **Import** (b): nur `reduce` braucht `from functools import reduce`.\n- **Signatur der übergebenen Funktion** (c/e): filter → 1 Parameter nach bool, map → 1 Parameter\n  (oder m Parameter bei m Listen), reduce → **2** Parameter.\n- **Mehrere Iterables** (d): nur `map` kann das, `filter` und `reduce` nicht.\n\nDie drei falschen Aussagen sind die drei typischen Denkfehler: reduce-Funktion mit einem Parameter,\nmap als In-Place-Operation, und `len` auf einem Iterator.\n\nZu f) besonders: `map` ist selbst nebeneffektfrei — aber die Funktion, die man ihm übergibt, muss es\nnicht sein. `map(lambda x: liste.append(x), …)` hätte sehr wohl Nebeneffekte. In funktionalem Code\nvermeidet man das.\n\n**Merkregel:** filter 1 Parameter → bool, map 1 (oder m) Parameter → Wert, reduce 2 Parameter → Wert.",
+   "hints": [
+    "Gehen Sie jede Aussage einzeln durch: Wie viele Parameter hat die jeweils übergebene Funktion?",
+    "Welche der drei Funktionen ist kein builtin?",
+    "Kann man auf einem Iterator `len` aufrufen?"
+   ],
+   "pitfalls": [
+    "Aussage c ablehnen, weil Python auch nicht-boolesche Werte akzeptiert — die Vorlesung formuliert sie genau so.",
+    "Aussage d übersehen, weil man die Mehr-Iterable-Form von map nicht kennt.",
+    "Aussage g für richtig halten, weil `len` bei Listen ja funktioniert."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map, filter, reduce — Definitionen"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Die Funktion muss zwei Elemente auf eines abbilden"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "Die Funktion evaluiert zu einem boolschen Wert"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 9,
+     "label": "Gelernte Befehle: map, filter, reduce"
+    }
+   ],
+   "tags": [
+    "multi-mc",
+    "map",
+    "filter",
+    "reduce",
+    "theorie"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-022"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Die reduce-Regel erklären und Schritt für Schritt anwenden",
+   "prompt": "Geben Sie die allgemeine Regel an, nach der `reduce(f, [x1, x2, …, xn])` ausgewertet wird.\nWerten Sie damit den folgenden Ausdruck **Schritt für Schritt** aus und geben Sie das Ergebnis an:\n\n```python\nreduce(lambda a, b: a + '-' + b, ['A', 'B', 'C', 'D'])\n```\n\nWie viele Aufrufe des lambda finden dabei statt? (3 P)",
+   "solution": "**1. Die Regel (von der Vorlesungsfolie)**\n\n```\nreduce(f, [x1, x2, x3, …, xn]) = f(…f(f(f(x1,x2),x3), …, xn)\n```\n\nDie Funktion `f` bildet zwei Elemente auf eines ab. `reduce` faltet von links: Das Zwischenergebnis\nist stets das **erste** Argument, das nächste Listenelement das **zweite**.\n\n**2. Schrittweise Auswertung**\n\n| Schritt | Aufruf | Ergebnis |\n|---|---|---|\n| 1 | `f('A', 'B')` | `'A-B'` |\n| 2 | `f('A-B', 'C')` | `'A-B-C'` |\n| 3 | `f('A-B-C', 'D')` | `'A-B-C-D'` |\n\n**Ergebnis:** `'A-B-C-D'`\n\n**3. Anzahl der Aufrufe**\n\nBei n = 4 Elementen ohne Startwert: **n − 1 = 3** Aufrufe.\n(Mit Startwert wären es n = 4 Aufrufe.)\n\n**Bewertungsrubrik (3 P)**\n- 1 P: Regel korrekt notiert (Faltung von links, f bildet zwei Elemente auf eines ab)\n- 1 P: alle drei Zwischenschritte und das Ergebnis `'A-B-C-D'`\n- 1 P: Anzahl der Aufrufe `n - 1 = 3`",
+   "explanation": "Wer die Faltungsregel einmal sauber hinschreiben kann, löst jede reduce-Aufgabe\nmechanisch — auch die kniffligen mit nicht-kommutativen Operationen.\n\nDie drei Bausteine der Regel:\n1. `f` hat **zwei** Parameter und gibt **einen** Wert zurück.\n2. Gefaltet wird **von links**: erst `x1` und `x2`, dann das Ergebnis mit `x3`, und so weiter.\n3. Das Zwischenergebnis ist immer der **linke** Parameter.\n\nAn diesem Beispiel sieht man auch, warum genau **n−1** Trennzeichen entstehen: Jeder der drei\nAufrufe fügt genau ein `'-'` hinzu. Wer stattdessen `a + b + '-'` schreibt, bekommt `'AB-C-D-'` —\nein zusätzliches Trennzeichen am Ende und keines nach dem ersten Element. Genau dieser Baustein\nsteckt in der `spieldokumentation` des Professors, wo `'\\n'` statt `'-'` verwendet wird.\n\nZählregel für die Aufrufe: Ohne Startwert dient `x1` als Anfangswert, also bleiben n−1 Faltungen.\nMit Startwert kommt ein Aufruf hinzu, also n.\n\n**Merkregel:** n Elemente → n−1 Faltungen → n−1 Trennzeichen.",
+   "hints": [
+    "Die Regel steht wörtlich auf der reduce-Folie — mit vielen geschachtelten Klammern.",
+    "Beginnen Sie mit den ersten beiden Elementen und arbeiten Sie sich nach rechts vor.",
+    "Zählen Sie, wie viele Trennzeichen im Ergebnis stehen — das ist auch die Anzahl der Aufrufe."
+   ],
+   "pitfalls": [
+    "Von rechts falten: `f('A', f('B', f('C','D')))` ergibt zwar hier zufällig dasselbe, ist aber die falsche Regel.",
+    "4 statt 3 Aufrufe angeben (es gibt keinen Startwert).",
+    "Ein zusätzliches `-` am Anfang oder Ende mitrechnen."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce(f, [x1,x2,x3,...,xn]) = f(...f(f(f(x1,x2),x3),...,xn)"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Beispiel: Eine Liste von Strings zu einem einzigen String machen"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "reduce(f, [x1, x2, x3]) = f(f(x1, x2), x3)"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "short-answer",
+    "faltung",
+    "theorie"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-023"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 3,
+   "title": "Maximum mit reduce - ohne max()",
+   "prompt": "Schreiben Sie eine Funktion `maximum(zahlen)`, die **mit `reduce`** das größte Element einer\nnichtleeren Zahlenliste bestimmt — **ohne** `max()`, `sorted()` oder Schleifen.\n\nBeispiel: `maximum([4, 2, 7, 1, 9, 3, 5])` → `9` (3 P)",
+   "starterCode": "from functools import reduce\n\ndef maximum(zahlen):\n    # mit reduce ergänzen\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "kein max()",
+    "kein sorted()",
+    "reduce verwenden"
+   ],
+   "solution": "from functools import reduce\n\n\ndef maximum(zahlen):\n    return reduce(lambda a, b: a if a > b else b, zahlen)",
+   "tests": [
+    {
+     "name": "Beispiel vom Übungsblatt",
+     "call": "maximum([4, 2, 7, 1, 9, 3, 5])",
+     "expected": "9"
+    },
+    {
+     "name": "Maximum am Anfang",
+     "call": "maximum([9, 1, 2])",
+     "expected": "9"
+    },
+    {
+     "name": "Maximum am Ende",
+     "call": "maximum([1, 2, 9])",
+     "expected": "9"
+    },
+    {
+     "name": "nur negative Zahlen",
+     "call": "maximum([-5, -2, -9])",
+     "expected": "-2"
+    },
+    {
+     "name": "einelementige Liste",
+     "call": "maximum([3])",
+     "expected": "3"
+    },
+    {
+     "name": "Duplikate",
+     "call": "maximum([4, 4, 4])",
+     "expected": "4"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "max(",
+    "sorted("
+   ],
+   "required": [
+    "reduce("
+   ],
+   "explanation": "Aufgabe 2.2 vom Übungsblatt — und ein gutes Beispiel dafür, dass `reduce` mehr kann\nals Summen bilden.\n\nDie Faltungsfunktion muss zwei Elemente auf eines abbilden. Für das Maximum heißt das: Behalte den\ngrößeren der beiden. Das lambda ist `lambda a, b: a if a > b else b` — der **bedingte Ausdruck**,\nPythons einzige Möglichkeit für eine Fallunterscheidung innerhalb eines `lambda`. Ein\n`if`-Statement ist dort syntaktisch nicht erlaubt.\n\nDa das Zwischenergebnis immer der bisher größte Wert ist, wandert das Maximum Schritt für Schritt\nnach rechts durch die Faltung. Bei `[4, 2, 7]` etwa: `f(4,2) = 4`, `f(4,7) = 7`.\n\nEin Startwert wäre hier heikel: `reduce(f, zahlen, 0)` gäbe bei `[-5, -2, -9]` fälschlich `0`,\nweil `0` kein neutrales Element des Maximums ist (das wäre minus unendlich). Deshalb hier **ohne**\nStartwert — und darum steht in der Aufgabe \"nichtleere Liste\".\n\n**Merkregel:** reduce + bedingter Ausdruck = Auswahl statt Rechnung.",
+   "hints": [
+    "`reduce` faltet zwei Werte zu einem — welchen der beiden wollen Sie behalten?",
+    "In einem `lambda` schreibt man Fallunterscheidungen als `wert1 if bedingung else wert2`.",
+    "Der Hinweis vom Übungsblatt lautet: `lambda a, b: a if a > b else b`."
+   ],
+   "pitfalls": [
+    "`if a > b: return a` in das lambda schreiben wollen — Statements sind dort verboten.",
+    "Einen Startwert `0` angeben und dadurch bei negativen Zahlen ein falsches Ergebnis bekommen.",
+    "`max()` benutzen, obwohl die Aufgabe es ausdrücklich verbietet."
+   ],
+   "sources": [
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "Aufgabe 2.2 — Maximum mit reduce ohne max()"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce: Die Funktion muss zwei Elemente auf eines abbilden"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "maximum",
+    "bedingter-ausdruck",
+    "lambda"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-024"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 3,
+   "title": "Fakultät mit reduce und Startwert",
+   "prompt": "Schreiben Sie eine Funktion `fakultaet(n)`, die `n!` **mit `reduce`** über `range(1, n+1)`\nberechnet. Für `n = 0` muss `1` herauskommen (0! = 1).\n\nBeispiel: `fakultaet(7)` → `5040`. Keine Schleifen, keine Rekursion. (3 P)",
+   "starterCode": "from functools import reduce\n\ndef fakultaet(n):\n    # mit reduce über range(1, n + 1) ergänzen\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "keine Rekursion",
+    "reduce verwenden",
+    "range verwenden"
+   ],
+   "solution": "from functools import reduce\n\n\ndef fakultaet(n):\n    return reduce(lambda a, b: a * b, range(1, n + 1), 1)",
+   "tests": [
+    {
+     "name": "7! vom Übungsblatt",
+     "call": "fakultaet(7)",
+     "expected": "5040"
+    },
+    {
+     "name": "0! ist 1 (Startwert nötig)",
+     "call": "fakultaet(0)",
+     "expected": "1"
+    },
+    {
+     "name": "1! ist 1",
+     "call": "fakultaet(1)",
+     "expected": "1"
+    },
+    {
+     "name": "5!",
+     "call": "fakultaet(5)",
+     "expected": "120"
+    },
+    {
+     "name": "10!",
+     "call": "fakultaet(10)",
+     "expected": "3628800"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "fakultaet(n - 1)",
+    "fakultaet(n-1)",
+    "math.factorial"
+   ],
+   "required": [
+    "reduce(",
+    "range("
+   ],
+   "explanation": "Aufgabe 2.3 vom Übungsblatt. Die eigentliche Pointe steckt im Sonderfall `n = 0`.\n\n`range(1, 1)` ist **leer**. Ohne Startwert würde `reduce(lambda a, b: a * b, range(1, 1))` deshalb\nmit `TypeError: reduce() of empty iterable with no initial value` abstürzen. Der Startwert `1` — das\n**neutrale Element der Multiplikation** — löst das Problem und liefert für `n = 0` korrekt `1`.\n\nFür alle anderen `n` ändert der Startwert nichts am Ergebnis, weil die Multiplikation mit 1 nichts\nbewirkt. Genau das ist die Idee eines neutralen Elements: Es macht die Funktion total, ohne die\nErgebnisse zu verfälschen.\n\nBeachten Sie außerdem, dass `range` ein iterierbares Objekt ist und ohne `list(...)` direkt an\n`reduce` übergeben werden kann — genau wie im Beispiel des Übungsblatts.\n\nZum Vergleich: Die rekursive Fassung aus VL 4 (`n * fakultaet(n-1)` mit Abbruch bei `n == 0`) löst\ndasselbe Problem über die Abbruchbedingung. Beim funktionalen Weg übernimmt der Startwert diese Rolle.\n\n**Merkregel:** Startwert = neutrales Element: `0` beim Addieren, `1` beim Multiplizieren, `''` beim Verketten.",
+   "hints": [
+    "Welchen Bereich müssen Sie multiplizieren, damit n! entsteht?",
+    "Was liefert `range(1, 1)` — und was macht `reduce` damit ohne Startwert?",
+    "Welche Zahl verändert ein Produkt nicht?"
+   ],
+   "pitfalls": [
+    "Den Startwert weglassen: `fakultaet(0)` stürzt dann mit einem TypeError ab.",
+    "`range(1, n)` statt `range(1, n + 1)` schreiben — dann fehlt der Faktor n.",
+    "Als Startwert `0` nehmen — damit ist jedes Produkt `0`."
+   ],
+   "sources": [
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "Aufgabe 2.3 — 7! mit reduce auf range(1, 8)"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce mit Startwert"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 9,
+     "label": "Berechne n! mittels for-Schleife und rekursiv"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "startwert",
+    "fakultaet",
+    "range",
+    "neutrales-element"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-025"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "title": "Produktliste: Bruttopreise mit map und Tupeln",
+   "prompt": "Gegeben ist eine Liste von Produkten, jeweils als Tupel `(name, nettopreis, steuersatz_in_prozent)`.\n\nSchreiben Sie eine Funktion `bruttoprodukte(produkte)`, die **mit `map`** eine Liste neuer Tupel\n`(name, bruttopreis)` erzeugt. Der Bruttopreis ist `nettopreis * (1 + steuersatz / 100)`,\ngerundet auf zwei Nachkommastellen mit `round`.\n\nKeine Schleifen. (4 P)",
+   "starterCode": "produkte = [\n    (\"Buch\", 12.0, 7),\n    (\"Laptop\", 999.0, 19),\n    (\"Wasserflasche\", 1.5, 19),\n    (\"Apfel\", 0.80, 7),\n]\n\ndef bruttoprodukte(produkte):\n    # mit map und lambda ergänzen\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "keine List Comprehension",
+    "map verwenden",
+    "round verwenden"
+   ],
+   "solution": "def bruttoprodukte(produkte):\n    return list(map(lambda p: (p[0], round(p[1] * (1 + p[2] / 100), 2)), produkte))",
+   "tests": [
+    {
+     "name": "Beispiel vom Aufgabenblatt",
+     "call": "bruttoprodukte([('Buch', 12.0, 7), ('Laptop', 999.0, 19), ('Wasserflasche', 1.5, 19), ('Apfel', 0.80, 7)])",
+     "expected": "[('Buch', 12.84), ('Laptop', 1188.81), ('Wasserflasche', 1.78), ('Apfel', 0.86)]"
+    },
+    {
+     "name": "Steuersatz 0 lässt den Preis unverändert",
+     "call": "bruttoprodukte([('Brief', 5.0, 0)])",
+     "expected": "[('Brief', 5.0)]"
+    },
+    {
+     "name": "leere Produktliste",
+     "call": "bruttoprodukte([])",
+     "expected": "[]"
+    },
+    {
+     "name": "Ergebnis besteht aus Tupeln",
+     "call": "type(bruttoprodukte([('X', 1.0, 0)])[0]).__name__",
+     "expected": "'tuple'"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "map(",
+    "round("
+   ],
+   "explanation": "Diese Aufgabe (Beispielaufgaben zu VL 3, Aufgabe 4) kombiniert `map` mit **Tupeln** —\nund genau das macht sie anspruchsvoll: Das lambda bekommt **ein** Tupel als Parameter und muss\ndaraus mit `p[0]`, `p[1]`, `p[2]` die drei Bestandteile herausholen und **ein neues Tupel**\nzurückgeben.\n\nDer häufigste Syntaxfehler ist das Vergessen der Klammern um das Ergebnis-Tupel:\n`lambda p: p[0], round(...)` wird von Python als **zwei** Ausdrücke gelesen (ein lambda und ein\nround-Aufruf), nicht als ein Tupel. Es muss `lambda p: (p[0], round(...))` heißen.\n\nAuch schön zu wissen: Alternativ kann man das Tupel direkt entpacken — `map(lambda p: ..., produkte)`\nlässt sich nicht mit `lambda (name, netto, satz): ...` schreiben, denn dieses Tupel-Unpacking in\nParameterlisten wurde in Python 3 entfernt.\n\n**Achtung Gleitkomma:** `1.5 * 1.19` ergibt intern `1.7849999999999999…`, also liegt der Wert knapp\n**unter** `1.785`. `round(..., 2)` liefert deshalb `1.78` und nicht `1.79`. Das ist kein Fehler im\nCode, sondern die begrenzte Genauigkeit von `float` — für Geldbeträge nimmt man in der Praxis\n`decimal.Decimal`.\n\n**Merkregel:** Ein Tupel als lambda-Rückgabe braucht immer eigene Klammern.",
+   "hints": [
+    "Das lambda bekommt ein ganzes Tupel — wie greifen Sie auf die einzelnen Bestandteile zu?",
+    "Der Rückgabewert soll selbst wieder ein Tupel mit zwei Einträgen sein.",
+    "`round(wert, 2)` rundet auf zwei Nachkommastellen."
+   ],
+   "pitfalls": [
+    "Die Klammern um das Ergebnis-Tupel vergessen: `lambda p: p[0], round(...)`.",
+    "`list(...)` vergessen und ein map-Objekt zurückgeben.",
+    "`round` vergessen — dann stehen dort Werte wie `1188.8100000000002`."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL3.pdf",
+     "page": 3,
+     "label": "Aufgabe 4: Verarbeitung einer Produktliste mit map und lambda"
+    },
+    {
+     "file": "Beispielaufgaben_VL3.pdf",
+     "page": 2,
+     "label": "Aufgabe 3: Bruttopreise mit map() und lambda"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map wendet die Funktion auf jedes Element an"
+    }
+   ],
+   "tags": [
+    "map",
+    "tupel",
+    "round",
+    "lambda",
+    "transfer"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-026"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Goofspiel: entferne_karte mit filter umschreiben",
+   "prompt": "Im Goofspiel des Professors entfernt diese Funktion eine gespielte Karte aus einem\nKartenspiel (einem **Tupel**), ohne das Original zu verändern:\n\n```python\ndef entferne_karte(kartenspiel, karte):\n    i = kartenspiel.index(karte)\n    return kartenspiel[:i] + kartenspiel[i+1:]\n```\n\nSchreiben Sie diese Funktion **unter Verwendung von `filter`** um. Die Rückgabe muss weiterhin\nein **Tupel** sein, und das übergebene Kartenspiel darf nicht verändert werden. (4 P)",
+   "starterCode": "def entferne_karte(kartenspiel, karte):\n    # mit filter ergänzen – Rückgabe muss ein Tupel sein\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "filter verwenden",
+    "Rückgabe ist ein Tupel",
+    "keine Mutation der Eingabe"
+   ],
+   "solution": "def entferne_karte(kartenspiel, karte):\n    return tuple(filter(lambda k: k != karte, kartenspiel))",
+   "tests": [
+    {
+     "name": "Karte in der Mitte",
+     "call": "entferne_karte((1, 2, 3, 4), 3)",
+     "expected": "(1, 2, 4)"
+    },
+    {
+     "name": "erste Karte",
+     "call": "entferne_karte((1, 2, 3), 1)",
+     "expected": "(2, 3)"
+    },
+    {
+     "name": "letzte Karte",
+     "call": "entferne_karte((1, 2, 3), 3)",
+     "expected": "(1, 2)"
+    },
+    {
+     "name": "Karte nicht vorhanden – kein Fehler",
+     "call": "entferne_karte((1, 2, 3), 9)",
+     "expected": "(1, 2, 3)"
+    },
+    {
+     "name": "volles Kartenspiel",
+     "call": "entferne_karte(tuple(range(1, 14)), 7)",
+     "expected": "(1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13)"
+    },
+    {
+     "name": "Rückgabe ist ein Tupel",
+     "call": "type(entferne_karte((1, 2), 1)).__name__",
+     "expected": "'tuple'"
+    },
+    {
+     "name": "Original bleibt unverändert",
+     "call": "(lambda ks: (entferne_karte(ks, 2), ks)[1])((1, 2, 3))",
+     "expected": "(1, 2, 3)"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    ".remove(",
+    ".index("
+   ],
+   "required": [
+    "filter("
+   ],
+   "explanation": "Auf der filter-Folie steht wörtlich: *\"Beispiel: Schreibe folgende Funktion aus dem\nGoofspiel unter Verwendung von 'filter' um\"*. Genau diese Transfer-Aufgabe ist hier gestellt.\n\nDas Prädikat lautet `lambda k: k != karte` — behalte alle Karten, die **nicht** die gespielte sind.\nWichtig ist, dass um `filter` ein `tuple(...)` und **nicht** `list(...)` steht: Im funktionalen\nGoofspiel sind die Kartenspiele bewusst **Tupel**, weil Tupel *immutable* sind und deshalb nicht\nversehentlich an anderer Stelle verändert werden können. `helper-2.py` gibt in `neues_kartenspiel`\ndeshalb `tuple(range(1, n+1))` zurück.\n\nDer Kontrast zur imperativen Urfassung in `helper.py` ist lehrreich: Dort stand\n`kartenspiel.remove(karte)` — ein **Nebeneffekt** auf der übergebenen Liste. Die filter-Variante ist\neine *pure function*: Sie liest nur ihre Argumente und baut ein neues Tupel.\n\nEin feiner Unterschied zur Index-Variante: Kommt eine Karte **mehrfach** vor, entfernt `.index`-Slicing\nnur das erste Vorkommen, `filter` dagegen **alle**. Beim Goofspiel spielt das keine Rolle, weil jede\nKarte genau einmal existiert — bei einer Klausurbegründung ist es aber genau der Punkt, der zeigt,\ndass man verstanden hat, was man tut.\n\n**Merkregel:** `tuple(filter(...))` statt `list(filter(...))`, wenn die Datenstruktur immutable bleiben soll.",
+   "hints": [
+    "Welche Karten sollen im Ergebnis landen — und welche Bedingung beschreibt genau die?",
+    "`filter` gibt einen Iterator zurück. Womit machen Sie daraus ein Tupel statt einer Liste?",
+    "Die Lösung passt in eine Zeile."
+   ],
+   "pitfalls": [
+    "`list(filter(...))` schreiben — dann ist die Rückgabe eine Liste und damit mutable.",
+    "`kartenspiel.remove(karte)` benutzen: Das ist ein Nebeneffekt und bei Tupeln gar nicht möglich.",
+    "`k == karte` als Prädikat nehmen und damit genau die falsche Karte behalten."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "Beispiel: Schreibe folgende Funktion aus dem Goofspiel unter Verwendung von filter um"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "entferne_karte mit index und Slicing, Kartenspiel als Tupel"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "imperative Urfassung mit kartenspiel.remove(karte)"
+    }
+   ],
+   "tags": [
+    "filter",
+    "goofspiel",
+    "tupel",
+    "immutable",
+    "pure-function"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-027"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "Spielstatistik ohne Schleifen (Push Your Luck)",
+   "prompt": "`runden` ist eine Liste von Runden; jede Runde ist eine Liste der in ihr gewürfelten Augenzahlen,\nz. B. `[[3, 4, 1], [2, 6, 5], [4, 4], [1]]`.\n\nSchreiben Sie **ohne jede Schleife** (nur `map`, `filter`, `reduce`, `len`) drei Funktionen:\n\n1. `anzahl_pechrunden(runden)` — wie viele Runden enden mit einer `1`?\n2. `laengste_runde(runden)` — die Länge der längsten Runde\n3. `gerade_wuerfe(runden)` — wie viele gerade Augenzahlen wurden insgesamt geworfen?\n\nSie dürfen `sum` und `max` **nicht** verwenden. Es gibt immer mindestens eine Runde. (5 P)",
+   "starterCode": "from functools import reduce\n\ndef anzahl_pechrunden(runden):\n    ...\n\ndef laengste_runde(runden):\n    ...\n\ndef gerade_wuerfe(runden):\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "keine List Comprehension",
+    "kein sum()",
+    "kein max()",
+    "nur map, filter, reduce, len"
+   ],
+   "solution": "from functools import reduce\n\n\ndef anzahl_pechrunden(runden):\n    return len(list(filter(lambda r: r[-1] == 1, runden)))\n\n\ndef laengste_runde(runden):\n    return reduce(lambda a, b: a if a > b else b, map(len, runden))\n\n\ndef gerade_wuerfe(runden):\n    return reduce(lambda a, b: a + b,\n                  map(lambda r: len(list(filter(lambda w: w % 2 == 0, r))), runden),\n                  0)",
+   "tests": [
+    {
+     "name": "Pechrunden im Beispiel",
+     "call": "anzahl_pechrunden([[3, 4, 1], [2, 6, 5], [4, 4], [1]])",
+     "expected": "2"
+    },
+    {
+     "name": "keine Pechrunde",
+     "call": "anzahl_pechrunden([[2, 3], [4]])",
+     "expected": "0"
+    },
+    {
+     "name": "längste Runde im Beispiel",
+     "call": "laengste_runde([[3, 4, 1], [2, 6, 5], [4, 4], [1]])",
+     "expected": "3"
+    },
+    {
+     "name": "längste Runde steht hinten",
+     "call": "laengste_runde([[1], [2, 3, 4, 5]])",
+     "expected": "4"
+    },
+    {
+     "name": "gerade Würfe im Beispiel",
+     "call": "gerade_wuerfe([[3, 4, 1], [2, 6, 5], [4, 4], [1]])",
+     "expected": "5"
+    },
+    {
+     "name": "gar keine geraden Würfe",
+     "call": "gerade_wuerfe([[1, 3], [5]])",
+     "expected": "0"
+    },
+    {
+     "name": "eine einzige Runde",
+     "call": "gerade_wuerfe([[2, 4, 6]])",
+     "expected": "3"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "sum(",
+    "max("
+   ],
+   "required": [
+    "map(",
+    "filter(",
+    "reduce(",
+    "len("
+   ],
+   "explanation": "Stufe B3 der Push-Your-Luck-Übung — genau die Art Transferaufgabe, die der Professor\nankündigt: bekannte Konzepte auf ein neues Problem anwenden, hier auf eine **verschachtelte**\nDatenstruktur (Liste von Listen).\n\n**1. Pechrunden.** `filter` mit dem Prädikat `r[-1] == 1` (negativer Index = letztes Element) wählt\ndie Runden aus, dann zählt `len(list(...))`. Das `list(...)` ist hier zwingend, weil `len` auf einem\nfilter-Objekt einen `TypeError` wirft.\n\n**2. Längste Runde.** `map(len, runden)` ist ein besonders eleganter Trick: Man übergibt `len`\n**ohne Klammern** als Funktion — eine echte *higher order function*-Anwendung. Daraus entstehen die\nRundenlängen, die `reduce` mit dem bedingten Ausdruck auf das Maximum reduziert.\n\n**3. Gerade Würfe.** Hier sind zwei Ebenen zu verarbeiten: Das äußere `map` verwandelt **jede Runde**\nin eine Zahl (wie viele gerade Würfe sie enthält), berechnet durch ein inneres\n`len(list(filter(...)))`. Das äußere `reduce` addiert diese Zahlen auf. Der Startwert `0` macht das\nGanze auch für eine leere Rundenliste sicher.\n\nFür 3. gibt es eine kürzere Variante, die ausnutzt, dass `True == 1` ist:\n`reduce(lambda a, r: a + reduce(lambda x, y: x + (y % 2 == 0), r, 0), runden, 0)`.\n\n**Merkregel:** Bei verschachtelten Daten: äußeres map macht aus jeder Teilliste **eine Zahl**,\näußeres reduce fasst diese Zahlen zusammen.",
+   "hints": [
+    "Wie sprechen Sie das letzte Element einer Liste an, ohne die Länge zu kennen?",
+    "`map(len, runden)` funktioniert — `len` ist selbst eine Funktion und darf ohne Klammern übergeben werden.",
+    "Für die geraden Würfe: Machen Sie zuerst aus jeder Runde eine Zahl, und fassen Sie diese Zahlen dann zusammen."
+   ],
+   "pitfalls": [
+    "`len(filter(...))` schreiben — auf einem Iterator gibt es kein `len`.",
+    "`map(len(), runden)` mit Klammern schreiben — dann wird `len` sofort (fehlerhaft) aufgerufen.",
+    "Bei den geraden Würfen nur pro Runde zählen und das äußere Zusammenfassen vergessen."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Stufe B3 — Statistik mit map / filter / reduce"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 27,
+     "label": "Musterlösung Stufe B3"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "filter und die Kombination mit map"
+    }
+   ],
+   "tags": [
+    "map",
+    "filter",
+    "reduce",
+    "verschachtelt",
+    "transfer",
+    "statistik"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-028"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 4,
+   "title": "Birthday Paradox mit reduce",
+   "prompt": "Aus der ersten Vorlesung: Wie wahrscheinlich ist es, dass in einer Gruppe von `n` Personen\n**mindestens zwei** am selben Tag Geburtstag haben?\n\nDie Gegenwahrscheinlichkeit (alle haben an verschiedenen Tagen Geburtstag) ist das Produkt\n`(365-0)/365 * (365-1)/365 * … * (365-(n-1))/365`. Gesucht ist `1` minus dieses Produkt.\n\nSchreiben Sie `geburtstagsparadox(n)` **mit `reduce`** über `range(n)` — ohne Schleifen und\nohne Rekursion. Für `n = 0` und `n = 1` muss `0.0` herauskommen. (4 P)",
+   "starterCode": "from functools import reduce\n\ndef geburtstagsparadox(n):\n    # mit reduce über range(n) ergänzen\n    ...",
+   "constraints": [
+    "keine for-/while-Schleifen",
+    "keine Rekursion",
+    "reduce verwenden",
+    "range verwenden"
+   ],
+   "solution": "from functools import reduce\n\n\ndef geburtstagsparadox(n):\n    return 1 - reduce(lambda p, k: p * (365 - k) / 365, range(n), 1.0)",
+   "tests": [
+    {
+     "name": "klassisches Ergebnis für 23 Personen",
+     "call": "round(geburtstagsparadox(23), 4)",
+     "expected": "0.5073"
+    },
+    {
+     "name": "eine Person: unmöglich",
+     "call": "geburtstagsparadox(1)",
+     "expected": "0.0"
+    },
+    {
+     "name": "null Personen: unmöglich",
+     "call": "geburtstagsparadox(0)",
+     "expected": "0.0"
+    },
+    {
+     "name": "zwei Personen: 1/365",
+     "call": "round(geburtstagsparadox(2), 6)",
+     "expected": "0.00274"
+    },
+    {
+     "name": "50 Personen: schon sehr wahrscheinlich",
+     "call": "round(geburtstagsparadox(50), 3)",
+     "expected": "0.97"
+    },
+    {
+     "name": "ab 366 Personen sicher",
+     "call": "round(geburtstagsparadox(400), 10)",
+     "expected": "1.0"
+    }
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    "geburtstagsparadox(n - 1)",
+    "geburtstagsparadox(n-1)"
+   ],
+   "required": [
+    "reduce(",
+    "range("
+   ],
+   "explanation": "Auf der reduce-Folie steht als letztes Beispiel *\"Berechne das 'Birthday Paradox'\n(aus der ersten Vorlesung) in Python\"*. Die Aufgabe verlangt zwei Transferleistungen auf einmal.\n\n**1. reduce als Produktbildung mit laufendem Index.** Das lambda ist `lambda p, k: p * (365 - k) / 365`.\nHier trägt der linke Parameter `p` das bisherige **Produkt**, der rechte `k` das aktuelle Element aus\n`range(n)` — also `0, 1, 2, …, n-1`. Das ist ein wichtiges Muster: `reduce` faltet nicht nur über\nWerte, sondern kann auch über **Indizes** falten und daraus etwas ganz anderes aufbauen.\n\n**2. Der Startwert `1.0`.** Er ist gleich dreifach nötig:\n- Er ist das neutrale Element der Multiplikation.\n- Er verhindert den `TypeError` bei `n = 0`, weil `range(0)` leer ist.\n- Er sorgt dafür, dass ein `float` herauskommt (mit `1` als int würde `/` trotzdem floats liefern,\n  aber `geburtstagsparadox(0)` gäbe dann `1 - 1 = 0` als int statt `0.0`).\n\nDas Ergebnis ist verblüffend: Schon bei 23 Personen liegt die Wahrscheinlichkeit über 50 %\n(≈ 0.5073) — daher der Name \"Paradox\".\n\n**Merkregel:** reduce über `range(n)` = Faltung über Indizes; der Startwert trägt den Anfangswert\nder Rechnung.",
+   "hints": [
+    "Was ist das Zwischenergebnis in der Faltung — die Wahrscheinlichkeit oder das Produkt?",
+    "Woher kommt der Faktor `(365 - k)`? Was durchläuft `k`, wenn Sie über `range(n)` falten?",
+    "Denken Sie an den Startwert: Womit muss ein Produkt beginnen — und was passiert bei `n = 0` ohne ihn?"
+   ],
+   "pitfalls": [
+    "Das `1 -` in das lambda schreiben — dann wird bei jedem Schritt neu subtrahiert.",
+    "`range(1, n)` oder `range(365)` statt `range(n)` benutzen.",
+    "Den Startwert weglassen: `geburtstagsparadox(0)` stürzt dann mit einem TypeError ab."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "Beispiel: Berechne das Birthday Paradox in Python"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce mit Startwert"
+    },
+    {
+     "file": "OFP -- Einleitung_SoSe26.pdf",
+     "page": 1,
+     "label": "Birthday Paradox aus der ersten Vorlesung"
+    }
+   ],
+   "tags": [
+    "reduce",
+    "startwert",
+    "range",
+    "wahrscheinlichkeit",
+    "transfer"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-029"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "title": "Der verbrauchte filter-Iterator und wie der Startwert ihn rettet",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?\nBegründen Sie, warum die zweite Zahl nicht dieselbe ist wie die erste — und warum die\ndritte Zeile keinen Fehler wirft.",
+   "code": "from functools import reduce\n\nzahlen = [1, 2, 3, 4, 5]\ngefiltert = filter(lambda x: x > 2, zahlen)\nprint(reduce(lambda a, b: a + b, gefiltert))\nprint(reduce(lambda a, b: a + b, gefiltert, 0))\nprint(list(gefiltert))\nprint(list(filter(lambda x: x > 2, zahlen)))",
+   "expectedOutput": "12\n0\n[]\n[3, 4, 5]",
+   "solution": "```\n12\n0\n[]\n[3, 4, 5]\n```\n\n**Zeile 1:** `filter` liefert `3, 4, 5`; `reduce` faltet sie zu `3 + 4 + 5 = 12`. Dabei wird der\nIterator **vollständig verbraucht**.\n\n**Zeile 2:** `gefiltert` ist jetzt leer. `reduce` auf einem leeren Iterable gibt den **Startwert**\n`0` zurück — ohne Startwert gäbe es hier `TypeError: reduce() of empty iterable with no initial value`.\n\n**Zeile 3:** Aus demselben Grund ist `list(gefiltert)` die leere Liste `[]`.\n\n**Zeile 4:** Ein **neu erzeugtes** filter-Objekt über dieselbe (unveränderte) Liste liefert wieder\n`[3, 4, 5]` — die Ausgangsliste `zahlen` hat nie gelitten.",
+   "explanation": "Diese Aufgabe verbindet die drei subtilsten Eigenschaften von map/filter/reduce.\n\n**1. Iteratoren sind einmalig.** `filter` liefert kein fertiges Ergebnis, sondern eine Vorschrift mit\ninternem Zählerstand. Sobald `reduce` durchgelaufen ist, steht der Zähler am Ende — jeder weitere\nZugriff sieht nichts mehr. Das ist der gefährlichste Fehlertyp überhaupt, weil er **keine\nFehlermeldung** erzeugt: Das Programm läuft weiter und rechnet stillschweigend mit leeren Daten.\n\n**2. Der Startwert entscheidet über Absturz oder Ergebnis.** Zeile 2 gibt `0` aus statt abzustürzen.\nOhne den Startwert stünde dort ein `TypeError`. Man kann diese Aufgabe also auch als Warnung lesen:\nEin Startwert kann einen Fehler *verdecken*, der auf ein echtes Problem hinweist.\n\n**3. filter verändert die Quelle nicht.** Zeile 4 beweist, dass `zahlen` unangetastet ist. Verbraucht\nwurde nur das **filter-Objekt**, nicht die Liste. Genau das ist die Trennung, die funktionale\nProgrammierung ausmacht: `filter` ist eine pure function; sein Ergebnisobjekt trägt lediglich einen\nZustand (den Zählerstand) mit sich, den man beim mehrfachen Gebrauch beachten muss.\n\nDie saubere Lösung wäre `gefiltert = list(filter(lambda x: x > 2, zahlen))` — eine Liste kann man\nbeliebig oft durchlaufen.\n\n**Merkregel:** Iterator = Einwegticket. Wer zweimal fahren will, kauft eine Liste.",
+   "hints": [
+    "Was ist mit `gefiltert` passiert, nachdem `reduce` in Zeile 1 damit fertig ist?",
+    "Was liefert `reduce` mit Startwert, wenn das iterierbare Objekt leer ist?",
+    "Wurde in Zeile 4 dasselbe filter-Objekt wiederverwendet oder ein neues erzeugt?"
+   ],
+   "pitfalls": [
+    "In Zeile 2 wieder `12` erwarten — der Iterator ist verbraucht.",
+    "In Zeile 2 einen `TypeError` erwarten und den Startwert übersehen.",
+    "In Zeile 4 `[]` erwarten und glauben, `zahlen` sei durch das Filtern geleert worden."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 8,
+     "label": "filter gibt einen Iterator zurück"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 17,
+     "label": "Iteratoren haben einen internen Zählerstand"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 7,
+     "label": "reduce mit Startwert"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "map gibt einen Iterator zurück - lazy evaluation"
+    }
+   ],
+   "tags": [
+    "filter",
+    "reduce",
+    "iterator",
+    "verbraucht",
+    "startwert",
+    "predict-output"
+   ],
+   "lang": "python",
+   "topicId": "py-mfr",
+   "id": "py-mfr-030"
+  }
+ ]
+}

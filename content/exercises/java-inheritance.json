@@ -1,0 +1,2052 @@
+{
+ "topicId": "java-inheritance",
+ "exercises": [
+  {
+   "id": "java-inheritance-001",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 1,
+   "examStyle": true,
+   "title": "Was beschreibt Polymorphie am besten?",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nWas beschreibt *Polymorphie* in Java am besten?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Eine Methode kann mehrere Parameter haben.",
+     "correct": false,
+     "why": "Falsch. Die Anzahl der Parameter hat mit Polymorphie nichts zu tun; das ist eine ganz normale Eigenschaft jeder Methode."
+    },
+    {
+     "id": "b",
+     "text": "Eine Variable des Obertyps kann auf Objekte verschiedener Unterklassen verweisen; der Aufruf richtet sich nach dem tatsächlichen Objekt.",
+     "correct": true,
+     "why": "Richtig. Genau das ist die im Skript beschriebene *polymorphe Variable* + *dynamische Bindung*: `Tier t = tiere[i]; t.print();` ruft die Methode der tatsächlichen Klasse (Hund oder Katze) auf."
+    },
+    {
+     "id": "c",
+     "text": "Eine Klasse kann mehrere Attribute besitzen.",
+     "correct": false,
+     "why": "Falsch. Das ist eine Trivialeigenschaft jeder Klasse und hat mit 'Vielgestaltigkeit' nichts zu tun."
+    },
+    {
+     "id": "d",
+     "text": "Ein Attribut kann Werte verschiedener Typen speichern.",
+     "correct": false,
+     "why": "Falsch. Java ist statisch typisiert: ein `int`-Attribut speichert nur `int`. Eine *Referenzvariable* kann zwar auf Objekte verschiedener Klassen zeigen, aber nur auf solche, die Untertypen ihres deklarierten Typs sind."
+    }
+   ],
+   "solution": "b) Eine Variable des Obertyps kann auf Objekte verschiedener Unterklassen verweisen; der Aufruf richtet sich nach dem tatsächlichen Objekt.",
+   "explanation": "Polymorphie heißt wörtlich 'Vielgestaltigkeit'. Im Skript (S. 227) steht: *Referenzvariablen sind polymorphe Variablen - sie können auf Objekte unterschiedlicher Klassen verweisen*.\n\nDer Kern besteht aus zwei Teilen, die man zusammen denken muss:\n1. **Zuweisungskompatibilität nach oben**: `Tier t = new Hund(...)` ist erlaubt, weil jedes `Hund`-Objekt auch ein `Tier`-Objekt ist (Upcast, implizit).\n2. **Dynamische Bindung**: Beim Aufruf `t.print()` entscheidet *nicht* der deklarierte Typ `Tier`, sondern das Objekt, auf das `t` gerade zeigt.\n\nTypischer Denkfehler: Studierende verwechseln Polymorphie mit *Überladen* (mehrere Methoden gleichen Namens mit verschiedenen Parameterlisten). Überladen ist zwar auch eine Form von Polymorphie im weiteren Sinn, wird aber **statisch** zur Übersetzungszeit aufgelöst - das ist genau der Unterschied.\n\nMerkregel des Skripts: **Jedes Objekt kennt seine Methoden.**",
+   "hints": [
+    "Übersetzen Sie das Wort: 'poly' = viele, 'morph' = Gestalt. Wovon gibt es hier viele Gestalten - von Parametern, von Attributen oder von Objekten hinter einer Variablen?",
+    "Denken Sie an das Beispiel `Tier[] tiere` aus der Vorlesung, in dem Hunde und Katzen gemischt liegen.",
+    "Die richtige Antwort muss zwei Dinge nennen: die Variable vom Obertyp UND dass der Aufruf sich nach dem echten Objekt richtet."
+   ],
+   "pitfalls": [
+    "Polymorphie mit Überladen (overloading) verwechseln - Überladen wird statisch gebunden.",
+    "Glauben, eine Referenzvariable könne auf beliebige Objekte zeigen. Sie kann nur auf Objekte ihres Typs oder eines Untertyps zeigen."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1a, Frage 5"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 227,
+     "label": "7.3. Polymorphie"
+    }
+   ],
+   "tags": [
+    "polymorphie",
+    "theorie",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-inheritance-002",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 1,
+   "examStyle": true,
+   "title": "Konstruktor der Oberklasse aufrufen",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nWomit ruft eine Unterklasse den Konstruktor ihrer Oberklasse auf - und wo muss dieser Aufruf stehen?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Mit `this(...)`, an beliebiger Stelle im Konstruktor.",
+     "correct": false,
+     "why": "Falsch. `this(...)` ruft einen **anderen Konstruktor derselben Klasse** auf, nicht den der Oberklasse."
+    },
+    {
+     "id": "b",
+     "text": "Mit `super(...)`, und der Aufruf muss die erste Anweisung im Konstruktor sein.",
+     "correct": true,
+     "why": "Richtig. Skript S. 223: *ruft Konstruktor Shape(int color), muss erste Anweisung sein!*"
+    },
+    {
+     "id": "c",
+     "text": "Mit `base(...)`, direkt nach der Initialisierung der eigenen Attribute.",
+     "correct": false,
+     "why": "Falsch. `base` gibt es in C#, nicht in Java. In Java ist es `super`."
+    },
+    {
+     "id": "d",
+     "text": "Mit `parent(...)`, irgendwo im Konstruktorrumpf.",
+     "correct": false,
+     "why": "Falsch. `parent` ist kein Java-Schlüsselwort."
+    }
+   ],
+   "solution": "b) Mit `super(...)` - und zwar als **erste** Anweisung im Konstruktor.",
+   "explanation": "Vor der Ausführung eines Unterklassen-Konstruktors wird **immer** ein Konstruktor der Oberklasse ausgeführt (Skript S. 222). Fehlt ein expliziter `super(...)`-Aufruf, fügt der Compiler automatisch `super();` als erste Anweisung ein - dann muss die Oberklasse aber einen parameterlosen Konstruktor besitzen.\n\nWarum muss `super(...)` zuerst stehen? Weil das Objekt von außen nach innen aufgebaut wird: Der geerbte Teil muss fertig initialisiert sein, bevor die Unterklasse ihre eigenen Attribute setzt. Sonst könnte man auf noch nicht initialisierte Oberklassen-Attribute zugreifen.\n\nWichtig zur Abgrenzung: `this(...)` als erste Anweisung ruft einen **anderen Konstruktor derselben Klasse** auf (Konstruktor-Verkettung, siehe `Snail` im SnailGame). `super(...)` und `this(...)` schließen sich gegenseitig aus - beide müssen erste Anweisung sein, also kann nur eines von beiden dastehen.\n\nMerkregel: **super geht nach oben, this bleibt zu Hause - und beide drängeln sich nach vorn.**",
+   "hints": [
+    "Zwei der vier Schlüsselwörter gibt es in Java gar nicht.",
+    "Die verbleibende Frage ist: `this(...)` oder `super(...)` - und was tut welches?",
+    "Achten Sie auch auf den zweiten Teil der Antwort: Darf der Aufruf irgendwo stehen?"
+   ],
+   "pitfalls": [
+    "`this(...)` und `super(...)` verwechseln.",
+    "Vergessen, dass der Aufruf zwingend die erste Anweisung sein muss - sonst gibt es den Compilerfehler 'call to super must be first statement in constructor'."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1a, Fragen 3+4"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 223,
+     "label": "7.2. Konstruktoren und Vererbung"
+    }
+   ],
+   "tags": [
+    "super",
+    "konstruktor",
+    "theorie",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-inheritance-003",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 1,
+   "examStyle": true,
+   "title": "Klasse mit abstrakter Methode",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nEine Klasse, die mindestens eine abstrakte Methode enthält, ...",
+   "choices": [
+    {
+     "id": "a",
+     "text": "... kann direkt mit `new` instanziiert werden.",
+     "correct": false,
+     "why": "Falsch. Von einer abstrakten Klasse können keine Instanzen erzeugt werden - `new` liefert 'X is abstract; cannot be instantiated'."
+    },
+    {
+     "id": "b",
+     "text": "... muss selbst als `abstract` deklariert sein.",
+     "correct": true,
+     "why": "Richtig. Skript S. 203: *Abstrakte Operationen dürfen nur in abstrakten Klassen auftreten.*"
+    },
+    {
+     "id": "c",
+     "text": "... darf keine Attribute besitzen.",
+     "correct": false,
+     "why": "Falsch. Eine abstrakte Klasse darf Attribute, Konstruktoren und voll implementierte Methoden besitzen - siehe `abstract class Tier` mit `protected String gattung`."
+    },
+    {
+     "id": "d",
+     "text": "... erbt automatisch von allen Interfaces.",
+     "correct": false,
+     "why": "Falsch. Vererbung von Interfaces entsteht nur durch explizites `implements` (bzw. `extends` zwischen Interfaces)."
+    }
+   ],
+   "solution": "b) ... muss selbst als `abstract` deklariert sein.",
+   "explanation": "Eine abstrakte Operation wird von der Klasse nur **deklariert**, nicht implementiert: sie legt Signatur und Ergebnistyp fest und hat **keinen Rumpf** (`public abstract void druckeAdresse();` - mit Semikolon statt `{ }`).\n\nWäre eine solche Klasse instanziierbar, könnte man `obj.druckeAdresse()` aufrufen, ohne dass es Code gibt, der ausgeführt werden könnte. Deshalb erzwingt Java: Sobald **eine** Methode abstrakt ist, muss die ganze Klasse `abstract` sein - und abstrakte Klassen kann man nicht mit `new` erzeugen.\n\nUmgekehrt gilt das **nicht**: Eine Klasse darf `abstract` sein, ohne eine einzige abstrakte Methode zu haben (z. B. um zu verhindern, dass jemand die Basisklasse direkt instanziiert).\n\nReferenzen vom abstrakten Typ sind trotzdem erlaubt und sogar der Normalfall: `Tier[] tiere = new Tier[3];` legt ein Array von *Referenzen* an - dort werden dann `Hund`- und `Katze`-Objekte eingetragen.\n\nMerkregel: **Kein Rumpf -> kein Objekt.**",
+   "hints": [
+    "Überlegen Sie: Was würde passieren, wenn man ein Objekt erzeugen könnte und dann die rumpflose Methode aufruft?",
+    "Im Skript steht ein Satz mit 'dürfen nur in abstrakten Klassen auftreten'.",
+    "Achtung bei Antwort c: `abstract class Tier { protected String gattung; ... }` gibt es in der Vorlesung - was folgt daraus?"
+   ],
+   "pitfalls": [
+    "Glauben, eine abstrakte Klasse dürfe keine Attribute oder Konstruktoren haben.",
+    "Glauben, man könne keine Variable vom Typ einer abstrakten Klasse deklarieren. Doch - nur `new AbstrakteKlasse()` ist verboten."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1a, Frage 6"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 202,
+     "label": "Abstrakte Klassen und Operationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 203,
+     "label": "Abstrakte Operationen"
+    }
+   ],
+   "tags": [
+    "abstract",
+    "theorie",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-inheritance-004",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Aussagen über Interfaces",
+   "prompt": "**Multiple Choice (mehrere Antworten richtig).**\n\nWelche der folgenden Aussagen über Interfaces (Schnittstellen) in Java sind **richtig**?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Ein Interface kann nicht mit `new` instanziiert werden, aber es darf Referenzvariablen seines Typs geben.",
+     "correct": true,
+     "why": "Richtig. Skript S. 206: Schnittstellen *können wie abstrakte Klassen nicht instanziiert werden. Referenzen auf Schnittstellen ... sind aber möglich.*"
+    },
+    {
+     "id": "b",
+     "text": "Eine Klasse kann mehrere Interfaces gleichzeitig implementieren.",
+     "correct": true,
+     "why": "Richtig - `class MyClass implements MyInterface1, MyInterface2`. Das Skript nennt es *eine Art Mehrfachvererbung, die auch in Java erlaubt ist*."
+    },
+    {
+     "id": "c",
+     "text": "Die implementierenden Methoden müssen `public` sein.",
+     "correct": true,
+     "why": "Richtig. Interface-Operationen sind immer `public`; eine Implementierung mit schwächerer Sichtbarkeit ist ein Compilerfehler ('attempting to assign weaker access privileges')."
+    },
+    {
+     "id": "d",
+     "text": "In `interface Figur { double PI = 3.1415; }` ist `PI` automatisch `public static final`.",
+     "correct": true,
+     "why": "Richtig. Skript S. 204: Java erlaubt in Schnittstellen *nur öffentliche, unveränderliche und initialisierte Klassenattribute*; `public static final` darf weggelassen werden."
+    },
+    {
+     "id": "e",
+     "text": "Ein Interface kann nicht von einem anderen Interface erben.",
+     "correct": false,
+     "why": "Falsch. Skript S. 211: *Schnittstellen können von anderen Schnittstellen erben (analog zu Klassen)* - mit `extends`."
+    },
+    {
+     "id": "f",
+     "text": "Implementiert eine Klasse nur einen Teil der Interface-Methoden, ergänzt der Compiler die restlichen mit leerem Rumpf.",
+     "correct": false,
+     "why": "Falsch. Skript S. 207: *werden nicht alle Operationen überschrieben, so bleibt die erbende Klasse abstrakt* - sie muss dann selbst `abstract` deklariert werden, sonst Compilerfehler."
+    }
+   ],
+   "solution": "Richtig sind **a, b, c und d**. Falsch sind e (Interfaces können sehr wohl mit `extends` voneinander erben) und f (fehlende Implementierungen ergänzt niemand - die Klasse muss dann `abstract` sein).",
+   "explanation": "Ein Interface ist im Kern eine abstrakte Klasse, die **nur** Signaturen und Konstanten enthält. Daraus folgen alle vier richtigen Aussagen:\n\n- **Nicht instanziierbar, aber referenzierbar** (a): `Figur f = new Kreis(2.0);` ist der Standardfall - die Variable hat den Interface-Typ, das Objekt eine konkrete Klasse. Genau darüber läuft Polymorphie über Interfaces.\n- **Mehrfachimplementierung** (b): Java verbietet Mehrfachvererbung bei Klassen (Diamond-Problem, S. 218), erlaubt sie aber bei Interfaces, weil dort keine Implementierung kollidieren kann.\n- **`public` Pflicht** (c): Weil Interface-Operationen implizit `public` sind und man beim Überschreiben die Sichtbarkeit nie einschränken darf.\n- **Konstanten** (d): `double PI = 3.1415;` in einem Interface ist eine Konstante, kein Instanzattribut - Zugriff über `Figur.PI`.\n\nTypischer Denkfehler bei (f): Man denkt an die Unterklassen-Regel 'was ich nicht überschreibe, erbe ich'. Bei abstrakten Methoden gibt es aber nichts zu erben - der Rumpf fehlt.\n\nMerkregel: **Ein Interface sagt *was*, niemals *wie*.**",
+   "hints": [
+    "Vier der sechs Aussagen sind richtig - suchen Sie gezielt die beiden falschen.",
+    "Zwei Stichworte aus dem Skript: 'Schnittstellen können von anderen Schnittstellen erben' und 'so bleibt die erbende Klasse abstrakt'.",
+    "Denken Sie an `interface Figur { double PI = 3.1415; double getFlaeche(); }` aus Test.java - was ist `PI` dort technisch?"
+   ],
+   "pitfalls": [
+    "Annehmen, ein Interface dürfe gar keine Attribute enthalten - Konstanten sind erlaubt (und implizit `public static final`).",
+    "Beim Implementieren das `public` vergessen: das ist ein Compilerfehler, kein Warnhinweis.",
+    "`implements` und `extends` verwechseln: Klasse->Interface = `implements`, Interface->Interface = `extends`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 204,
+     "label": "Interfaces"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 206,
+     "label": "Interfaces"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 207,
+     "label": "implements"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 211,
+     "label": "Interface-Vererbung"
+    }
+   ],
+   "tags": [
+    "interface",
+    "implements",
+    "theorie",
+    "multi-mc"
+   ]
+  },
+  {
+   "id": "java-inheritance-005",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Die universelle Klasse Object",
+   "prompt": "**Multiple Choice (mehrere Antworten richtig).**\n\nWelche Aussagen über die Klasse `Object` und ihre Methoden sind **richtig**?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`class Tier { ... }` ist gleichbedeutend mit `class Tier extends Object { ... }`.",
+     "correct": true,
+     "why": "Richtig. Skript S. 244: *Alle Klassen, die nicht explizit von einer anderen Klasse abgeleitet werden, sind (implizit) von Object abgeleitet.*"
+    },
+    {
+     "id": "b",
+     "text": "`System.out.println(obj)` ruft intern `obj.toString()` auf - dank Polymorphie also die überschriebene Version der tatsächlichen Klasse.",
+     "correct": true,
+     "why": "Richtig. Skript S. 246 zeigt genau diese Implementierung: `public void println(Object obj) { String str = obj.toString(); println(str); }`."
+    },
+    {
+     "id": "c",
+     "text": "Die Standard-Implementierung von `equals` in `Object` vergleicht die Inhalte der Attribute.",
+     "correct": false,
+     "why": "Falsch. Skript S. 245: *Implementierung in Object: return this == obj;* - also reiner Referenzvergleich."
+    },
+    {
+     "id": "d",
+     "text": "`toString()` liefert ohne Überschreiben eine Darstellung der Form 'Klassenname@Adresse'.",
+     "correct": true,
+     "why": "Richtig, so steht es im Skript (S. 245). Konkret ist es der Hashcode in Hexadezimal, z. B. `Student@1b6d3586`."
+    },
+    {
+     "id": "e",
+     "text": "`equals` darf man nur in Klassen überschreiben, die von einer anderen Klasse erben.",
+     "correct": false,
+     "why": "Falsch. Jede Klasse erbt `equals` von `Object` und darf es überschreiben - `class Student { public boolean equals(Object obj) {...} }` ist genau das Beispiel aus Studenten.java."
+    },
+    {
+     "id": "f",
+     "text": "Beim Überschreiben von `equals` muss der Parametertyp `Object` sein, sonst wird die Methode nur überladen statt überschrieben.",
+     "correct": true,
+     "why": "Richtig - und das ist eine beliebte Falle. `public boolean equals(Student s)` überschreibt nichts, sondern erzeugt eine zweite, überladene Methode."
+    }
+   ],
+   "solution": "Richtig sind **a, b, d und f**. Falsch sind c (`Object.equals` vergleicht Referenzen mit `==`, nicht Inhalte) und e (jede Klasse erbt `equals` von `Object` und darf es überschreiben).",
+   "explanation": "`Object` steht an der Spitze **jeder** Klassenhierarchie. Daraus folgt: In jeder Klasse stehen die 9 Object-Methoden bereit, u. a. `toString()`, `equals(Object)`, `hashCode()` und `clone()`.\n\nDie beiden prüfungsrelevanten sind `toString()` und `equals()`:\n\n- **`toString()`**: Ohne Überschreiben bekommt man `Klassenname@Adresse` - unlesbar. Überschreibt man sie, wird sie automatisch von `println`, von der String-Konkatenation `\"x=\" + obj` und von `String.valueOf(obj)` benutzt. Das ist Polymorphie in Reinform: `println` kennt nur `Object`, ruft aber Ihre Methode auf.\n- **`equals(Object obj)`**: Die Standardversion ist `return this == obj;`, vergleicht also nur, ob es **dasselbe** Objekt ist. Wer Inhaltsgleichheit will, muss überschreiben - mit **exakt** der Signatur `public boolean equals(Object obj)`, sonst liegt nur Überladen vor und `println(a.equals(b))` ruft trotzdem die Object-Version auf, sobald der statische Typ `Object` ist.\n\nMerkregel: **`==` fragt 'dasselbe Objekt?', `equals` fragt (wenn man es überschreibt) 'derselbe Inhalt?'.**",
+   "hints": [
+    "Zwei der sechs Aussagen sind falsch.",
+    "Was steht im Skript als Implementierung von `equals` in `Object`? Genau eine Zeile Code.",
+    "Überlegen Sie bei (f): Wann überschreibt man, wann überlädt man? Signatur und Ergebnistyp müssen exakt übereinstimmen."
+   ],
+   "pitfalls": [
+    "`equals(Student s)` statt `equals(Object obj)` schreiben - das überschreibt nicht.",
+    "Denken, `==` bei Objekten vergleiche Inhalte. Es vergleicht Referenzen (Adressen).",
+    "Vergessen, dass auch `\"Wert: \" + obj` intern `toString()` benutzt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 244,
+     "label": "7.4. Die universelle Klasse Object"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 245,
+     "label": "toString/equals"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 246,
+     "label": "println(Object)"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Studenten.java",
+     "page": 0,
+     "label": "toString/equals überschreiben"
+    }
+   ],
+   "tags": [
+    "object",
+    "tostring",
+    "equals",
+    "theorie",
+    "multi-mc"
+   ]
+  },
+  {
+   "id": "java-inheritance-006",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "Überschreiben und dynamische Bindung",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Bindung1 {\n  public static void main(String[] s) {\n    Fahrzeug f  = new Fahrzeug();\n    Fahrzeug fa = new Auto();\n    Auto     a  = new Auto();\n    System.out.println( f.raeder() );\n    System.out.println( fa.raeder() );\n    System.out.println( a.raeder() );\n  }\n}\n\nclass Fahrzeug {\n  public int raeder() { return 2; }\n}\n\nclass Auto extends Fahrzeug {\n  public int raeder() { return 4; }\n}",
+   "solution": "2\n4\n4",
+   "explanation": "Die entscheidende Zeile ist die mittlere: `Fahrzeug fa = new Auto();`\n\nHier gibt es **zwei** Typen:\n- den **statischen Typ** (deklarierter Typ der Variablen): `Fahrzeug`\n- den **dynamischen Typ** (Klasse des tatsächlichen Objekts): `Auto`\n\nBei Instanzmethoden entscheidet in Java immer der **dynamische** Typ - das ist die dynamische (späte) Bindung. Also liefert `fa.raeder()` die 4 aus `Auto`, obwohl die Variable als `Fahrzeug` deklariert ist.\n\nDer statische Typ bestimmt nur, **welche Methoden man überhaupt aufrufen darf**: Hätte `Auto` eine zusätzliche Methode `hupen()`, wäre `fa.hupen()` ein Compilerfehler, weil `Fahrzeug` diese Methode nicht kennt.\n\nMerkregel aus dem Skript: **Jedes Objekt kennt seine Methoden.** Der Variablentyp entscheidet über die Erlaubnis, das Objekt über die Ausführung.",
+   "hints": [
+    "Schreiben Sie sich zu jeder Variablen zwei Dinge auf: den deklarierten Typ und die Klasse des Objekts hinter `new`.",
+    "Bei Instanzmethoden entscheidet einer der beiden Typen - welcher?",
+    "Nur bei einer der drei Ausgaben unterscheiden sich die beiden Typen überhaupt."
+   ],
+   "pitfalls": [
+    "Glauben, `Fahrzeug fa = new Auto();` rufe die Fahrzeug-Version auf, weil die Variable so deklariert ist.",
+    "Vergessen, dass `println` bei drei Aufrufen drei Zeilen erzeugt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 214,
+     "label": "Vererbung: Beispiel, operationB"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 232,
+     "label": "Binden von Bezeichnern"
+    }
+   ],
+   "tags": [
+    "overriding",
+    "dynamische-bindung",
+    "polymorphie"
+   ],
+   "expectedOutput": "2\n4\n4"
+  },
+  {
+   "id": "java-inheritance-007",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Array des Obertyps mit gemischten Objekten",
+   "prompt": "Was ist die Ausgabe dieses Programms? Achten Sie auf die Laufrichtung der Schleife.",
+   "code": "class Gruesse {\n  public static void main(String[] s) {\n    Gruss[] g = new Gruss[4];\n    g[0] = new DeutschGruss();\n    g[1] = new Gruss();\n    g[2] = new EnglischGruss();\n    g[3] = new DeutschGruss();\n    for (int i = g.length-1; i >= 0; i--) {\n      System.out.print( g[i].gruss() + \",\" );\n    }\n    System.out.println();\n  }\n}\n\nclass Gruss {\n  public String gruss() { return new String(\"Hi\"); }\n}\nclass EnglischGruss extends Gruss {\n  public String gruss() { return new String(\"Cheerio\"); }\n}\nclass DeutschGruss extends Gruss {\n  public String gruss() { return new String(\"Gutentag\"); }\n}",
+   "solution": "Gutentag,Cheerio,Hi,Gutentag,",
+   "explanation": "Das ist die Kernaufgabe aus `Klausur10.java` - fast genau so kann sie in der Klausur stehen.\n\nDrei Dinge muss man sauber trennen:\n\n1. **Ein Array des Obertyps darf Objekte aller Untertypen aufnehmen.** `Gruss[] g` ist ein Array von *Referenzen* auf `Gruss` - dort passen auch `EnglischGruss`- und `DeutschGruss`-Objekte hinein (impliziter Upcast).\n2. **Der Aufruf `g[i].gruss()` wird dynamisch gebunden.** Der Compiler sieht nur `Gruss.gruss()`; zur Laufzeit entscheidet das Objekt in der Zelle.\n3. **Die Schleife läuft rückwärts** (`i = g.length-1; i >= 0; i--`), also von Index 3 nach 0.\n\nDaher: Index 3 = DeutschGruss, 2 = EnglischGruss, 1 = Gruss, 0 = DeutschGruss.\n\nAußerdem: `System.out.print` (ohne `ln`) hängt alles in **eine** Zeile, und das abschließende `System.out.println()` beendet nur diese Zeile. Das letzte Komma bleibt stehen - typisch für diesen Aufgabentyp.\n\nMerkregel: **Erst die Schleifenrichtung notieren, dann pro Zelle die echte Klasse.**",
+   "hints": [
+    "Notieren Sie zuerst tabellarisch, welche Klasse in welcher Array-Zelle steht.",
+    "In welcher Reihenfolge läuft die Schleife durch die Indizes?",
+    "`print` schreibt ohne Zeilenumbruch - alles landet in einer Zeile, inklusive des letzten Kommas."
+   ],
+   "pitfalls": [
+    "Die Schleife vorwärts lesen und die Reihenfolge umdrehen.",
+    "Denken, `g[i].gruss()` rufe immer die Methode aus `Gruss` auf, weil das Array so deklariert ist.",
+    "Das letzte Komma weglassen."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur10.java",
+     "page": 0,
+     "label": "Polymorphie im Array"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 373,
+     "label": "Überblick, Klausur10"
+    }
+   ],
+   "tags": [
+    "polymorphie",
+    "array",
+    "dynamische-bindung",
+    "klausur10"
+   ],
+   "expectedOutput": "Gutentag,Cheerio,Hi,Gutentag,"
+  },
+  {
+   "id": "java-inheritance-008",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Reihenfolge der Konstruktoraufrufe",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class KonstruktorKette {\n  public static void main(String[] s) {\n    new C();\n    System.out.println(\"---\");\n    new B(1);\n  }\n}\n\nclass A {\n  A()      { System.out.println(\"A()\"); }\n  A(int i) { System.out.println(\"A(\" + i + \")\"); }\n}\n\nclass B extends A {\n  B(int i) { System.out.println(\"B(\" + i + \")\"); }\n}\n\nclass C extends B {\n  C() { super(9); System.out.println(\"C()\"); }\n}",
+   "solution": "A()\nB(9)\nC()\n---\nA()\nB(1)",
+   "explanation": "Vor der Ausführung eines Unterklassen-Konstruktors wird **immer** zuerst ein Konstruktor der Oberklasse ausgeführt (Skript S. 222).\n\nAufruf `new C()`:\n- `C()` beginnt mit `super(9)` -> springt in `B(int i)` mit `i = 9`.\n- `B(int)` hat **keinen** expliziten `super`-Aufruf -> der Compiler ergänzt `super();` -> springt in `A()` (den **parameterlosen** Konstruktor!).\n- `A()` hat keine Oberklasse außer `Object` -> Rumpf läuft: `A()`.\n- Zurück in `B(9)`: Rumpf läuft: `B(9)`.\n- Zurück in `C()`: Rumpf läuft: `C()`.\n\nDas ist genau die Merkregel aus dem Skript: *Reihenfolge der Konstruktoraufrufe: C() -> B(9) -> A(); Reihenfolge der Abarbeitung der Rumpfe: A -> B -> C.*\n\nAufruf `new B(1)`: implizites `super()` -> `A()` gibt `A()` aus, dann `B(1)`.\n\nTypischer Denkfehler: Man denkt, `B(int i)` rufe automatisch `A(int i)` auf. Nein - ohne expliziten `super(i)` wird immer der **parameterlose** Konstruktor der Oberklasse genommen (und wenn es den nicht gibt, gibt es einen Compilerfehler).\n\nMerkregel: **Aufrufe gehen nach oben, Ausgaben kommen von oben nach unten zurück.**",
+   "hints": [
+    "Zeichnen Sie die Aufrufkette als Stapel: welcher Konstruktor ruft welchen?",
+    "`B(int i)` enthält keinen `super`-Aufruf. Welchen Konstruktor der Oberklasse benutzt Java dann?",
+    "Die Rumpfe werden erst abgearbeitet, wenn die Aufrufkette ganz oben angekommen ist."
+   ],
+   "pitfalls": [
+    "Annehmen, `B(int i)` rufe automatisch `A(int i)` mit demselben Argument auf.",
+    "Die Ausgabereihenfolge umdrehen (C, B, A statt A, B, C).",
+    "Vergessen, dass auch `new B(1)` eine Zeile aus `A()` erzeugt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 222,
+     "label": "7.2. Konstruktoren und Vererbung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 223,
+     "label": "super(...)"
+    }
+   ],
+   "tags": [
+    "konstruktor",
+    "super",
+    "vererbung"
+   ],
+   "expectedOutput": "A()\nB(9)\nC()\n---\nA()\nB(1)"
+  },
+  {
+   "id": "java-inheritance-009",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Attribute werden nicht polymorph gebunden",
+   "prompt": "Was ist die Ausgabe dieses Programms? Überlegen Sie bei jeder Zeile genau, ob der **Variablentyp** oder das **Objekt** entscheidet.",
+   "code": "class Feldverdeckung {\n  public static void main(String[] s) {\n    Ober  o = new Unter();\n    Unter u = new Unter();\n    System.out.println( o.attr );\n    System.out.println( u.attr );\n    System.out.println( o.hole() );\n    System.out.println( ((Ober) u).attr );\n    System.out.println( u.holeOber() );\n  }\n}\n\nclass Ober {\n  public int attr = 1;\n  public int hole() { return attr; }\n}\n\nclass Unter extends Ober {\n  public int attr = 2;\n  public int hole() { return attr; }\n  public int holeOber() { return super.attr; }\n}",
+   "solution": "1\n2\n2\n1\n1",
+   "explanation": "Diese Aufgabe trennt die beiden Bindungsarten sauber (Skript S. 232):\n\n- **Methoden werden dynamisch gebunden** - es entscheidet das Objekt.\n- **Attribute (und Klassenmethoden) werden statisch gebunden** - es entscheidet der Typ der Referenzvariablen.\n\nWenn `Unter` ein Attribut mit demselben Namen deklariert wie `Ober`, wird das geerbte Attribut nicht überschrieben, sondern **verdeckt** (field hiding). Es existieren dann **zwei** `attr`-Felder im selben Objekt!\n\nZeile für Zeile:\n- `o.attr` -> statischer Typ `Ober` -> das `attr` aus `Ober` -> 1\n- `u.attr` -> statischer Typ `Unter` -> das `attr` aus `Unter` -> 2\n- `o.hole()` -> Methode, dynamisch gebunden -> `Unter.hole()` -> liest dort `attr` = das aus `Unter` -> 2\n- `((Ober) u).attr` -> der Cast ändert den **statischen** Typ -> 1. Bei einer Methode hätte der Cast nichts geändert!\n- `u.holeOber()` -> `super.attr` greift ausdrücklich auf das verdeckte Feld der Oberklasse zu -> 1\n\nMerkregel: **Methoden gehören dem Objekt, Attribute gehören dem Typ.** Und praktisch: Attribute nie in Unterklassen erneut deklarieren - genau deshalb.",
+   "hints": [
+    "Im Objekt der Klasse `Unter` gibt es zwei Felder namens `attr`. Welches man sieht, hängt vom Blickwinkel ab.",
+    "Skript S. 232: 'Methoden werden in Java dynamisch gebunden. Klassenmethoden und Attribute werden statisch gebunden.'",
+    "Ein Cast `((Ober) u)` ändert nur den statischen Typ - das wirkt auf Attribute, aber nicht auf Methoden."
+   ],
+   "pitfalls": [
+    "Annehmen, `o.attr` liefere 2, weil dahinter ein `Unter`-Objekt steckt.",
+    "Annehmen, `((Ober) u).hole()` würde die Ober-Methode aufrufen (tut es nicht - der Cast wirkt nur bei Attributen).",
+    "`super.attr` mit `this.attr` verwechseln."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 232,
+     "label": "Binden von Bezeichnern"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 233,
+     "label": "Polymorphie - Beispiel"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 225,
+     "label": "this und super"
+    }
+   ],
+   "tags": [
+    "feldverdeckung",
+    "statische-bindung",
+    "super",
+    "cast"
+   ],
+   "expectedOutput": "1\n2\n2\n1\n1"
+  },
+  {
+   "id": "java-inheritance-010",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "Instanzmethoden, Klassenmethoden und Klassenattribute",
+   "prompt": "Was ist die Ausgabe dieses Programms? (Diese Aufgabe kombiniert Interface-Polymorphie, Überladen, statische und dynamische Bindung - sie entspricht dem Beispiel auf Folie 233 des Skripts.)",
+   "code": "class Bindungstest {\n  public static void main(String[] s) {\n    Ober o  = new Ober();\n    Unter u = new Unter();\n    I[] i = { new Ober(), new Unter() };\n    System.out.println( i[0].op(1) );\n    System.out.println( i[1].op(1) );\n    System.out.println( u.op(6.2) );\n    System.out.println( o.attr );\n    System.out.println( u.attr );\n    System.out.println( Ober.kop() );\n    System.out.println( Unter.kop() );\n    System.out.println( o.kattr );\n    System.out.println( u.kattr );\n  }\n}\n\ninterface I {\n  public int op(int i);\n}\n\nclass Ober implements I {\n  public int attr = 1;\n  public static int kattr = 10;\n  public int op(int i) { return i + 1; }\n  public static int kop() { return 4; }\n}\n\nclass Unter extends Ober {\n  public int attr = 2;\n  public static int kattr = 20;\n  public int op(int i) { return i + 2; }\n  public int op(double d) { return 7; }\n  public static int kop() { return 8; }\n}",
+   "solution": "2\n3\n7\n1\n2\n4\n8\n10\n20",
+   "explanation": "Diese Aufgabe ist die 'Endgegner'-Folie des Kapitels (Skript S. 233). Man muss vier Regeln gleichzeitig anwenden:\n\n1. **Instanzmethoden: dynamische Bindung.** `i[0]` zeigt auf ein `Ober`-Objekt -> `op(1)` = 1+1 = 2. `i[1]` zeigt auf ein `Unter`-Objekt -> `op(1)` = 1+2 = 3. Dass die Variable den Interface-Typ `I` hat, ist egal.\n2. **Überladen: statische Auflösung über die Parameterliste.** `u.op(6.2)` passt auf `op(double)` - das ist eine **neue** Methode in `Unter`, kein Überschreiben. -> 7. Achtung: über eine Variable vom Typ `Ober` wäre `op(6.2)` ein Compilerfehler, weil `Ober` nur `op(int)` kennt.\n3. **Attribute: statische Bindung.** `o.attr` -> 1 (Typ `Ober`), `u.attr` -> 2 (Typ `Unter`). Die beiden Felder verdecken einander.\n4. **Klassenmethoden und Klassenattribute: statische Bindung.** `Ober.kop()` -> 4, `Unter.kop()` -> 8. `kop()` wird **verdeckt** (hiding), nicht überschrieben. Ebenso `o.kattr` -> 10 und `u.kattr` -> 20.\n\nMerkregel: **Nur normale Instanzmethoden sind polymorph. Alles andere - Attribute, `static`-Methoden, Überladung - entscheidet der Compiler anhand des deklarierten Typs.**",
+   "hints": [
+    "Machen Sie eine Tabelle mit zwei Spalten: 'entscheidet der Variablentyp' und 'entscheidet das Objekt'. Ordnen Sie jede der neun Zeilen ein.",
+    "`op(double)` steht nur in `Unter` - das ist Überladen, kein Überschreiben.",
+    "`static`-Methoden werden nie polymorph gebunden; `Ober.kop()` und `Unter.kop()` sind zwei völlig unabhängige Methoden."
+   ],
+   "pitfalls": [
+    "`i[1].op(1)` als 2 lesen, weil die Variable den Typ `I` hat.",
+    "Annehmen, `Unter.kop()` würde `Ober.kop()` überschreiben - `static`-Methoden verdecken sich nur.",
+    "Erwarten, dass `o.attr` und `u.attr` denselben Wert liefern, weil `u` ein `Ober` ist."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 233,
+     "label": "7.3. Polymorphie - Beispiel"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 232,
+     "label": "Binden von Bezeichnern"
+    }
+   ],
+   "tags": [
+    "statische-bindung",
+    "dynamische-bindung",
+    "overloading",
+    "interface",
+    "static"
+   ],
+   "expectedOutput": "2\n3\n7\n1\n2\n4\n8\n10\n20"
+  },
+  {
+   "id": "java-inheritance-011",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "super.methode() in der überschriebenen Methode",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class TierHeim {\n  public static void main(String[] s) {\n    Tier[] t = new Tier[3];\n    t[0] = new Hund(\"Waldi\", \"Dackel\");\n    t[1] = new Katze(\"Chanty\");\n    t[2] = new Tier(\"Wesen\");\n    for (int i = 0; i < t.length; i++) {\n      t[i].print();\n    }\n  }\n}\n\nclass Tier {\n  protected String gattung;\n  public Tier(String gattung) { this.gattung = gattung; }\n  public void print() {\n    System.out.println(\"Tier der Gattung \" + gattung + \".\");\n  }\n}\n\nclass Hund extends Tier {\n  protected String name, rasse;\n  public Hund(String aName, String aRasse) {\n    super(\"Hund\"); name = aName; rasse = aRasse;\n  }\n  public void print() {\n    System.out.println(\"Ich bin \" + name + \", der \" + rasse + \".\");\n  }\n}\n\nclass Katze extends Tier {\n  protected String name;\n  public Katze(String n) { super(\"Katze\"); name = n; }\n  public void print() {\n    System.out.print(\"Ich bin \" + name + \". \"); super.print();\n  }\n}",
+   "solution": "Ich bin Waldi, der Dackel.\nIch bin Chanty. Tier der Gattung Katze.\nTier der Gattung Wesen.",
+   "explanation": "Das ist `DemoPolymorphie.java` aus der Vorlesung, nur ohne Zufall - dadurch ist die Ausgabe eindeutig.\n\nDrei Bausteine wirken zusammen:\n\n1. **Polymorphes Array**: `Tier[] t` nimmt `Hund`-, `Katze`- und `Tier`-Objekte auf.\n2. **Dynamische Bindung**: `t[i].print()` wählt die `print`-Methode der tatsächlichen Klasse.\n3. **`super.print()`**: `Katze.print()` gibt zuerst mit `print` (ohne `ln`) *\"Ich bin Chanty. \"* aus und ruft dann **explizit** die verdeckte Methode der Oberklasse auf. `super.print()` ist der einzige Weg, an eine überschriebene Methode heranzukommen - `this.print()` würde in eine Endlosrekursion laufen!\n\nDeshalb steht bei der Katze alles in **einer** Zeile: `System.out.print` bricht die Zeile nicht um, erst das `println` in `Tier.print()` tut das. Beachten Sie das Leerzeichen nach dem Punkt in `\"Ich bin \" + name + \". \"`.\n\nDer Konstruktor `Hund(...)` ruft `super(\"Hund\")` auf und setzt damit `gattung` - im Beispiel wird `gattung` bei Hund aber nie ausgegeben.\n\nMerkregel: **`super.m()` ruft die Version von oben, `this.m()` fängt wieder unten an.**",
+   "hints": [
+    "Gehen Sie das Array Zelle für Zelle durch und notieren Sie die tatsächliche Klasse.",
+    "Bei `Katze` steht `System.out.print` (ohne 'ln') - was bedeutet das für die Zeilenumbrüche?",
+    "`super.print()` in `Katze` springt in die Methode von `Tier`. Welchen Wert hat `gattung` dort?"
+   ],
+   "pitfalls": [
+    "Bei der Katze zwei Zeilen ausgeben statt einer.",
+    "Das Leerzeichen nach '. ' in `\"Ich bin \" + name + \". \"` übersehen.",
+    "Denken, `super.print()` würde wieder die Katzen-Version aufrufen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 228,
+     "label": "abstract class Tier"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 229,
+     "label": "DemoPolymorphie"
+    },
+    {
+     "file": "07_VererbungPolymorphie/DemoPolymorphie.java",
+     "page": 0,
+     "label": "super.print()"
+    }
+   ],
+   "tags": [
+    "super",
+    "overriding",
+    "polymorphie",
+    "array"
+   ],
+   "expectedOutput": "Ich bin Waldi, der Dackel.\nIch bin Chanty. Tier der Gattung Katze.\nTier der Gattung Wesen."
+  },
+  {
+   "id": "java-inheritance-012",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "toString() und die implizite Nutzung in println",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class ToStringDemo {\n  public static void main(String[] s) {\n    Punkt p = new Punkt(2, 3);\n    System.out.println( p );\n    System.out.println( \"P = \" + p );\n    Punkt3D q = new Punkt3D(1, 2, 3);\n    System.out.println( q );\n    Object o = q;\n    System.out.println( o );\n  }\n}\n\nclass Punkt {\n  protected int x, y;\n  public Punkt(int x, int y) { this.x = x; this.y = y; }\n  public String toString() { return \"(\" + x + \"|\" + y + \")\"; }\n}\n\nclass Punkt3D extends Punkt {\n  private int z;\n  public Punkt3D(int x, int y, int z) { super(x, y); this.z = z; }\n  public String toString() { return super.toString() + \"+z=\" + z; }\n}",
+   "solution": "(2|3)\nP = (2|3)\n(1|2)+z=3\n(1|2)+z=3",
+   "explanation": "`System.out.println(Object obj)` ist im JDK ungefähr so implementiert (Skript S. 246):\n\n```java\npublic void println(Object obj) {\n  String str = obj.toString();  // Polymorphie!\n  println(str);\n}\n```\n\nDas heißt: `println` kennt nur den Typ `Object`, ruft aber dank dynamischer Bindung Ihre überschriebene `toString()`-Methode auf. Dasselbe passiert bei der String-Konkatenation `\"P = \" + p` - der `+`-Operator ruft ebenfalls `toString()`.\n\n`Punkt3D.toString()` benutzt `super.toString()`, um die Darstellung der Oberklasse wiederzuverwenden, und hängt nur `+z=3` an. Das ist das übliche Muster.\n\nDie letzte Zeile ist der eigentliche Test: `Object o = q;` - der statische Typ ist jetzt `Object`, das Objekt ist aber weiterhin ein `Punkt3D`. Da `toString()` eine Instanzmethode ist, wird sie dynamisch gebunden -> dieselbe Ausgabe wie vorher.\n\nHätte man `toString()` **nicht** überschrieben, bekäme man `Punkt3D@1b6d3586` (Klassenname@Hashcode) - genau das ist der Grund, warum der Prof in `Klausur08.java` warnt: *\"println() druckt nicht automatisch bei einem Objekt von Klasse Zahl den Wert der Variable wert aus\"*.\n\nMerkregel: **Wer sein Objekt lesbar drucken will, überschreibt `toString()` - dann funktioniert es überall automatisch.**",
+   "hints": [
+    "Was macht `println`, wenn man ihm ein Objekt übergibt statt eines Strings?",
+    "`Punkt3D.toString()` ruft `super.toString()` - setzen Sie das Ergebnis Stück für Stück zusammen.",
+    "In der letzten Zeile ändert sich nur der deklarierte Typ der Variablen, nicht das Objekt."
+   ],
+   "pitfalls": [
+    "Bei `Object o = q;` die Object-Standardausgabe `Punkt3D@...` erwarten.",
+    "Vergessen, dass auch `\"P = \" + p` intern `toString()` benutzt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 245,
+     "label": "toString"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 246,
+     "label": "println(Object)"
+    },
+    {
+     "file": "11_Ueberblick/Klausur08.java",
+     "page": 0,
+     "label": "println druckt nicht automatisch"
+    }
+   ],
+   "tags": [
+    "tostring",
+    "object",
+    "super",
+    "polymorphie"
+   ],
+   "expectedOutput": "(2|3)\nP = (2|3)\n(1|2)+z=3\n(1|2)+z=3"
+  },
+  {
+   "id": "java-inheritance-013",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "equals() überschreiben oder nicht",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class EqualsDemo {\n  public static void main(String[] s) {\n    Student a = new Student(\"Lena\", 1234567);\n    Student b = new Student(\"Lena\", 1234567);\n    Student c = a;\n    System.out.println( a == b );\n    System.out.println( a.equals(b) );\n    System.out.println( a == c );\n    Konto k1 = new Konto(100);\n    Konto k2 = new Konto(100);\n    System.out.println( k1.equals(k2) );\n    System.out.println( k1.equals(k1) );\n  }\n}\n\nclass Student {\n  private String name;\n  private long matrnr;\n  public Student(String name, long matrnr) {\n    this.name = name; this.matrnr = matrnr;\n  }\n  public boolean equals(Object obj) {\n    if (!(obj instanceof Student)) return false;\n    Student andere = (Student) obj;\n    return this.matrnr == andere.matrnr && this.name.equals(andere.name);\n  }\n}\n\nclass Konto {\n  private int stand;\n  public Konto(int stand) { this.stand = stand; }\n}",
+   "solution": "false\ntrue\ntrue\nfalse\ntrue",
+   "explanation": "Hier stehen drei Vergleichsarten nebeneinander:\n\n1. **`==` bei Referenztypen** vergleicht **Adressen**, nie Inhalte. `a` und `b` sind zwei getrennte `new`-Objekte -> `false`. `c = a` kopiert nur die Referenz -> `a == c` ist `true`.\n2. **`Student.equals`** ist überschrieben und vergleicht Inhalte: gleicher Name, gleiche Matrikelnummer -> `true`. Das Muster ist immer gleich: `instanceof` prüfen, dann Downcast, dann Felder vergleichen. Beachten Sie, dass für `name` (ein `String`) wieder `equals` benutzt wird, nicht `==`.\n3. **`Konto` überschreibt `equals` nicht.** Also greift die Implementierung aus `Object`: `return this == obj;` (Skript S. 245). Zwei verschiedene Konten mit gleichem Stand sind damit **nicht** gleich -> `false`. Nur `k1.equals(k1)` ist `true`, weil es dasselbe Objekt ist.\n\nTypischer Denkfehler: Man erwartet, dass `equals` 'immer irgendwie den Inhalt vergleicht'. Das tut es nur bei Klassen, die es überschreiben (z. B. `String`, `Integer` - oder eben Ihre eigene Klasse).\n\nMerkregel: **`==` fragt 'dasselbe Objekt?'. `equals` fragt das auch - solange niemand es überschrieben hat.**",
+   "hints": [
+    "Trennen Sie die beiden Klassen: Welche überschreibt `equals`, welche nicht?",
+    "Was steht im Skript als Implementierung von `equals` in `Object`? Genau: `return this == obj;`",
+    "`Student c = a;` erzeugt kein neues Objekt."
+   ],
+   "pitfalls": [
+    "`k1.equals(k2)` als `true` lesen, weil beide Konten denselben Stand haben.",
+    "`a == b` als `true` lesen, weil die Inhalte identisch sind.",
+    "Im eigenen `equals` `this.name == andere.name` schreiben statt `.equals(...)`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 245,
+     "label": "equals in Object"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Studenten.java",
+     "page": 0,
+     "label": "equals überschreiben"
+    }
+   ],
+   "tags": [
+    "equals",
+    "object",
+    "instanceof",
+    "referenzvergleich"
+   ],
+   "expectedOutput": "false\ntrue\ntrue\nfalse\ntrue"
+  },
+  {
+   "id": "java-inheritance-014",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "instanceof und Downcast",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class InstanceofDemo {\n  public static void main(String[] s) {\n    Tier[] t = { new Hund(\"Waldi\"), new Katze(\"Mimi\"), new Hund(\"Rex\") };\n    int hunde = 0;\n    for (int i = 0; i < t.length; i++) {\n      System.out.print( (t[i] instanceof Hund) + \" \" );\n      if (t[i] instanceof Hund) {\n        Hund h = (Hund) t[i];\n        hunde++;\n        System.out.println( h.bellen() );\n      } else {\n        System.out.println( \"kein Hund\" );\n      }\n    }\n    System.out.println( \"Hunde: \" + hunde );\n    System.out.println( t[1] instanceof Tier );\n  }\n}\n\nabstract class Tier {\n  protected String name;\n  public Tier(String name) { this.name = name; }\n}\n\nclass Hund extends Tier {\n  public Hund(String n) { super(n); }\n  public String bellen() { return name + \" sagt Wuff\"; }\n}\n\nclass Katze extends Tier {\n  public Katze(String n) { super(n); }\n}",
+   "solution": "true Waldi sagt Wuff\nfalse kein Hund\ntrue Rex sagt Wuff\nHunde: 2\ntrue",
+   "explanation": "Ein Array vom abstrakten Obertyp `Tier` enthält gemischte Objekte. Der Compiler kennt bei `t[i]` nur den Typ `Tier` - `t[i].bellen()` wäre also ein **Compilerfehler**, obwohl in Zelle 0 wirklich ein Hund liegt.\n\nDeshalb der Standard-Zweischritt aus dem Skript (S. 235):\n\n```java\nif (einTier instanceof Katze)\n  Katze pucki = (Katze) einTier;   // OK\n```\n\n1. `instanceof` fragt zur **Laufzeit**: Ist das Objekt vom angegebenen Typ (oder einem Untertyp)?\n2. Nur wenn ja, macht man den **Downcast** `(Hund) t[i]` - eine Konversion **abwärts** in der Klassenhierarchie, die immer explizit sein muss.\n\nOhne die `instanceof`-Prüfung würde `(Hund) t[1]` eine `ClassCastException` zur **Laufzeit** werfen (Skript S. 253).\n\nDie letzte Zeile prüft die andere Richtung: eine `Katze` **ist ein** `Tier` -> `true`. `instanceof` ist also nicht 'genau diese Klasse', sondern 'ist ein'.\n\nZur Formatierung: `System.out.print((t[i] instanceof Hund) + \" \")` schreibt `true ` bzw. `false ` **ohne** Zeilenumbruch; erst das folgende `println` beendet die Zeile.\n\nMerkregel: **Nach oben geht es von allein, nach unten nur mit Cast - und vorher fragen.**",
+   "hints": [
+    "Notieren Sie für jede der drei Array-Zellen die tatsächliche Klasse.",
+    "`print` (ohne 'ln') und `println` in derselben Schleife: wie viele Zeilen entstehen?",
+    "Die letzte Zeile fragt nicht nach 'genau Tier', sondern nach 'ist ein Tier'."
+   ],
+   "pitfalls": [
+    "`t[1] instanceof Tier` als `false` lesen, weil das Objekt eine Katze ist.",
+    "Vergessen, dass ohne Downcast `t[i].bellen()` nicht kompiliert.",
+    "Die `true`/`false`-Ausgabe in eine eigene Zeile setzen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 235,
+     "label": "instanceof, Typkonversion"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 253,
+     "label": "ClassCastException"
+    }
+   ],
+   "tags": [
+    "instanceof",
+    "downcast",
+    "abstract",
+    "array",
+    "polymorphie"
+   ],
+   "expectedOutput": "true Waldi sagt Wuff\nfalse kein Hund\ntrue Rex sagt Wuff\nHunde: 2\ntrue"
+  },
+  {
+   "id": "java-inheritance-015",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Interface-Konstante und Polymorphie über ein Interface",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class FigurenDemo {\n  public static void main(String[] s) {\n    Figur[] f = new Figur[3];\n    f[0] = new Rechteck(10.0, 15.0);\n    f[1] = new Quadrat(4.0);\n    f[2] = new Dreieck(8.0, 5.0);\n    double summe = 0.0;\n    for (int i = 0; i < f.length; i++) {\n      System.out.println( f[i].getFlaeche() );\n      summe = summe + f[i].getFlaeche();\n    }\n    System.out.println( \"Summe: \" + summe );\n    System.out.println( Figur.FAKTOR );\n  }\n}\n\ninterface Figur {\n  double FAKTOR = 0.5;\n  double getFlaeche();\n}\n\nclass Rechteck implements Figur {\n  protected double laenge, breite;\n  public Rechteck(double laenge, double breite) {\n    this.laenge = laenge; this.breite = breite;\n  }\n  public double getFlaeche() { return laenge * breite; }\n}\n\nclass Quadrat extends Rechteck {\n  public Quadrat(double a) { super(a, a); }\n}\n\nclass Dreieck implements Figur {\n  private double g, h;\n  public Dreieck(double g, double h) { this.g = g; this.h = h; }\n  public double getFlaeche() { return FAKTOR * g * h; }\n}",
+   "solution": "150.0\n16.0\n20.0\nSumme: 186.0\n0.5",
+   "explanation": "Hier läuft Polymorphie **über ein Interface** statt über eine Oberklasse - technisch identisch: `Figur[] f` ist ein Array von Referenzen auf 'irgendetwas, das `Figur` implementiert'.\n\nDrei Details:\n\n1. **`Quadrat extends Rechteck`** implementiert `Figur` nicht selbst - es erbt `getFlaeche()` von `Rechteck` und ist trotzdem eine `Figur` (Vererbung der Implementierungsbeziehung). `new Quadrat(4.0)` ruft `super(4.0, 4.0)`, also 4*4 = 16.0.\n2. **`double FAKTOR = 0.5;` im Interface** ist automatisch `public static final` (Skript S. 204). Man erreicht die Konstante über `Figur.FAKTOR` **und** direkt in jeder implementierenden Klasse ohne Präfix - genau so wie `PI` in `Test.java` der Vorlesung.\n3. **`double`-Ausgabe**: Java druckt `double`-Werte immer mit mindestens einer Nachkommastelle, also `150.0`, nicht `150`.\n\nRechnung: 10.0*15.0 = 150.0, 4.0*4.0 = 16.0, 0.5*8.0*5.0 = 20.0; Summe = 186.0.\n\nMerkregel: **Ein Interface-Typ ist ein vollwertiger Typ - Arrays, Parameter und Rückgabewerte dürfen ihn benutzen.**",
+   "hints": [
+    "Welche `getFlaeche()`-Methode benutzt `Quadrat`? Es steht keine in der Klasse.",
+    "`FAKTOR` steht im Interface - welchen Wert hat es und wie kommt `Dreieck` daran?",
+    "Wie druckt Java einen `double`-Wert wie 150?"
+   ],
+   "pitfalls": [
+    "`150` statt `150.0` schreiben - `double` wird immer mit Nachkommastelle gedruckt.",
+    "Denken, `Quadrat` müsse `implements Figur` schreiben, um im `Figur[]` zu liegen.",
+    "`Figur.FAKTOR` für einen Fehler halten, weil `Figur` ein Interface ist."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 204,
+     "label": "Interface-Konstanten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 211,
+     "label": "Interface-Vererbung"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Test.java",
+     "page": 0,
+     "label": "interface Figur mit PI"
+    }
+   ],
+   "tags": [
+    "interface",
+    "konstante",
+    "polymorphie",
+    "array",
+    "double"
+   ],
+   "expectedOutput": "150.0\n16.0\n20.0\nSumme: 186.0\n0.5"
+  },
+  {
+   "id": "java-inheritance-016",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Abstrakte Methode aus einer konkreten Methode aufrufen",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class FormenTest {\n  public static void main(String[] s) {\n    Form[] f = { new Kreis(2.0), new Rechteck(3.0, 4.0), new Quadrat(5.0) };\n    double summe = 0.0;\n    for (int i = 0; i < f.length; i++) {\n      f[i].beschreibe();\n      summe = summe + f[i].flaeche();\n    }\n    System.out.println( \"Summe: \" + summe );\n  }\n}\n\nabstract class Form {\n  protected String name;\n  public Form(String name) { this.name = name; }\n  public abstract double flaeche();\n  public void beschreibe() {\n    System.out.println( name + \" hat Flaeche \" + flaeche() );\n  }\n}\n\nclass Kreis extends Form {\n  private double r;\n  public Kreis(double r) { super(\"Kreis\"); this.r = r; }\n  public double flaeche() { return 3.0 * r * r; }\n}\n\nclass Rechteck extends Form {\n  private double a, b;\n  public Rechteck(double a, double b) { super(\"Rechteck\"); this.a = a; this.b = b; }\n  public double flaeche() { return a * b; }\n}\n\nclass Quadrat extends Rechteck {\n  public Quadrat(double a) { super(a, a); this.name = \"Quadrat\"; }\n}",
+   "solution": "Kreis hat Fläche 12.0\nRechteck hat Fläche 12.0\nQuadrat hat Fläche 25.0\nSumme: 49.0",
+   "explanation": "Das ist das *Template-Method*-Muster, das der Prof in `Bezahlung.java` verlangt: Die Oberklasse implementiert den **gemeinsamen Ablauf** und lässt die variable Stelle abstrakt.\n\n`Form.beschreibe()` ist eine ganz normale, implementierte Methode - sie ruft aber `flaeche()` auf, die in `Form` **abstrakt** ist. Das ist erlaubt und funktioniert, weil `flaeche()` dynamisch gebunden wird: Zur Laufzeit steht dort immer ein konkretes Objekt, das die Methode implementiert. Deshalb muss `Form` abstrakt sein - es dürfte nie ein reines `Form`-Objekt geben.\n\n`Quadrat extends Rechteck` erbt `flaeche()` (a*b, mit a = b = 5.0 -> 25.0) und überschreibt gar nichts - es setzt im Konstruktor nur `this.name = \"Quadrat\"`. Das geht, weil `name` in `Form` als `protected` deklariert ist und damit in allen Unterklassen sichtbar ist. Wäre `name` `private`, gäbe es einen Compilerfehler.\n\nRechnung: Kreis 3.0*2.0*2.0 = 12.0; Rechteck 3.0*4.0 = 12.0; Quadrat 5.0*5.0 = 25.0; Summe 49.0.\n\nMerkregel: **Die abstrakte Oberklasse schreibt das Drehbuch, die Unterklasse spielt die Rolle.**",
+   "hints": [
+    "`beschreibe()` steht nur einmal - in `Form`. Aber welche `flaeche()` ruft sie jeweils auf?",
+    "`Quadrat` hat keine eigene `flaeche()`. Woher bekommt es sie und mit welchen Werten?",
+    "Warum darf `Quadrat` im Konstruktor `this.name` setzen? Achten Sie auf den Modifikator von `name`."
+   ],
+   "pitfalls": [
+    "Denken, `beschreibe()` könne `flaeche()` nicht aufrufen, weil die Methode keinen Rumpf hat.",
+    "Bei `Quadrat` den Namen 'Rechteck' ausgeben, weil `super(a, a)` ihn zunächst so setzt - die nächste Zeile überschreibt ihn.",
+    "`double`-Werte ohne Nachkommastelle schreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 203,
+     "label": "Abstrakte Operationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 236,
+     "label": "Bezahlung.java"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Flaecheinhalt.java",
+     "page": 0,
+     "label": "Form-Hierarchie"
+    }
+   ],
+   "tags": [
+    "abstract",
+    "template-method",
+    "protected",
+    "polymorphie"
+   ],
+   "expectedOutput": "Kreis hat Flaeche 12.0\nRechteck hat Flaeche 12.0\nQuadrat hat Flaeche 25.0\nSumme: 49.0"
+  },
+  {
+   "id": "java-inheritance-017",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Überschreiben und Überladen im selben Programm",
+   "prompt": "Was ist die Ausgabe dieses Programms? Achten Sie genau darauf, welche der Methoden `f` jeweils gewählt wird.",
+   "code": "class UeberladenDemo {\n  public static void main(String[] s) {\n    Basis b       = new Basis();\n    Abgeleitet a  = new Abgeleitet();\n    Basis ba      = new Abgeleitet();\n    System.out.println( b.f(2) );\n    System.out.println( a.f(2) );\n    System.out.println( ba.f(2) );\n    System.out.println( a.f(2.0) );\n    System.out.println( ba.f(2.0) );\n    char c = 'A';\n    System.out.println( a.f(c) );\n  }\n}\n\nclass Basis {\n  public String f(int i)    { return \"Basis-int\"; }\n  public String f(double d) { return \"Basis-double\"; }\n}\n\nclass Abgeleitet extends Basis {\n  public String f(int i) { return \"Abgeleitet-int\"; }\n}",
+   "solution": "Basis-int\nAbgeleitet-int\nAbgeleitet-int\nBasis-double\nBasis-double\nAbgeleitet-int",
+   "explanation": "Zwei Mechanismen greifen ineinander:\n\n**1. Überladen (overloading) - vom Compiler entschieden.** `Basis` hat zwei Methoden `f`, die sich nur in der Parameterliste unterscheiden. Welche genommen wird, entscheidet der Compiler anhand des **Argumenttyps**: `f(2)` -> `f(int)`, `f(2.0)` -> `f(double)`.\n\n**2. Überschreiben (overriding) - zur Laufzeit entschieden.** `Abgeleitet` überschreibt nur `f(int)` - Signatur und Ergebnistyp stimmen exakt überein (Skript S. 216). `f(double)` wird nur **geerbt**, nicht überschrieben.\n\nDaraus folgt Zeile für Zeile:\n- `b.f(2)` -> Basis-int\n- `a.f(2)` -> Abgeleitet-int\n- `ba.f(2)` -> Compiler wählt `f(int)`, Laufzeit wählt die Version von `Abgeleitet` -> Abgeleitet-int\n- `a.f(2.0)` -> `f(double)` gibt es nur in `Basis` (geerbt) -> Basis-double\n- `ba.f(2.0)` -> ebenso -> Basis-double\n- `a.f(c)` mit `char c = 'A'`: es gibt kein `f(char)`. Java erweitert automatisch (widening) - `char` -> `int` ist die *engste* passende Erweiterung, also `f(int)` -> Abgeleitet-int. (Erst wenn es kein `f(int)` gäbe, würde `char` bis `double` erweitert.)\n\nMerkregel: **Der Compiler wählt die Signatur, das Objekt wählt die Implementierung.**",
+   "hints": [
+    "Entscheiden Sie in zwei Schritten: erst welche *Signatur* (anhand der Argumenttypen), dann welche *Klasse* (anhand des Objekts).",
+    "`Abgeleitet` überschreibt nur eine der beiden Methoden. Welche?",
+    "Bei `a.f(c)` mit `char c`: es gibt kein `f(char)`. Zu welchem Typ wird `char` automatisch erweitert - `int` oder `double`?"
+   ],
+   "pitfalls": [
+    "Glauben, `f(double)` sei in `Abgeleitet` auch überschrieben - dort steht sie gar nicht.",
+    "Bei `a.f(c)` `Basis-double` erwarten. `char` -> `int` ist die näherliegende Erweiterung.",
+    "`ba.f(2)` als 'Basis-int' lesen, weil `ba` als `Basis` deklariert ist."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 216,
+     "label": "Überschreiben von Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 227,
+     "label": "Arten der Polymorphie"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 233,
+     "label": "op(int)/op(double)"
+    }
+   ],
+   "tags": [
+    "overloading",
+    "overriding",
+    "statische-bindung",
+    "widening"
+   ],
+   "expectedOutput": "Basis-int\nAbgeleitet-int\nAbgeleitet-int\nBasis-double\nBasis-double\nAbgeleitet-int"
+  },
+  {
+   "id": "java-inheritance-018",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": false,
+   "title": "Der Konstruktor ruft eine überschriebene Methode auf",
+   "prompt": "Was ist die Ausgabe dieses Programms? (Härtetest: hier zählt die genaue Reihenfolge von Konstruktor- und Attributinitialisierung.)",
+   "code": "class InitFalle {\n  public static void main(String[] s) {\n    Basis b = new Abgeleitet(7);\n    b.zeige();\n  }\n}\n\nclass Basis {\n  protected int wert = 1;\n  public Basis() {\n    System.out.println(\"Basis-Konstruktor\");\n    zeige();\n  }\n  public void zeige() {\n    System.out.println(\"Basis wert = \" + wert);\n  }\n}\n\nclass Abgeleitet extends Basis {\n  private int extra = 100;\n  public Abgeleitet(int w) {\n    super();\n    wert = w;\n    System.out.println(\"Abgeleitet-Konstruktor\");\n  }\n  public void zeige() {\n    System.out.println(\"Abgeleitet wert = \" + wert + \", extra = \" + extra);\n  }\n}",
+   "solution": "Basis-Konstruktor\nAbgeleitet wert = 1, extra = 0\nAbgeleitet-Konstruktor\nAbgeleitet wert = 7, extra = 100",
+   "explanation": "Die genaue Reihenfolge beim Erzeugen eines Objekts mit `new Abgeleitet(7)` lautet:\n\n1. Speicher wird angelegt, **alle** Attribute stehen auf ihrem Default (`0`, `false`, `null`).\n2. Der Konstruktor `Abgeleitet(int)` startet und ruft als erstes `super()`.\n3. In `Basis()`: erst werden die **Attribut-Initialisierer von Basis** ausgeführt (`wert = 1`), dann läuft der Rumpf.\n4. Der Rumpf gibt `Basis-Konstruktor` aus und ruft `zeige()`. Dieser Aufruf wird **dynamisch gebunden** - das Objekt ist ein `Abgeleitet`, also läuft `Abgeleitet.zeige()`. Zu diesem Zeitpunkt gilt `wert = 1` (von Basis gesetzt) und `extra = 0`, denn die Initialisierer von `Abgeleitet` sind **noch nicht gelaufen**!\n5. Zurück in `Abgeleitet(int)`: jetzt erst `extra = 100`, dann `wert = 7`, dann die Ausgabe `Abgeleitet-Konstruktor`.\n6. `b.zeige()` in `main` sieht das fertige Objekt: `wert = 7`, `extra = 100`.\n\nDeshalb gilt die Faustregel: **Rufe in einem Konstruktor niemals eine überschreibbare Methode auf.** Man arbeitet sonst auf einem halb fertigen Objekt.\n\nMerkregel: **Der Konstruktor der Oberklasse läuft, bevor die Unterklasse ihre Felder gefüllt hat - aber die Methoden der Unterklasse gelten schon.**",
+   "hints": [
+    "Zeichnen Sie eine Zeitachse: super() -> Attribute von Basis -> Rumpf von Basis -> Attribute von Abgeleitet -> Rumpf von Abgeleitet.",
+    "Welche `zeige()`-Methode läuft, wenn `Basis()` sie aufruft? Achtung: dynamische Bindung gilt auch im Konstruktor.",
+    "Welchen Wert hat `extra` zu dem Zeitpunkt, an dem `Basis()` läuft? Der Initialisierer `= 100` steht in `Abgeleitet`."
+   ],
+   "pitfalls": [
+    "`extra = 100` schon beim ersten Aufruf von `zeige()` annehmen.",
+    "Annehmen, `Basis()` rufe `Basis.zeige()` auf, weil der Aufruf in `Basis` steht.",
+    "`wert = 7` schon beim ersten Aufruf annehmen - `wert = w` steht erst nach `super()`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 222,
+     "label": "Konstruktoren und Vererbung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 232,
+     "label": "dynamische Bindung"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Uebung.java",
+     "page": 0,
+     "label": "Konstruktorreihenfolge"
+    }
+   ],
+   "tags": [
+    "konstruktor",
+    "dynamische-bindung",
+    "initialisierung",
+    "falle"
+   ],
+   "expectedOutput": "Basis-Konstruktor\nAbgeleitet wert = 1, extra = 0\nAbgeleitet-Konstruktor\nAbgeleitet wert = 7, extra = 100"
+  },
+  {
+   "id": "java-inheritance-019",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "code",
+   "difficulty": 3,
+   "points": 14,
+   "examStyle": true,
+   "title": "Unterklasse Auto und Polymorphie im Array (Klausuraufgabe 5)",
+   "prompt": "Gegeben ist die Basisklasse `Fahrzeug`:\n\n```java\nclass Fahrzeug {\n  protected String name;\n  public Fahrzeug(String name) { this.name = name; }\n  public void beschreibung() {\n    System.out.println(\"Fahrzeug: \" + name);\n  }\n}\n```\n\n**a) (9 P.)** Schreiben Sie eine Unterklasse `Auto`, die von `Fahrzeug` erbt, ein zusätzliches `int`-Attribut `anzahlTueren` besitzt, einen passenden Konstruktor hat (Name über `super`, Tueren setzen) und `beschreibung()` so überschreibt, dass **zusätzlich** die Türanzahl ausgegeben wird (nutzen Sie `super.beschreibung()`).\n\n**b) (5 P.)** Schreiben Sie die `main`-Methode in `FahrzeugTest`, die ein `Fahrzeug[]`-Array mit einem `Fahrzeug(\"Fahrrad\")` und einem `Auto(\"Golf\", 5)` füllt und in einer Schleife für jedes Element `beschreibung()` aufruft (Polymorphie).\n\nDie Konsolenausgabe muss exakt so aussehen:\n```\nFahrzeug: Fahrrad\nFahrzeug: Golf\nTueren: 5\n```",
+   "starterCode": "class FahrzeugTest {\n  public static void main(String[] s) {\n    // b) Fahrzeug[]-Array mit 2 Elementen anlegen, füllen\n    //    und in einer Schleife beschreibung() aufrufen:\n\n  }\n}\n\nclass Fahrzeug {\n  protected String name;\n  public Fahrzeug(String name) { this.name = name; }\n  public void beschreibung() {\n    System.out.println(\"Fahrzeug: \" + name);\n  }\n}\n\n// a) Unterklasse Auto hier:\n",
+   "required": [
+    "extends",
+    "super("
+   ],
+   "solution": "class FahrzeugTest {\n  public static void main(String[] s) {\n    Fahrzeug[] flotte = new Fahrzeug[2];\n    flotte[0] = new Fahrzeug(\"Fahrrad\");\n    flotte[1] = new Auto(\"Golf\", 5);\n    for (int i = 0; i < flotte.length; i++) {\n      flotte[i].beschreibung();\n    }\n  }\n}\n\nclass Fahrzeug {\n  protected String name;\n  public Fahrzeug(String name) { this.name = name; }\n  public void beschreibung() {\n    System.out.println(\"Fahrzeug: \" + name);\n  }\n}\n\nclass Auto extends Fahrzeug {\n  private int anzahlTueren;\n  public Auto(String name, int anzahlTueren) {\n    super(name);\n    this.anzahlTueren = anzahlTueren;\n  }\n  public void beschreibung() {\n    super.beschreibung();\n    System.out.println(\"Tueren: \" + anzahlTueren);\n  }\n}",
+   "explanation": "Das ist Aufgabe 5 der Probeklausur - der teuerste Einzelblock des Java-Teils (14 Punkte). Die Lösung besteht aus vier Standardbausteinen, die man auswendig können sollte:\n\n1. **`class Auto extends Fahrzeug`** - die Generalisierungsbeziehung.\n2. **Konstruktor mit `super(name)` als erster Anweisung**, danach die eigenen Attribute setzen. Ohne `super(name)` sucht Java einen parameterlosen `Fahrzeug()`-Konstruktor - den gibt es nicht -> Compilerfehler.\n3. **`beschreibung()` überschreiben**: identische Signatur `public void beschreibung()`. Mit `super.beschreibung()` als erster Zeile erbt man die Ausgabe der Oberklasse und ergänzt nur.\n4. **Polymorphie im Array**: `Fahrzeug[] flotte` nimmt beide Objekttypen auf; `flotte[i].beschreibung()` wird dynamisch gebunden.\n\nAchten Sie auf `protected String name` in der Oberklasse - wäre das `private`, könnte `Auto` nicht direkt darauf zugreifen (in dieser Lösung ist das nicht nötig, weil `super.beschreibung()` den Namen druckt).\n\nMerkregel für die Klausur: **extends, super(...), überschreiben, Array vom Obertyp - in dieser Reihenfolge abarbeiten.**",
+   "hints": [
+    "Beginnen Sie mit dem Klassenkopf: `class Auto extends Fahrzeug { ... }` und dem zusätzlichen Attribut.",
+    "Der Konstruktor braucht zwei Parameter; die erste Anweisung muss `super(name);` sein.",
+    "Die überschriebene Methode muss exakt `public void beschreibung()` heißen. Rufen Sie darin zuerst `super.beschreibung();` auf und geben Sie danach die Tueren aus.",
+    "Für b): `Fahrzeug[] flotte = new Fahrzeug[2];`, dann beide Zellen füllen und mit `for (int i = 0; i < flotte.length; i++)` durchlaufen."
+   ],
+   "pitfalls": [
+    "`super(name)` vergessen oder nicht als erste Anweisung schreiben.",
+    "Im Array `Auto[]` statt `Fahrzeug[]` deklarieren - dann passt das reine `Fahrzeug`-Objekt nicht hinein.",
+    "`beschreibung()` mit anderer Signatur schreiben (z. B. `beschreibung(String)`) - das überschreibt nichts, sondern überlädt."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 5 - Klasse mit Vererbung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 223,
+     "label": "super(...)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 229,
+     "label": "Polymorphie im Array"
+    }
+   ],
+   "tags": [
+    "extends",
+    "super",
+    "overriding",
+    "polymorphie",
+    "array",
+    "klausuraufgabe5"
+   ],
+   "expectedOutput": "Fahrzeug: Fahrrad\nFahrzeug: Golf\nTueren: 5"
+  },
+  {
+   "id": "java-inheritance-020",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "code",
+   "difficulty": 3,
+   "points": 8,
+   "examStyle": true,
+   "title": "Gruss-Array so füllen, dass die Ausgabe stimmt",
+   "prompt": "Vervollständigen Sie `main`, damit die Konsolenausgabe dieses Programms exakt so aussieht:\n\n```\nCheerio,Hi,Gutentag,\n```\n\nDie Schleife und die drei Klassen dürfen Sie **nicht** ändern - Sie ergänzen nur die Anweisungen oberhalb der Schleife (Array `gruesse` anlegen und füllen).",
+   "starterCode": "class GrussTest {\n  public static void main(String[] s) {\n    // Schreibe unten Anweisungen, damit die Konsolenausgabe dieses\n    // Programms wie folgt aussieht: \"Cheerio,Hi,Gutentag,\".\n\n\n    for (int i = gruesse.length-1; i>=0; i--) {\n      System.out.print( gruesse[i].gruss()+\",\" );\n    }\n    System.out.println();\n  }\n}\n\nclass Gruss {\n  public String gruss() { return new String(\"Hi\"); }\n}\nclass EnglischGruss extends Gruss {\n  public String gruss() { return new String(\"Cheerio\"); }\n}\nclass DeutschGruss extends Gruss {\n  public String gruss() { return new String(\"Gutentag\"); }\n}",
+   "required": [
+    "Gruss[]",
+    "new EnglischGruss",
+    "new DeutschGruss"
+   ],
+   "solution": "class GrussTest {\n  public static void main(String[] s) {\n    Gruss[] gruesse = new Gruss[3];\n    gruesse[0] = new DeutschGruss();\n    gruesse[1] = new Gruss();\n    gruesse[2] = new EnglischGruss();\n\n    for (int i = gruesse.length-1; i>=0; i--) {\n      System.out.print( gruesse[i].gruss()+\",\" );\n    }\n    System.out.println();\n  }\n}\n\nclass Gruss {\n  public String gruss() { return new String(\"Hi\"); }\n}\nclass EnglischGruss extends Gruss {\n  public String gruss() { return new String(\"Cheerio\"); }\n}\nclass DeutschGruss extends Gruss {\n  public String gruss() { return new String(\"Gutentag\"); }\n}",
+   "explanation": "Das ist `Klausur10.java` - eine der zehn offiziellen Klausur-Übungsaufgaben des Profs.\n\nDer Trick ist, **rückwärts** zu denken: Die Schleife läuft von `gruesse.length-1` bis `0`, also von hinten nach vorne. Die gewünschte Ausgabe ist `Cheerio,Hi,Gutentag,` - also muss gelten:\n\n| Ausgabe-Position | Index | Objekt |\n|---|---|---|\n| Cheerio | 2 | `EnglischGruss` |\n| Hi | 1 | `Gruss` |\n| Gutentag | 0 | `DeutschGruss` |\n\nDamit alle drei Objekte in **ein** Array passen, muss es vom Typ des gemeinsamen Obertyps sein: `Gruss[] gruesse = new Gruss[3];`. Ein `EnglischGruss` **ist ein** `Gruss`, deshalb ist die Zuweisung ohne Cast erlaubt (impliziter Upcast).\n\nDer Aufruf `gruesse[i].gruss()` wird dynamisch gebunden - der Compiler sieht nur `Gruss.gruss()`, zur Laufzeit entscheidet das Objekt.\n\nAlternativ kann man die Array-Initialisierer-Kurzform nutzen:\n```java\nGruss[] gruesse = { new DeutschGruss(), new Gruss(), new EnglischGruss() };\n```\n\nMerkregel: **Array vom Obertyp anlegen, Untertypen hineinlegen, Schleifenrichtung prüfen.**",
+   "hints": [
+    "Welchen Elementtyp muss das Array haben, damit `Gruss`, `EnglischGruss` und `DeutschGruss` alle hineinpassen?",
+    "Die Schleife läuft rückwärts. Schreiben Sie sich die gewünschte Ausgabe auf und ordnen Sie ihr die Indizes 2, 1, 0 zu.",
+    "Drei Zeilen genügen: `gruesse[0] = new ...;` usw. - oder eine einzige mit `{ ... }`-Initialisierer."
+   ],
+   "pitfalls": [
+    "Die Reihenfolge vorwärts eintragen, weil man die Schleifenrichtung übersieht.",
+    "Das Array als `EnglischGruss[]` deklarieren - dann passen die anderen Objekte nicht hinein.",
+    "Vergessen, das Array überhaupt zu deklarieren - `gruesse` wird in der Schleife benutzt."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur10.java",
+     "page": 0,
+     "label": "offizielle Übungsaufgabe"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 373,
+     "label": "Überblick, Klausur10"
+    }
+   ],
+   "tags": [
+    "polymorphie",
+    "array",
+    "upcast",
+    "klausur10"
+   ],
+   "expectedOutput": "Cheerio,Hi,Gutentag,"
+  },
+  {
+   "id": "java-inheritance-021",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Schnittstelle Figur mit drei implementierenden Klassen",
+   "prompt": "Schreiben Sie ein Java-Programm, um eine Schnittstelle `Figur` mit der Konstanten `PI = 3.1415` und der Methode `getFlaeche()` zu erstellen. Erstellen Sie drei Klassen `Rechteck`, `Kreis` und `Dreieck`, die die `Figur`-Schnittstelle implementieren, und implementieren Sie `getFlaeche()` jeweils passend:\n\n- `Rechteck(laenge, breite)` -> `laenge * breite`\n- `Kreis(radius)` -> `radius * radius * PI`\n- `Dreieck(grundseite, hoehe)` -> `0.5 * grundseite * hoehe`\n\nLegen Sie in `main` ein `Figur[]`-Array mit `new Rechteck(10.0, 15.0)`, `new Kreis(2.0)` und `new Dreieck(8.0, 5.0)` an und geben Sie in einer Schleife die Flächen aus (eine pro Zeile).\n\nErwartete Ausgabe:\n```\n150.0\n12.566\n20.0\n```",
+   "starterCode": "class FigurTest {\n  public static void main(String[] s) {\n    // Figur[]-Array anlegen, füllen und in einer Schleife\n    // die Flächen ausgeben:\n\n  }\n}\n\n// interface Figur hier:\n\n// Klassen Rechteck, Kreis und Dreieck hier:\n",
+   "required": [
+    "interface",
+    "implements"
+   ],
+   "solution": "class FigurTest {\n  public static void main(String[] s) {\n    Figur[] figuren = new Figur[3];\n    figuren[0] = new Rechteck(10.0, 15.0);\n    figuren[1] = new Kreis(2.0);\n    figuren[2] = new Dreieck(8.0, 5.0);\n    for (int i = 0; i < figuren.length; i++) {\n      System.out.println( figuren[i].getFlaeche() );\n    }\n  }\n}\n\ninterface Figur {\n  double PI = 3.1415;\n  double getFlaeche();\n}\n\nclass Rechteck implements Figur {\n  private double laenge, breite;\n  public Rechteck(double laenge, double breite) {\n    this.laenge = laenge;\n    this.breite = breite;\n  }\n  public double getFlaeche() { return laenge * breite; }\n}\n\nclass Kreis implements Figur {\n  private double radius;\n  public Kreis(double radius) { this.radius = radius; }\n  public double getFlaeche() { return radius * radius * PI; }\n}\n\nclass Dreieck implements Figur {\n  private double grundseite, hoehe;\n  public Dreieck(double grundseite, double hoehe) {\n    this.grundseite = grundseite;\n    this.hoehe = hoehe;\n  }\n  public double getFlaeche() { return 0.5 * grundseite * hoehe; }\n}",
+   "explanation": "Diese Aufgabe steht wörtlich im Skript (S. 210, `Interface.java`) und in `Test.java` des Repos.\n\nDie drei Regeln, die man dabei nicht vergessen darf:\n\n1. **`interface Figur { double PI = 3.1415; double getFlaeche(); }`** - Methoden im Interface haben **keinen Rumpf**, sondern enden mit Semikolon. `public` und `abstract` darf man weglassen, sie sind implizit da. `PI` ist automatisch `public static final`.\n2. **`class Kreis implements Figur`** - nicht `extends`! Und die implementierende Methode **muss `public` sein**, sonst: *attempting to assign weaker access privileges*.\n3. **Jede implementierende Klasse muss alle Methoden des Interface implementieren**, sonst bleibt sie abstrakt und muss selbst `abstract` deklariert werden.\n\nInnerhalb von `Kreis` kann man `PI` direkt schreiben (ohne `Figur.`), weil die Konstante mitgeerbt wird.\n\nDas `Figur[]`-Array zeigt den eigentlichen Nutzen: Ein Interface-Typ ist ein vollwertiger Typ, über den Polymorphie läuft - `figuren[i].getFlaeche()` wird dynamisch gebunden.\n\nMerkregel: **Interface = Vertrag. `implements` = Vertrag unterschreiben. `public` = Vertragsbedingung.**",
+   "hints": [
+    "Im Interface stehen nur Signaturen: `double getFlaeche();` - mit Semikolon, ohne `{ }`.",
+    "Klasse und Interface verbindet `implements`, nicht `extends`. Die Methoden müssen `public` sein.",
+    "In `Kreis` können Sie `PI` direkt verwenden, da die Konstante aus dem Interface geerbt wird.",
+    "Für die Ausgabe: `Figur[] figuren = new Figur[3];` und eine `for`-Schleife über `figuren.length`."
+   ],
+   "pitfalls": [
+    "`class Kreis extends Figur` schreiben - bei einem Interface heißt es `implements`.",
+    "`public` bei `getFlaeche()` in der Klasse vergessen -> Compilerfehler.",
+    "Im Interface einen Methodenrumpf `{ }` schreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 210,
+     "label": "Interface.java"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 204,
+     "label": "Interfaces"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Test.java",
+     "page": 0,
+     "label": "interface Figur mit PI"
+    }
+   ],
+   "tags": [
+    "interface",
+    "implements",
+    "konstante",
+    "polymorphie",
+    "array"
+   ],
+   "expectedOutput": "150.0\n12.566\n20.0"
+  },
+  {
+   "id": "java-inheritance-022",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Zahlungsabwicklung mit abstrakter Basisklasse",
+   "prompt": "Gegeben ist die Aufgabenstellung aus der Vorlesung (`Bezahlung.java`): *\"Schreibe die Methode `bezahlen` in `Zahlungsmethode` so um, dass die Methoden `bezahlen` der untergeordneten Klassen effizienter bzw. kürzer werden.\"*\n\nBauen Sie die Hierarchie so um, dass die Ausgabe **einmal** in der abstrakten Basisklasse steht:\n\n- `abstract class Zahlungsmethode` mit einer **abstrakten** Methode `public abstract String getName()` und einer **implementierten** Methode `public void bezahlen(double betrag)`, die `\"Bezahlt: <betrag> Euro mit <Name>.\"` ausgibt.\n- Die Unterklassen `Kreditkarte`, `PayPal` und `Bitcoin` implementieren nur noch `getName()`.\n- In `Kasse` gibt es eine Klassenmethode `static void zurKasse(Zahlungsmethode methode, double betrag)`, die `methode.bezahlen(betrag)` aufruft, sowie eine `main`, die ein `Zahlungsmethode[]`-Array mit je einem Objekt der drei Klassen anlegt und der Reihe nach mit den Beträgen `99.99`, `49.99` und `0.005` bezahlt.\n\nErwartete Ausgabe:\n```\nBezahlt: 99.99 Euro mit Kreditkarte.\nBezahlt: 49.99 Euro mit PayPal.\nBezahlt: 0.005 Euro mit Bitcoin.\n```",
+   "starterCode": "class Kasse {\n  static void zurKasse(Zahlungsmethode methode, double betrag) {\n    methode.bezahlen(betrag);\n  }\n  public static void main(String[] args) {\n    // Array vom Typ Zahlungsmethode anlegen und füllen,\n    // dann in einer Schleife zurKasse(...) aufrufen:\n\n  }\n}\n\n// Abstrakte Basisklasse Zahlungsmethode hier:\n\n// Unterklassen Kreditkarte, PayPal, Bitcoin hier:\n",
+   "required": [
+    "abstract",
+    "extends"
+   ],
+   "solution": "class Kasse {\n  static void zurKasse(Zahlungsmethode methode, double betrag) {\n    methode.bezahlen(betrag);\n  }\n  public static void main(String[] args) {\n    Zahlungsmethode[] methoden = new Zahlungsmethode[3];\n    methoden[0] = new Kreditkarte();\n    methoden[1] = new PayPal();\n    methoden[2] = new Bitcoin();\n    double[] betraege = { 99.99, 49.99, 0.005 };\n    for (int i = 0; i < methoden.length; i++) {\n      zurKasse(methoden[i], betraege[i]);\n    }\n  }\n}\n\nabstract class Zahlungsmethode {\n  public abstract String getName();\n  public void bezahlen(double betrag) {\n    System.out.println(\"Bezahlt: \" + betrag + \" Euro mit \" + getName() + \".\");\n  }\n}\n\nclass Kreditkarte extends Zahlungsmethode {\n  public String getName() { return \"Kreditkarte\"; }\n}\n\nclass PayPal extends Zahlungsmethode {\n  public String getName() { return \"PayPal\"; }\n}\n\nclass Bitcoin extends Zahlungsmethode {\n  public String getName() { return \"Bitcoin\"; }\n}",
+   "explanation": "Der Kern der Aufgabe ist das Herausziehen des **gemeinsamen** Codes nach oben - genau das, wozu Vererbung da ist.\n\nVorher stand in jeder Unterklasse dieselbe `println`-Zeile, nur mit anderem Text. Nachher steht sie **einmal** in `Zahlungsmethode.bezahlen(...)`, und die Unterklassen liefern nur noch ihren Namen. Dass das funktioniert, liegt an der dynamischen Bindung: In `bezahlen` steht `getName()` (implizit `this.getName()`), und `this` ist zur Laufzeit ein `Kreditkarte`-, `PayPal`- oder `Bitcoin`-Objekt.\n\nWichtige Punkte:\n- `getName()` ist **abstrakt** -> deshalb muss `Zahlungsmethode` als `abstract class` deklariert sein und kann nicht mit `new` erzeugt werden.\n- `bezahlen(...)` ist **nicht** abstrakt: eine abstrakte Klasse darf beliebig viele fertig implementierte Methoden enthalten.\n- `zurKasse(Zahlungsmethode methode, ...)` nimmt den **Obertyp** als Parameter an - so funktioniert Polymorphie auch über Methodenparameter, nicht nur über Arrays.\n- `double`-Werte werden von Java als `99.99`, `49.99`, `0.005` gedruckt.\n\nMerkregel: **Gemeinsames Verhalten nach oben, Unterschiede nach unten.**",
+   "hints": [
+    "Welche Zeile ist in allen drei Unterklassen identisch (bis auf ein Wort)? Genau die gehört in die Oberklasse.",
+    "`abstract class Zahlungsmethode` darf sowohl abstrakte als auch fertige Methoden enthalten.",
+    "In der fertigen Methode `bezahlen` rufen Sie einfach `getName()` auf - dynamische Bindung erledigt den Rest.",
+    "Für `main`: `Zahlungsmethode[] methoden = new Zahlungsmethode[3];` und ein `double[]` mit den Beträgen."
+   ],
+   "pitfalls": [
+    "`abstract` bei der Klasse vergessen, obwohl eine abstrakte Methode darin steht.",
+    "`bezahlen` versehentlich auch abstrakt machen - dann müssten es alle Unterklassen wieder selbst schreiben.",
+    "In `getName()` das `public` vergessen: beim Überschreiben darf die Sichtbarkeit nie eingeschränkt werden."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 236,
+     "label": "Bezahlung.java"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Bezahlung.java",
+     "page": 0,
+     "label": "Zahlungsabwicklung mit Polymorphismus"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 203,
+     "label": "Abstrakte Operationen"
+    }
+   ],
+   "tags": [
+    "abstract",
+    "extends",
+    "polymorphie",
+    "template-method"
+   ],
+   "expectedOutput": "Bezahlt: 99.99 Euro mit Kreditkarte.\nBezahlt: 49.99 Euro mit PayPal.\nBezahlt: 0.005 Euro mit Bitcoin."
+  },
+  {
+   "id": "java-inheritance-023",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "code",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "toString() und equals() aus Object überschreiben",
+   "prompt": "Vervollständigen Sie die Klasse `Student` so, dass sie `toString()` und `equals()` aus `Object` überschreibt:\n\n- `toString()` liefert `Student{name='<name>', matr.nr.=<matrnr>}`\n- `equals(Object obj)` liefert `true`, wenn `obj` ein `Student` mit gleichem Namen und gleicher Matrikelnummer ist, sonst `false`.\n\nErwartete Ausgabe:\n```\nStudent{name='Lena', matr.nr.=1234567}\ns1.equals(s2)? true\ns1.equals(s3)? false\ns1 == s2? false\ns1.equals(\"Lena\")? false\n```",
+   "starterCode": "class StudentenTest {\n  public static void main(String[] args) {\n    Student s1 = new Student(\"Lena\", 1234567);\n    Student s2 = new Student(\"Lena\", 1234567);\n    Student s3 = new Student(\"Max\", 678901);\n    System.out.println( s1 );\n    System.out.println( \"s1.equals(s2)? \" + s1.equals(s2) );\n    System.out.println( \"s1.equals(s3)? \" + s1.equals(s3) );\n    System.out.println( \"s1 == s2? \" + (s1 == s2) );\n    System.out.println( \"s1.equals(\\\"Lena\\\")? \" + s1.equals(\"Lena\") );\n  }\n}\n\nclass Student {\n  private String name;\n  private long matrnr;\n  public Student(String name, long matrnr) {\n    this.name = name;\n    this.matrnr = matrnr;\n  }\n  // überschreibe toString() von Object:\n\n  // überschreibe equals() von Object:\n\n}",
+   "required": [
+    "toString",
+    "equals(Object"
+   ],
+   "solution": "class StudentenTest {\n  public static void main(String[] args) {\n    Student s1 = new Student(\"Lena\", 1234567);\n    Student s2 = new Student(\"Lena\", 1234567);\n    Student s3 = new Student(\"Max\", 678901);\n    System.out.println( s1 );\n    System.out.println( \"s1.equals(s2)? \" + s1.equals(s2) );\n    System.out.println( \"s1.equals(s3)? \" + s1.equals(s3) );\n    System.out.println( \"s1 == s2? \" + (s1 == s2) );\n    System.out.println( \"s1.equals(\\\"Lena\\\")? \" + s1.equals(\"Lena\") );\n  }\n}\n\nclass Student {\n  private String name;\n  private long matrnr;\n  public Student(String name, long matrnr) {\n    this.name = name;\n    this.matrnr = matrnr;\n  }\n  public String toString() {\n    return \"Student{name='\" + name + \"', matr.nr.=\" + matrnr + \"}\";\n  }\n  public boolean equals(Object obj) {\n    if (!(obj instanceof Student)) return false;\n    Student andere = (Student) obj;\n    return this.matrnr == andere.matrnr && this.name.equals(andere.name);\n  }\n}",
+   "explanation": "Das ist `Studenten.java` aus der Vorlesung. Der Prof fragt dort ausdrücklich: *\"return super.equals(obj); // wieso funktioniert dies nicht?\"* - Antwort: Weil `Object.equals` als `return this == obj;` implementiert ist und damit nur Referenzen vergleicht.\n\n**`toString()`** ist einfach: Signatur `public String toString()`, String zusammenbauen. Danach benutzen `System.out.println(s1)` und jede String-Konkatenation die Methode automatisch (Polymorphie in `println(Object obj)`).\n\n**`equals(Object obj)`** hat drei Pflicht-Schritte:\n1. **Typprüfung mit `instanceof`** - sonst kracht es beim Cast. Praktischer Nebeneffekt: `null instanceof Student` ist `false`, damit ist auch der `null`-Fall automatisch abgedeckt.\n2. **Downcast** `(Student) obj` - vorher kennt der Compiler nur `Object` und lässt `obj.matrnr` nicht zu.\n3. **Feldvergleich**: `long` mit `==`, aber `String` mit `.equals(...)`, niemals mit `==`!\n\nDie Signatur muss **exakt** `public boolean equals(Object obj)` lauten. Schreibt man `equals(Student s)`, entsteht eine **überladene** Methode - dann ergäbe `s1.equals(\"Lena\")` einen Compilerfehler statt `false`, und Aufrufe über eine `Object`-Variable landeten bei der Object-Version.\n\nMerkregel: **instanceof - Cast - Felder. Und der Parameter heißt `Object`.**",
+   "hints": [
+    "`toString()` hat die Signatur `public String toString()` und gibt einfach den zusammengebauten String zurück.",
+    "`equals` muss `public boolean equals(Object obj)` heißen - nur so wird die Object-Methode wirklich überschrieben.",
+    "Prüfen Sie zuerst mit `instanceof`, casten Sie danach und vergleichen Sie erst dann die Felder.",
+    "Strings vergleicht man mit `.equals(...)`, Zahlen mit `==`."
+   ],
+   "pitfalls": [
+    "`public boolean equals(Student s)` schreiben - das überlädt nur und überschreibt nichts.",
+    "Den `instanceof`-Test weglassen -> `ClassCastException` bei `s1.equals(\"Lena\")`.",
+    "`this.name == andere.name` benutzen statt `this.name.equals(andere.name)`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 245,
+     "label": "toString/equals in Object"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 247,
+     "label": "Studenten.java"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Studenten.java",
+     "page": 0,
+     "label": "toString/equals überschreiben"
+    }
+   ],
+   "tags": [
+    "object",
+    "tostring",
+    "equals",
+    "instanceof",
+    "downcast"
+   ],
+   "expectedOutput": "Student{name='Lena', matr.nr.=1234567}\ns1.equals(s2)? true\ns1.equals(s3)? false\ns1 == s2? false\ns1.equals(\"Lena\")? false"
+  },
+  {
+   "id": "java-inheritance-024",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Unterklasse VerwundbareSchnecke (SnailGame v2)",
+   "prompt": "Aus der Vorlesung (SnailGame v2): *\"Implementiere eine neue Klasse für eine Schnecke, die 3 Leben hat, die nach jeder Kollision herunterzählen.\"*\n\nGegeben ist die Basisklasse `Schnecke`. Schreiben Sie die Unterklasse `VerwundbareSchnecke`:\n\n- zusätzliches privates `int`-Attribut `leben`\n- Konstruktor `VerwundbareSchnecke(String name, int laenge, int leben)`, der `name` und `laenge` über `super(...)` setzt\n- Methode `public int treffer()`, die `leben` um 1 verringert und den neuen Wert zurückgibt\n- `zeige()` wird so überschrieben, dass zuerst die Ausgabe der Oberklasse erscheint und danach eine Zeile `\"  Leben: <leben>\"`\n\nErgänzen Sie außerdem `main` wie im Kommentar beschrieben.\n\nErwartete Ausgabe:\n```\nBasis (Laenge 7)\nHeld (Laenge 5)\n  Leben: 3\n2\n1\nHeld (Laenge 5)\n  Leben: 1\n```",
+   "starterCode": "class SchneckenTest {\n  public static void main(String[] s) {\n    Schnecke[] alle = new Schnecke[2];\n    alle[0] = new Schnecke(\"Basis\", 7);\n    alle[1] = new VerwundbareSchnecke(\"Held\", 5, 3);\n    for (int i = 0; i < alle.length; i++) {\n      alle[i].zeige();\n    }\n    // Downcast auf VerwundbareSchnecke, dann zweimal treffer()\n    // ausgeben und danach nochmal zeige() aufrufen:\n\n  }\n}\n\nclass Schnecke {\n  protected String name;\n  protected int laenge;\n  public Schnecke(String name, int laenge) {\n    this.name = name;\n    this.laenge = laenge;\n  }\n  public void zeige() {\n    System.out.println(name + \" (Laenge \" + laenge + \")\");\n  }\n}\n\n// Unterklasse VerwundbareSchnecke hier:\n",
+   "required": [
+    "extends Schnecke",
+    "super(",
+    "super.zeige()"
+   ],
+   "solution": "class SchneckenTest {\n  public static void main(String[] s) {\n    Schnecke[] alle = new Schnecke[2];\n    alle[0] = new Schnecke(\"Basis\", 7);\n    alle[1] = new VerwundbareSchnecke(\"Held\", 5, 3);\n    for (int i = 0; i < alle.length; i++) {\n      alle[i].zeige();\n    }\n    VerwundbareSchnecke held = (VerwundbareSchnecke) alle[1];\n    System.out.println( held.treffer() );\n    System.out.println( held.treffer() );\n    held.zeige();\n  }\n}\n\nclass Schnecke {\n  protected String name;\n  protected int laenge;\n  public Schnecke(String name, int laenge) {\n    this.name = name;\n    this.laenge = laenge;\n  }\n  public void zeige() {\n    System.out.println(name + \" (Laenge \" + laenge + \")\");\n  }\n}\n\nclass VerwundbareSchnecke extends Schnecke {\n  private int leben;\n  public VerwundbareSchnecke(String name, int laenge, int leben) {\n    super(name, laenge);\n    this.leben = leben;\n  }\n  public int treffer() {\n    leben--;\n    return leben;\n  }\n  public void zeige() {\n    super.zeige();\n    System.out.println(\"  Leben: \" + leben);\n  }\n}",
+   "explanation": "Diese Aufgabe kombiniert die vier Bausteine, die in der Klausur immer zusammen auftauchen:\n\n1. **`extends` + zusätzlicher Zustand**: `VerwundbareSchnecke` erbt `name` und `laenge` und ergänzt `leben`. Ererbtes kann man nie löschen, nur hinzufügen (Skript S. 212).\n2. **`super(name, laenge)` als erste Anweisung** - der geerbte Teil wird zuerst initialisiert, danach das eigene Attribut.\n3. **`zeige()` überschreiben und `super.zeige()` aufrufen**: So erweitert man Verhalten, statt es zu duplizieren. `super.zeige()` ist der einzige Weg zur verdeckten Version der Oberklasse.\n4. **Downcast für die Zusatzmethode**: `alle[1]` hat den statischen Typ `Schnecke`; `alle[1].treffer()` wäre ein Compilerfehler, weil `Schnecke` diese Methode nicht kennt. Erst `(VerwundbareSchnecke) alle[1]` macht sie sichtbar - Konversion **abwärts** braucht immer einen expliziten Cast.\n\nBeachten Sie den Rückgabewert von `treffer()`: `leben--` **vor** dem `return` reduziert erst und gibt dann den neuen Wert zurück -> 2, dann 1.\n\nMerkregel: **Nach oben passt alles von allein, nach unten nur mit Cast.**",
+   "hints": [
+    "Klassenkopf `class VerwundbareSchnecke extends Schnecke` und das neue Attribut `private int leben;`.",
+    "Der Konstruktor hat drei Parameter; die erste Anweisung muss `super(name, laenge);` sein.",
+    "In `zeige()` rufen Sie zuerst `super.zeige();` auf und geben danach die Leben aus.",
+    "In `main` brauchen Sie einen Downcast: `VerwundbareSchnecke held = (VerwundbareSchnecke) alle[1];`"
+   ],
+   "pitfalls": [
+    "`alle[1].treffer()` direkt aufrufen - der statische Typ `Schnecke` kennt die Methode nicht.",
+    "In `zeige()` `this.zeige()` statt `super.zeige()` schreiben -> Endlosrekursion / StackOverflowError.",
+    "`super(name, laenge)` nicht als erste Anweisung schreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 226,
+     "label": "SnailGame v2, VulnerableSnail"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 212,
+     "label": "Vererbung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 235,
+     "label": "Typkonversion"
+    }
+   ],
+   "tags": [
+    "extends",
+    "super",
+    "overriding",
+    "downcast",
+    "protected"
+   ],
+   "expectedOutput": "Basis (Laenge 7)\nHeld (Laenge 5)\n  Leben: 3\n2\n1\nHeld (Laenge 5)\n  Leben: 1"
+  },
+  {
+   "id": "java-inheritance-025",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "code",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "Eine Klasse implementiert mehrere Schnittstellen",
+   "prompt": "Modellieren Sie ein kleines Benachrichtigungssystem:\n\n- Interface `Sendbar` mit `void sende(String text)`\n- Interface `Protokollierbar` mit `String protokoll()`\n- Klasse `Email`, die **beide** Interfaces implementiert. Sie hat ein privates Attribut `int gesendet` (Zähler). `sende(text)` gibt `\"E-Mail: <text>\"` aus und erhöht den Zähler; `protokoll()` liefert `\"E-Mail hat <gesendet> Nachricht(en) gesendet\"`.\n- Klasse `SMS`, die **nur** `Sendbar` implementiert und `\"SMS: <text>\"` ausgibt.\n\nIn `main`: ein `Sendbar[]`-Array mit einer `Email` und einer `SMS` anlegen, an beide `\"Hallo\"` senden, danach nochmal an `array[0]` `\"Test\"` senden. Anschließend in einer Schleife prüfen, welche Elemente zusätzlich `Protokollierbar` sind (mit `instanceof`), und deren `protokoll()` ausgeben.\n\nErwartete Ausgabe:\n```\nE-Mail: Hallo\nSMS: Hallo\nE-Mail: Test\nE-Mail hat 2 Nachricht(en) gesendet\n```",
+   "starterCode": "class NachrichtTest {\n  public static void main(String[] s) {\n    // Sendbar[]-Array anlegen und füllen, Nachrichten senden,\n    // dann mit instanceof die protokollierbaren Elemente finden:\n\n  }\n}\n\n// interface Sendbar hier:\n\n// interface Protokollierbar hier:\n\n// class Email implements ... hier:\n\n// class SMS implements ... hier:\n",
+   "required": [
+    "implements Sendbar, Protokollierbar",
+    "instanceof"
+   ],
+   "solution": "class NachrichtTest {\n  public static void main(String[] s) {\n    Sendbar[] dienste = new Sendbar[2];\n    dienste[0] = new Email();\n    dienste[1] = new SMS();\n    for (int i = 0; i < dienste.length; i++) {\n      dienste[i].sende(\"Hallo\");\n    }\n    dienste[0].sende(\"Test\");\n    for (int i = 0; i < dienste.length; i++) {\n      if (dienste[i] instanceof Protokollierbar) {\n        Protokollierbar p = (Protokollierbar) dienste[i];\n        System.out.println( p.protokoll() );\n      }\n    }\n  }\n}\n\ninterface Sendbar {\n  void sende(String text);\n}\n\ninterface Protokollierbar {\n  String protokoll();\n}\n\nclass Email implements Sendbar, Protokollierbar {\n  private int gesendet = 0;\n  public void sende(String text) {\n    System.out.println(\"E-Mail: \" + text);\n    gesendet++;\n  }\n  public String protokoll() {\n    return \"E-Mail hat \" + gesendet + \" Nachricht(en) gesendet\";\n  }\n}\n\nclass SMS implements Sendbar {\n  public void sende(String text) {\n    System.out.println(\"SMS: \" + text);\n  }\n}",
+   "explanation": "Java erlaubt keine Mehrfachvererbung von Klassen (Diamond-Problem, Skript S. 218), aber eine Klasse darf **beliebig viele Interfaces** implementieren - das Skript nennt es *eine Art Mehrfachvererbung, die auch in Java erlaubt ist* (S. 207). Syntax: `class Email implements Sendbar, Protokollierbar` - kommagetrennt.\n\nDaraus folgt: Ein `Email`-Objekt hat **mehrere Typen** gleichzeitig. Es ist ein `Email`, ein `Sendbar`, ein `Protokollierbar` und ein `Object`. Deshalb darf es sowohl in einem `Sendbar[]` liegen als auch mit `instanceof Protokollierbar` erkannt werden.\n\nDas Muster in der zweiten Schleife ist genau das aus dem Skript (S. 235): erst `instanceof` fragen, dann casten. Ohne den Cast wäre `dienste[i].protokoll()` ein Compilerfehler, weil `Sendbar` diese Methode nicht kennt. `SMS` implementiert `Protokollierbar` nicht -> `instanceof` ist `false` -> keine Ausgabe.\n\nBeachten Sie den Zähler: `sende` wird bei `Email` zweimal aufgerufen (`\"Hallo\"` und `\"Test\"`), also `gesendet == 2`.\n\nMerkregel: **Ein Objekt kann viele Verträge unterschreiben - `instanceof` fragt nach, welche.**",
+   "hints": [
+    "Interfaces enthalten nur Signaturen mit Semikolon. `public` darf man dort weglassen, in der implementierenden Klasse aber nicht.",
+    "Mehrere Interfaces schreibt man kommagetrennt hinter ein einziges `implements`.",
+    "Das Array hat den Typ `Sendbar[]` - für `protokoll()` brauchen Sie `instanceof` und einen Cast auf `Protokollierbar`.",
+    "Der Zähler `gesendet` wird in `sende(...)` erhöht, nicht im Konstruktor."
+   ],
+   "pitfalls": [
+    "`implements Sendbar implements Protokollierbar` schreiben - es gibt nur ein `implements` mit Kommaliste.",
+    "`dienste[i].protokoll()` ohne Cast aufrufen -> Compilerfehler, `Sendbar` kennt die Methode nicht.",
+    "In `Email` das `public` bei den implementierten Methoden vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 209,
+     "label": "Implementierung mehrerer Schnittstellen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 207,
+     "label": "implements"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 235,
+     "label": "instanceof"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Benachrichtigung.java",
+     "page": 0,
+     "label": "Notification-Interface"
+    }
+   ],
+   "tags": [
+    "interface",
+    "mehrere-interfaces",
+    "instanceof",
+    "downcast",
+    "polymorphie"
+   ],
+   "expectedOutput": "E-Mail: Hallo\nSMS: Hallo\nE-Mail: Test\nE-Mail hat 2 Nachricht(en) gesendet"
+  },
+  {
+   "id": "java-inheritance-026",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "code",
+   "difficulty": 5,
+   "points": 14,
+   "examStyle": false,
+   "title": "Kontohierarchie mit abstrakter Basisklasse, toString und instanceof",
+   "prompt": "Bauen Sie eine kleine Bank-Hierarchie (Härtetest, kombiniert alles aus Kapitel 7):\n\n- `abstract class Konto` mit `protected String nr`, `protected double stand`, Konstruktor `Konto(String nr, double stand)`, der **abstrakten** Methode `public abstract double verfuegbar()` und einem überschriebenen `toString()`, das `\"<nr>: <stand>\"` liefert.\n- `class Girokonto extends Konto` mit zusätzlichem `private double dispo`; `verfuegbar()` = `stand + dispo`.\n- `class Sparkonto extends Konto` mit zusätzlichem `private int zinssatzProzent`; `verfuegbar()` = `stand`; zusätzliche Methode `public double zinsen()` = `stand * zinssatzProzent / 100.0`.\n\nIn `main`: ein `Konto[]`-Array mit `new Girokonto(\"G1\", 1000.0, 500.0)`, `new Sparkonto(\"S1\", 2000.0, 2)` und `new Girokonto(\"G2\", -200.0, 300.0)` füllen. Erst jedes Konto ausgeben (nutzen Sie, dass `println` `toString()` benutzt) und die verfügbaren Beträge aufsummieren, dann die Summe ausgeben. Danach in einer zweiten Schleife für jedes `Sparkonto` die Zinsen ausgeben.\n\nErwartete Ausgabe:\n```\nG1: 1000.0\nS1: 2000.0\nG2: -200.0\nVerfuegbar gesamt: 3600.0\nZinsen: 40.0\n```",
+   "starterCode": "class Bank {\n  public static void main(String[] s) {\n    // Konto[]-Array anlegen und füllen,\n    // Schleife 1: Konto ausgeben + verfuegbar() aufsummieren,\n    // Schleife 2: mit instanceof die Sparkonten finden und zinsen() ausgeben:\n\n  }\n}\n\n// abstract class Konto hier:\n\n// class Girokonto hier:\n\n// class Sparkonto hier:\n",
+   "required": [
+    "abstract class Konto",
+    "extends Konto",
+    "instanceof Sparkonto"
+   ],
+   "solution": "class Bank {\n  public static void main(String[] s) {\n    Konto[] konten = new Konto[3];\n    konten[0] = new Girokonto(\"G1\", 1000.0, 500.0);\n    konten[1] = new Sparkonto(\"S1\", 2000.0, 2);\n    konten[2] = new Girokonto(\"G2\", -200.0, 300.0);\n    double summe = 0.0;\n    for (int i = 0; i < konten.length; i++) {\n      System.out.println( konten[i] );\n      summe = summe + konten[i].verfuegbar();\n    }\n    System.out.println( \"Verfuegbar gesamt: \" + summe );\n    for (int i = 0; i < konten.length; i++) {\n      if (konten[i] instanceof Sparkonto) {\n        Sparkonto sp = (Sparkonto) konten[i];\n        System.out.println( \"Zinsen: \" + sp.zinsen() );\n      }\n    }\n  }\n}\n\nabstract class Konto {\n  protected String nr;\n  protected double stand;\n  public Konto(String nr, double stand) {\n    this.nr = nr;\n    this.stand = stand;\n  }\n  public abstract double verfuegbar();\n  public String toString() { return nr + \": \" + stand; }\n}\n\nclass Girokonto extends Konto {\n  private double dispo;\n  public Girokonto(String nr, double stand, double dispo) {\n    super(nr, stand);\n    this.dispo = dispo;\n  }\n  public double verfuegbar() { return stand + dispo; }\n}\n\nclass Sparkonto extends Konto {\n  private int zinssatzProzent;\n  public Sparkonto(String nr, double stand, int zinssatzProzent) {\n    super(nr, stand);\n    this.zinssatzProzent = zinssatzProzent;\n  }\n  public double verfuegbar() { return stand; }\n  public double zinsen() { return stand * zinssatzProzent / 100.0; }\n}",
+   "explanation": "Diese Aufgabe verlangt alle Bausteine des Kapitels gleichzeitig:\n\n1. **Abstrakte Basisklasse mit Konstruktor**: `Konto` kann nicht instanziiert werden, hat aber sehr wohl Attribute und einen Konstruktor - den die Unterklassen mit `super(nr, stand)` aufrufen.\n2. **Abstrakte Methode `verfuegbar()`**: Jede konkrete Unterklasse **muss** sie implementieren, sonst bliebe sie selbst abstrakt.\n3. **`toString()` überschreiben**: `System.out.println(konten[i])` übergibt ein `Object`; dank Polymorphie läuft `Konto.toString()`. Ohne Überschreiben stünde dort `Girokonto@1b6d3586`.\n4. **Polymorphes Array + Summenschleife**: `konten[i].verfuegbar()` wählt zur Laufzeit die passende Formel: 1000+500 = 1500, 2000, -200+300 = 100 -> Summe 3600.0.\n5. **`instanceof` + Downcast** für die Zusatzmethode `zinsen()`, die es nur bei `Sparkonto` gibt.\n\nZum Rechnen: `stand * zinssatzProzent / 100.0` ist `2000.0 * 2 = 4000.0`, geteilt durch `100.0` = `40.0`. Wichtig: `100.0` (nicht `100`), sonst wäre es zwar hier zufällig gleich, aber bei anderen Werten drohte Ganzzahldivision - eine Lieblingsfalle des Profs.\n\nMerkregel: **Abstrakt = Bauplan mit Lücke. Die Unterklasse füllt die Lücke, das Array nutzt sie.**",
+   "hints": [
+    "Bauen Sie zuerst `abstract class Konto` mit Attributen, Konstruktor, `abstract double verfuegbar();` und `toString()`.",
+    "Beide Unterklassen brauchen `super(nr, stand);` als erste Anweisung ihres Konstruktors.",
+    "In der ersten Schleife können Sie `System.out.println(konten[i]);` direkt schreiben - `toString()` wird automatisch benutzt.",
+    "Für die Zinsen: `if (konten[i] instanceof Sparkonto) { Sparkonto sp = (Sparkonto) konten[i]; ... }`"
+   ],
+   "pitfalls": [
+    "`konten[i].zinsen()` ohne Cast aufrufen - der statische Typ `Konto` kennt die Methode nicht.",
+    "`stand * zinssatzProzent / 100` mit ganzzahliger 100 - hier zufällig richtig, generell aber ein Ganzzahldivisions-Risiko.",
+    "`toString()` mit falscher Signatur schreiben (z. B. `public void toString()`) -> Compilerfehler beim Überschreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 203,
+     "label": "abstrakte Operationen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 235,
+     "label": "instanceof/Downcast"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 245,
+     "label": "toString"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 5 - Vererbung + Polymorphie"
+    }
+   ],
+   "tags": [
+    "abstract",
+    "extends",
+    "super",
+    "tostring",
+    "instanceof",
+    "downcast",
+    "polymorphie",
+    "array"
+   ],
+   "expectedOutput": "G1: 1000.0\nS1: 2000.0\nG2: -200.0\nVerfuegbar gesamt: 3600.0\nZinsen: 40.0"
+  },
+  {
+   "id": "java-inheritance-027",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "fill-gaps",
+   "difficulty": 2,
+   "points": 12,
+   "examStyle": true,
+   "title": "Vererbungsgerüst vervollständigen",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass ein lauffähiges Programm entsteht (je 2 P.).\n\nDie Ausgabe soll lauten:\n```\nTier der Gattung Wesen.\nTier der Gattung Hund.\nIch bin Waldi.\n```",
+   "code": "class TierTest {\n  public static void main(String[] s) {\n    Tier[] tiere = new Tier[2];\n    tiere[0] = new Tier(\"Wesen\");\n    tiere[1] = ____(6)____ Hund(\"Waldi\");\n    for (int i = 0; i < tiere.length; i++) {\n      tiere[i].print();\n    }\n  }\n}\n\nclass Tier {\n  ____(1)____ String gattung;   // in Unterklassen sichtbar, sonst nicht\n  public Tier(String gattung) { ____(2)____.gattung = gattung; }\n  public void print() {\n    System.out.println(\"Tier der Gattung \" + gattung + \".\");\n  }\n}\n\nclass Hund ____(3)____ Tier {\n  private String name;\n  public Hund(String name) {\n    ____(4)____(\"Hund\");\n    this.name = name;\n  }\n  public void print() {\n    ____(5)____.print();\n    System.out.println(\"Ich bin \" + name + \".\");\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "protected"
+     ],
+     "explanation": "`protected` = sichtbar in derselben Klasse, in Unterklassen und im selben Paket - genau das, was der Kommentar verlangt. `private` wäre in `Hund` nicht sichtbar, `public` wäre überall sichtbar."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "this"
+     ],
+     "explanation": "Der Parameter `gattung` verdeckt das gleichnamige Attribut. `this.gattung` bezeichnet ausdrücklich das Attribut des aktuellen Objekts."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "extends"
+     ],
+     "explanation": "Klasse erbt von Klasse -> `extends`. `implements` gilt nur für Interfaces."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "super"
+     ],
+     "explanation": "`super(\"Hund\")` ruft den Konstruktor `Tier(String)` auf und muss die **erste** Anweisung des Konstruktors sein."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "super"
+     ],
+     "explanation": "`super.print()` ruft die überschriebene Methode der Oberklasse auf. `this.print()` würde in eine Endlosrekursion laufen."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "new"
+     ],
+     "explanation": "`new Hund(\"Waldi\")` erzeugt das Objekt. Der Upcast auf `Tier` geschieht automatisch, weil ein `Hund` ein `Tier` ist."
+    }
+   ],
+   "solution": "class TierTest {\n  public static void main(String[] s) {\n    Tier[] tiere = new Tier[2];\n    tiere[0] = new Tier(\"Wesen\");\n    tiere[1] = new Hund(\"Waldi\");\n    for (int i = 0; i < tiere.length; i++) {\n      tiere[i].print();\n    }\n  }\n}\n\nclass Tier {\n  protected String gattung;   // in Unterklassen sichtbar, sonst nicht\n  public Tier(String gattung) { this.gattung = gattung; }\n  public void print() {\n    System.out.println(\"Tier der Gattung \" + gattung + \".\");\n  }\n}\n\nclass Hund extends Tier {\n  private String name;\n  public Hund(String name) {\n    super(\"Hund\");\n    this.name = name;\n  }\n  public void print() {\n    super.print();\n    System.out.println(\"Ich bin \" + name + \".\");\n  }\n}",
+   "explanation": "Alle sechs Lücken zusammen bilden das Grundgerüst jeder Vererbungsaufgabe:\n\n- **(1) `protected`** - die Sichtbarkeit für 'Unterklassen ja, Fremde nein'. In UML ist das das Zeichen `#`. Genau so steht `protected String gattung;` in `abstract class Tier` des Skripts.\n- **(2) `this`** - nötig, weil der Parameter das Attribut verdeckt. Ohne `this` würde `gattung = gattung;` den Parameter sich selbst zuweisen (klassischer Fehler, siehe Probeklausur Aufgabe 1b!).\n- **(3) `extends`** - Klasse erbt von Klasse.\n- **(4) `super`** - Konstruktoraufruf der Oberklasse, **erste** Anweisung.\n- **(5) `super`** - Aufruf der überschriebenen Methode.\n- **(6) `new`** - Objekterzeugung; der Upcast `Hund -> Tier` erfolgt implizit.\n\nBeachten Sie die Reihenfolge der Ausgabe bei `tiere[1]`: `Hund.print()` ruft zuerst `super.print()` (Zeile 'Tier der Gattung Hund.'), dann die eigene Zeile.\n\nMerkregel: **`this` zeigt auf mich, `super` zeigt auf meinen Vorfahren.**",
+   "hints": [
+    "Lücke 1: Der Kommentar beschreibt die Sichtbarkeit exakt - welches der drei Schlüsselwörter passt?",
+    "Lücken 4 und 5 enthalten dasselbe Wort, aber in zwei verschiedenen Rollen: einmal Konstruktoraufruf, einmal Methodenaufruf.",
+    "Lücke 2: Parameter und Attribut heißen gleich - womit unterscheidet man sie?"
+   ],
+   "pitfalls": [
+    "In Lücke 5 `this` statt `super` einsetzen -> Endlosrekursion.",
+    "In Lücke 3 `implements` einsetzen - das gilt nur für Interfaces.",
+    "In Lücke 1 `private` einsetzen - dann käme man in `Hund` nicht an `gattung` heran (hier zwar nicht direkt genutzt, aber die Regel gilt)."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 228,
+     "label": "Tier/Hund/Katze"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 223,
+     "label": "super(...)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 224,
+     "label": "Referenzvariable super"
+    }
+   ],
+   "tags": [
+    "extends",
+    "super",
+    "this",
+    "protected",
+    "fill-gaps"
+   ],
+   "expectedOutput": "Tier der Gattung Wesen.\nTier der Gattung Hund.\nIch bin Waldi."
+  },
+  {
+   "id": "java-inheritance-028",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Abstrakte Klasse und Polymorphie im Array",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass ein lauffähiges Programm entsteht (je 2 P.).\n\nDie Ausgabe soll lauten:\n```\nKreis: 12.0\nQuadrat: 9.0\n```",
+   "code": "class FormenTest {\n  public static void main(String[] s) {\n    ____(5)____[] formen = new Form[2];\n    formen[0] = new Kreis(2.0);\n    formen[1] = new Quadrat(3.0);\n    for (int i = 0; i < formen.length; i++) {\n      System.out.println( formen[i].name + \": \" + formen[i].____(6)____() );\n    }\n  }\n}\n\n____(1)____ class Form {\n  protected String name;\n  public Form(String name) { this.name = name; }\n  public ____(2)____ double flaeche();\n}\n\nclass Kreis extends Form {\n  private double r;\n  public Kreis(double r) { super(\"Kreis\"); this.r = r; }\n  public double flaeche() { return 3.0 * r * ____(3)____; }\n}\n\nclass Quadrat extends Form {\n  private double a;\n  public Quadrat(double a) { ____(4)____(\"Quadrat\"); this.a = a; }\n  public double flaeche() { return a * a; }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "abstract"
+     ],
+     "explanation": "Eine Klasse mit einer abstrakten Methode muss selbst `abstract` sein (Skript S. 203)."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "abstract"
+     ],
+     "explanation": "Die Methode hat keinen Rumpf, sondern endet mit Semikolon - sie muss als `abstract` deklariert sein."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "r"
+     ],
+     "explanation": "Fläche des Kreises: `3.0 * r * r` = 3.0 * 2.0 * 2.0 = 12.0 (hier wird 3.0 statt Math.PI benutzt, damit die Ausgabe glatt ist)."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "super"
+     ],
+     "explanation": "`super(\"Quadrat\")` ruft den Konstruktor `Form(String)` auf und setzt `name`. `this(\"Quadrat\")` gäbe es nicht - `Quadrat` hat keinen Konstruktor mit einem String-Parameter."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "Form"
+     ],
+     "explanation": "Der Elementtyp des Arrays muss der gemeinsame Obertyp sein - `Form`. Ein Array vom abstrakten Typ ist erlaubt, weil es nur Referenzen speichert."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "flaeche"
+     ],
+     "explanation": "`formen[i].flaeche()` - der Aufruf wird dynamisch gebunden und liefert je nach Objekt 12.0 bzw. 9.0."
+    }
+   ],
+   "solution": "class FormenTest {\n  public static void main(String[] s) {\n    Form[] formen = new Form[2];\n    formen[0] = new Kreis(2.0);\n    formen[1] = new Quadrat(3.0);\n    for (int i = 0; i < formen.length; i++) {\n      System.out.println( formen[i].name + \": \" + formen[i].flaeche() );\n    }\n  }\n}\n\nabstract class Form {\n  protected String name;\n  public Form(String name) { this.name = name; }\n  public abstract double flaeche();\n}\n\nclass Kreis extends Form {\n  private double r;\n  public Kreis(double r) { super(\"Kreis\"); this.r = r; }\n  public double flaeche() { return 3.0 * r * r; }\n}\n\nclass Quadrat extends Form {\n  private double a;\n  public Quadrat(double a) { super(\"Quadrat\"); this.a = a; }\n  public double flaeche() { return a * a; }\n}",
+   "explanation": "Die Lücken 1 und 2 gehören zusammen: **eine abstrakte Methode zwingt die Klasse, abstrakt zu sein**. Erkennungsmerkmal einer abstrakten Methode ist der fehlende Rumpf - `public abstract double flaeche();` endet mit Semikolon.\n\nLücke 5 ist der Kern der Klausuraufgabe 5: Das Array hat den Typ des **gemeinsamen Obertyps**. Dass `Form` abstrakt ist, stört nicht - `new Form[2]` erzeugt keine `Form`-Objekte, sondern nur zwei Referenzzellen, die noch `null` sind. Erst `new Form(...)` wäre verboten.\n\nLücke 6 ist der polymorphe Aufruf. Der Compiler prüft nur, dass `Form` eine Methode `flaeche()` kennt (sie ist dort deklariert, wenn auch abstrakt); zur Laufzeit entscheidet das Objekt.\n\n`formen[i].name` funktioniert, weil `name` `protected` ist **und** `FormenTest` im selben Paket (Default-Paket) liegt. Wäre `name` `private`, gäbe es hier einen Compilerfehler.\n\nMerkregel: **Ein abstrakter Typ darf alles - nur kein eigenes Objekt.**",
+   "hints": [
+    "Die Methode in `Form` hat keinen Rumpf. Welches Schlüsselwort braucht sie, und was folgt daraus für die Klasse?",
+    "Lücke 5: Welchen Elementtyp muss ein Array haben, damit `Kreis` und `Quadrat` beide hineinpassen?",
+    "Lücke 3: Rechnen Sie rückwärts - 3.0 * 2.0 * ? soll 12.0 ergeben."
+   ],
+   "pitfalls": [
+    "Denken, `new Form[2]` sei verboten, weil `Form` abstrakt ist. Verboten ist nur `new Form(...)`.",
+    "Lücke 4 mit `this` füllen - `this(\"Quadrat\")` würde einen Konstruktor `Quadrat(String)` verlangen, den es nicht gibt.",
+    "Bei Lücke 2 `void` einsetzen - der Rückgabetyp `double` steht bereits da."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 202,
+     "label": "Abstrakte Klassen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 203,
+     "label": "Abstrakte Operationen"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 5"
+    }
+   ],
+   "tags": [
+    "abstract",
+    "polymorphie",
+    "array",
+    "super",
+    "fill-gaps"
+   ],
+   "expectedOutput": "Kreis: 12.0\nQuadrat: 9.0"
+  },
+  {
+   "id": "java-inheritance-029",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Schnittstelle mit Konstante vervollständigen",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass ein lauffähiges Programm entsteht (je 2 P.).\n\nDie Ausgabe soll lauten:\n```\n12.566\n3.1415\ntrue\n```",
+   "code": "class KreisTest {\n  public static void main(String[] s) {\n    ____(5)____ f = new Kreis(2.0);\n    System.out.println( f.getFlaeche() );\n    System.out.println( Figur.____(6)____ );\n    System.out.println( f instanceof Kreis );\n  }\n}\n\n____(1)____ Figur {\n  double PI = 3.1415;\n  double getFlaeche();\n}\n\nclass Kreis ____(2)____ Figur {\n  private double radius;\n  public Kreis(double r) { radius = r; }\n  ____(3)____ double getFlaeche() {\n    return radius * radius * ____(4)____;\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "interface"
+     ],
+     "explanation": "`interface Figur { ... }` - erkennbar an den rumpflosen Methoden und der Konstanten."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "implements"
+     ],
+     "explanation": "Eine Klasse realisiert ein Interface mit `implements`, nicht mit `extends`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "public"
+     ],
+     "explanation": "Interface-Operationen sind implizit `public`; beim Implementieren darf die Sichtbarkeit nicht eingeschränkt werden. Ohne `public` gibt es den Fehler 'attempting to assign weaker access privileges'."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "PI",
+      "Figur.PI"
+     ],
+     "explanation": "Die Konstante wird aus dem Interface geerbt und kann direkt als `PI` (oder qualifiziert als `Figur.PI`) benutzt werden."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "Figur",
+      "Kreis"
+     ],
+     "explanation": "`Figur f = new Kreis(2.0);` ist der typische polymorphe Fall - die Variable hat den Interface-Typ, das Objekt die konkrete Klasse. `Kreis` wäre auch lauffähig, verschenkt aber die Polymorphie."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "PI"
+     ],
+     "explanation": "`Figur.PI` - Konstanten eines Interface sind implizit `public static final` und werden über den Interface-Namen angesprochen."
+    }
+   ],
+   "solution": "class KreisTest {\n  public static void main(String[] s) {\n    Figur f = new Kreis(2.0);\n    System.out.println( f.getFlaeche() );\n    System.out.println( Figur.PI );\n    System.out.println( f instanceof Kreis );\n  }\n}\n\ninterface Figur {\n  double PI = 3.1415;\n  double getFlaeche();\n}\n\nclass Kreis implements Figur {\n  private double radius;\n  public Kreis(double r) { radius = r; }\n  public double getFlaeche() {\n    return radius * radius * PI;\n  }\n}",
+   "explanation": "Diese Aufgabe ist `Test.java` aus dem Repo in Lückenform.\n\nDie wichtigsten Regeln, die die Lücken abfragen:\n\n- **(1) `interface`**: Man erkennt es an der rumpflosen Methode `double getFlaeche();` und daran, dass `PI` ohne `static final` direkt initialisiert ist - das geht nur im Interface.\n- **(2) `implements`**: Klasse -> Interface. Bei `extends` bekäme man 'no interface expected here'.\n- **(3) `public`**: Die häufigste Fehlerquelle. Interface-Methoden sind implizit `public`; lässt man das `public` in der Klasse weg, gilt Paket-Sichtbarkeit - und das ist **schwächer** -> Compilerfehler.\n- **(4) `PI`**: Konstanten des Interface werden mitgeerbt und sind direkt sichtbar.\n- **(5) `Figur`**: Der polymorphe Standardfall. Ein Interface kann man nicht instanziieren, aber Referenzen darauf sind erlaubt (Skript S. 206).\n- **(6) `PI`**: Von außen erreicht man die Konstante über den Interface-Namen: `Figur.PI`.\n\nRechnung: `2.0 * 2.0 * 3.1415 = 12.566`.\n\nMerkregel: **Im Interface darf man weglassen (`public`, `abstract`, `static final`), in der Klasse nicht.**",
+   "hints": [
+    "Woran erkennt man ein Interface im Code? Zwei Merkmale stecken bereits im gezeigten Rumpf.",
+    "Lücke 3: Welche Sichtbarkeit haben Interface-Operationen implizit - und was folgt daraus für die Implementierung?",
+    "Lücke 5: Damit die erste Zeile 'polymorph' ist, sollte der deklarierte Typ allgemeiner sein als `Kreis`."
+   ],
+   "pitfalls": [
+    "Lücke 2 mit `extends` füllen.",
+    "Lücke 3 leer lassen bzw. nur `double` erwarten - ohne `public` kompiliert es nicht.",
+    "`Figur.PI` für ungültig halten, weil `Figur` kein Objekt hat - es ist eine Konstante der Schnittstelle."
+   ],
+   "sources": [
+    {
+     "file": "07_VererbungPolymorphie/Test.java",
+     "page": 0,
+     "label": "interface Figur mit PI"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 204,
+     "label": "Interfaces"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 206,
+     "label": "Referenzen auf Schnittstellen"
+    }
+   ],
+   "tags": [
+    "interface",
+    "implements",
+    "konstante",
+    "polymorphie",
+    "fill-gaps"
+   ],
+   "expectedOutput": "12.566\n3.1415\ntrue"
+  },
+  {
+   "id": "java-inheritance-030",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "toString() und equals() in einer Vererbungshierarchie",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass ein lauffähiges Programm entsteht (je 2 P.).\n\nDie Ausgabe soll lauten:\n```\nJava (2024)\nJava (2024) [5 MB]\ntrue\nfalse\nfalse\n```",
+   "code": "class BuchTest {\n  public static void main(String[] s) {\n    Buch b1 = new Buch(\"Java\", 2024);\n    Buch b2 = new Buch(\"Java\", 2024);\n    EBook e  = new EBook(\"Java\", 2024, 5);\n    System.out.println( b1 );\n    System.out.println( e );\n    System.out.println( b1.equals(b2) );\n    System.out.println( b1 == b2 );\n    System.out.println( b1.equals(\"Java\") );\n  }\n}\n\nclass Buch {\n  protected String titel;\n  protected int jahr;\n  public Buch(String titel, int jahr) {\n    this.titel = titel; this.jahr = jahr;\n  }\n  public String ____(1)____() { return titel + \" (\" + jahr + \")\"; }\n  public boolean equals(____(2)____ obj) {\n    if ( !(obj ____(3)____ Buch) ) return false;\n    Buch b = (____(4)____) obj;\n    return titel.____(5)____(b.titel) && jahr == b.jahr;\n  }\n}\n\nclass EBook extends Buch {\n  private int mb;\n  public EBook(String titel, int jahr, int mb) {\n    super(titel, jahr); this.mb = mb;\n  }\n  public String toString() {\n    return ____(6)____.toString() + \" [\" + mb + \" MB]\";\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "toString"
+     ],
+     "explanation": "`public String toString()` ist die Methode aus `Object`, die `println` automatisch benutzt."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "Object"
+     ],
+     "explanation": "Nur mit dem Parametertyp `Object` wird `Object.equals` wirklich **überschrieben**. `equals(Buch b)` wäre nur eine Überladung - dann wäre `b1.equals(\"Java\")` sogar ein Compilerfehler."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "instanceof"
+     ],
+     "explanation": "`obj instanceof Buch` prüft zur Laufzeit den Typ, bevor gecastet wird - und fängt gleichzeitig `null` ab."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "Buch"
+     ],
+     "explanation": "Downcast auf `Buch`, damit man auf `b.titel` und `b.jahr` zugreifen darf."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "equals"
+     ],
+     "explanation": "Strings vergleicht man inhaltlich mit `equals(...)`, nie mit `==`."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "super"
+     ],
+     "explanation": "`super.toString()` liefert die Darstellung der Oberklasse, an die `EBook` nur noch die Größe anhängt."
+    }
+   ],
+   "solution": "class BuchTest {\n  public static void main(String[] s) {\n    Buch b1 = new Buch(\"Java\", 2024);\n    Buch b2 = new Buch(\"Java\", 2024);\n    EBook e  = new EBook(\"Java\", 2024, 5);\n    System.out.println( b1 );\n    System.out.println( e );\n    System.out.println( b1.equals(b2) );\n    System.out.println( b1 == b2 );\n    System.out.println( b1.equals(\"Java\") );\n  }\n}\n\nclass Buch {\n  protected String titel;\n  protected int jahr;\n  public Buch(String titel, int jahr) {\n    this.titel = titel; this.jahr = jahr;\n  }\n  public String toString() { return titel + \" (\" + jahr + \")\"; }\n  public boolean equals(Object obj) {\n    if ( !(obj instanceof Buch) ) return false;\n    Buch b = (Buch) obj;\n    return titel.equals(b.titel) && jahr == b.jahr;\n  }\n}\n\nclass EBook extends Buch {\n  private int mb;\n  public EBook(String titel, int jahr, int mb) {\n    super(titel, jahr); this.mb = mb;\n  }\n  public String toString() {\n    return super.toString() + \" [\" + mb + \" MB]\";\n  }\n}",
+   "explanation": "Hier steckt das komplette `Object`-Kapitel in sechs Lücken.\n\n**Lücke 2 ist die wichtigste**: Der Parameter muss `Object` heißen. Signatur und Ergebnistyp müssen beim Überschreiben **exakt** übereinstimmen (Skript S. 216). Mit `equals(Buch b)` hätte man nur eine zweite, überladene Methode - und die letzte Zeile `b1.equals(\"Java\")` wäre dann ein **Compilerfehler** statt `false`.\n\n**Lücken 3 bis 5** sind das Standardrezept für `equals`: `instanceof` -> Downcast -> Feldvergleich, wobei Objektfelder (hier `String titel`) wieder mit `equals` verglichen werden.\n\n**Lücke 6** zeigt die übliche Arbeitsteilung in einer Hierarchie: `EBook.toString()` ruft `super.toString()` und ergänzt nur seinen Zusatz. Würde man dort `this.toString()` schreiben, gäbe es eine Endlosrekursion (StackOverflowError).\n\nZur Ausgabe: `b1.equals(b2)` ist `true` (gleicher Inhalt), `b1 == b2` ist `false` (verschiedene Objekte), `b1.equals(\"Java\")` ist `false`, weil ein `String` kein `Buch` ist - genau deshalb braucht man den `instanceof`-Test.\n\nMerkregel: **`equals` nimmt immer ein `Object` entgegen - alles andere ist Überladen.**",
+   "hints": [
+    "Lücke 1 und 6 gehören zusammen - es geht um die Methode, die `println` automatisch aufruft.",
+    "Lücke 2: Welche Signatur hat `equals` in `Object`? Nur damit überschreibt man wirklich.",
+    "Lücken 3-5 sind das Standardrezept: Typ prüfen, casten, Felder vergleichen (Strings inhaltlich!)."
+   ],
+   "pitfalls": [
+    "In Lücke 2 `Buch` einsetzen - dann kompiliert die Zeile `b1.equals(\"Java\")` nicht mehr.",
+    "In Lücke 5 nichts einsetzen und `titel == b.titel` erwarten - das vergleicht Referenzen.",
+    "In Lücke 6 `this` einsetzen -> Endlosrekursion."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 245,
+     "label": "toString/equals"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 216,
+     "label": "Überschreiben von Methoden"
+    },
+    {
+     "file": "07_VererbungPolymorphie/Studenten.java",
+     "page": 0,
+     "label": "equals überschreiben"
+    }
+   ],
+   "tags": [
+    "object",
+    "tostring",
+    "equals",
+    "instanceof",
+    "super",
+    "fill-gaps"
+   ],
+   "expectedOutput": "Java (2024)\nJava (2024) [5 MB]\ntrue\nfalse\nfalse"
+  },
+  {
+   "id": "java-inheritance-031",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: abstrakte Klasse, super und private",
+   "prompt": "Der folgende Code enthält **genau 3 Compiler-Fehler**. Benennen Sie sie und geben Sie jeweils die Korrektur an.",
+   "code": "class Werkstatt {\n  public static void main(String[] s) {\n    Fahrzeug f = new Fahrzeug(\"Allgemein\");\n    Auto a = new Auto(\"Golf\", 5);\n    a.beschreibung();\n  }\n}\n\nabstract class Fahrzeug {\n  private String name;\n  public Fahrzeug(String name) { this.name = name; }\n  public abstract void beschreibung();\n}\n\nclass Auto extends Fahrzeug {\n  private int tueren;\n  public Auto(String name, int tueren) {\n    this.tueren = tueren;\n    super(name);\n  }\n  public void beschreibung() {\n    System.out.println(\"Auto \" + name + \" mit \" + tueren + \" Tueren\");\n  }\n}",
+   "errors": [
+    {
+     "line": 3,
+     "wrong": "Fahrzeug f = new Fahrzeug(\"Allgemein\");",
+     "fix": "Abstrakte Klassen koennen nicht instanziiert werden. Stattdessen ein Objekt einer konkreten Unterklasse erzeugen, z. B. `Fahrzeug f = new Auto(\"Polo\", 3);`",
+     "why": "Compilerfehler: *Fahrzeug is abstract; cannot be instantiated*. Von einer abstrakten Klasse können keine Instanzen erzeugt werden (Skript S. 202)."
+    },
+    {
+     "line": 19,
+     "wrong": "super(name);",
+     "fix": "`super(name);` muss die **erste** Anweisung des Konstruktors sein - also vor `this.tueren = tueren;` schreiben.",
+     "why": "Compilerfehler: *call to super must be first statement in constructor*. Der geerbte Teil des Objekts muss zuerst initialisiert werden (Skript S. 223)."
+    },
+    {
+     "line": 22,
+     "wrong": "System.out.println(\"Auto \" + name + \" mit \" + tueren + \" Tueren\");",
+     "fix": "`name` in `Fahrzeug` von `private` auf `protected` aendern (oder eine oeffentliche `getName()`-Methode benutzen).",
+     "why": "Compilerfehler: *name has private access in Fahrzeug*. `private`-Attribute sind nur in der eigenen Klasse sichtbar, nicht in Unterklassen - dafür gibt es `protected`."
+    }
+   ],
+   "solution": "class Werkstatt {\n  public static void main(String[] s) {\n    Fahrzeug f = new Auto(\"Polo\", 3);\n    Auto a = new Auto(\"Golf\", 5);\n    f.beschreibung();\n    a.beschreibung();\n  }\n}\n\nabstract class Fahrzeug {\n  protected String name;\n  public Fahrzeug(String name) { this.name = name; }\n  public abstract void beschreibung();\n}\n\nclass Auto extends Fahrzeug {\n  private int tueren;\n  public Auto(String name, int tueren) {\n    super(name);\n    this.tueren = tueren;\n  }\n  public void beschreibung() {\n    System.out.println(\"Auto \" + name + \" mit \" + tueren + \" Tueren\");\n  }\n}",
+   "explanation": "Die drei Fehler decken die drei häufigsten Stolpersteine des Kapitels ab:\n\n1. **`new` auf eine abstrakte Klasse.** Sobald `abstract` am Klassenkopf steht (und hier steht außerdem eine rumpflose Methode drin), ist `new Fahrzeug(...)` verboten. Eine **Variable** vom Typ `Fahrzeug` bleibt aber völlig legal - sie muss nur auf ein Objekt einer konkreten Unterklasse zeigen.\n2. **`super(...)` nicht an erster Stelle.** Java baut Objekte von außen nach innen auf: erst der geerbte Teil, dann der eigene. Deshalb schreibt das Skript ausdrücklich *muss erste Anweisung sein!*.\n3. **Zugriff auf ein `private`-Attribut der Oberklasse.** `private` heißt 'nur in dieser Klasse' - Unterklassen sehen es **nicht**, obwohl es im Objekt physisch vorhanden ist. Genau dafür gibt es `protected` (in UML das Zeichen `#`); im Skript steht deshalb überall `protected String gattung;` bzw. `protected String name;`.\n\nAlle drei sind **Compiler**fehler - das Programm startet gar nicht erst.\n\nMerkregel: **abstract = kein new. super = ganz nach vorn. private = Familie ausgeschlossen, protected = Familie erlaubt.**",
+   "hints": [
+    "Zeile 3: Was steht in Zeile 9 vor `class Fahrzeug`? Was bedeutet das für `new`?",
+    "Schauen Sie sich die Reihenfolge der beiden Anweisungen im Auto-Konstruktor an.",
+    "Zeile 22 greift auf ein Attribut der Oberklasse zu. Mit welchem Modifikator ist es dort deklariert - und wer darf es damit sehen?"
+   ],
+   "pitfalls": [
+    "Den `private`-Zugriff übersehen, weil das Attribut ja 'geerbt' wurde - geerbt heißt nicht sichtbar.",
+    "Als Korrektur für Fehler 1 das `abstract` bei `Fahrzeug` streichen: dann müsste `beschreibung()` einen Rumpf bekommen; die eigentlich gemeinte Korrektur ist, kein `Fahrzeug`-Objekt zu erzeugen.",
+    "Nur zwei Fehler nennen - gefragt sind genau drei."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 1b - Fehlersuche"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 202,
+     "label": "abstrakte Klassen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 223,
+     "label": "super(...) erste Anweisung"
+    }
+   ],
+   "tags": [
+    "abstract",
+    "super",
+    "protected",
+    "private",
+    "find-errors"
+   ],
+   "expectedOutput": "Auto Polo mit 3 Tueren\nAuto Golf mit 5 Tueren"
+  },
+  {
+   "id": "java-inheritance-032",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: Interface implementieren",
+   "prompt": "Der folgende Code enthält **genau 3 Compiler-Fehler**. Benennen Sie sie und geben Sie jeweils die Korrektur an.",
+   "code": "class NachrichtTest {\n  public static void main(String[] s) {\n    Sender s1 = new Sender();\n    s1.sende(\"Hallo\");\n  }\n}\n\ninterface Sender {\n  void sende(String text);\n  void abbrechen();\n}\n\nclass Email implements Sender {\n  void sende(String text) {\n    System.out.println(\"E-Mail: \" + text);\n  }\n}",
+   "errors": [
+    {
+     "line": 3,
+     "wrong": "Sender s1 = new Sender();",
+     "fix": "Ein Interface kann nicht instanziiert werden. Stattdessen ein Objekt einer implementierenden Klasse erzeugen: `Sender s1 = new Email();`",
+     "why": "Compilerfehler: *Sender is abstract; cannot be instantiated*. Schnittstellen können wie abstrakte Klassen nicht instanziiert werden - Referenzen auf sie sind aber erlaubt (Skript S. 206)."
+    },
+    {
+     "line": 13,
+     "wrong": "class Email implements Sender {",
+     "fix": "`Email` implementiert `abbrechen()` nicht. Entweder die Methode `public void abbrechen() { ... }` ergaenzen oder die Klasse als `abstract` deklarieren.",
+     "why": "Compilerfehler: *Email is not abstract and does not override abstract method abbrechen() in Sender*. Wer nicht alle Operationen implementiert, bleibt abstrakt (Skript S. 207)."
+    },
+    {
+     "line": 14,
+     "wrong": "void sende(String text) {",
+     "fix": "`public` ergaenzen: `public void sende(String text) {`",
+     "why": "Compilerfehler: *attempting to assign weaker access privileges; was public*. Interface-Operationen sind implizit `public`; beim Implementieren darf die Sichtbarkeit nie eingeschränkt werden."
+    }
+   ],
+   "solution": "class NachrichtTest {\n  public static void main(String[] s) {\n    Sender s1 = new Email();\n    s1.sende(\"Hallo\");\n    s1.abbrechen();\n  }\n}\n\ninterface Sender {\n  void sende(String text);\n  void abbrechen();\n}\n\nclass Email implements Sender {\n  public void sende(String text) {\n    System.out.println(\"E-Mail: \" + text);\n  }\n  public void abbrechen() {\n    System.out.println(\"E-Mail: abgebrochen\");\n  }\n}",
+   "explanation": "Alle drei Fehler folgen direkt aus den Interface-Regeln des Skripts (S. 206/207):\n\n1. **`new Sender()`**: Ein Interface ist eine reine Sammlung von Signaturen - es gibt keinen Code, den ein Objekt ausführen könnte. *Referenzen* auf Schnittstellen sind dagegen ausdrücklich erlaubt und der Normalfall: `Sender s1 = new Email();`\n2. **Unvollständige Implementierung**: `Sender` verlangt **zwei** Operationen. Wer nur eine implementiert, bleibt abstrakt - also entweder `abbrechen()` nachliefern oder `abstract class Email implements Sender` schreiben (dann kann man aber kein `Email`-Objekt erzeugen).\n3. **Fehlendes `public`**: Interface-Operationen sind implizit `public`. Lässt man das `public` in der Klasse weg, gilt Paket-Sichtbarkeit - das ist **schwächer** als `public`, und beim Überschreiben/Implementieren darf die Sichtbarkeit nie eingeschränkt werden. Das ist der mit Abstand häufigste Anfängerfehler bei Interfaces.\n\nBeachten Sie: Die Fehlermeldung zu (2) steht in der Zeile mit dem **Klassenkopf**, nicht dort, wo die Methode fehlt - der Compiler beschwert sich über die Klasse als Ganzes.\n\nMerkregel: **Interface = Vertrag: vollständig erfüllen, öffentlich erfüllen - und nie selbst unterschreiben (`new`).**",
+   "hints": [
+    "Zeile 3: Kann man von einem Interface ein Objekt erzeugen?",
+    "Zählen Sie die Methoden im Interface und die in der Klasse - stimmt die Anzahl?",
+    "Vergleichen Sie die Sichtbarkeit von `sende` im Interface (implizit!) und in der Klasse."
+   ],
+   "pitfalls": [
+    "Das fehlende `public` für Absicht halten - bei Interfaces ist es Pflicht.",
+    "Nur die fehlende Methode bemerken und den `new Sender()`-Fehler übersehen.",
+    "`implements` durch `extends` 'korrigieren' - das ergäbe einen neuen Fehler ('no interface expected here')."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 206,
+     "label": "Schnittstellen nicht instanziierbar"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 207,
+     "label": "implements-Regeln"
+    },
+    {
+     "file": "11_Ueberblick/Klausur09.java",
+     "page": 0,
+     "label": "interface CharMethoden"
+    }
+   ],
+   "tags": [
+    "interface",
+    "implements",
+    "public",
+    "find-errors"
+   ],
+   "expectedOutput": "E-Mail: Hallo\nE-Mail: abgebrochen"
+  },
+  {
+   "id": "java-inheritance-033",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: Überschreiben und Typkonversion",
+   "prompt": "Der folgende Code enthält **genau 3 Compiler-Fehler**. Benennen Sie sie und geben Sie jeweils die Korrektur an.",
+   "code": "class ZooTest {\n  public static void main(String[] s) {\n    Tier t = new Hund(\"Rex\");\n    Hund h = t;\n    System.out.println( h.bellen() );\n  }\n}\n\nclass Tier {\n  protected String name;\n  public Tier(String name) { this.name = name; }\n  public void print() { System.out.println(\"Tier \" + name); }\n}\n\nclass Hund extends Tier {\n  public Hund(String name) { super(name); }\n  public int print() { System.out.println(\"Hund \" + name); return 1; }\n  public String bellen() { return name + \": Wuff\"; }\n}\n\nclass Katze extends Tier {\n  public Katze(String name) { super(name); }\n  private void print() { System.out.println(\"Katze \" + name); }\n}",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "Hund h = t;",
+     "fix": "Downcast ergaenzen: `Hund h = (Hund) t;` (idealerweise mit vorheriger `instanceof`-Pruefung).",
+     "why": "Compilerfehler: *incompatible types: Tier cannot be converted to Hund*. Konversion **aufwärts** geschieht implizit, **abwärts** nur mit explizitem Cast (Skript S. 235)."
+    },
+    {
+     "line": 17,
+     "wrong": "public int print() { System.out.println(\"Hund \" + name); return 1; }",
+     "fix": "Rueckgabetyp auf `void` aendern: `public void print() { System.out.println(\"Hund \" + name); }`",
+     "why": "Compilerfehler: *print() in Hund cannot override print() in Tier - return type int is not compatible with void*. Beim Überschreiben müssen Signatur **und** Ergebnistyp exakt übereinstimmen (Skript S. 216)."
+    },
+    {
+     "line": 23,
+     "wrong": "private void print() { System.out.println(\"Katze \" + name); }",
+     "fix": "`public` statt `private`: `public void print() { ... }`",
+     "why": "Compilerfehler: *attempting to assign weaker access privileges; was public*. Eine überschreibende Methode darf die Sichtbarkeit nie einschränken."
+    }
+   ],
+   "solution": "class ZooTest {\n  public static void main(String[] s) {\n    Tier t = new Hund(\"Rex\");\n    Hund h = (Hund) t;\n    System.out.println( h.bellen() );\n    Tier k = new Katze(\"Mimi\");\n    k.print();\n  }\n}\n\nclass Tier {\n  protected String name;\n  public Tier(String name) { this.name = name; }\n  public void print() { System.out.println(\"Tier \" + name); }\n}\n\nclass Hund extends Tier {\n  public Hund(String name) { super(name); }\n  public void print() { System.out.println(\"Hund \" + name); }\n  public String bellen() { return name + \": Wuff\"; }\n}\n\nclass Katze extends Tier {\n  public Katze(String name) { super(name); }\n  public void print() { System.out.println(\"Katze \" + name); }\n}",
+   "explanation": "Drei Regeln werden hier verletzt:\n\n1. **Downcast braucht einen Cast.** `Tier t = new Hund(\"Rex\");` ist erlaubt (implizite Konversion aufwärts). Die Rückrichtung `Hund h = t;` muss dagegen explizit sein: `(Hund) t`. Der Compiler kann nicht wissen, dass in `t` wirklich ein `Hund` steckt - deshalb prüft man im Ernstfall vorher mit `instanceof`, sonst droht zur Laufzeit eine `ClassCastException`.\n2. **Ergebnistyp beim Überschreiben.** Das Skript zeigt dieses Gegenbeispiel wörtlich (S. 216): `int op(int p)` kann `void op(int p)` nicht überschreiben. Signatur *und* Ergebnistyp müssen exakt passen. (Anders bei `void op(double p)` - das wäre kein Fehler, sondern schlicht eine **neue, überladene** Methode.)\n3. **Sichtbarkeit beim Überschreiben.** Man darf sie erweitern (`protected` -> `public`), aber nie einschränken (`public` -> `private`). Sonst könnte man über eine `Tier`-Variable eine Methode aufrufen, die es im Objekt gar nicht öffentlich gibt - das würde das Substitutionsprinzip brechen.\n\nMerkregel: **Nach oben von allein, nach unten mit Cast. Und beim Überschreiben: gleiche Signatur, gleicher Ergebnistyp, mindestens gleiche Sichtbarkeit.**",
+   "hints": [
+    "Zeile 3 und 4 sehen symmetrisch aus, sind es aber nicht - in welche Richtung darf Java implizit konvertieren?",
+    "Vergleichen Sie den Kopf von `print()` in `Tier` und in `Hund` Zeichen für Zeichen.",
+    "Vergleichen Sie den Kopf von `print()` in `Tier` und in `Katze` - diesmal steht der Unterschied ganz vorn."
+   ],
+   "pitfalls": [
+    "`public int print()` für zulässiges Überladen halten - beim Überladen müsste sich die **Parameterliste** unterscheiden, nicht der Rückgabetyp.",
+    "Den `private`-Fehler in `Katze` übersehen, weil die Klasse in `main` gar nicht benutzt wird - der Compiler prüft trotzdem.",
+    "Zeile 4 mit `Tier h = t;` 'korrigieren' - dann kompiliert zwar die Zeile, aber `h.bellen()` nicht mehr."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 216,
+     "label": "Überschreiben von Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 234,
+     "label": "Konversion von Objekttypen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 235,
+     "label": "explizite Typkonversion"
+    }
+   ],
+   "tags": [
+    "overriding",
+    "downcast",
+    "cast",
+    "sichtbarkeit",
+    "find-errors"
+   ],
+   "expectedOutput": "Rex: Wuff\nKatze Mimi"
+  },
+  {
+   "id": "java-inheritance-034",
+   "lang": "java",
+   "topicId": "java-inheritance",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Überschreiben vs. Überladen, dynamische vs. statische Bindung",
+   "prompt": "Beantworten Sie kurz und präzise (Stichpunkte genügen):\n\n**a)** Worin unterscheiden sich *Überschreiben* (overriding) und *Überladen* (overloading)? Nennen Sie für jedes ein Java-Minibeispiel mit der Klasse `Ober` und `Unter`.\n\n**b)** Welche Bezeichner werden in Java **dynamisch** und welche **statisch** gebunden? Nennen Sie die Regel und begründen Sie damit die Ausgabe des folgenden Codes:\n\n```java\nOber o = new Unter();\nSystem.out.println( o.attr );   // ?\nSystem.out.println( o.op() );   // ?\n\nclass Ober { public int attr = 1; public int op() { return 1; } }\nclass Unter extends Ober { public int attr = 2; public int op() { return 2; } }\n```",
+   "solution": "**a) Überschreiben vs. Überladen**\n\n| | Überschreiben (overriding) | Überladen (overloading) |\n|---|---|---|\n| Wo? | in einer **Unterklasse** | in **derselben** (oder einer beliebigen) Klasse |\n| Signatur | **exakt gleich** (Name, Parameterliste) **und** gleicher Ergebnistyp | **gleicher Name, andere Parameterliste** |\n| Sichtbarkeit | darf nicht eingeschränkt werden | beliebig |\n| Auflösung | zur **Laufzeit** (dynamische Bindung) | zur **Übersetzungszeit** (statische Bindung) |\n\nBeispiel Überschreiben:\n```java\nclass Ober  { void op(int p) { } }\nclass Unter extends Ober { void op(int p) { } }   // überschreibt\n```\nBeispiel Überladen:\n```java\nclass Unter extends Ober { void op(double p) { } } // NEUE Methode, überschreibt NICHT\n```\nGegenbeispiel (Fehler): `int op(int p)` in `Unter` - gleicher Name und gleiche Parameterliste, aber anderer Ergebnistyp -> Compilerfehler.\n\n**b) Bindungsregel**\n\n- **Instanzmethoden werden dynamisch (spät) gebunden** - es entscheidet die Klasse des **Objekts**. Merkregel: *jedes Objekt kennt seine Methoden*.\n- **Attribute sowie Klassenmethoden (`static`) werden statisch (früh) gebunden** - es entscheidet der **deklarierte Typ der Referenzvariablen**.\n\nDaraus folgt für das Beispiel:\n- `o.attr` -> `1`, weil `o` als `Ober` deklariert ist und Attribute statisch gebunden werden (das `attr` aus `Unter` verdeckt es nur, ersetzt es nicht).\n- `o.op()` -> `2`, weil `op()` eine Instanzmethode ist und das Objekt ein `Unter` ist.\n\n**Bewertungsrubrik (6 P.)**\n- a) Kriterium 'gleiche vs. andere Parameterliste' genannt: 1 P.\n- a) Überschreiben nur in Unterklasse / Ergebnistyp muss passen: 1 P.\n- a) zwei korrekte Minibeispiele: 1 P.\n- b) 'Methoden dynamisch, Attribute und static statisch' korrekt formuliert: 2 P.\n- b) beide Ausgaben (1 und 2) korrekt begründet: 1 P.",
+   "explanation": "Das ist die theoretische Klammer um das ganze Kapitel und taucht in der Klausur sowohl als Multiple-Choice-Frage als auch als Begründung bei 'Was ist die Ausgabe?' auf.\n\nDer Unterschied lässt sich auf **eine** Frage reduzieren: *Ist die Parameterliste gleich oder verschieden?*\n- gleich + Unterklasse -> **Überschreiben** -> das Objekt entscheidet.\n- verschieden -> **Überladen** -> der Compiler entscheidet anhand der Argumenttypen.\n\nEin häufiger Denkfehler: Man hält den Rückgabetyp für ein Unterscheidungsmerkmal. Das ist er **nicht** - `int op(int)` und `void op(int)` sind für den Compiler zwei Versuche derselben Signatur und damit ein Fehler.\n\nDer zweite Teil ist der Satz aus Skript S. 232, den man auswendig können sollte: *Methoden werden in Java dynamisch gebunden ... Klassenmethoden und Attribute werden statisch gebunden.* Daraus folgt auch, warum man Attribute nie in Unterklassen erneut deklarieren sollte: Es entstehen zwei Felder, und welches man sieht, hängt vom Blickwinkel (Variablentyp) ab.\n\nMerkregel: **Der Compiler wählt die Signatur, das Objekt wählt die Implementierung - außer bei Attributen und `static`, da wählt der Compiler alles.**",
+   "hints": [
+    "Fragen Sie sich zuerst: Was muss beim Überschreiben *exakt gleich* sein, und was muss beim Überladen *verschieden* sein?",
+    "Ist der Rückgabetyp ein Unterscheidungsmerkmal beim Überladen? Überlegen Sie, ob der Compiler bei `x.op(3)` daraus etwas ableiten könnte.",
+    "Für b): Der Satz aus dem Skript besteht aus zwei Hälften - eine über Methoden, eine über Attribute und Klassenmethoden."
+   ],
+   "pitfalls": [
+    "Glauben, ein anderer Rückgabetyp genüge zum Überladen - er genügt nicht und führt beim Überschreiben sogar zum Compilerfehler.",
+    "Attribute für polymorph halten und `o.attr` als 2 angeben.",
+    "Überladen für 'keine Polymorphie' halten - es ist Polymorphie, aber die statisch aufgelöste Variante."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 216,
+     "label": "Überschreiben von Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 227,
+     "label": "Arten der Polymorphie"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 231,
+     "label": "statische/dynamische Bindung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 232,
+     "label": "Binden von Bezeichnern"
+    }
+   ],
+   "tags": [
+    "overriding",
+    "overloading",
+    "statische-bindung",
+    "dynamische-bindung",
+    "theorie"
+   ]
+  }
+ ]
+}

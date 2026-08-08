@@ -1,0 +1,1592 @@
+{
+  "topicId": "py-basics",
+  "exercises": [
+    {
+      "type": "mc",
+      "difficulty": 1,
+      "points": 2,
+      "examStyle": true,
+      "title": "Welchen Typ liefert die Division?",
+      "prompt": "Was passiert beim Ausführen des folgenden Codes?",
+      "code": "a = 6\nb = 3\nprint(type(a / b))",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Es gibt einen Fehler",
+          "correct": false,
+          "why": "Der Code ist völlig korrekt: `type` darf auf jedes Objekt angewendet werden und `/` ist für zwei ints definiert."
+        },
+        {
+          "id": "b",
+          "text": "<class 'int'>",
+          "correct": false,
+          "why": "Auch wenn 6/3 mathematisch die ganze Zahl 2 ist, liefert `/` in Python **immer** einen float (hier 2.0). Ganzzahlig teilt nur `//`."
+        },
+        {
+          "id": "c",
+          "text": "<class 'float'>",
+          "correct": true,
+          "why": "Richtig: `/` ist die 'echte' Division und liefert bei zwei ints immer einen float, hier 2.0."
+        },
+        {
+          "id": "d",
+          "text": "<class 'complex'>",
+          "correct": false,
+          "why": "complex entsteht nur durch komplexe Literale wie `2+3j` oder durch `complex(...)`."
+        }
+      ],
+      "solution": "<class 'float'>",
+      "explanation": "In Python gibt es drei vorimplementierte Zahlentypen: `int`, `float` und `complex`. Der Operator `/` ist die *echte* Division und liefert **grundsätzlich** einen `float` – auch dann, wenn das Ergebnis mathematisch eine ganze Zahl ist. `6 / 3` ergibt also `2.0` und nicht `2`. Der typische Denkfehler ist, aus dem 'schönen' Ergebnis auf den Typ zu schließen: der Typ hängt am *Operator*, nicht am Zahlenwert. Wer wirklich einen `int` braucht, nimmt die ganzzahlige Division `//` (`6 // 3` → `2`) oder wandelt mit `int(...)` um. Merkregel: **Ein Schrägstrich → immer Komma.** `type(x)` gibt übrigens das Typ-Objekt zurück, das beim Ausdrucken als `<class '...'>` erscheint.",
+      "hints": [
+        "Überlege zuerst, welchen *Wert* `6 / 3` hat – und schreibe ihn so hin, wie Python ihn ausgeben würde.",
+        "Es gibt in Python zwei Divisionsoperatoren. Welcher liefert eine ganze Zahl, welcher nicht?",
+        "`print(6/3)` gibt `2.0` aus. Welcher Typ hat eine Zahl mit Nachkommastelle?"
+      ],
+      "pitfalls": [
+        "Annehmen, dass eine 'aufgehende' Division einen int liefert.",
+        "`/` und `//` verwechseln – nur `//` liefert bei zwei ints einen int."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Operationen mit Zahlen: Python liefert als Division von zwei Integers automatisch einen Float"
+        },
+        {
+          "file": "end_summary_python_26.pdf",
+          "page": 5,
+          "label": "Überblick VL 1b – 'Was passiert hier?' (int/float)"
+        }
+      ],
+      "tags": [
+        "typen",
+        "operatoren",
+        "division",
+        "type"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-001"
+    },
+    {
+      "type": "predict-output",
+      "difficulty": 1,
+      "points": 2,
+      "examStyle": false,
+      "title": "Dynamische Typisierung sichtbar gemacht",
+      "prompt": "Was gibt der folgende Code auf der Kommandozeile aus?",
+      "code": "wert = 10\nprint(wert, type(wert))\nwert = \"10\"\nprint(wert, type(wert))\nwert = 10.0\nprint(wert, type(wert))",
+      "expectedOutput": "10 <class 'int'>\n10 <class 'str'>\n10.0 <class 'float'>",
+      "solution": "10 <class 'int'>\n10 <class 'str'>\n10.0 <class 'float'>",
+      "explanation": "Python ist eine **dynamisch typisierte** Sprache: Der Datentyp einer Variablen muss nicht angegeben werden und kann sich während des Programms ändern. Dieselbe Variable `wert` zeigt hier nacheinander auf einen `int`, einen `str` und einen `float`. In Java (statisch typisiert) wäre das ein Compilerfehler. Wichtig ist der Unterschied zwischen *Ausgabe des Wertes* und *Ausgabe des Typs*: `print(wert)` zeigt `10`, egal ob es die Zahl 10 oder der String \"10\" ist – man sieht dem Ausdruck den Typ also nicht an! Nur `type(wert)` verrät ihn, und zwar in der Form `<class 'int'>`. Beachte auch: `10.0` wird als `10.0` ausgedruckt, die Null hinter dem Punkt geht nicht verloren. `print` trennt mehrere Argumente automatisch durch ein Leerzeichen. Merkregel: **In Python haben Werte einen Typ, Variablen nur einen Namen.**",
+      "hints": [
+        "Schreibe für jede der drei `print`-Zeilen getrennt auf, was links und was rechts steht.",
+        "`print` trennt seine Argumente mit genau einem Leerzeichen.",
+        "`type(x)` wird als `<class 'name'>` ausgegeben – mit einfachen Anführungszeichen um den Typnamen."
+      ],
+      "pitfalls": [
+        "Denken, eine Variable behalte ihren Typ nach der ersten Zuweisung (das gilt nur in Java).",
+        "`10` und `\"10\"` in der Ausgabe verwechseln – sie sehen identisch aus, sind aber verschiedene Typen."
+      ],
+      "sources": [
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 18,
+          "label": "Python ist dynamisch typisiert"
+        },
+        {
+          "file": "pythonvorlesung_02.ipynb",
+          "page": 4,
+          "label": "Zelle mit type(a), type(b), type(c), type(d)"
+        }
+      ],
+      "tags": [
+        "typen",
+        "dynamische-typisierung",
+        "type",
+        "print"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-002"
+    },
+    {
+      "type": "mc",
+      "difficulty": 3,
+      "points": 2,
+      "examStyle": true,
+      "title": "Was liefert input() wirklich?",
+      "prompt": "Der folgende Code wird ausgeführt. Der Benutzer tippt `3.3` und drückt Enter.\n\nWas erscheint danach auf der Kommandozeile?",
+      "code": "zahl = input(\"Bitte geben sie eine Zahl ein: \")\nprint(zahl * 2)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "6.6",
+          "correct": false,
+          "why": "Das wäre die Ausgabe, wenn `zahl` ein float wäre – also nur nach `zahl = float(input(...))`."
+        },
+        {
+          "id": "b",
+          "text": "3.33.3",
+          "correct": true,
+          "why": "Richtig: `input` liefert einen String; ein String mal 2 wird schlicht verdoppelt (aneinandergehängt)."
+        },
+        {
+          "id": "c",
+          "text": "Es gibt einen TypeError",
+          "correct": false,
+          "why": "`str * int` ist in Python erlaubt und bedeutet 'Wiederholung'. Ein TypeError entstünde erst bei `str * str` oder `str + int`."
+        },
+        {
+          "id": "d",
+          "text": "6",
+          "correct": false,
+          "why": "Es wird weder in int umgewandelt noch gerundet – es findet überhaupt keine Rechnung statt."
+        }
+      ],
+      "solution": "3.33.3",
+      "explanation": "`input(...)` gibt **immer** einen `str` zurück – egal, was der Benutzer eintippt. `zahl` enthält also die Zeichenkette `\"3.3\"` und nicht die Zahl 3.3. Der Operator `*` ist für Strings als *Wiederholung* definiert: `\"3.3\" * 2` ergibt `\"3.33.3\"`. Genau so steht es in den Beispielfragen des Dozenten: *'Man bekommt die Ausgabe 3.33.3, da inputs vom Datentyp string sind und das Multiplizieren eines Strings mit 2 diesen lediglich verdoppelt.'* Der typische Denkfehler ist, dass Python 'schon merkt', dass da eine Zahl steht – das tut es nicht. Wer rechnen will, muss selbst umwandeln: `zahl = float(input(...))` oder `zahl = int(input(...))`. Merkregel: **Aus `input` kommt immer Text – rechnen erst nach `int()`/`float()`.** Tückisch ist, dass der Code *keinen Fehler* wirft, sondern klaglos ein falsches Ergebnis liefert.",
+      "hints": [
+        "Welchen Typ hat `zahl` unmittelbar nach der ersten Zeile? Steht das irgendwo im Code?",
+        "Was bedeutet der Operator `*`, wenn links ein String und rechts eine ganze Zahl steht?",
+        "In der Vorlesung: `a = \"hi\"` und `print(a*5)` – was kam dabei heraus?"
+      ],
+      "pitfalls": [
+        "Annehmen, `input` erkenne Zahlen automatisch.",
+        "Die fehlende Umwandlung fällt nicht als Fehler auf – das Programm läuft einfach falsch weiter."
+      ],
+      "sources": [
+        {
+          "file": "ofp_beispielfragen_mit_antworten.pdf",
+          "page": 1,
+          "label": "Beispielfrage mit Musterantwort '3.33.3'"
+        },
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 25,
+          "label": "Klausurrelevante Dinge: Eingabe in die Konsole input"
+        }
+      ],
+      "tags": [
+        "input",
+        "typen",
+        "str",
+        "typumwandlung"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-003"
+    },
+    {
+      "type": "predict-output",
+      "difficulty": 2,
+      "points": 2,
+      "examStyle": false,
+      "title": "Zuweisung ist keine Gleichung",
+      "prompt": "Was gibt der folgende Code auf der Kommandozeile aus?",
+      "code": "a = 10\nb = a\na = a + 5\nprint(a, b)\nprint(\"a=\" + str(a) + \" und b=\" + str(b))\nprint(f\"a={a}, b={b}\")",
+      "expectedOutput": "15 10\na=15 und b=10\na=15, b=10",
+      "solution": "15 10\na=15 und b=10\na=15, b=10",
+      "explanation": "`=` ist der **Zuweisungsoperator**, kein mathematisches Gleichheitszeichen. Er wertet zuerst den Ausdruck rechts aus und ordnet das Ergebnis dann der Variablen links zu. `b = a` kopiert daher den *aktuellen Wert* 10 nach `b`; `b` ist danach nicht dauerhaft an `a` gekoppelt. Die Zeile `a = a + 5` wäre als Gleichung unlösbar, als Zuweisung ist sie völlig normal: rechts wird 10+5 gerechnet, links landet 15. `b` bleibt 10. Die drei `print`-Varianten zeigen die drei in der Vorlesung benutzten Ausgabeformen: mehrere Argumente (automatisch durch Leerzeichen getrennt), Konkatenation mit `+` (dann müssen Zahlen mit `str(...)` umgewandelt werden!) und f-strings. Merkregel: **Rechts rechnen, links speichern.**",
+      "hints": [
+        "Gehe den Code Zeile für Zeile durch und notiere nach jeder Zeile die Werte von `a` und `b`.",
+        "Wird `b` durch die dritte Zeile verändert? Überlege, wann der Wert von `a` nach `b` übertragen wurde.",
+        "`print(x, y)` setzt genau ein Leerzeichen zwischen die Werte, `+` setzt gar nichts dazwischen."
+      ],
+      "pitfalls": [
+        "`b = a` als dauerhafte Verknüpfung lesen (wie eine Gleichung in Mathe).",
+        "Bei der Konkatenation `str(...)` vergessen – das gäbe einen TypeError."
+      ],
+      "sources": [
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 19,
+          "label": "Statements and Expressions: = unterscheidet sich vom mathematischen Gleichheitszeichen"
+        },
+        {
+          "file": "pythonvorlesung_02.ipynb",
+          "page": 6,
+          "label": "a = 10; a = a + 1; print(a)"
+        }
+      ],
+      "tags": [
+        "variablen",
+        "zuweisung",
+        "print",
+        "str"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-004"
+    },
+    {
+      "type": "short-answer",
+      "difficulty": 2,
+      "points": 3,
+      "examStyle": true,
+      "title": "Zuweisungsoperator vs. mathematisches Gleichheitszeichen",
+      "prompt": "Was ist der Unterschied zwischen dem Zuweisungsoperator `=` in Python und dem mathematischen Gleichheitszeichen? Erklären Sie den Unterschied und belegen Sie ihn mit **einem** Beispiel. Geben Sie außerdem an, mit welchem Operator man in Python auf Gleichheit *prüft*.",
+      "solution": "**Musterlösung**\n\nDas mathematische `=` ist eine *symmetrische Aussage*: `x = y` behauptet, dass beide Seiten denselben Wert haben, und man darf die Seiten vertauschen.\n\nDer Python-Operator `=` ist dagegen eine *gerichtete Anweisung* (statement): Er wertet den Ausdruck auf der **rechten** Seite aus und ordnet das Ergebnis der Variablen auf der **linken** Seite zu. Links muss deshalb ein Variablenname stehen; `5 = x` ist ein Fehler.\n\nBeispiel:\n\n```python\na = 10\na = a + 1   # als Gleichung unlösbar, als Zuweisung: rechne 10+1 und speichere 11 in a\nprint(a)    # 11\n```\n\nAuf Gleichheit geprüft wird in Python mit `==` (bzw. auf Ungleichheit mit `!=`); `==` ist ein *Ausdruck* und liefert `True` oder `False`.\n\n**Bewertungsrubrik (3 P)**\n- 1 P: `=` als gerichtete Zuweisung beschrieben (rechts auswerten → links speichern / links muss Variable sein).\n- 1 P: passendes Beispiel, das als Gleichung falsch wäre, z. B. `a = a + 1` (oder `x = x * 2`).\n- 1 P: `==` als Vergleichsoperator genannt (Abgrenzung zu `=`).",
+      "explanation": "Diese Frage stellt der Dozent wörtlich auf der Zusammenfassungsfolie zur Vorlesung 1a – sie ist also ein sehr heißer Klausurkandidat. Der Kern: In der Mathematik ist `=` eine Behauptung über zwei Ausdrücke, in Python ist `=` eine Handlungsanweisung. Genau deshalb funktioniert `a = a + 1`, was als Gleichung `a = a+1` keine Lösung hätte. Aus der Gerichtetheit folgen zwei praktische Konsequenzen: links vom `=` darf nur ein Variablenname (kein Literal, kein Ausdruck) stehen, und die rechte Seite wird **vollständig zuerst** ausgewertet. Der zweite Teil der Frage – `==` – wird oft vergessen, bringt aber Punkte, weil er zeigt, dass man Zuweisung und Vergleich sauber trennt. Merkregel: **`=` macht, `==` fragt.**",
+      "hints": [
+        "Denke an `a = a + 1`: Warum ist das als mathematische Gleichung Unsinn, als Python-Zeile aber völlig normal?",
+        "Was passiert, wenn man in Python die Seiten vertauscht und `10 = a` schreibt?",
+        "Womit prüft man in Python, ob zwei Werte gleich sind? Dieser Operator liefert einen Wahrheitswert."
+      ],
+      "pitfalls": [
+        "Nur 'das eine weist zu, das andere ist gleich' schreiben, ohne ein Beispiel – das Beispiel ist explizit verlangt.",
+        "`=` und `==` in der eigenen Erklärung durcheinanderbringen."
+      ],
+      "sources": [
+        {
+          "file": "end_summary_python_26.pdf",
+          "page": 3,
+          "label": "Überblick VL 1a: 'Was ist der Unterschied zwischen dem Zuweisungsoperator = und dem mathematischen Gleichheitszeichen?'"
+        },
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 19,
+          "label": "Statements and Expressions"
+        }
+      ],
+      "tags": [
+        "zuweisung",
+        "variablen",
+        "theorie",
+        "=="
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-005"
+    },
+    {
+      "type": "predict-output",
+      "difficulty": 3,
+      "points": 3,
+      "examStyle": true,
+      "title": "Alle Rechenoperatoren auf einen Blick",
+      "prompt": "Was gibt der folgende Code auf der Kommandozeile aus?",
+      "code": "a = 17\nb = 5\nprint(a + b, a - b, a * b)\nprint(a / b)\nprint(a // b, a % b)\nprint(a ** 2)\nprint(2 ** 0.5 > 1.41)",
+      "expectedOutput": "22 12 85\n3.4\n3 2\n289\nTrue",
+      "solution": "22 12 85\n3.4\n3 2\n289\nTrue",
+      "explanation": "Die Aufgabe geht die Operatortabelle der Vorlesung komplett durch. `+`, `-`, `*` verhalten sich wie erwartet und liefern bei zwei ints wieder einen int. `/` ist die echte Division und liefert **immer** einen float: `17 / 5` → `3.4`. `//` ist die ganzzahlige Division und schneidet den Nachkommateil ab (genauer: rundet ab): `17 // 5` → `3`. `%` liefert den Rest: `17 % 5` → `2`. Es gilt immer die Kontrollgleichung `a == (a // b) * b + a % b`, hier `3*5 + 2 = 17`. `**` ist die Potenz, `17 ** 2` → `289` (und **nicht** XOR wie `^` in anderen Sprachen!). Der Exponent darf auch ein float sein: `2 ** 0.5` ist die Wurzel aus 2 (ca. 1.4142) und damit größer als 1.41 → `True`. Merkregel: **`/` gibt Komma, `//` gibt ganz, `%` gibt den Rest, `**` gibt hoch.**",
+      "hints": [
+        "Bearbeite die `print`-Zeilen einzeln. Bei mehreren Argumenten trennt `print` mit einem Leerzeichen.",
+        "Welche der Zeilen kann überhaupt eine Nachkommastelle produzieren?",
+        "`2 ** 0.5` ist keine ganze Zahl – was bedeutet ein gebrochener Exponent?"
+      ],
+      "pitfalls": [
+        "`17 / 5` als `3` statt `3.4` notieren.",
+        "`**` mit `^` verwechseln (`^` ist in Python bitweises XOR).",
+        "Bei `print(a + b, a - b, a * b)` Kommas mit ausgeben – `print` schreibt nur Leerzeichen."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Operationen mit Zahlen (Operatortabelle)"
+        },
+        {
+          "file": "end_summary_python_26.pdf",
+          "page": 5,
+          "label": "Überblick VL 1b: Operatortabelle"
+        }
+      ],
+      "tags": [
+        "operatoren",
+        "zahlen",
+        "division",
+        "modulo",
+        "potenz"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-006"
+    },
+    {
+      "type": "predict-output",
+      "difficulty": 4,
+      "points": 3,
+      "examStyle": true,
+      "title": "Ganzzahlige Division und Modulo mit negativen Zahlen",
+      "prompt": "Was gibt der folgende Code auf der Kommandozeile aus?",
+      "code": "print(7 // 2)\nprint(-7 // 2)\nprint(-4 // 3)\nprint(7 % 2)\nprint(-7 % 2)\nprint(7 // -2)",
+      "expectedOutput": "3\n-4\n-2\n1\n1\n-4",
+      "solution": "3\n-4\n-2\n1\n1\n-4",
+      "explanation": "`//` **schneidet nicht ab, sondern rundet immer ab** – also in Richtung minus unendlich. Bei positiven Zahlen sieht beides gleich aus (`7 // 2` → 3), bei negativen nicht: `-7 / 2 = -3.5`, abgerundet ist das `-4` (und nicht `-3`). Genau dieses Beispiel steht auf der Folie: *'Die Ganzzahlige Division rundet immer ab, z.B. ist -4//3 = -2'*, denn `-4/3 ≈ -1.33` und die nächstkleinere ganze Zahl ist `-2`. Das Vorzeichen des Ergebnisses von `//` hängt also von den Vorzeichen beider Operanden ab: `7 // -2` ist ebenfalls `-4`. Bei `%` gilt in Python die Regel, dass das Ergebnis **das Vorzeichen des Divisors** hat: `-7 % 2` ist daher `1` und nicht `-1` (in Java oder C wäre es `-1`!). Beides zusammen erfüllt immer die Gleichung `a == (a // b) * b + (a % b)`, hier `(-4)*2 + 1 = -7`. Merkregel: **`//` geht nach unten, `%` folgt dem Vorzeichen rechts.**",
+      "hints": [
+        "Rechne jede Division erst als 'echte' Division mit Komma aus und zeichne die Zahl auf einem Zahlenstrahl ein.",
+        "'Abrunden' heißt: die nächste ganze Zahl **links** auf dem Zahlenstrahl – nicht die betragsmäßig kleinere.",
+        "Prüfe deine Ergebnisse mit `(a // b) * b + (a % b) == a`."
+      ],
+      "pitfalls": [
+        "`-7 // 2` als `-3` angeben (Abschneiden statt Abrunden).",
+        "`-7 % 2` als `-1` angeben – das ist die Java/C-Regel, nicht die Python-Regel.",
+        "Vergessen, dass auch ein negativer *Divisor* das Ergebnis von `//` nach unten drückt."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "'Die Ganzzahlige Division rundet immer ab, z.B. ist -4//3 = -2'"
+        },
+        {
+          "file": "end_summary_python_26.pdf",
+          "page": 5,
+          "label": "Überblick VL 1b: // und %"
+        }
+      ],
+      "tags": [
+        "operatoren",
+        "floor-division",
+        "modulo",
+        "negative-zahlen"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-007"
+    },
+    {
+      "type": "mc",
+      "difficulty": 3,
+      "points": 2,
+      "examStyle": true,
+      "title": "Float-Vergleich",
+      "prompt": "Was passiert beim Ausführen dieses Codes?",
+      "code": "print(0.1 + 0.2 == 0.3)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Es gibt einen Fehler",
+          "correct": false,
+          "why": "Der Vergleich ist syntaktisch und typmäßig einwandfrei; `==` funktioniert für floats."
+        },
+        {
+          "id": "b",
+          "text": "Es wird True ausgegeben",
+          "correct": false,
+          "why": "Mathematisch richtig, in Binärdarstellung aber falsch: 0.1 und 0.2 sind nicht exakt speicherbar."
+        },
+        {
+          "id": "c",
+          "text": "Es wird False ausgegeben",
+          "correct": true,
+          "why": "Richtig: `0.1 + 0.2` ergibt `0.30000000000000004`, das ist ungleich `0.3`."
+        },
+        {
+          "id": "d",
+          "text": "Es wird 0.30000000000000004 ausgegeben",
+          "correct": false,
+          "why": "Das wäre die Ausgabe von `print(0.1 + 0.2)`. Hier steht aber ein Vergleich, der einen bool liefert."
+        }
+      ],
+      "solution": "False",
+      "explanation": "Floats werden nach IEEE 754 (double precision) **binär** und mit endlicher Präzision gespeichert. 0.1 und 0.2 sind im Binärsystem periodische Brüche und lassen sich deshalb nicht exakt darstellen – genau wie 1/3 im Dezimalsystem. Die winzigen Rundungsfehler addieren sich: `0.1 + 0.2` ergibt intern `0.30000000000000004`, was ungleich `0.3` ist. Der Vergleich `==` liefert also `False`. Auf der Folie warnt der Dozent ausdrücklich: *'Floats werden nur mit endlicher Präzision gespeichert – das führt zu numerischen (Rechen-)fehlern!'* Der typische Denkfehler ist, Python einen Bug zu unterstellen – das Verhalten ist in jeder Sprache mit IEEE-754-Floats identisch. Praktische Konsequenz: **Floats nie mit `==` vergleichen**, sondern die Differenz gegen eine kleine Schranke prüfen, z.B. `abs(x - y) < 0.000001` (oder das Modul `decimal` nutzen). Merkregel: **Bei Kommazahlen fragt man nicht 'gleich?', sondern 'nah genug?'**",
+      "hints": [
+        "Wie speichert ein Rechner 0.1 im Binärsystem? Geht das exakt?",
+        "Was gibt `print(0.1 + 0.2)` aus? Vergleiche das Zeichen für Zeichen mit `0.3`.",
+        "Der Ausdruck enthält `==` – welchen Typ hat das Ergebnis eines Vergleichs?"
+      ],
+      "pitfalls": [
+        "Die Ausgabe des *Vergleichs* mit der Ausgabe der *Summe* verwechseln.",
+        "Glauben, das Problem verschwinde bei anderen Zahlen – es tritt bei allen nicht-binär darstellbaren Werten auf."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Warnung: Floats werden nur mit endlicher Präzision gespeichert"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 8,
+          "label": "Floats nach IEEE 754 double precision"
+        }
+      ],
+      "tags": [
+        "float",
+        "praezision",
+        "vergleich",
+        "ieee754"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-008"
+    },
+    {
+      "type": "predict-output",
+      "difficulty": 3,
+      "points": 2,
+      "examStyle": false,
+      "title": "Rundungsfehler und wie man damit umgeht",
+      "prompt": "Was gibt der folgende Code auf der Kommandozeile aus?",
+      "code": "print(0.1 + 0.2)\nprint(round(0.1 + 0.2, 2))\nprint(0.1 + 0.2 == 0.3)\nprint(abs((0.1 + 0.2) - 0.3) < 0.000001)",
+      "expectedOutput": "0.30000000000000004\n0.3\nFalse\nTrue",
+      "solution": "0.30000000000000004\n0.3\nFalse\nTrue",
+      "explanation": "Zeile 1 macht den Rundungsfehler sichtbar: `0.1 + 0.2` ist intern `0.30000000000000004`, weil 0.1 und 0.2 binär nicht exakt darstellbar sind (IEEE 754). Zeile 2 zeigt, dass `round(x, 2)` das Ergebnis für die *Anzeige* glättet – der zugrunde liegende Typ bleibt aber ein float. Zeile 3 ist die direkte Konsequenz: Der exakte Vergleich mit `==` schlägt fehl. Zeile 4 zeigt die übliche Abhilfe: Man prüft, ob der *Abstand* der beiden Zahlen kleiner als eine kleine Schranke (Toleranz) ist – das liefert `True`. Der typische Denkfehler ist zu glauben, `round` behebe das Problem dauerhaft; es ändert nur den einen berechneten Wert. Für exaktes Rechnen mit Dezimalzahlen (z.B. Geldbeträgen) verweist die Vorlesung auf das Modul `decimal`. Merkregel: **`round` für die Ausgabe, Toleranzvergleich für die Logik.**",
+      "hints": [
+        "Die erste Zeile hat 17 Nachkommastellen – schreibe sie genau so hin, wie Python sie ausgibt.",
+        "`round(x, 2)` rundet auf 2 Nachkommastellen; überflüssige Nullen werden bei der Ausgabe weggelassen.",
+        "Die letzte Zeile ist ein Vergleich – sie liefert einen Wahrheitswert, keinen Zahlenwert."
+      ],
+      "pitfalls": [
+        "`0.30000000000000004` mit falscher Anzahl Nullen aufschreiben.",
+        "Bei Zeile 2 `0.30` erwarten – Python gibt `0.3` aus."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Warnung zu numerischen Rechenfehlern bei Floats"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 11,
+          "label": "Hinweis auf das Modul decimal"
+        }
+      ],
+      "tags": [
+        "float",
+        "praezision",
+        "round",
+        "vergleich"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-009"
+    },
+    {
+      "type": "fill-gaps",
+      "difficulty": 3,
+      "points": 4,
+      "examStyle": true,
+      "title": "Punktezähler mit augmented assignment",
+      "prompt": "In einem Würfelspiel sammelt ein Spieler zunächst Punkte in einer Rundensumme. Hält er an, wandert die Rundensumme in den Gesamtstand und die Rundensumme wird zurückgesetzt.\n\nFüllen Sie die vier Lücken **nur mit Operatoren** (also z.B. `=` oder einem der zusammengesetzten Zuweisungsoperatoren), sodass die letzte Zeile `10 0` ausgibt. Der Variablenname darf in der Zeile nur einmal vorkommen, wo immer das möglich ist.",
+      "code": "gesamt = 0\nrundensumme = 0\n\n# Erster Wurf: eine 4\nrundensumme ## Lücke 1 ## 4\n# Zweiter Wurf: eine 6\nrundensumme ## Lücke 2 ## 6\n# Der Spieler hält: die Rundensumme wandert in den Gesamtstand\ngesamt ## Lücke 3 ## rundensumme\n# ... und die Rundensumme wird auf 0 zurückgesetzt\nrundensumme ## Lücke 4 ## 0\n\nprint(gesamt, rundensumme)",
+      "gaps": [
+        {
+          "id": 1,
+          "accept": [
+            "+="
+          ],
+          "explanation": "Der Würfelwurf wird zur bisherigen Rundensumme **addiert**: `rundensumme += 4` ist die Kurzform von `rundensumme = rundensumme + 4`."
+        },
+        {
+          "id": 2,
+          "accept": [
+            "+="
+          ],
+          "explanation": "Genauso wird der zweite Wurf addiert: aus 4 werden 10."
+        },
+        {
+          "id": 3,
+          "accept": [
+            "+="
+          ],
+          "explanation": "Der Gesamtstand wird um die Rundensumme erhöht: `gesamt += rundensumme`. Ein einfaches `=` wäre hier falsch, sobald schon Punkte auf dem Konto sind."
+        },
+        {
+          "id": 4,
+          "accept": [
+            "="
+          ],
+          "explanation": "Zurücksetzen ist **kein** Rechnen mit dem alten Wert – hier ist die einfache Zuweisung `rundensumme = 0` richtig. Es gibt keinen augmented-assignment-Operator fürs Überschreiben."
+        }
+      ],
+      "solution": "gesamt = 0\nrundensumme = 0\n\n# Erster Wurf: eine 4\nrundensumme += 4\n# Zweiter Wurf: eine 6\nrundensumme += 6\n# Der Spieler hält: die Rundensumme wandert in den Gesamtstand\ngesamt += rundensumme\n# ... und die Rundensumme wird auf 0 zurückgesetzt\nrundensumme = 0\n\nprint(gesamt, rundensumme)",
+      "expectedOutput": "10 0",
+      "explanation": "Alle Rechenoperatoren lassen sich mit einem nachgestellten `=` zu einem *augmented assignment* kombinieren: `x += n` ist die Kurzform von `x = x + n`, analog gibt es `-=`, `*=`, `/=`, `//=`, `%=` und `**=`. Genau das steht auf der Operatorfolie: *'Alle obigen Operatoren können mit nachfolgendem = verwendet werden, um x = x (Operator) Zahl abzukürzen.'* Wichtig ist der Unterschied zur letzten Lücke: Beim **Zurücksetzen** spielt der alte Wert keine Rolle, deshalb steht dort ein einfaches `=`. Wer dort `+=` schreibt, addiert 0 und die Rundensumme bleibt stehen – ein Fehler, der im Spiel erst Runden später auffällt. Umgekehrt ist `gesamt = rundensumme` bei Lücke 3 zwar hier zufällig richtig (der Gesamtstand ist noch 0), zerstört aber ab der zweiten Runde den bisherigen Punktestand. Merkregel: **`+=` erweitert, `=` ersetzt.**",
+      "hints": [
+        "Erweitern oder ersetzen? Frage dich bei jeder Zeile, ob der alte Wert der Variablen noch gebraucht wird.",
+        "`x += 4` ist genau dasselbe wie `x = x + 4` – nur kürzer.",
+        "Nur an genau einer Stelle wird der alte Wert *nicht* gebraucht."
+      ],
+      "pitfalls": [
+        "In Lücke 4 `+=` schreiben – dann wird die Rundensumme nie zurückgesetzt.",
+        "In Lücke 3 `=` schreiben – funktioniert nur in der allerersten Runde.",
+        "`=+` statt `+=` tippen: `x =+ 4` ist eine ganz normale Zuweisung von `+4` und überschreibt x!"
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Augmented assignment: 'Alle obigen Operatoren können mit nachfolgendem = verwendet werden'"
+        },
+        {
+          "file": "zusammenfassung.ipynb",
+          "page": 3,
+          "label": "a += 1 in der while-Schleife"
+        }
+      ],
+      "tags": [
+        "augmented-assignment",
+        "zuweisung",
+        "operatoren"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-010"
+    },
+    {
+      "type": "fill-gaps",
+      "difficulty": 3,
+      "points": 4,
+      "examStyle": true,
+      "title": "Fläche eines Kreises berechnen",
+      "prompt": "Schreiben Sie ein Programm, das den Benutzer nach einem Radius fragt und den Flächeninhalt des zugehörigen Kreises ausgibt.\n\nFüllen Sie dazu die drei Lücken. Der Radius darf auch eine Kommazahl sein (z.B. `2.5`).",
+      "code": "pi = 3.141592\n\nradius = ## Lücke 1 ##(input(\"Radius? \"))\nflaeche = ## Lücke 2 ##\nprint(\"Die Fläche des Kreises ist \" + ## Lücke 3 ## + \" Quadratmeter.\")",
+      "gaps": [
+        {
+          "id": 1,
+          "accept": [
+            "float"
+          ],
+          "explanation": "`input` liefert **immer** einen String. Da der Radius auch Nachkommastellen haben darf, muss mit `float(...)` umgewandelt werden – `int(...)` würde bei der Eingabe `2.5` sogar einen ValueError werfen."
+        },
+        {
+          "id": 2,
+          "accept": [
+            "radius * radius * pi",
+            "pi * radius * radius",
+            "radius ** 2 * pi",
+            "pi * radius ** 2",
+            "radius * pi * radius"
+          ],
+          "explanation": "Die Kreisfläche ist π·r², also `radius * radius * pi` oder gleichwertig `pi * radius ** 2`."
+        },
+        {
+          "id": 3,
+          "accept": [
+            "str(flaeche)"
+          ],
+          "explanation": "Mit `+` lassen sich nur Strings verketten. Die Zahl `flaeche` muss deshalb mit `str(...)` in einen String umgewandelt werden, sonst gibt es einen TypeError."
+        }
+      ],
+      "solution": "pi = 3.141592\n\nradius = float(input(\"Radius? \"))\nflaeche = radius * radius * pi\nprint(\"Die Fläche des Kreises ist \" + str(flaeche) + \" Quadratmeter.\")",
+      "explanation": "Diese Aufgabe ist die Standard-Einstiegsaufgabe des Dozenten und verbindet die drei Bausteine, die in fast jedem Konsolenprogramm vorkommen: **einlesen, umwandeln, rechnen, ausgeben**. Der wichtigste Punkt ist die Umwandlung: `input` gibt immer einen `str` zurück, mit dem man nicht rechnen kann. `float(...)` ist hier `int(...)` vorzuziehen, weil ein Radius eine Kommazahl sein darf – `int(\"2.5\")` würde nicht etwa abrunden, sondern einen `ValueError` werfen. Beim Ausgeben mit `+` gilt die Umkehrung: `+` verkettet nur Strings, also muss die berechnete Zahl mit `str(...)` zurückverwandelt werden. Alternativ hätte man `print(\"...\", flaeche, \"...\")` mit Kommas oder einen f-string schreiben können – dann wäre `str` nicht nötig. Merkregel: **Rein mit `float()`, raus mit `str()`.**",
+      "hints": [
+        "Womit muss der String, den `input` liefert, in eine Zahl verwandelt werden, wenn Nachkommastellen erlaubt sind?",
+        "Die Kreisfläche ist π mal Radius zum Quadrat – nutze die schon definierte Variable `pi`.",
+        "In der letzten Zeile wird mit `+` verkettet. Welche Typen darf `+` zusammenfügen?"
+      ],
+      "pitfalls": [
+        "`int` statt `float` in Lücke 1 – scheitert bei der Eingabe `2.5` mit einem ValueError.",
+        "In Lücke 3 einfach `flaeche` schreiben – `str + float` ist ein TypeError.",
+        "Den Radius mit `2 * pi * radius` verwechseln – das ist der Umfang, nicht die Fläche."
+      ],
+      "sources": [
+        {
+          "file": "end_summary_python_26.pdf",
+          "page": 5,
+          "label": "'Schreiben sie ein Programm, das den Benutzer nach einem Radius fragt und den Flächeninhalt ausgibt'"
+        },
+        {
+          "file": "zusammenfassung.ipynb",
+          "page": 2,
+          "label": "Musterlösung Kreisfläche mit float(input(...))"
+        }
+      ],
+      "tags": [
+        "input",
+        "typumwandlung",
+        "float",
+        "str",
+        "print"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-011"
+    },
+    {
+      "type": "find-errors",
+      "difficulty": 3,
+      "points": 4,
+      "examStyle": true,
+      "title": "Fehlersuche: Summe zweier Eingaben",
+      "prompt": "Ein Kommilitone hat folgendes Programm geschrieben. Es soll zwei eingegebene ganze Zahlen addieren und das Ergebnis ausgeben – tut es aber nicht.\n\nIn welchen **3** Zeilen befinden sich Fehler? Benennen Sie jeden Fehler und geben Sie die Korrektur an.",
+      "code": "Zahl1 = input(\"Erste Zahl: \")\nzahl2 = input(\"Zweite Zahl: \")\nsumme = zahl1 + zahl2\nprint(\"Die Summe ist \" + summe)",
+      "errors": [
+        {
+          "line": 1,
+          "wrong": "Zahl1 = input(\"Erste Zahl: \")",
+          "fix": "zahl1 = input(\"Erste Zahl: \")",
+          "why": "Python ist case-sensitive: `Zahl1` und `zahl1` sind zwei verschiedene Variablen. In Zeile 3 wird `zahl1` gelesen, dem nie etwas zugewiesen wurde → NameError."
+        },
+        {
+          "line": 3,
+          "wrong": "summe = zahl1 + zahl2",
+          "fix": "summe = int(zahl1) + int(zahl2)",
+          "why": "`input` liefert immer einen `str`. `+` verkettet zwei Strings, statt zu addieren: aus \"2\" und \"3\" würde \"23\". Es muss vorher mit `int(...)` (oder `float(...)`) umgewandelt werden."
+        },
+        {
+          "line": 4,
+          "wrong": "print(\"Die Summe ist \" + summe)",
+          "fix": "print(\"Die Summe ist \" + str(summe))",
+          "why": "Nach der Korrektur aus Zeile 3 ist `summe` ein `int`. `str + int` ist ein TypeError – die Zahl muss mit `str(...)` umgewandelt werden (alternativ: `print(\"Die Summe ist\", summe)`)."
+        }
+      ],
+      "solution": "zahl1 = input(\"Erste Zahl: \")\nzahl2 = input(\"Zweite Zahl: \")\nsumme = int(zahl1) + int(zahl2)\nprint(\"Die Summe ist \" + str(summe))",
+      "explanation": "Drei klassische Anfängerfehler auf vier Zeilen. **(1) Case-Sensitivity:** Python (wie Java) unterscheidet Groß- und Kleinschreibung. `Zahl1` ist eine andere Variable als `zahl1`; der Zugriff auf die nie zugewiesene `zahl1` bricht mit `NameError` ab. Die Konvention des Dozenten lautet: nur Kleinbuchstaben, Wörter mit Unterstrich trennen. **(2) Fehlende Umwandlung:** `input` liefert immer einen String. Das Tückische daran ist, dass `\"2\" + \"3\"` **keinen Fehler** wirft, sondern klaglos `\"23\"` liefert – das Programm rechnet also still falsch. **(3) Verkettung mit einer Zahl:** In die andere Richtung ist Python streng: `\"Die Summe ist \" + 5` ist ein `TypeError`, weil `+` entweder zwei Strings oder zwei Zahlen verlangt. Erst `str(summe)` (oder ein f-string bzw. `print(..., summe)`) löst das. Merkregel: **An der Eingabe umwandeln, an der Ausgabe zurückwandeln – und Groß-/Kleinschreibung zählt.**",
+      "hints": [
+        "Vergleiche die Variablennamen der Zeilen 1 und 3 Buchstabe für Buchstabe.",
+        "Welchen Typ haben `zahl1` und `zahl2` nach dem Einlesen? Was macht `+` mit diesem Typ?",
+        "Wenn `summe` erst einmal eine Zahl ist – darf man sie dann direkt mit `+` an einen String hängen?"
+      ],
+      "pitfalls": [
+        "Nur die fehlende Umwandlung finden und den Namensfehler übersehen.",
+        "Zeile 4 für korrekt halten, weil sie im *ursprünglichen* (fehlerhaften) Programm mit Strings noch funktioniert hätte."
+      ],
+      "sources": [
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 18,
+          "label": "Python und Java sind case-sensitive"
+        },
+        {
+          "file": "pythonvorlesung_02.ipynb",
+          "page": 17,
+          "label": "Summe zweier Eingaben mit int(zahl1)+int(zahl2)"
+        }
+      ],
+      "tags": [
+        "fehlersuche",
+        "input",
+        "case-sensitivity",
+        "typumwandlung"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-012"
+    },
+    {
+      "type": "fill-gaps",
+      "difficulty": 3,
+      "points": 4,
+      "examStyle": true,
+      "title": "Stunden in Tage und Stunden umrechnen",
+      "prompt": "Der Benutzer gibt eine Anzahl von Stunden ein. Das Programm soll ausgeben, wie vielen ganzen Tagen und wie vielen übrigen Stunden das entspricht.\n\nBei der Eingabe `50` soll erscheinen: `Dies entspricht 2 Tagen und 2 Stunden.`\n\nFüllen Sie die drei Lücken.",
+      "code": "eingabe = input(\"Wie viele Stunden? \")\nstunden = ## Lücke 1 ##\ntage = ## Lücke 2 ##\nrest = ## Lücke 3 ##\nprint(\"Dies entspricht \" + str(tage) + \" Tagen und \" + str(rest) + \" Stunden.\")",
+      "gaps": [
+        {
+          "id": 1,
+          "accept": [
+            "int(eingabe)"
+          ],
+          "explanation": "`input` liefert einen String; um damit zu rechnen, muss er in eine ganze Zahl umgewandelt werden."
+        },
+        {
+          "id": 2,
+          "accept": [
+            "stunden // 24"
+          ],
+          "explanation": "Die Anzahl **ganzer** Tage ist die ganzzahlige Division durch 24: `50 // 24` → `2`. Mit `/` käme `2.0833...` heraus."
+        },
+        {
+          "id": 3,
+          "accept": [
+            "stunden % 24"
+          ],
+          "explanation": "Die übrigen Stunden sind der Rest der Division: `50 % 24` → `2`."
+        }
+      ],
+      "solution": "eingabe = input(\"Wie viele Stunden? \")\nstunden = int(eingabe)\ntage = stunden // 24\nrest = stunden % 24\nprint(\"Dies entspricht \" + str(tage) + \" Tagen und \" + str(rest) + \" Stunden.\")",
+      "explanation": "`//` und `%` sind das Standard-Paar für jede Umrechnung in gemischte Einheiten – Tage/Stunden, Stunden/Minuten, Euro/Cent, Meter/Zentimeter. `//` liefert, wie oft die Einheit vollständig hineinpasst, `%` den Rest. Es gilt immer `stunden == tage * 24 + rest`. Wer in Lücke 2 `/` statt `//` schreibt, bekommt `2.0833333333333335` Tage – syntaktisch korrekt, inhaltlich Unsinn. Wer die Umwandlung in Lücke 1 vergisst, bekommt sofort einen `TypeError`, weil `//` zwischen `str` und `int` nicht definiert ist. In der Ausgabe müssen die Zahlen mit `str(...)` zurückverwandelt werden, weil `+` nur Strings verkettet; mit einem f-string (`f\"Dies entspricht {tage} Tagen ...\"`) ginge es ohne. Merkregel: **`//` zählt die vollen Einheiten, `%` sammelt den Rest ein.**",
+      "hints": [
+        "Zuerst muss aus dem eingelesenen Text eine ganze Zahl werden.",
+        "Wie oft passen 24 Stunden vollständig in die eingegebene Zahl? Welcher Operator liefert genau das?",
+        "Der Überrest nach der ganzzahligen Division hat einen eigenen Operator."
+      ],
+      "pitfalls": [
+        "`/` statt `//` – liefert eine Kommazahl statt ganzer Tage.",
+        "`int(...)` vergessen – `//` funktioniert nicht auf Strings.",
+        "`tage` und `rest` vertauschen."
+      ],
+      "sources": [
+        {
+          "file": "pythonvorlesung_02.ipynb",
+          "page": 25,
+          "label": "Aufgabe: 'Der Benutzer gibt eine Zahl in Stunden ein ... Dies entspricht ??? Tagen und ??? Stunden.'"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Operatoren // und %"
+        }
+      ],
+      "tags": [
+        "operatoren",
+        "floor-division",
+        "modulo",
+        "input",
+        "typumwandlung"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-013"
+    },
+    {
+      "type": "code",
+      "difficulty": 3,
+      "points": 4,
+      "examStyle": true,
+      "title": "Trinkgeld berechnen",
+      "prompt": "Schreiben Sie eine Funktion `trinkgeld_und_gesamt(rechnung, prozent)`.\n\n`rechnung` und `prozent` sind die **Zeichenketten**, die von der Benutzereingabe kommen (z.B. `\"45.50\"` und `\"10\"`). Die Funktion soll ein Tupel `(trinkgeld, gesamtbetrag)` zurückgeben; beide Werte auf 2 Nachkommastellen gerundet.\n\nBeispiel: `trinkgeld_und_gesamt(\"45.50\", \"10\")` → `(4.55, 50.05)`",
+      "starterCode": "def trinkgeld_und_gesamt(rechnung, prozent):\n    \"\"\"\n    rechnung: Rechnungsbetrag als Zeichenkette, z.B. \"45.50\"\n    prozent:  gewünschter Trinkgeld-Prozentsatz als Zeichenkette, z.B. \"10\"\n    Rueckgabe: Tupel (trinkgeld, gesamtbetrag), jeweils auf 2 Nachkommastellen gerundet\n    \"\"\"\n    # Ihr Code hier\n",
+      "solution": "def trinkgeld_und_gesamt(rechnung, prozent):\n    betrag = float(rechnung)\n    anteil = float(prozent)\n    trinkgeld = round(betrag * anteil / 100, 2)\n    gesamt = round(betrag + trinkgeld, 2)\n    return (trinkgeld, gesamt)\n",
+      "tests": [
+        {
+          "name": "Beispiel aus der Aufgabe",
+          "call": "trinkgeld_und_gesamt(\"45.50\", \"10\")",
+          "expected": "(4.55, 50.05)"
+        },
+        {
+          "name": "runde Beträge",
+          "call": "trinkgeld_und_gesamt(\"80\", \"15\")",
+          "expected": "(12.0, 92.0)"
+        },
+        {
+          "name": "kein Trinkgeld",
+          "call": "trinkgeld_und_gesamt(\"20.00\", \"0\")",
+          "expected": "(0.0, 20.0)"
+        },
+        {
+          "name": "kleiner Betrag, krummer Prozentsatz",
+          "call": "trinkgeld_und_gesamt(\"10\", \"7.5\")",
+          "expected": "(0.75, 10.75)"
+        }
+      ],
+      "required": [
+        "float("
+      ],
+      "forbidden": [
+        "eval("
+      ],
+      "explanation": "Die Aufgabe ist die Funktionsvariante der Trinkgeld-Aufgabe aus den Übungsaufgaben zur 0. Vorlesung. Der Kern ist die **Typumwandlung**: Was aus der Benutzereingabe kommt, ist immer ein `str`. Mit `float(...)` (nicht `int(...)`, denn `\"45.50\"` hat Nachkommastellen!) wird daraus eine Zahl, mit der man rechnen kann. Danach ist es reine Arithmetik: Trinkgeld = Betrag mal Prozentsatz geteilt durch 100. `round(x, 2)` wird gebraucht, weil Float-Rechnungen sonst Werte wie `10.750000000000002` liefern können – genau die Rundungsfehler, vor denen die Vorlesung warnt. Wichtig ist, den **Gesamtbetrag aus dem bereits gerundeten Trinkgeld** zu bilden, damit die beiden Rückgabewerte zueinander passen. `return (a, b)` gibt ein Tupel zurück – die Klammern dürften sogar weggelassen werden. Merkregel: **Erst umwandeln, dann rechnen, zuletzt runden.**",
+      "hints": [
+        "Womit machst du aus `\"45.50\"` eine Zahl, mit der man multiplizieren kann?",
+        "Prozent heißt 'von hundert' – wie kommst du von 10 auf den Faktor?",
+        "Runde das Trinkgeld zuerst und addiere es dann zum Betrag, damit beide Rückgabewerte zusammenpassen."
+      ],
+      "pitfalls": [
+        "`int(rechnung)` benutzen – das wirft bei `\"45.50\"` einen ValueError.",
+        "Das Ergebnis mit `print` ausgeben statt mit `return` zurückzugeben.",
+        "Nicht runden – dann scheitert der Vergleich an Float-Rundungsfehlern."
+      ],
+      "sources": [
+        {
+          "file": "Beispielaufgaben_VL0_undVL1.pdf",
+          "page": 1,
+          "label": "Aufgabe 2: Trinkgeld berechnen (input, float, print/format)"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 9,
+          "label": "Umwandeln von Typen: int, float, complex"
+        }
+      ],
+      "tags": [
+        "typumwandlung",
+        "float",
+        "funktion",
+        "rechnen",
+        "input"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-014"
+    },
+    {
+      "type": "code",
+      "difficulty": 3,
+      "points": 4,
+      "examStyle": true,
+      "title": "Zeitdifferenz in Minuten",
+      "prompt": "Zwei Uhrzeiten sind als **ganze Zahlen** im Format `hhmm` gegeben, z.B. `830` für 08:30 und `1015` für 10:15.\n\nSchreiben Sie eine Funktion `dauer_in_minuten(start, ende)`, die die Dauer von `start` bis `ende` in Minuten als ganze Zahl zurückgibt. Sie dürfen annehmen, dass `ende` immer nach `start` liegt und beide am selben Tag sind.\n\nBeispiel: `dauer_in_minuten(830, 1015)` → `105`",
+      "constraints": [
+        "Keine Umwandlung in Strings und kein Slicing – rechnen Sie ausschließlich mit // und %."
+      ],
+      "starterCode": "def dauer_in_minuten(start, ende):\n    \"\"\"\n    start, ende: Uhrzeiten als ganze Zahlen im Format hhmm (z.B. 830, 1015)\n    Rueckgabe: Dauer in Minuten als int\n    \"\"\"\n    # Ihr Code hier\n",
+      "solution": "def dauer_in_minuten(start, ende):\n    start_minuten = (start // 100) * 60 + start % 100\n    ende_minuten = (ende // 100) * 60 + ende % 100\n    return ende_minuten - start_minuten\n",
+      "tests": [
+        {
+          "name": "Beispiel aus der Aufgabe",
+          "call": "dauer_in_minuten(830, 1015)",
+          "expected": "105"
+        },
+        {
+          "name": "volle Stunde",
+          "call": "dauer_in_minuten(900, 1000)",
+          "expected": "60"
+        },
+        {
+          "name": "kurz vor Mitternacht",
+          "call": "dauer_in_minuten(2300, 2359)",
+          "expected": "59"
+        },
+        {
+          "name": "Mitternacht als 0",
+          "call": "dauer_in_minuten(0, 1)",
+          "expected": "1"
+        },
+        {
+          "name": "über mehrere Stunden",
+          "call": "dauer_in_minuten(45, 1230)",
+          "expected": "705"
+        }
+      ],
+      "required": [
+        "//",
+        "%"
+      ],
+      "forbidden": [
+        "str(",
+        "input(",
+        "eval("
+      ],
+      "explanation": "Die Zahl `830` codiert zwei Informationen in einer: die Stunden in den 'oberen' Stellen und die Minuten in den letzten beiden. Genau dafür sind `//` und `%` gemacht: `830 // 100` → `8` (Stunden), `830 % 100` → `30` (Minuten). Man rechnet beide Zeitpunkte in *Minuten seit Mitternacht* um und bildet erst dann die Differenz – das ist der entscheidende Trick. Wer stattdessen `1015 - 830 = 185` rechnet, bekommt Unsinn, weil eine Stunde 60 und nicht 100 Minuten hat. Die Klammern in `(start // 100) * 60` sind hier zwar nicht nötig (`//` und `*` haben dieselbe Priorität und werden von links ausgewertet), machen die Absicht aber deutlich. Der Sonderfall `dauer_in_minuten(0, 1)` zeigt, dass die Formel auch für Mitternacht funktioniert: `0 // 100` ist `0` und `0 % 100` ist `0`. Merkregel: **Erst alles in die kleinste Einheit umrechnen, dann vergleichen.**",
+      "hints": [
+        "Wie bekommst du aus der Zahl `1015` die 10 heraus? Und wie die 15?",
+        "Rechne beide Uhrzeiten in 'Minuten seit 00:00' um, bevor du subtrahierst.",
+        "Eine Stunde hat 60 Minuten – die Stundenzahl muss also mit 60 multipliziert werden."
+      ],
+      "pitfalls": [
+        "Einfach `ende - start` rechnen – das ignoriert, dass hhmm keine Minutenzählung ist.",
+        "`/` statt `//` benutzen – das Ergebnis wäre ein float statt eines int.",
+        "`% 60` statt `% 100` – die letzten beiden *Dezimalstellen* holt man mit `% 100`."
+      ],
+      "sources": [
+        {
+          "file": "Beispielaufgaben_VL0_undVL1.pdf",
+          "page": 2,
+          "label": "Aufgabe 4: Zeitdifferenz in Minuten berechnen"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Operatoren // und %"
+        }
+      ],
+      "tags": [
+        "operatoren",
+        "floor-division",
+        "modulo",
+        "funktion"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-015"
+    },
+    {
+      "type": "multi-mc",
+      "difficulty": 3,
+      "points": 3,
+      "examStyle": false,
+      "title": "Aussagen über Eingabe und Typumwandlung",
+      "prompt": "Welche der folgenden Aussagen sind **korrekt**? (Mehrfachauswahl)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "`input()` liefert immer einen Wert vom Typ `str` – auch wenn der Benutzer `42` eintippt.",
+          "correct": true,
+          "why": "Genau so ist es. Der Rückgabetyp von `input` hängt nicht davon ab, was eingetippt wurde."
+        },
+        {
+          "id": "b",
+          "text": "`int(\"3.7\")` liefert `3`.",
+          "correct": false,
+          "why": "Falsch: `int` akzeptiert als String nur eine *ganze* Zahl. `int(\"3.7\")` wirft einen ValueError. Erst `int(float(\"3.7\"))` ergibt 3."
+        },
+        {
+          "id": "c",
+          "text": "`float(\"3,7\")` liefert `3.7`.",
+          "correct": false,
+          "why": "Falsch: Python erwartet den Dezimal**punkt**. Ein Komma führt zu einem ValueError."
+        },
+        {
+          "id": "d",
+          "text": "`int(3.7)` liefert `3`.",
+          "correct": true,
+          "why": "Richtig: Auf einen float angewendet schneidet `int` den Nachkommateil ab (in Richtung Null)."
+        },
+        {
+          "id": "e",
+          "text": "`str(42) + \"!\"` liefert `\"42!\"`.",
+          "correct": true,
+          "why": "Richtig: `str(42)` macht aus der Zahl den String \"42\", und `+` verkettet zwei Strings."
+        },
+        {
+          "id": "f",
+          "text": "`42 + \"1\"` liefert `\"421\"`.",
+          "correct": false,
+          "why": "Falsch: `int + str` ist ein TypeError. Python wandelt nicht automatisch um – anders als z.B. Java bei der String-Konkatenation."
+        }
+      ],
+      "solution": "Korrekt sind a, d und e.",
+      "explanation": "Diese Aufgabe sammelt die Stolperstellen rund um Typumwandlungen. Erstens: `input` liefert **immer** einen String – das ist die häufigste Fehlerquelle in Konsolenprogrammen. Zweitens ist `int(...)` zweigesichtig: Auf einen **float** angewendet schneidet es ab (`int(3.7)` → `3`), auf einen **String** angewendet verlangt es dagegen eine saubere ganze Zahl – `int(\"3.7\")` ist ein ValueError. Der Umweg lautet `int(float(\"3.7\"))`. Drittens kennt Python nur den Dezimalpunkt; `\"3,7\"` ist keine Zahl. Viertens ist Python bei `+` streng typisiert: Zwei Strings werden verkettet, zwei Zahlen addiert, eine Mischung ist ein TypeError. Deshalb braucht man `str(...)` beim Ausgeben. Merkregel: **`int()` schneidet Kommas ab, aber verträgt sie nicht im Text.**",
+      "hints": [
+        "Zwei der Aussagen behaupten, eine Umwandlung *aus einem String heraus* würde stillschweigend runden oder Kommata verstehen.",
+        "Unterscheide streng: `int(3.7)` (float als Argument) und `int(\"3.7\")` (String als Argument) verhalten sich verschieden.",
+        "Was macht `+`, wenn links eine Zahl und rechts ein String steht?"
+      ],
+      "pitfalls": [
+        "`int(\"3.7\")` für erlaubt halten, weil `int(3.7)` funktioniert.",
+        "Von Java gewohnt sein, dass `42 + \"1\"` automatisch zu einem String wird – in Python nicht."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 9,
+          "label": "Umwandeln von Typen (int, float, complex, auch aus Strings)"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 13,
+          "label": "Klausurrelevant: Andere Datentypen in string umwandeln str"
+        }
+      ],
+      "tags": [
+        "typumwandlung",
+        "input",
+        "int",
+        "float",
+        "str"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-016"
+    },
+    {
+      "type": "short-answer",
+      "difficulty": 3,
+      "points": 3,
+      "examStyle": true,
+      "title": "Ausdruck (expression) oder Anweisung (statement)?",
+      "prompt": "Erklären Sie in ein bis zwei Sätzen den Unterschied zwischen einem **Ausdruck** (expression) und einer **Anweisung** (statement).\n\nOrdnen Sie anschließend jede der folgenden Zeilen zu und begründen Sie kurz:\n\n1. `3 + 4 * 2`\n2. `x = 3 + 4 * 2`\n3. `len(\"hallo\")`\n4. `x += 1`\n5. `print(\"hallo\")`",
+      "solution": "**Musterlösung**\n\nEin **Ausdruck** ist eine Anweisung, die einen **Wert liefert** (z.B. der arithmetische Ausdruck `2+5`). Eine **Anweisung** ist allgemein eine Instruktion, die der Python-Interpreter ausführen kann – z.B. ein Funktionsaufruf oder die Zuweisung eines Werts an eine Variable. Ausdrücke sind damit ein Spezialfall von Anweisungen: Jeder Ausdruck liefert einen Wert, aber nicht jede Anweisung tut das.\n\n1. `3 + 4 * 2` – **Ausdruck**: liefert den Wert 11 (Punkt- vor Strichrechnung).\n2. `x = 3 + 4 * 2` – **Anweisung (Zuweisung)**: rechts steht ein Ausdruck, die Zuweisung selbst liefert keinen Wert und darf deshalb nicht als Teil eines anderen Ausdrucks verwendet werden.\n3. `len(\"hallo\")` – **Ausdruck**: der Funktionsaufruf liefert den Wert 5.\n4. `x += 1` – **Anweisung**: eine (zusammengesetzte) Zuweisung, Kurzform von `x = x + 1`, liefert keinen Wert.\n5. `print(\"hallo\")` – **Ausdruck** (Funktionsaufruf, Rückgabewert `None`), der als eigene Zeile als Anweisung ausgeführt wird. Der eigentliche Zweck ist der Nebeneffekt der Ausgabe.\n\n**Bewertungsrubrik (3 P)**\n- 1 P: Definition – Ausdruck liefert einen Wert, Anweisung ist eine ausführbare Instruktion.\n- 1 P: 1, 3 als Ausdruck **und** 2, 4 als Anweisung (Zuweisung) korrekt zugeordnet.\n- 1 P: 5 sinnvoll eingeordnet (Funktionsaufruf → Ausdruck mit Rückgabe `None`, wird hier als Anweisung wegen des Nebeneffekts genutzt).",
+      "explanation": "Der Dozent definiert es auf der Folie 'Statements and Expressions' so: *'Ein Ausdruck (expression) ist eine Anweisung, die einen Wert liefert'* und *'Eine Anweisung ist eine Instruktion die vom Python-Interpreter ausgeführt werden kann, z.B. der Aufruf einer Funktion oder die Zuweisung eines Werts zu einer Variable.'* Ausdrücke sind also die Teilmenge der Anweisungen mit Rückgabewert. Der praktisch wichtigste Unterschied: Weil die **Zuweisung kein Ausdruck** ist, kann man sie nicht schachteln – `x = (y = 5)` ist in Python ein SyntaxError (in C oder Java ginge es). Die interessanteste Zeile ist `print(\"hallo\")`: Der Aufruf *ist* ein Ausdruck, sein Wert ist aber `None`; sein Sinn liegt im Nebeneffekt (Ausgabe). Genau diese Unterscheidung wird später bei pure functions und Nebeneffekten wieder gebraucht. Merkregel: **Kann ich es rechts vom `=` schreiben? Dann ist es ein Ausdruck.**",
+      "hints": [
+        "Frage dich bei jeder Zeile: Könnte ich das Ganze rechts von einem `=` einsetzen, also `ergebnis = ...`?",
+        "Die Zuweisung selbst gehört zu den Anweisungen – sie liefert keinen Wert.",
+        "`print` gibt zwar etwas aus, aber was *liefert* der Aufruf als Wert zurück?"
+      ],
+      "pitfalls": [
+        "`print(\"hallo\")` für eine reine Anweisung ohne Rückgabewert halten – es liefert `None`.",
+        "`x += 1` für einen Ausdruck halten, weil dort gerechnet wird; entscheidend ist die Zuweisung."
+      ],
+      "sources": [
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 19,
+          "label": "Statements and Expressions"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Augmented assignment"
+        }
+      ],
+      "tags": [
+        "expression",
+        "statement",
+        "theorie",
+        "zuweisung"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-017"
+    },
+    {
+      "type": "short-answer",
+      "difficulty": 3,
+      "points": 3,
+      "examStyle": false,
+      "title": "Case-Sensitivity und Namenskonventionen",
+      "prompt": "Gegeben ist folgender Code:\n\n```python\nPunkte = 0\npunkte = 10\nPUNKTE = punkte + Punkte\nprint(punkte, Punkte, PUNKTE)\n```\n\na) Was gibt der `print`-Befehl aus?\nb) Begründen Sie Ihre Antwort mit einer Eigenschaft der Sprache Python.\nc) Welche Namenskonvention für Variablen empfiehlt die Vorlesung? Nennen Sie zwei gute und zwei schlechte Variablennamen und erklären Sie, warum obiger Code trotz korrekter Ausführung schlechter Stil ist.",
+      "solution": "**Musterlösung**\n\na) Die Ausgabe lautet: `10 0 10`\n\nb) Python ist **case-sensitive**: Groß- und Kleinschreibung spielt eine Rolle, `punkte`, `Punkte` und `PUNKTE` sind drei völlig verschiedene Variablen. `PUNKTE` erhält `10 + 0 = 10`. Der `print`-Befehl gibt sie in der Reihenfolge `punkte`, `Punkte`, `PUNKTE` aus, also `10 0 10`.\n\nc) Empfohlen wird: nur Kleinbuchstaben, Leerzeichen durch Unterstriche ersetzen, und vor allem **sinnvolle, sprechende Namen**.\n- Gute Namen: `first_name`, `number_of_people` (auch `punkte_spieler1`, `rundensumme`).\n- Schlechte Namen: `aA`, `Aaaa` (auch `aaAAaa`, `x1`).\nDer Code oben ist schlechter Stil, weil drei Variablen benutzt werden, die sich nur in der Groß-/Kleinschreibung unterscheiden. Er läuft zwar fehlerfrei, ist aber praktisch nicht lesbar und eine Einladung für Tippfehler, die zu einem NameError oder – schlimmer – zu stillen Logikfehlern führen.\n\n**Bewertungsrubrik (3 P)**\n- 1 P: Ausgabe `10 0 10` korrekt.\n- 1 P: Begründung mit Case-Sensitivity (drei verschiedene Variablen).\n- 1 P: Konvention (Kleinbuchstaben + Unterstriche, sprechende Namen) mit Beispielen und Stilkritik.",
+      "explanation": "Die Vorlesung hält auf der Variablen-Folie beides fest: *'Python und Java sind beide case-sensitive: Groß- und Kleinschreibung spielt eine Rolle. a und A können unterschiedliche Variablen sein (sollten sie aber nicht – das wäre kein guter Stil!)'* und *'Die übliche Konvention ist es nur Kleinbuchstaben zu verwenden und Leerzeichen durch Unterstriche zu ersetzen'*. Beim Ablesen der Ausgabe ist die Reihenfolge im `print` entscheidend, nicht die Reihenfolge der Zuweisungen – ein häufiger Flüchtigkeitsfehler. Auch wichtig: `print` trennt die drei Werte durch je ein Leerzeichen. In der Praxis ist Case-Sensitivity vor allem als Fehlerquelle relevant: Wer `Zahl1` zuweist und `zahl1` liest, bekommt einen `NameError` – Python legt keine Variable stillschweigend an. Merkregel: **Für Python sind `punkte` und `Punkte` so verschieden wie `apfel` und `birne`.**",
+      "hints": [
+        "Notiere in einer kleinen Tabelle, welchen Wert jede der drei Variablen nach Zeile 3 hat.",
+        "Achte auf die Reihenfolge der Argumente im `print`-Befehl – sie ist eine andere als die der Zuweisungen.",
+        "Die Konvention steht auf der Folie 'Variabeln' – Stichwort Kleinbuchstaben und Unterstriche."
+      ],
+      "pitfalls": [
+        "Die Werte in der Reihenfolge der Zuweisungen (`0 10 10`) statt in der Reihenfolge des `print` angeben.",
+        "Annehmen, Python fasse `punkte` und `Punkte` als dieselbe Variable auf."
+      ],
+      "sources": [
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 17,
+          "label": "Variabeln: Namenskonventionen, gute und schlechte Namen"
+        },
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 18,
+          "label": "Python und Java sind beide case-sensitive"
+        }
+      ],
+      "tags": [
+        "case-sensitivity",
+        "variablen",
+        "stil",
+        "print"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-018"
+    },
+    {
+      "type": "find-errors",
+      "difficulty": 3,
+      "points": 3,
+      "examStyle": true,
+      "title": "Fehlersuche: Paketpreis",
+      "prompt": "Das folgende Programm soll den Versandpreis eines 3,5 kg schweren Pakets bei einem Kilopreis von 2.99 Euro berechnen und ausgeben. Es lässt sich aber nicht ausführen.\n\nIn welchen **3** Zeilen befinden sich Fehler? Benennen Sie jeden Fehler und geben Sie die Korrektur an.",
+      "code": "// Preis pro Kilogramm in Euro\npreis_pro_kg = 2.99\n3.5 = gewicht\ngesamt = gewicht * preis_pro_kg\nprint \"Der Preis ist\", gesamt",
+      "errors": [
+        {
+          "line": 1,
+          "wrong": "// Preis pro Kilogramm in Euro",
+          "fix": "# Preis pro Kilogramm in Euro",
+          "why": "In Python leitet `#` einen Kommentar ein (alles dahinter wird vom Interpreter ignoriert). `//` ist kein Kommentarzeichen, sondern der Operator für die ganzzahlige Division → SyntaxError."
+        },
+        {
+          "line": 3,
+          "wrong": "3.5 = gewicht",
+          "fix": "gewicht = 3.5",
+          "why": "Der Zuweisungsoperator `=` ist gerichtet: Links muss der Variablenname stehen, rechts der Ausdruck, dessen Wert zugewiesen wird. Anders als das mathematische Gleichheitszeichen darf man die Seiten nicht tauschen → SyntaxError ('cannot assign to literal')."
+        },
+        {
+          "line": 5,
+          "wrong": "print \"Der Preis ist\", gesamt",
+          "fix": "print(\"Der Preis ist\", gesamt)",
+          "why": "In Python 3 ist `print` eine ganz normale Funktion; ihre Argumente müssen in Klammern stehen. Die klammerlose Schreibweise stammt aus Python 2 → SyntaxError."
+        }
+      ],
+      "solution": "# Preis pro Kilogramm in Euro\npreis_pro_kg = 2.99\ngewicht = 3.5\ngesamt = gewicht * preis_pro_kg\nprint(\"Der Preis ist\", gesamt)",
+      "explanation": "Drei Fehler, die je ein Grundkonzept betreffen. **Kommentare:** In Python beginnt ein Zeilenkommentar mit `#` – *'alles was hier steht wird vom Interpreter ignoriert'*. `//` wäre in Java richtig, in Python ist es der Operator für die ganzzahlige Division und führt hier zu einem SyntaxError. (Für Blockkommentare kann man alternativ einen String in dreifachen Anführungszeichen schreiben, der keiner Variablen zugewiesen wird.) **Zuweisungsrichtung:** `=` ist kein mathematisches Gleichheitszeichen, sondern gerichtet – rechts wird ausgewertet, links gespeichert. Auf der linken Seite muss deshalb ein Variablenname stehen; `3.5 = gewicht` ist ungültig. **print als Funktion:** Seit Python 3 braucht `print` Klammern. Das korrigierte Programm gibt übrigens `Der Preis ist 10.465` aus – nicht `10.47`. Das liegt daran, dass `print` den Wert ungeründet anzeigt; für eine Preisausgabe würde man `round(gesamt, 2)` ergänzen. Merkregel: **`#` kommentiert, `//` teilt, `=` zeigt nach links.**",
+      "hints": [
+        "Welches Zeichen leitet in Python einen Kommentar ein? Vergleiche mit anderen Sprachen, die du kennst.",
+        "Schau dir Zeile 3 an: Auf welcher Seite des `=` muss der Variablenname stehen?",
+        "Was hat sich beim `print`-Befehl zwischen Python 2 und Python 3 geändert?"
+      ],
+      "pitfalls": [
+        "`//` für einen Kommentar halten (Java-Gewohnheit).",
+        "Zeile 3 als korrekt ansehen, weil sie als mathematische Gleichung Sinn ergibt.",
+        "Zeile 4 für fehlerhaft halten – sie ist korrekt, sobald `gewicht` richtig zugewiesen wurde."
+      ],
+      "sources": [
+        {
+          "file": "2_functions_and_comments_26.pdf",
+          "page": 10,
+          "label": "Kommentare: '# alles was hier steht wird vom Interpreter ignoriert'"
+        },
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 19,
+          "label": "Der Operator = ordnet den Wert des rechts stehenden Ausdrucks der links stehenden Variable zu"
+        },
+        {
+          "file": "Beispielaufgaben_VL0_undVL1.pdf",
+          "page": 1,
+          "label": "Aufgabe 1: Paketpreis (2.99 Euro pro Kilogramm)"
+        }
+      ],
+      "tags": [
+        "fehlersuche",
+        "kommentare",
+        "zuweisung",
+        "print"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-019"
+    },
+    {
+      "type": "predict-output",
+      "difficulty": 4,
+      "points": 3,
+      "examStyle": true,
+      "title": "Typumwandlungen und gemischte Typen",
+      "prompt": "Was gibt der folgende Code auf der Kommandozeile aus?",
+      "code": "a = \"7\"\nb = 3\nprint(a * b)\nprint(int(a) * b)\nprint(int(\"42\") + int(3.99))\nprint(float(\"2.5\") + True)\nprint(str(2) + str(3))",
+      "expectedOutput": "777\n21\n45\n3.5\n23",
+      "solution": "777\n21\n45\n3.5\n23",
+      "explanation": "Fünf Zeilen, fünf verschiedene Fallen. **Zeile 3:** `\"7\" * 3` ist eine String-Wiederholung – `\"777\"`, keine Multiplikation. **Zeile 4:** Erst `int(a)` macht daraus die Zahl 7, `7 * 3` ist `21`. Genau dieser Unterschied ist der Grund, warum man Benutzereingaben umwandeln muss. **Zeile 5:** `int(\"42\")` → `42`; `int(3.99)` → `3` – `int` **rundet nicht**, es schneidet den Nachkommateil ab. Summe: `45`. **Zeile 6:** `float(\"2.5\")` → `2.5`; `True` ist in Python ein Spezialfall von `int` mit dem Wert 1, also `2.5 + 1 = 3.5`. **Zeile 7:** `str(2) + str(3)` verkettet zwei Strings zu `\"23\"` – die Zahlen werden **nicht** addiert. Merkregel: **`+` und `*` fragen zuerst nach dem Typ und erst dann nach dem Wert.**",
+      "hints": [
+        "Notiere für jede Zeile zuerst die Typen der Operanden, dann erst das Ergebnis.",
+        "`int(3.99)` – wird hier gerundet oder abgeschnitten?",
+        "Welchen Zahlenwert hat `True`, wenn man damit rechnet?"
+      ],
+      "pitfalls": [
+        "`int(3.99)` als `4` lesen – `int` schneidet ab, es rundet nicht.",
+        "`str(2) + str(3)` als `5` angeben.",
+        "Vergessen, dass `bool` in Python ein Untertyp von `int` ist (`True` → 1, `False` → 0)."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 9,
+          "label": "Umwandeln von Typen"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 11,
+          "label": "Datentyp Boolean"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 3,
+          "label": "Strings wiederholen durch Multiplikation"
+        }
+      ],
+      "tags": [
+        "typumwandlung",
+        "operatoren",
+        "bool",
+        "str",
+        "int"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-020"
+    },
+    {
+      "type": "mc",
+      "difficulty": 4,
+      "points": 2,
+      "examStyle": false,
+      "title": "Darf eine Zuweisung rechts stehen?",
+      "prompt": "Was passiert beim Ausführen dieses Codes?",
+      "code": "x = (y = 5)\nprint(x, y)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Es wird `5 5` ausgegeben.",
+          "correct": false,
+          "why": "Das wäre das Verhalten in C oder Java, wo eine Zuweisung selbst einen Wert liefert. In Python nicht."
+        },
+        {
+          "id": "b",
+          "text": "Es wird `None 5` ausgegeben.",
+          "correct": false,
+          "why": "Das setzt voraus, dass die Zuweisung ein Ausdruck mit Rückgabewert `None` wäre – sie ist überhaupt kein Ausdruck."
+        },
+        {
+          "id": "c",
+          "text": "Der Code lässt sich nicht ausführen: es gibt einen SyntaxError.",
+          "correct": true,
+          "why": "Richtig: Die Zuweisung ist in Python eine Anweisung (statement) und darf nicht als Teil eines Ausdrucks auftreten."
+        },
+        {
+          "id": "d",
+          "text": "Es wird `5 None` ausgegeben.",
+          "correct": false,
+          "why": "Auch hier: Es kommt gar nicht zur Ausführung, der Fehler tritt bereits beim Einlesen des Codes auf."
+        }
+      ],
+      "solution": "SyntaxError – der Code wird gar nicht erst ausgeführt.",
+      "explanation": "Diese Aufgabe prüft den Unterschied zwischen **Ausdruck** und **Anweisung** an einer konkreten Stelle. Ein Ausdruck liefert einen Wert und darf deshalb überall dort stehen, wo ein Wert erwartet wird – also auch rechts von einem `=`. Die Zuweisung selbst ist in Python aber eine **Anweisung** und liefert keinen Wert; `y = 5` in Klammern zu setzen macht daraus keinen Ausdruck. Python meldet den Fehler schon beim Übersetzen der Datei, also **bevor** irgendeine Zeile ausgeführt wird – deshalb erscheint auch keine Teil-Ausgabe. In C oder Java ist die Zuweisung dagegen ein Ausdruck, weshalb dort `x = (y = 5)` erlaubt ist; wer von dort kommt, tappt hier leicht hinein. Anmerkung: Seit Python 3.8 gibt es mit dem 'Walross-Operator' `:=` einen echten Zuweisungs*ausdruck* (`x = (y := 5)` funktioniert) – das ist aber ein anderes Symbol und nicht Stoff der Vorlesung. Merkregel: **In Python macht `=` etwas, es *ist* aber nichts.**",
+      "hints": [
+        "Überlege, was rechts von einem `=` stehen darf: nur etwas, das einen Wert liefert.",
+        "Ist die Zuweisung in Python ein Ausdruck oder eine Anweisung? Die Vorlesungsfolie 'Statements and Expressions' hilft.",
+        "Wenn ein Fehler schon beim Einlesen des Codes auftritt – wie viel der Ausgabe siehst du dann?"
+      ],
+      "pitfalls": [
+        "Von C/Java gewohnt sein, dass Zuweisungen einen Wert liefern.",
+        "Einen Laufzeitfehler (z.B. TypeError) statt eines SyntaxError vermuten – der Code wird gar nicht erst gestartet."
+      ],
+      "sources": [
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 19,
+          "label": "Statements and Expressions"
+        }
+      ],
+      "tags": [
+        "expression",
+        "statement",
+        "zuweisung",
+        "syntaxerror"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-021"
+    },
+    {
+      "type": "predict-output",
+      "difficulty": 4,
+      "points": 3,
+      "examStyle": false,
+      "title": "complex, bool und NoneType",
+      "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Achten Sie auf die Reihenfolge der Zeilen!",
+      "code": "z = complex(2, 3)\nprint(z, type(z))\nprint(z + 1)\nergebnis = print(\"Hallo\")\nprint(ergebnis, type(ergebnis))\nprint(type(True), True + True)",
+      "expectedOutput": "(2+3j) <class 'complex'>\n(3+3j)\nHallo\nNone <class 'NoneType'>\n<class 'bool'> 2",
+      "solution": "(2+3j) <class 'complex'>\n(3+3j)\nHallo\nNone <class 'NoneType'>\n<class 'bool'> 2",
+      "explanation": "Die Aufgabe führt die übrigen Basistypen vor. **complex:** `complex(2, 3)` erzeugt die komplexe Zahl 2+3i, die Python als `(2+3j)` ausgibt (in der Technik heißt die imaginäre Einheit `j`). Beim Addieren von 1 wird nur der Realteil verändert: `(3+3j)`. **NoneType:** Die Zeile `ergebnis = print(\"Hallo\")` ist der Kern der Aufgabe. Sie hat **zwei** Effekte: Erst wird `Hallo` ausgegeben (der Nebeneffekt), und der *Rückgabewert* von `print` – nämlich `None` – landet in `ergebnis`. Deshalb steht `Hallo` in der Ausgabe **vor** `None <class 'NoneType'>`. `None` ist der einzige Wert des Typs `NoneType` und wird oft zur Initialisierung benutzt. **bool:** `True` ist vom Typ `bool`, gleichzeitig ist `bool` ein Untertyp von `int`: `True + True` ergibt `2`. Merkregel: **`print` gibt aus, aber zurück gibt es `None`.**",
+      "hints": [
+        "Geh die Zeilen streng von oben nach unten durch – auch Zeile 4 erzeugt schon Ausgabe.",
+        "Was gibt der Funktionsaufruf `print(...)` eigentlich als Wert *zurück*?",
+        "Wie stellt Python eine komplexe Zahl dar – mit `i` oder mit `j`? Und mit oder ohne Klammern?"
+      ],
+      "pitfalls": [
+        "Die Zeile `ergebnis = print(\"Hallo\")` für wirkungslos halten und `Hallo` in der Ausgabe vergessen.",
+        "Annehmen, `ergebnis` enthalte den String `\"Hallo\"`.",
+        "`True + True` als `True` oder als Fehler ansehen statt als `2`."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 8,
+          "label": "Drei Arten von Zahlen: Integer, Floats, Komplexe Zahlen"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 11,
+          "label": "Zwei weitere Datentypen: Booleans und NoneType"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 13,
+          "label": "Klausurrelevant: Datentypen Boolean und Nonetype: True, False, None"
+        }
+      ],
+      "tags": [
+        "complex",
+        "nonetype",
+        "bool",
+        "print",
+        "typen"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-022"
+    },
+    {
+      "type": "find-errors",
+      "difficulty": 4,
+      "points": 4,
+      "examStyle": true,
+      "title": "Fehlersuche: Sekunden umrechnen",
+      "prompt": "Das folgende Programm soll 500 Sekunden in Minuten und Sekunden umrechnen und `Das sind 8 Minuten und 20 Sekunden.` ausgeben.\n\nIn welchen **3** Zeilen befinden sich Fehler? Benennen Sie jeden Fehler und geben Sie die Korrektur an.",
+      "code": "# Umrechnung: Sekunden -> Minuten und Sekunden\ngesamt_sekunden = 500\nminuten = gesamt_sekunden / 60\nsekunden = gesamt_sekunden mod 60\nprint(\"Das sind \" + minuten + \" Minuten und \" + sekunden + \" Sekunden.\")",
+      "errors": [
+        {
+          "line": 3,
+          "wrong": "minuten = gesamt_sekunden / 60",
+          "fix": "minuten = gesamt_sekunden // 60",
+          "why": "`/` liefert immer einen float: `500 / 60` ergibt `8.333333333333334`. Gesucht sind die **ganzen** Minuten, also die ganzzahlige Division `//` → `8`."
+        },
+        {
+          "line": 4,
+          "wrong": "sekunden = gesamt_sekunden mod 60",
+          "fix": "sekunden = gesamt_sekunden % 60",
+          "why": "Python kennt kein Schlüsselwort `mod`. Der Modulo-Operator (Rest der Division) heißt `%` → `500 % 60` ergibt `20`. Ohne Korrektur: SyntaxError."
+        },
+        {
+          "line": 5,
+          "wrong": "print(\"Das sind \" + minuten + \" Minuten und \" + sekunden + \" Sekunden.\")",
+          "fix": "print(\"Das sind \" + str(minuten) + \" Minuten und \" + str(sekunden) + \" Sekunden.\")",
+          "why": "`+` verkettet nur Strings miteinander. `str + int` ist ein TypeError – die Zahlen müssen mit `str(...)` umgewandelt werden (alternativ: f-string oder Kommas in `print`)."
+        }
+      ],
+      "solution": "# Umrechnung: Sekunden -> Minuten und Sekunden\ngesamt_sekunden = 500\nminuten = gesamt_sekunden // 60\nsekunden = gesamt_sekunden % 60\nprint(\"Das sind \" + str(minuten) + \" Minuten und \" + str(sekunden) + \" Sekunden.\")",
+      "expectedOutput": "Das sind 8 Minuten und 20 Sekunden.",
+      "explanation": "Die drei Fehler stehen für drei verschiedene Fehlerklassen. Zeile 4 ist ein **Syntaxfehler**: `mod` gibt es in Python nicht, der Interpreter kann die Zeile nicht einmal lesen – das Programm startet gar nicht. Zeile 5 wäre ein **Laufzeitfehler** (TypeError), der erst beim Ausführen auftritt. Zeile 3 ist der gefährlichste Fall: ein **Logikfehler**. `500 / 60` ist syntaktisch einwandfrei und wirft keinen Fehler, liefert aber `8.333333333333334` statt `8` – das Programm würde also klaglos Unsinn ausgeben. Die Kontrollrechnung `minuten * 60 + sekunden == gesamt_sekunden` (`8*60 + 20 = 500`) bestätigt die Korrektur. Wer statt `str(...)` lieber einen f-string schreibt (`print(f\"Das sind {minuten} Minuten und {sekunden} Sekunden.\")`), löst Zeile 5 ebenso richtig. Merkregel: **`//` und `%` gehören zusammen wie Quotient und Rest.**",
+      "hints": [
+        "Rechne `500 / 60` im Kopf aus – passt der Typ des Ergebnisses zu 'ganze Minuten'?",
+        "Wie heißt der Modulo-Operator in Python? (Er ist ein einzelnes Zeichen.)",
+        "In der letzten Zeile wird mit `+` verkettet – welche Typen dürfen dabei zusammentreffen?"
+      ],
+      "pitfalls": [
+        "Zeile 3 für korrekt halten, weil sie keinen Fehler wirft – sie liefert nur das falsche Ergebnis.",
+        "`mod` aus anderen Sprachen (Pascal, VBA) für gültiges Python halten.",
+        "Nur eine der beiden Zahlen in Zeile 5 mit `str(...)` umwandeln."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Operatortabelle mit // und %"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 13,
+          "label": "Klausurrelevant: Rechenoperationen + - * / // % **"
+        }
+      ],
+      "tags": [
+        "fehlersuche",
+        "operatoren",
+        "modulo",
+        "typumwandlung"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-023"
+    },
+    {
+      "type": "multi-mc",
+      "difficulty": 4,
+      "points": 3,
+      "examStyle": false,
+      "title": "Wahr oder falsch: Zahlen, Typen und Kommentare",
+      "prompt": "Welche der folgenden Aussagen sind **korrekt**? (Mehrfachauswahl)",
+      "choices": [
+        {
+          "id": "a",
+          "text": "Die ganzzahlige Division `//` rundet immer ab (in Richtung minus unendlich); deshalb ist `-4 // 3` gleich `-2`.",
+          "correct": true,
+          "why": "Genau dieses Beispiel steht auf der Folie: `-4/3 ≈ -1.33`, abgerundet `-2`."
+        },
+        {
+          "id": "b",
+          "text": "`int(-4 / 3)` und `-4 // 3` liefern denselben Wert.",
+          "correct": false,
+          "why": "Falsch: `int(-4/3)` = `int(-1.333)` = `-1` (abgeschnitten Richtung Null), `-4 // 3` = `-2` (abgerundet). Bei negativen Zahlen unterscheiden sich beide!"
+        },
+        {
+          "id": "c",
+          "text": "Ein Blockkommentar lässt sich in Python auch durch einen String in dreifachen Anführungszeichen realisieren, der keiner Variablen zugewiesen wird.",
+          "correct": true,
+          "why": "Richtig – so steht es auf der Kommentar-Folie: formal ist das ein String über mehrere Zeilen, der einfach nicht verwendet wird."
+        },
+        {
+          "id": "d",
+          "text": "Weil Python dynamisch typisiert ist, darf derselben Variablen nacheinander ein `int` und danach ein `str` zugewiesen werden.",
+          "correct": true,
+          "why": "Richtig: der Typ einer Variablen kann sich im Laufe des Programms ändern – anders als im statisch typisierten Java."
+        },
+        {
+          "id": "e",
+          "text": "`0.1 + 0.2` ergibt in Python exakt `0.3`, weil intern mit Dezimalbrüchen gerechnet wird.",
+          "correct": false,
+          "why": "Falsch: Floats folgen IEEE 754 und werden binär mit endlicher Präzision gespeichert. `0.1 + 0.2` ergibt `0.30000000000000004`."
+        },
+        {
+          "id": "f",
+          "text": "Den Typ eines Wertes fragt man in Python mit dem Befehl `typeof(...)` ab.",
+          "correct": false,
+          "why": "Falsch: Der Befehl heißt `type(...)`. `typeof` gibt es z.B. in JavaScript."
+        }
+      ],
+      "solution": "Korrekt sind a, c und d.",
+      "explanation": "Der schwierigste Punkt ist der Unterschied zwischen **Abschneiden** und **Abrunden**: `int(x)` schneidet den Nachkommateil ab, geht also in Richtung Null; `//` rundet ab, geht also in Richtung minus unendlich. Bei positiven Zahlen fällt das nie auf, bei negativen sofort: `int(-4/3)` ist `-1`, `-4 // 3` ist `-2`. Die übrigen Aussagen wiederholen Kernaussagen der Folien: dreifach-doppelte Anführungszeichen können als Blockkommentar dienen, Python ist dynamisch typisiert (Java statisch), Floats sind binäre Näherungen, und der Typ-Befehl heißt `type`. Merkregel: **`int()` geht zur Null, `//` geht nach unten.**",
+      "hints": [
+        "Prüfe Aussage b, indem du `-4/3` erst als Kommazahl aufschreibst und dann beide Umwandlungen anwendest.",
+        "Überlege bei c, was ein String bewirkt, der nirgendwo zugewiesen oder benutzt wird.",
+        "Zwei der Aussagen behaupten etwas über Befehle bzw. interne Zahldarstellung, das aus anderen Sprachen stammt."
+      ],
+      "pitfalls": [
+        "Aussage b für richtig halten, weil beide Varianten bei positiven Zahlen übereinstimmen.",
+        "`typeof` aus JavaScript übernehmen."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "'Die Ganzzahlige Division rundet immer ab, z.B. ist -4//3 = -2' und Float-Warnung"
+        },
+        {
+          "file": "2_functions_and_comments_26.pdf",
+          "page": 11,
+          "label": "Blockkommentare mit dreifachen Anführungszeichen"
+        },
+        {
+          "file": "1_installation_variablen_anweisungen_26.pdf",
+          "page": 18,
+          "label": "dynamisch vs. statisch typisiert"
+        }
+      ],
+      "tags": [
+        "floor-division",
+        "float",
+        "kommentare",
+        "dynamische-typisierung",
+        "type"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-024"
+    },
+    {
+      "type": "predict-output",
+      "difficulty": 5,
+      "points": 3,
+      "examStyle": false,
+      "title": "int() schneidet ab, // rundet ab",
+      "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Achten Sie genau auf Vorzeichen und Typen.",
+      "code": "x = -4.5\nprint(int(x))\nprint(x // 1)\nprint(int(-4 / 3))\nprint(-4 // 3)\nprint(int(\"  8  \") + int(2.999999))",
+      "expectedOutput": "-4\n-5.0\n-1\n-2\n10",
+      "solution": "-4\n-5.0\n-1\n-2\n10",
+      "explanation": "Diese Aufgabe stellt die beiden 'Ganzmach'-Operationen direkt nebeneinander. **`int(x)` schneidet ab**, und zwar in Richtung Null: `int(-4.5)` → `-4`. **`//` rundet ab**, und zwar in Richtung minus unendlich: `-4.5 // 1` → `-5.0`. Beachte außerdem den Typ: `//` zwischen einem float und einem int liefert wieder einen **float** – deshalb `-5.0` und nicht `-5`. Die Zeilen 4 und 5 zeigen denselben Unterschied noch einmal an einer Division: `-4 / 3` ist `-1.333...`, abgeschnitten `-1`; `-4 // 3` ist dagegen `-2` – genau das Beispiel von der Vorlesungsfolie. Bei positiven Zahlen wären beide Wege identisch, hier trennen sie sich. Die letzte Zeile zeigt zwei Kleinigkeiten: `int` toleriert umgebende Leerzeichen in einem String (`int(\"  8  \")` → `8`), und `int(2.999999)` ist `2` – auch knapp unter 3 wird nicht aufgerundet. Summe: `10`. Merkregel: **`int()` geht zur Null, `//` geht nach unten – und `//` mit einem float bleibt float.**",
+      "hints": [
+        "Zeichne -4.5 auf einem Zahlenstrahl ein. Wo landet 'Richtung Null', wo 'Richtung minus unendlich'?",
+        "`//` liefert nur dann einen int, wenn *beide* Operanden ints sind.",
+        "Wird bei `int(2.999999)` gerundet oder abgeschnitten?"
+      ],
+      "pitfalls": [
+        "`-4.5 // 1` als `-4.0` oder `-5` (ohne `.0`) angeben.",
+        "`int(-4/3)` und `-4//3` für gleichwertig halten.",
+        "`int(2.999999)` zu `3` aufrunden."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Ganzzahlige Division rundet immer ab (-4//3 = -2)"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 9,
+          "label": "Umwandeln von Typen mit int, float, complex"
+        }
+      ],
+      "tags": [
+        "floor-division",
+        "int",
+        "typumwandlung",
+        "negative-zahlen",
+        "float"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-025"
+    },
+    {
+      "type": "code",
+      "difficulty": 5,
+      "points": 6,
+      "examStyle": false,
+      "title": "Ein kleiner Taschenrechner",
+      "prompt": "Schreiben Sie eine Funktion `rechne(a, b, operator)`.\n\n`a` und `b` sind Zahlen, `operator` ist einer der Strings `\"+\"`, `\"-\"`, `\"*\"`, `\"/\"`, `\"//\"`, `\"%\"` oder `\"**\"`. Die Funktion gibt das Ergebnis der entsprechenden Rechnung zurück.\n\nSonderfälle: Ist der Operator unbekannt, oder würde die Rechnung eine Division durch 0 erfordern, soll `None` zurückgegeben werden (das Programm darf also nicht abstürzen).\n\nBeispiele: `rechne(3, 2, \"/\")` → `1.5`, `rechne(-4, 3, \"//\")` → `-2`, `rechne(7, 0, \"%\")` → `None`",
+      "constraints": [
+        "Kein `eval` und kein `exec`, keine zusätzlichen Module importieren.",
+        "Denken Sie daran, dass nicht nur `/`, sondern auch `//` und `%` bei 0 abstürzen."
+      ],
+      "starterCode": "def rechne(a, b, operator):\n    \"\"\"\n    a, b: Zahlen\n    operator: einer der Strings \"+\", \"-\", \"*\", \"/\", \"//\", \"%\", \"**\"\n    Rueckgabe: Ergebnis der Rechnung, oder None bei unbekanntem Operator\n               bzw. bei einer Division durch 0\n    \"\"\"\n    # Ihr Code hier\n",
+      "solution": "def rechne(a, b, operator):\n    if b == 0 and (operator == \"/\" or operator == \"//\" or operator == \"%\"):\n        return None\n    if operator == \"+\":\n        return a + b\n    elif operator == \"-\":\n        return a - b\n    elif operator == \"*\":\n        return a * b\n    elif operator == \"/\":\n        return a / b\n    elif operator == \"//\":\n        return a // b\n    elif operator == \"%\":\n        return a % b\n    elif operator == \"**\":\n        return a ** b\n    else:\n        return None\n",
+      "tests": [
+        {
+          "name": "Addition",
+          "call": "rechne(3, 2, \"+\")",
+          "expected": "5"
+        },
+        {
+          "name": "Subtraktion",
+          "call": "rechne(3, 2, \"-\")",
+          "expected": "1"
+        },
+        {
+          "name": "Multiplikation",
+          "call": "rechne(3, 2, \"*\")",
+          "expected": "6"
+        },
+        {
+          "name": "Division liefert float",
+          "call": "rechne(3, 2, \"/\")",
+          "expected": "1.5"
+        },
+        {
+          "name": "Ganzzahlige Division",
+          "call": "rechne(3, 2, \"//\")",
+          "expected": "1"
+        },
+        {
+          "name": "// rundet ab, auch negativ",
+          "call": "rechne(-4, 3, \"//\")",
+          "expected": "-2"
+        },
+        {
+          "name": "Modulo",
+          "call": "rechne(5, 3, \"%\")",
+          "expected": "2"
+        },
+        {
+          "name": "Potenz",
+          "call": "rechne(3, 2, \"**\")",
+          "expected": "9"
+        },
+        {
+          "name": "Division durch 0",
+          "call": "rechne(7, 0, \"/\")",
+          "expected": "None"
+        },
+        {
+          "name": "// durch 0",
+          "call": "rechne(7, 0, \"//\")",
+          "expected": "None"
+        },
+        {
+          "name": "% durch 0",
+          "call": "rechne(7, 0, \"%\")",
+          "expected": "None"
+        },
+        {
+          "name": "Multiplikation mit 0 ist erlaubt",
+          "call": "rechne(7, 0, \"*\")",
+          "expected": "0"
+        },
+        {
+          "name": "0 als Exponent ist erlaubt",
+          "call": "rechne(7, 0, \"**\")",
+          "expected": "1"
+        },
+        {
+          "name": "unbekannter Operator",
+          "call": "rechne(3, 2, \"?\")",
+          "expected": "None"
+        }
+      ],
+      "required": [
+        "//",
+        "%",
+        "**",
+        "None"
+      ],
+      "forbidden": [
+        "eval(",
+        "exec(",
+        "import "
+      ],
+      "explanation": "Die Aufgabe bündelt den gesamten Operator-Stoff und zwingt dazu, drei Feinheiten gleichzeitig im Blick zu behalten. **Erstens** müssen alle sieben Operatoren korrekt zugeordnet werden – insbesondere `/` (float) und `//` (abgerundet, auch bei negativen Zahlen: `-4 // 3` → `-2`). **Zweitens** ist die Sonderfallprüfung tückischer als sie aussieht: Fast alle prüfen `b == 0` nur für `/`. Aber auch `7 // 0` und `7 % 0` werfen einen `ZeroDivisionError`! Umgekehrt sind `7 * 0` und `7 ** 0` völlig unproblematisch – die Prüfung darf also nicht pauschal für jedes `b == 0` greifen. **Drittens** braucht es einen `else`-Zweig für unbekannte Operatoren, sonst liefert die Funktion implizit `None` – was hier zwar zufällig richtig wäre, aber nur aus Versehen; explizit ist besser. `None` ist der einzige Wert des Typs `NoneType` und dient hier als 'kein sinnvolles Ergebnis'. Merkregel: **Alles, was durch b teilt – `/`, `//`, `%` – stürzt bei b = 0 ab.**",
+      "hints": [
+        "Beginne mit einer `if`/`elif`-Kette über die sieben Operator-Strings.",
+        "Welche der sieben Rechnungen scheitern, wenn `b` gleich 0 ist? Es sind mehr als eine.",
+        "Fange die Sonderfälle **vor** der Rechnung ab, statt hinterher zu reparieren – und vergiss den `else`-Zweig für unbekannte Operatoren nicht."
+      ],
+      "pitfalls": [
+        "Nur `/` gegen 0 absichern und `//` sowie `%` vergessen – die stürzen genauso ab.",
+        "Pauschal bei `b == 0` `None` zurückgeben – dann liefert `rechne(7, 0, \"*\")` fälschlich `None` statt `0`.",
+        "Die Operator-Strings mit `=` statt `==` vergleichen."
+      ],
+      "sources": [
+        {
+          "file": "1_strings_26.pdf",
+          "page": 10,
+          "label": "Operationen mit Zahlen: + - * / // % **"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 11,
+          "label": "Datentyp NoneType mit dem einzigen Wert None"
+        },
+        {
+          "file": "1_strings_26.pdf",
+          "page": 13,
+          "label": "Klausurrelevant: Rechenoperationen und Datentypen Boolean/Nonetype"
+        }
+      ],
+      "tags": [
+        "operatoren",
+        "nonetype",
+        "funktion",
+        "fallunterscheidung",
+        "modulo"
+      ],
+      "lang": "python",
+      "topicId": "py-basics",
+      "id": "py-basics-026"
+    }
+  ]
+}

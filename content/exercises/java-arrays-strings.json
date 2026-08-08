@@ -1,0 +1,1667 @@
+{
+ "topicId": "java-arrays-strings",
+ "exercises": [
+  {
+   "id": "java-arrays-strings-001",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 1,
+   "examStyle": true,
+   "title": "Länge eines Arrays und Länge eines Strings",
+   "prompt": "Gegeben sind `double[] x = new double[3];` und `String motto = \"Wir lernen Java!\";`.\n\nWie ermittelt man korrekt die Anzahl der Array-Elemente **und** die Anzahl der Zeichen des Strings? Kreuzen Sie genau eine Antwort an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`x.length` und `motto.length()`",
+     "correct": true,
+     "why": "Richtig. Bei Arrays ist `length` ein **Attribut** (kein Klammernpaar), bei `String` ist `length()` eine **Methode** (mit Klammernpaar)."
+    },
+    {
+     "id": "b",
+     "text": "`x.length()` und `motto.length()`",
+     "correct": false,
+     "why": "Falsch. `x.length()` ist ein Compiler-Fehler: 'cannot find symbol: method length()' - ein Array hat keine Methode `length()`."
+    },
+    {
+     "id": "c",
+     "text": "`x.length` und `motto.length`",
+     "correct": false,
+     "why": "Falsch. `motto.length` ist ein Compiler-Fehler: 'cannot find symbol: variable length' - `String` hat kein öffentliches Attribut `length`."
+    },
+    {
+     "id": "d",
+     "text": "`x.size()` und `motto.size()`",
+     "correct": false,
+     "why": "Falsch. `size()` gibt es bei Java-Collections (`ArrayList` usw.), aber weder bei Arrays noch bei `String`."
+    }
+   ],
+   "solution": "a) `x.length` (Attribut, **ohne** Klammern) und `motto.length()` (Methode, **mit** Klammern)",
+   "explanation": "Das ist die meistgetestete Kleinigkeit des ganzen Kapitels, weil sie inkonsequent wirkt.\n\nEin Array ist in Java **kein normales Objekt mit Methoden**, sondern ein Sprachkonstrukt. Der Compiler spendiert ihm genau ein pseudo-Attribut: `length`. Das Skript schreibt dazu ausdrücklich: *\"Arrays besitzen ein 'Attribut' length: Anzahl der Elemente, x.length == 3\"* (S. 74). Weil es ein Attribut ist, steht **kein** Klammernpaar dahinter, und es ist `final` - man kann `x.length = 5;` nicht schreiben.\n\n`String` dagegen ist eine **ganz normale Klasse** aus `java.lang` mit privatem Innenleben. Auf die Länge kommt man nur über die öffentliche Methode `length()` - also **mit** Klammernpaar (S. 90, Überblick S. 354: `motto.length()==16`).\n\nTypischer Denkfehler: man gewöhnt sich eine der beiden Formen an und nutzt sie überall. Beides sind **Compiler**-Fehler, keine Laufzeitfehler - das Programm startet also gar nicht erst.\n\nMerkregel: **Array = Attribut = ohne Klammern. String = Klasse = Methode = mit Klammern.** Oder noch kürzer: *Das Array ist zu primitiv für Klammern.*",
+   "hints": [
+    "Überlegen Sie: Ist ein Array in Java eine Klasse mit Methoden, oder ein eingebautes Sprachkonstrukt?",
+    "Im Skript steht bei Arrays 'Attribut length', bei Strings dagegen 'Länge: motto.length()'. Ein Attribut braucht keine Klammern, eine Methode schon.",
+    "Genau eine der beiden Schreibweisen unterscheidet sich - und zwar in der Frage: Klammernpaar ja oder nein?"
+   ],
+   "pitfalls": [
+    "`x.length()` schreiben, weil man sich an `motto.length()` gewöhnt hat.",
+    "`motto.length` schreiben, weil man von Arrays kommt.",
+    "Glauben, das sei ein Laufzeitfehler - nein, beides fällt schon beim Kompilieren auf."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 90,
+     "label": "5.2 == vs. equals, compareTo, length()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 354,
+     "label": "Überblick 5. Arrays und Strings"
+    }
+   ],
+   "tags": [
+    "array",
+    "length",
+    "string",
+    "syntax"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-002",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "Default-Werte frisch erzeugter Arrays",
+   "prompt": "Was gibt dieses Programm auf der Konsole aus?",
+   "code": "class Defaults {\n  public static void main(String[] s) {\n    int[] a = new int[2];\n    double[] b = new double[2];\n    boolean[] c = new boolean[2];\n    String[] d = new String[2];\n    char[] e = new char[2];\n    System.out.println(a[0] + \" \" + b[1]);\n    System.out.println(c[0] + \" \" + d[1]);\n    System.out.println((int) e[0]);\n    System.out.println(a.length + b.length);\n  }\n}",
+   "expectedOutput": "0 0.0\nfalse null\n0\n4",
+   "solution": "class Defaults {\n  public static void main(String[] s) {\n    int[] a = new int[2];\n    double[] b = new double[2];\n    boolean[] c = new boolean[2];\n    String[] d = new String[2];\n    char[] e = new char[2];\n    System.out.println(a[0] + \" \" + b[1]);\n    System.out.println(c[0] + \" \" + d[1]);\n    System.out.println((int) e[0]);\n    System.out.println(a.length + b.length);\n  }\n}",
+   "explanation": "`new` legt ein Array an und **initialisiert jedes Element automatisch** mit dem Default-Wert seines Typs - anders als bei lokalen Variablen, die uninitialisiert nicht benutzt werden dürfen.\n\n| Typ | Default |\n|---|---|\n| `byte`, `short`, `int`, `long` | `0` |\n| `float`, `double` | `0.0` |\n| `char` | `'\\u0000'` (Zeichen mit Code 0) |\n| `boolean` | `false` |\n| jeder Referenztyp (`String`, Arrays, Objekte) | `null` |\n\nZeile 1 zeigt den Unterschied zwischen `0` (int) und `0.0` (double) - `println` gibt einen `double` immer mit Nachkommastelle aus. Zeile 2 zeigt `false` und `null`: `String[] d` ist ein Array **von Referenzen**, und diese Referenzen zeigen zunächst nirgendwohin. `d[1].length()` würde deshalb sofort eine `NullPointerException` werfen - das Array existiert, die Strings darin nicht!\n\nZeile 3 castet den `char`-Default nach `int`, damit man ihn sehen kann: `0`. Ohne Cast würde ein unsichtbares Steuerzeichen gedruckt.\n\nZeile 4 ist die versteckte Falle: `a.length + b.length` ist `2 + 2`. Weil **beide** Operanden `int` sind, ist `+` hier **Addition** und nicht Konkatenation - Ausgabe `4`, nicht `22`.",
+   "hints": [
+    "`new` füllt jedes Element - aber womit? Unterscheiden Sie Zahl-, Wahrheits- und Referenztypen.",
+    "Achten Sie darauf, wie `println` einen `double` ausgibt: `0` oder `0.0`?",
+    "In der letzten Zeile stehen links und rechts vom `+` zwei `int`-Werte. Was macht `+` dann?"
+   ],
+   "pitfalls": [
+    "Glauben, ein `String[]` sei mit leeren Strings `\"\"` gefüllt - es ist mit `null` gefüllt.",
+    "In der letzten Zeile `22` statt `4` erwarten (Konkatenation statt Addition).",
+    "`0` statt `0.0` für den `double` erwarten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 75,
+     "label": "5.1 Arrays: Deklaration, Erzeugung, Initialisierung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 76,
+     "label": "5.1 Arrays: Referenzen, null, echte Kopie"
+    }
+   ],
+   "tags": [
+    "array",
+    "default-werte",
+    "null",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-003",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 4,
+   "examStyle": true,
+   "title": "Array mit for-each durchlaufen (Klausur-Aufgabe 2)",
+   "prompt": "Was gibt der folgende Code-Ausschnitt auf der Konsole aus?",
+   "code": "class Summe {\n  public static void main(String[] s) {\n    int[] a = { 3, 5, 8, 10, 12 };\n    int summe = 0;\n    for (int w : a) {\n      if (w % 2 == 0) summe += w;\n      else            summe -= w;\n    }\n    System.out.println(summe);\n    System.out.println(summe / a.length);\n  }\n}",
+   "expectedOutput": "22\n4",
+   "solution": "class Summe {\n  public static void main(String[] s) {\n    int[] a = { 3, 5, 8, 10, 12 };\n    int summe = 0;\n    for (int w : a) {\n      if (w % 2 == 0) summe += w;\n      else            summe -= w;\n    }\n    System.out.println(summe);\n    System.out.println(summe / a.length);\n  }\n}",
+   "explanation": "Die **erweiterte for-Schleife** (`for-each`) `for (int w : a)` durchläuft das Array von vorne nach hinten und legt in jedem Durchlauf eine **Kopie** des Elements in `w`. Man braucht keinen Index - dafür kann man auch nicht auf das Array schreiben (`w = 0;` würde `a` nicht verändern).\n\nAblauf:\n\n| w | gerade? | summe |\n|---|---|---|\n| 3 | nein | 0 - 3 = -3 |\n| 5 | nein | -3 - 5 = -8 |\n| 8 | ja | -8 + 8 = 0 |\n| 10 | ja | 0 + 10 = 10 |\n| 12 | ja | 10 + 12 = 22 |\n\nErste Ausgabe: **22**.\n\nDie zweite Zeile ist die eigentliche Klausurfalle: `summe / a.length` ist `22 / 5`. Beide Operanden sind `int`, also rechnet Java **Ganzzahldivision** - das Ergebnis wird zu 0 hin abgeschnitten, nicht gerundet. `22 / 5 = 4` (nicht `4.4` und nicht `5`). Nur wenn mindestens ein Operand `double` wäre (`summe / (double) a.length`), käme `4.4` heraus.\n\nMerkregel: **`int / int` bleibt `int`** - egal wohin das Ergebnis zugewiesen wird.",
+   "hints": [
+    "Schreiben Sie eine kleine Tabelle mit einer Zeile pro Schleifendurchlauf und tragen Sie `summe` fortlaufend ein.",
+    "`a.length` ist 5. Welchen Typ haben `summe` und `a.length`?",
+    "Wenn beide Operanden von `/` ganzzahlig sind, wird abgeschnitten - nicht gerundet."
+   ],
+   "pitfalls": [
+    "Bei der zweiten Ausgabe `4.4` oder `5` erwarten statt `4`.",
+    "Das erste Element überspringen - `for-each` fängt bei Index 0 an, nicht bei 1.",
+    "Vorzeichen verwechseln: ungerade Werte werden **abgezogen**."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2 - Ausgabe vorhersagen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    }
+   ],
+   "tags": [
+    "array",
+    "for-each",
+    "int-division",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-004",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 1,
+   "examStyle": true,
+   "title": "Zwei Strings inhaltlich vergleichen",
+   "prompt": "Zwei `String`-Variablen `s1` und `s2` sollen daraufhin geprüft werden, ob sie **denselben Text** enthalten (also zeichenweise übereinstimmen). Welche Aussage ist richtig?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`s1 == s2` prüft die Zeichen; `s1.equals(s2)` prüft, ob es dasselbe Objekt ist.",
+     "correct": false,
+     "why": "Falsch - genau andersherum. `==` ist bei Referenztypen immer ein Identitätsvergleich."
+    },
+    {
+     "id": "b",
+     "text": "`s1.equals(s2)` prüft die Zeichen; `s1 == s2` liefert nur dann `true`, wenn beide auf **denselben** String verweisen.",
+     "correct": true,
+     "why": "Richtig, genau so steht es im Skript (S. 90): '== liefert true, wenn beide Operanden auf denselben String verweisen (Objektidentität)'."
+    },
+    {
+     "id": "c",
+     "text": "`==` und `equals` sind bei `String` gleichbedeutend, weil `String` immutable ist.",
+     "correct": false,
+     "why": "Falsch. Immutability ändert nichts daran, dass es mehrere String-Objekte mit gleichem Inhalt geben kann (z.B. durch `new String(...)`)."
+    },
+    {
+     "id": "d",
+     "text": "Man muss `s1.compareTo(s2) > 0` verwenden.",
+     "correct": false,
+     "why": "Falsch. `compareTo` liefert `0` bei Gleichheit; `> 0` bedeutet 's1 steht alphabetisch **nach** s2'."
+    }
+   ],
+   "solution": "b) `s1.equals(s2)` vergleicht zeichenweise, `s1 == s2` vergleicht die Referenzen (Objektidentität).",
+   "explanation": "`String` ist ein **Referenztyp**. Eine `String`-Variable speichert nicht die Zeichen, sondern nur die Adresse des String-Objekts (Skript S. 87: *\"motto ist eine Referenzvariable, speichert nicht den String, sondern nur die Referenz darauf\"*).\n\nDaraus folgt direkt:\n\n- `==` vergleicht die gespeicherten **Adressen**. Es liefert nur `true`, wenn beide Variablen auf **ein und dasselbe** Objekt zeigen.\n- `equals(...)` ist eine Methode der Klasse `String`, die die Zeichen einzeln durchgeht.\n\nWarum funktioniert `==` in kleinen Testprogrammen trotzdem oft? Weil Java identische **Literale** im selben Compilat zu einem Objekt zusammenlegt (String-Pool). Sobald ein String zur Laufzeit entsteht - `new String(...)`, `substring`, `split`, `+` mit einer Variablen, Benutzereingabe - ist es ein neues Objekt und `==` liefert `false`. Genau deshalb ist `==` bei Strings ein Fehler, der sich im Test versteckt und in der Klausur zuschlägt.\n\n`compareTo` ist die dritte Variante: `< 0` alphabetisch davor, `== 0` gleich, `> 0` alphabetisch danach (S. 90).\n\nMerkregel: **`==` fragt \"dasselbe?\", `equals` fragt \"dasgleiche?\"**",
+   "hints": [
+    "Was steht eigentlich *in* einer `String`-Variablen - die Zeichen oder eine Adresse?",
+    "Das Skript formuliert es für `==` wörtlich mit dem Wort 'Objektidentität'.",
+    "`compareTo` liefert bei Gleichheit `0` - also ist `> 0` sicher nicht der Gleichheitstest."
+   ],
+   "pitfalls": [
+    "`==` benutzen, weil es im Testprogramm mit zwei Literalen zufällig `true` liefert.",
+    "`equals` mit `=` verwechseln oder `s1.equals == s2` schreiben.",
+    "`compareTo(...) > 0` für Gleichheit halten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 90,
+     "label": "5.2 == vs. equals, compareTo, length()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 87,
+     "label": "5.2 Strings: automatisches new, Positionen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 354,
+     "label": "Überblick 5. Arrays und Strings"
+    }
+   ],
+   "tags": [
+    "string",
+    "equals",
+    "referenz",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-005",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "fill-gaps",
+   "difficulty": 2,
+   "points": 10,
+   "examStyle": false,
+   "title": "Arrays erzeugen, füllen und durchlaufen",
+   "prompt": "Ergänzen Sie die 5 Lücken `____(n)____`, sodass ein lauffähiges Programm entsteht (je 2 P.).\n\nDie Ausgabe muss lauten:\n```\n4.5\n1,2,3,\nDIE\n```",
+   "code": "class ArrayGrundlagen {\n  public static void main(String[] s) {\n    double[] x;\n    x = ____(1)____;              // Array für 3 double-Werte erzeugen\n    x[0] = 1.5;\n    x[1] = 2.0;\n    x[2] = 1.0;\n    double summe = 0.0;\n    for (int i = 0; i < x.____(2)____; i++) {\n      summe = summe + x[i];\n    }\n    System.out.println(summe);\n    int[] y = ____(3)____;        // Array direkt mit 1, 2, 3 initialisieren\n    for (int w : ____(4)____) {\n      System.out.print(w + \",\");\n    }\n    System.out.println();\n    String[] artikel = { \"der\", \"die\", \"das\" };\n    System.out.println(artikel[1].____(5)____());   // soll DIE ausgeben\n  }\n}",
+   "expectedOutput": "4.5\n1,2,3,\nDIE",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "new double[3]",
+      "new double[ 3 ]"
+     ],
+     "explanation": "Ein Array muss **dynamisch** mit `new` angelegt werden; in den eckigen Klammern steht die Anzahl der Elemente. Der Typ muss zur Deklaration `double[] x` passen."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "length"
+     ],
+     "explanation": "Die Anzahl der Elemente steht im Attribut `length` - **ohne** Klammernpaar. `x.length()` wäre ein Compiler-Fehler."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "{ 1, 2, 3 }",
+      "{1,2,3}",
+      "{1, 2, 3}",
+      "{ 1,2,3 }",
+      "new int[]{1,2,3}",
+      "new int[]{ 1, 2, 3 }"
+     ],
+     "explanation": "Der Initialisierer `{ 1, 2, 3 }` führt ein **automatisches new** aus: Java zählt die Werte, legt ein `int[3]` an und trägt sie ein. Diese Kurzform ist nur direkt bei der Deklaration erlaubt."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "y"
+     ],
+     "explanation": "In der erweiterten for-Schleife `for (int w : y)` steht hinter dem Doppelpunkt das zu durchlaufende Array, nicht sein Index oder seine Länge."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "toUpperCase"
+     ],
+     "explanation": "`toUpperCase()` liefert einen **neuen** String in Großbuchstaben. `artikel[1]` ist `\"die\"`, also wird `DIE` ausgegeben - `artikel[1]` selbst bleibt unverändert, weil Strings immutable sind."
+    }
+   ],
+   "solution": "class ArrayGrundlagen {\n  public static void main(String[] s) {\n    double[] x;\n    x = new double[3];\n    x[0] = 1.5;\n    x[1] = 2.0;\n    x[2] = 1.0;\n    double summe = 0.0;\n    for (int i = 0; i < x.length; i++) {\n      summe = summe + x[i];\n    }\n    System.out.println(summe);\n    int[] y = { 1, 2, 3 };\n    for (int w : y) {\n      System.out.print(w + \",\");\n    }\n    System.out.println();\n    String[] artikel = { \"der\", \"die\", \"das\" };\n    System.out.println(artikel[1].toUpperCase());\n  }\n}",
+   "explanation": "Die Aufgabe geht die drei Wege durch, ein Array in die Welt zu bringen und wieder zu durchlaufen.\n\n**Erzeugen:** `double[] x;` ist nur die *Deklaration* der Referenzvariablen - sie zeigt zunächst auf `null`. Erst `new double[3]` legt das eigentliche Array im Speicher an und liefert die Referenz darauf (Skript S. 74/75). Die Kurzform `int[] y = { 1, 2, 3 };` erledigt Deklaration, Erzeugung und Initialisierung in einem Schritt - das Skript nennt das ausdrücklich *\"automatisches new\"*.\n\n**Länge:** `x.length` ist ein Attribut ohne Klammern. Genau das ist die klassische Verwechslung mit `String.length()`, die in Lücke 5 gleich danebensteht.\n\n**Durchlaufen:** Die indizierte Schleife `for (int i = 0; i < x.length; i++)` brauchen Sie immer dann, wenn Sie den Index selbst benötigen (z.B. zum Schreiben). Die for-each-Schleife `for (int w : y)` ist kürzer, gibt Ihnen aber nur eine Kopie des Werts.\n\nDie Summe ist `1.5 + 2.0 + 1.0 = 4.5`; weil `summe` ein `double` ist, druckt `println` `4.5` (nicht `4`). Bei der zweiten Ausgabe steht wegen `print(w + \",\")` auch **hinter** der letzten `3` noch ein Komma.",
+   "hints": [
+    "Lücke 1: Arrays müssen dynamisch angelegt werden - mit welchem Schlüsselwort?",
+    "Lücke 2 und 5 gehören zusammen: einmal Array, einmal String. Bei genau einem der beiden gehört ein Klammernpaar dazu.",
+    "Lücke 3: Es gibt eine Kurzschreibweise mit geschweiften Klammern, die das `new` automatisch erledigt."
+   ],
+   "pitfalls": [
+    "`new double(3)` mit runden Klammern schreiben - Arrays brauchen eckige.",
+    "`x.length()` statt `x.length`.",
+    "In Lücke 4 `y.length` oder `y[i]` einsetzen - dort gehört das ganze Array hin."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 75,
+     "label": "5.1 Arrays: Deklaration, Erzeugung, Initialisierung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 94,
+     "label": "5.3 Strings und Arrays: toCharArray, new String"
+    }
+   ],
+   "tags": [
+    "array",
+    "new",
+    "initialisierer",
+    "length",
+    "for-each",
+    "fill-gaps"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-006",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Der überladene + Operator: String, char und int",
+   "prompt": "Was gibt dieses Programm auf der Konsole aus? (Hinweis: `'a'` hat den Zeichencode 97.)",
+   "code": "class Konkatenation {\n  public static void main(String[] s) {\n    String t = \"elf ist \" + 1 + 1;\n    System.out.println(t);\n    System.out.println(1 + 1 + \" ist zwei\");\n    System.out.println(0.5 + 0.5 + \" ist \" + 1);\n    char c = 'a';\n    System.out.println(c + 1);\n    System.out.println(\"\" + c + 1);\n    System.out.println((char)(c + 1));\n    System.out.println('a' + 'b');\n    System.out.println(\"x\" + 'a' + 'b');\n  }\n}",
+   "expectedOutput": "elf ist 11\n2 ist zwei\n1.0 ist 1\n98\na1\nb\n195\nxab",
+   "solution": "class Konkatenation {\n  public static void main(String[] s) {\n    String t = \"elf ist \" + 1 + 1;\n    System.out.println(t);\n    System.out.println(1 + 1 + \" ist zwei\");\n    System.out.println(0.5 + 0.5 + \" ist \" + 1);\n    char c = 'a';\n    System.out.println(c + 1);\n    System.out.println(\"\" + c + 1);\n    System.out.println((char)(c + 1));\n    System.out.println('a' + 'b');\n    System.out.println(\"x\" + 'a' + 'b');\n  }\n}",
+   "explanation": "Der Operator `+` ist in Java **überladen** (Skript S. 89) und wird strikt **von links nach rechts** ausgewertet:\n\n- `int + int` -> Addition\n- `String + irgendwas` -> Umwandlung in String und Konkatenation\n\nDamit ergibt sich Zeile für Zeile:\n\n1. `\"elf ist \" + 1 + 1`: erst `\"elf ist \" + 1` -> `\"elf ist 1\"` (String!), dann `+ 1` -> **`elf ist 11`**.\n2. `1 + 1 + \" ist zwei\"`: erst `1 + 1` -> `2` (beides int!), dann Konkatenation -> **`2 ist zwei`**.\n3. `0.5 + 0.5 + \" ist \" + 1`: erst `0.5 + 0.5` -> `1.0` (double), dann String -> **`1.0 ist 1`**. Beachten Sie die Nachkommastelle.\n4. `c + 1` mit `char c = 'a'`: **kein** String beteiligt, also numerische Addition. `char` wird dazu implizit nach `int` erweitert: `97 + 1` -> **`98`**.\n5. `\"\" + c + 1`: jetzt startet die Kette mit einem String -> `\"a\"`, dann `+ 1` -> **`a1`**.\n6. `(char)(c + 1)`: es wird wieder `98` gerechnet, aber der Cast macht daraus wieder ein Zeichen -> **`b`**.\n7. `'a' + 'b'`: zwei `char`, kein String -> `97 + 98` = **`195`**.\n8. `\"x\" + 'a' + 'b'`: String zuerst, also bleiben beide Zeichen Zeichen -> **`xab`**.\n\nMerkregel: **Sobald links ein String steht, ist alles danach Konkatenation. Vorher wird gerechnet.** Deshalb ist `\"a\" + 1 + 2` = `a12`, aber `1 + 2 + \"a\"` = `3a`.",
+   "hints": [
+    "Setzen Sie gedanklich Klammern von links nach rechts: `a + b + c` ist `(a + b) + c`.",
+    "Fragen Sie sich bei jedem Teilschritt: Ist einer der beiden Operanden bereits ein String?",
+    "`char` ohne String-Partner verhält sich wie eine kleine ganze Zahl - erst ein Cast `(char)` macht daraus wieder ein Zeichen."
+   ],
+   "pitfalls": [
+    "`\"elf ist \" + 1 + 1` als `elf ist 2` lesen - die Auswertung ist links-assoziativ.",
+    "Bei `0.5 + 0.5` das Ergebnis `1` statt `1.0` erwarten.",
+    "`'a' + 'b'` als `\"ab\"` lesen - ohne String-Operand wird addiert."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 89,
+     "label": "5.2 Konkatenation, überladener + Operator"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 87,
+     "label": "5.2 Strings: automatisches new, Positionen"
+    }
+   ],
+   "tags": [
+    "string",
+    "konkatenation",
+    "char",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-007",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Arrays sind Referenztypen: y = x kopiert nichts",
+   "prompt": "Was gibt dieses Programm auf der Konsole aus?",
+   "code": "class Referenz {\n  public static void main(String[] s) {\n    double[] x = { 1.5, 2.0, 1.0 };\n    double[] y = x;\n    y[1] = 4.0;\n    double[] z = new double[x.length];\n    for (int j = 0; j < x.length; j++) z[j] = x[j];\n    z[0] = 9.9;\n    System.out.println(x[0] + \" \" + x[1] + \" \" + x[2]);\n    System.out.println(y[0] + \" \" + y[1] + \" \" + y[2]);\n    System.out.println(z[0] + \" \" + z[1] + \" \" + z[2]);\n    System.out.println(x == y);\n    System.out.println(x == z);\n  }\n}",
+   "expectedOutput": "1.5 4.0 1.0\n1.5 4.0 1.0\n9.9 4.0 1.0\ntrue\nfalse",
+   "solution": "class Referenz {\n  public static void main(String[] s) {\n    double[] x = { 1.5, 2.0, 1.0 };\n    double[] y = x;\n    y[1] = 4.0;\n    double[] z = new double[x.length];\n    for (int j = 0; j < x.length; j++) z[j] = x[j];\n    z[0] = 9.9;\n    System.out.println(x[0] + \" \" + x[1] + \" \" + x[2]);\n    System.out.println(y[0] + \" \" + y[1] + \" \" + y[2]);\n    System.out.println(z[0] + \" \" + z[1] + \" \" + z[2]);\n    System.out.println(x == y);\n    System.out.println(x == z);\n  }\n}",
+   "explanation": "Der Kern des Kapitels: **eine Array-Variable enthält nicht das Array, sondern nur eine Referenz darauf** (Skript S. 74/76).\n\n`double[] y = x;` kopiert deshalb *die Adresse*, nicht die drei Zahlen. Das Skript kommentiert diese Zeile wörtlich: *\"erzeugt neue Referenzvariable y, die auf dasselbe Array zeigt wie x\"*. Danach sind `x` und `y` zwei Namen für **ein** Array. `y[1] = 4.0;` ändert deshalb *auch* `x[1]` - das Skript schreibt dazu: *\"ändert auch den Wert von x[2]\"*. Die ersten beiden Ausgabezeilen sind zwangsläufig identisch.\n\nEine **echte Kopie** entsteht nur so, wie es im Skript vorgemacht wird: neues Array gleicher Länge anlegen und die Elemente einzeln umkopieren. `z` ist danach ein eigenständiges Array; `z[0] = 9.9` lässt `x` völlig unberührt. Aber Achtung: `z` wurde **nach** der Änderung `y[1] = 4.0` befüllt, also steht auch in `z[1]` die 4.0.\n\nDie beiden letzten Zeilen machen den Unterschied sichtbar: `==` vergleicht bei Referenztypen die Adressen. `x == y` ist `true` (dasselbe Array), `x == z` ist `false` (gleicher Inhalt in Position 1 und 2, aber ein anderes Objekt).\n\nMerkregel: **Zuweisung kopiert den Pfeil, nicht die Kiste.** Wer eine Kiste will, muss `new` benutzen.",
+   "hints": [
+    "Zeichnen Sie ein Kästchendiagramm: Variablen links, das eigentliche Array rechts, Pfeile dazwischen.",
+    "Wie viele Arrays existieren nach `double[] y = x;` wirklich - eins oder zwei?",
+    "Wann genau wird `z` gefüllt: vor oder nach `y[1] = 4.0;`?"
+   ],
+   "pitfalls": [
+    "Annehmen, `y = x` erzeuge eine Kopie - dann wäre die erste Zeile `1.5 2.0 1.0`.",
+    "In `z[1]` noch die 2.0 erwarten - beim Kopieren stand dort längst 4.0.",
+    "`x == z` für `true` halten, weil zwei der drei Werte gleich sind - `==` schaut nie auf den Inhalt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 76,
+     "label": "5.1 Arrays: Referenzen, null, echte Kopie"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 354,
+     "label": "Überblick 5. Arrays und Strings"
+    }
+   ],
+   "tags": [
+    "array",
+    "referenz",
+    "kopie",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-008",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "char-Array gegen String: wer ändert sich, wer nicht?",
+   "prompt": "Was wird in der Konsole ausgegeben - und warum unterscheiden sich die beiden Fälle?",
+   "code": "class ArrayGegenString {\n  public static void main(String[] s) {\n    char[] a1 = { 'H', 'e', 'y', '!' };\n    char[] a2 = a1;\n    a2[3] = '?';\n    System.out.println(a1);\n\n    String s1 = \"Hey!\";\n    String s2 = s1;\n    s2.replace('!', '?');\n    System.out.println(s1);\n    System.out.println(s2.replace('!', '?'));\n    System.out.println(s1.length() + a1.length);\n  }\n}",
+   "expectedOutput": "Hey?\nHey!\nHey?\n8",
+   "solution": "class ArrayGegenString {\n  public static void main(String[] s) {\n    char[] a1 = { 'H', 'e', 'y', '!' };\n    char[] a2 = a1;\n    a2[3] = '?';\n    System.out.println(a1);\n\n    String s1 = \"Hey!\";\n    String s2 = s1;\n    s2.replace('!', '?');\n    System.out.println(s1);\n    System.out.println(s2.replace('!', '?'));\n    System.out.println(s1.length() + a1.length);\n  }\n}",
+   "explanation": "Diese Aufgabe stellt die beiden Referenztypen des Kapitels direkt nebeneinander (Datei `ArrayVersusString.java`).\n\n**Oben - `char[]`:** `a2 = a1` kopiert nur die Referenz, beide Namen zeigen auf dasselbe Array. `a2[3] = '?'` schreibt **in** das Array hinein, also sieht `a1` die Änderung: **`Hey?`**. (Nebenbei: `System.out.println(char[])` ist eine eigene Überladung, die die Zeichen als Text ausgibt - bei jedem anderen Array-Typ, z.B. `int[]`, bekäme man stattdessen etwas wie `[I@1b6d3586`.)\n\n**Unten - `String`:** Auch hier zeigen `s1` und `s2` auf dasselbe Objekt. Aber Strings sind **immutable** (Skript S. 95): `replace` kann das Objekt gar nicht verändern, sondern liefert einen **neuen** String zurück. Der Rückgabewert von `s2.replace('!','?')` wird in Zeile 10 nirgends gespeichert und daher sofort weggeworfen. `s1` bleibt **`Hey!`**. Erst wenn man den Rückgabewert benutzt - so wie in der nächsten Zeile - sieht man **`Hey?`**.\n\nDie letzte Zeile ist eine reine Syntax-Kontrolle: `s1.length()` (Methode, 4) `+ a1.length` (Attribut, 4) = **8**, beides `int`, also Addition.\n\nMerkregel: **Ein Array kann man von innen ändern, einen String nur ersetzen.** Deshalb verhalten sich Strings bei der Parameterübergabe wie einfache Datentypen (call-by-value-Semantik), Arrays dagegen nicht.",
+   "hints": [
+    "Wie viele `char`-Arrays existieren? Und wie viele String-Objekte existieren nach `String s2 = s1;`?",
+    "`replace` hat einen Rückgabewert. Was passiert mit ihm in der Zeile `s2.replace('!','?');`?",
+    "In der letzten Zeile stehen absichtlich beide Schreibweisen der Länge nebeneinander."
+   ],
+   "pitfalls": [
+    "Erwarten, dass `s2.replace(...)` den String `s1` (oder wenigstens `s2`) verändert.",
+    "Im ersten Fall `Hey!` erwarten, weil man glaubt, `a2 = a1` sei eine Kopie.",
+    "Bei `println(a1)` eine Adresse wie `[C@1b6d` erwarten - für `char[]` gibt es eine Spezial-Überladung."
+   ],
+   "sources": [
+    {
+     "file": "05_ArraysStrings/ArrayVersusString.java",
+     "page": null,
+     "label": "Array vs. String Referenzsemantik"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 95,
+     "label": "5.3 Strings sind immutable"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 76,
+     "label": "5.1 Arrays: Referenzen, null, echte Kopie"
+    }
+   ],
+   "tags": [
+    "array",
+    "string",
+    "immutable",
+    "referenz",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-009",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "String-Methoden auf 'Wir lernen Java!'",
+   "prompt": "Was gibt dieses Programm aus? Nummerieren Sie zur Sicherheit vorher die Zeichen des Strings ab 0.",
+   "code": "class StringMethoden {\n  public static void main(String[] s) {\n    String motto = \"Wir lernen Java!\";\n    System.out.println(motto.length());\n    System.out.println(motto.charAt(5));\n    System.out.println(motto.indexOf('e', 0));\n    System.out.println(motto.lastIndexOf('e', 15));\n    System.out.println(motto.substring(11, 15));\n    System.out.println(motto.toUpperCase());\n    System.out.println(motto.startsWith(\"Wir\"));\n    System.out.println(motto.endsWith(\".\"));\n  }\n}",
+   "expectedOutput": "16\ne\n5\n8\nJava\nWIR LERNEN JAVA!\ntrue\nfalse",
+   "solution": "class StringMethoden {\n  public static void main(String[] s) {\n    String motto = \"Wir lernen Java!\";\n    System.out.println(motto.length());\n    System.out.println(motto.charAt(5));\n    System.out.println(motto.indexOf('e', 0));\n    System.out.println(motto.lastIndexOf('e', 15));\n    System.out.println(motto.substring(11, 15));\n    System.out.println(motto.toUpperCase());\n    System.out.println(motto.startsWith(\"Wir\"));\n    System.out.println(motto.endsWith(\".\"));\n  }\n}",
+   "explanation": "Positionstabelle (ab **0** gezählt, Skript S. 87):\n\n```\nW  i  r     l  e  r  n  e  n     J  a  v  a  !\n0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15\n```\n\n- `length()` = **16** - es gibt 16 Zeichen, der letzte Index ist 15.\n- `charAt(5)` = **`e`** (das `e` in *lernen*).\n- `indexOf('e', 0)` sucht ab Index 0 **vorwärts** das erste `e` -> **5**.\n- `lastIndexOf('e', 15)` sucht ab Index 15 **rückwärts** -> das letzte `e` davor steht bei **8**.\n- `substring(11, 15)` liefert die Zeichen von 11 **bis 14** - die Obergrenze ist **exklusiv**! Also **`Java`** ohne Ausrufezeichen. *(Achtung: auf Folie S. 91 steht als Kommentar `\"Java!\"` - das ist ein Fehler im Skript. Der `!` sitzt auf Index 15 und wird von `substring(11,15)` gerade nicht mehr mitgenommen; man bräuchte `substring(11, 16)` oder `substring(11)`.)*\n- `toUpperCase()` liefert einen **neuen** String **`WIR LERNEN JAVA!`**; `motto` selbst bleibt unverändert.\n- `startsWith(\"Wir\")` -> **`true`**, `endsWith(\".\")` -> **`false`** (der String endet auf `!`).\n\nMerkregel für `substring(a, b)`: **a ist dabei, b ist der erste, der fehlt** - die Länge des Ergebnisses ist genau `b - a`.",
+   "hints": [
+    "Schreiben Sie die Indizes 0 bis 15 unter die Zeichen. Das Leerzeichen zählt mit!",
+    "`substring(a, b)`: Ist das Zeichen an Position `b` noch dabei? Denken Sie an die Länge `b - a`.",
+    "`lastIndexOf(c, i)` sucht **rückwärts** ab Index i; `indexOf(c, i)` sucht vorwärts."
+   ],
+   "pitfalls": [
+    "`substring(11, 15)` als `Java!` lesen - die zweite Grenze ist exklusiv (so steht es sogar falsch im Skript).",
+    "`charAt(5)` mit dem 5. Zeichen verwechseln - gezählt wird ab 0, es ist das sechste.",
+    "Glauben, `toUpperCase()` verändere `motto` - Strings sind immutable."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 91,
+     "label": "5.2 charAt, indexOf, substring, replace"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 87,
+     "label": "5.2 Strings: automatisches new, Positionen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 90,
+     "label": "5.2 == vs. equals, compareTo, length()"
+    }
+   ],
+   "tags": [
+    "string",
+    "charAt",
+    "substring",
+    "indexOf",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-010",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "split: vom String zum String-Array",
+   "prompt": "Was gibt dieses Programm aus? Achten Sie besonders auf die letzten beiden Zeilen.",
+   "code": "class Zerlegen {\n  public static void main(String[] s) {\n    String zeile = \"der,die,das,dem\";\n    String[] teile = zeile.split(\",\");\n    System.out.println(teile.length);\n    System.out.println(teile[2]);\n    System.out.println(teile[0].length());\n\n    String satz = \"Wir lernen Java\";\n    String[] woerter = satz.split(\" \");\n    System.out.println(woerter.length);\n    System.out.println(woerter[1].toUpperCase());\n    System.out.println(woerter[2].equals(\"Java\"));\n    System.out.println(woerter[2] == \"Java\");\n  }\n}",
+   "expectedOutput": "4\ndas\n3\n3\nLERNEN\ntrue\nfalse",
+   "solution": "class Zerlegen {\n  public static void main(String[] s) {\n    String zeile = \"der,die,das,dem\";\n    String[] teile = zeile.split(\",\");\n    System.out.println(teile.length);\n    System.out.println(teile[2]);\n    System.out.println(teile[0].length());\n\n    String satz = \"Wir lernen Java\";\n    String[] woerter = satz.split(\" \");\n    System.out.println(woerter.length);\n    System.out.println(woerter[1].toUpperCase());\n    System.out.println(woerter[2].equals(\"Java\"));\n    System.out.println(woerter[2] == \"Java\");\n  }\n}",
+   "explanation": "`split(trenner)` zerlegt einen String an jedem Vorkommen des Trenners und liefert ein **`String[]`** zurück - das ist die übliche Brücke von Strings zu Arrays.\n\n- `\"der,die,das,dem\".split(\",\")` -> `{ \"der\", \"die\", \"das\", \"dem\" }`, also `teile.length` = **4** (Array-Attribut, ohne Klammern!). `teile[2]` ist **`das`** (ab 0 gezählt), `teile[0].length()` ist **3** (String-Methode, mit Klammern). Die beiden Schreibweisen stehen hier absichtlich direkt untereinander.\n- `\"Wir lernen Java\".split(\" \")` -> `{ \"Wir\", \"lernen\", \"Java\" }`, also **3**; `woerter[1].toUpperCase()` -> **`LERNEN`**.\n\nDie letzten beiden Zeilen sind die eigentliche Lehre: Beide vergleichen `woerter[2]` mit `\"Java\"`.\n\n- `equals` vergleicht **zeichenweise** -> **`true`**.\n- `==` vergleicht die **Referenzen**. `split` schneidet die Teilstücke zur Laufzeit mit `substring` heraus und erzeugt dabei **neue** String-Objekte. Das Literal `\"Java\"` liegt dagegen im String-Pool. Zwei verschiedene Objekte -> **`false`**.\n\nDas ist genau der Grund, warum `==` bei Strings unbrauchbar ist: Bei zwei Literalen liefert es zufällig `true`, sobald ein String zur Laufzeit entsteht, `false`.\n\nMerkregel: **Alles, was zur Laufzeit entsteht (`split`, `substring`, `+` mit Variablen, `new String`, Scanner-Eingabe), ist ein neues Objekt.**",
+   "hints": [
+    "`split` liefert ein Array. Wie fragt man dessen Länge ab - mit oder ohne Klammern?",
+    "Zählen Sie die Teilstücke; das erste hat den Index 0.",
+    "Woher stammt `woerter[2]`: aus einem Literal im Quelltext oder aus einer Rechnung zur Laufzeit?"
+   ],
+   "pitfalls": [
+    "`teile.length()` statt `teile.length` schreiben - `split` liefert ein Array, keinen String.",
+    "In der letzten Zeile `true` erwarten, weil der Inhalt übereinstimmt.",
+    "`teile[2]` für `\"die\"` halten (ab 1 gezählt)."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 94,
+     "label": "5.3 Strings und Arrays: toCharArray, new String"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 90,
+     "label": "5.2 == vs. equals, compareTo, length()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 91,
+     "label": "5.2 charAt, indexOf, substring, replace"
+    }
+   ],
+   "tags": [
+    "string",
+    "split",
+    "array",
+    "equals",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-011",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Indexüberlauf: was erscheint noch auf der Konsole?",
+   "prompt": "Geben Sie **nur** die Zeilen an, die auf `System.out` erscheinen. Erklären Sie anschließend in einem Satz, wie das Programm endet.",
+   "code": "class IndexFehler {\n  public static void main(String[] s) {\n    int[] werte = { 10, 20, 30 };\n    for (int i = 0; i <= werte.length; i++) {\n      System.out.println(i + \": \" + werte[i]);\n    }\n    System.out.println(\"fertig\");\n  }\n}",
+   "expectedOutput": "0: 10\n1: 20\n2: 30",
+   "solution": "0: 10\n1: 20\n2: 30\n\nDanach bricht das Programm mit einer **ArrayIndexOutOfBoundsException** ab\n(\"Index 3 out of bounds for length 3\"), weil die Schleifenbedingung `i <= werte.length`\nauch noch für i = 3 wahr ist. Die Zeile \"fertig\" wird deshalb nie erreicht.\n\nKorrektur: `for (int i = 0; i < werte.length; i++)`",
+   "explanation": "Ein Array der Länge 3 hat die gültigen Indizes **0, 1, 2** - der größte gültige Index ist also immer `length - 1`. Das Skript sagt dazu: *\"Das erste Element hat den Index 0 ... Ausnahme bei Indexüberlauf: IndexOutOfBoundsException\"* (S. 74).\n\nDie Schleife läuft hier mit `i <= werte.length`, also für `i = 0, 1, 2, 3`. Die ersten drei Durchläufe drucken sauber `0: 10`, `1: 20`, `2: 30`. Im vierten Durchlauf wird `werte[3]` ausgewertet - Java prüft den Index zur **Laufzeit** und wirft eine `ArrayIndexOutOfBoundsException` mit der Meldung *\"Index 3 out of bounds for length 3\"*.\n\nZwei Details, die in der Klausur Punkte bringen:\n\n1. Das ist **kein Compiler-Fehler**. Der Code übersetzt sauber; erst beim Ausführen knallt es. Anders als in C liest Java nicht einfach fremden Speicher.\n2. Die Exception fliegt aus `main` heraus, deshalb wird `System.out.println(\"fertig\")` **nicht** mehr ausgeführt. Die Fehlermeldung landet außerdem auf `System.err`, nicht auf `System.out`.\n\nMerkregel: **In einer Array-Schleife steht `<`, nie `<=`.** Wer `<=` braucht, muss `length - 1` schreiben.",
+   "hints": [
+    "Welche Indizes sind bei `length == 3` erlaubt? Und für welche i-Werte läuft diese Schleife?",
+    "Die ersten Durchläufe funktionieren völlig normal - schreiben Sie sie einzeln auf.",
+    "Überlegen Sie, ob das Programm nach dem Fehler noch bis zum letzten `println` kommt."
+   ],
+   "pitfalls": [
+    "`fertig` mit ausgeben - nach der Exception läuft nichts mehr.",
+    "Den Fehler für einen Compiler-Fehler halten; er tritt erst zur Laufzeit auf.",
+    "Bei `<=` glauben, Java liefere für `werte[3]` einfach `0` zurück."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 75,
+     "label": "5.1 Arrays: Deklaration, Erzeugung, Initialisierung"
+    }
+   ],
+   "tags": [
+    "array",
+    "exception",
+    "index",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-012",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "In welchen 3 Zeilen befinden sich Compiler-Fehler?",
+   "prompt": "In welchen **3 Zeilen** befinden sich Compiler-Fehler? Benennen Sie den Grund und geben Sie jeweils eine Korrektur an.",
+   "code": "class ArrayFehler {\n  public static void main(String[] s) {\n    int[] zahlen = new int[3];\n    zahlen[0] = 5;\n    String wort = \"Java\";\n    System.out.println(zahlen.length());\n    System.out.println(wort.length);\n    String erstes = wort.charAt(0);\n    System.out.println(erstes);\n  }\n}",
+   "expectedOutput": "3\n4\nJ",
+   "errors": [
+    {
+     "kind": "compiler",
+     "line": 6,
+     "wrong": "System.out.println(zahlen.length());",
+     "fix": "System.out.println(zahlen.length);",
+     "why": "`length` ist bei einem Array ein **Attribut**, keine Methode. javac meldet: 'cannot find symbol: method length(), location: variable zahlen of type int[]'."
+    },
+    {
+     "kind": "compiler",
+     "line": 7,
+     "wrong": "System.out.println(wort.length);",
+     "fix": "System.out.println(wort.length());",
+     "why": "Bei `String` ist die Länge eine **Methode** und braucht ein Klammernpaar. javac meldet: 'cannot find symbol: variable length, location: variable wort of type String'."
+    },
+    {
+     "kind": "compiler",
+     "line": 8,
+     "wrong": "String erstes = wort.charAt(0);",
+     "fix": "String erstes = \"\" + wort.charAt(0);   // oder: char erstes = wort.charAt(0);",
+     "why": "`charAt` liefert einen **`char`**, keinen `String`. Ein `char` ist ein primitiver Typ und wird nicht automatisch zu `String`. javac meldet: 'incompatible types: char cannot be converted to String'."
+    }
+   ],
+   "solution": "class ArrayFehler {\n  public static void main(String[] s) {\n    int[] zahlen = new int[3];\n    zahlen[0] = 5;\n    String wort = \"Java\";\n    System.out.println(zahlen.length);\n    System.out.println(wort.length());\n    String erstes = \"\" + wort.charAt(0);\n    System.out.println(erstes);\n  }\n}",
+   "explanation": "Alle drei Fehler drehen sich um denselben Kern: **Array und String sehen ähnlich aus, sind aber völlig verschiedene Dinge.**\n\n**Zeile 6 und 7 - `length` gegen `length()`:** Ein Array ist ein Sprachkonstrukt mit genau einem eingebauten Attribut `length` (Skript S. 74). `String` ist eine normale Klasse mit der Methode `length()` (S. 90). Beide Verwechslungen erzeugt derselbe javac-Fehlertyp 'cannot find symbol' - einmal wird eine Methode, einmal eine Variable gesucht.\n\n**Zeile 8 - `charAt` liefert `char`:** `charAt(i)` gibt genau **ein Zeichen** zurück, also einen `char` (S. 91: `char c = motto.charAt(5);`). `char` ist ein primitiver Typ; Java konvertiert ihn **nicht** automatisch in einen `String`. Es gibt zwei übliche Korrekturen: den Typ links anpassen (`char erstes = ...`) oder den Wert per Konkatenation in einen String verwandeln (`\"\" + wort.charAt(0)`) - Letzteres funktioniert, weil `String + char` Konkatenation ist.\n\nBewusst **kein** Fehler ist `int[] zahlen = new int[3];` (korrekte dynamische Erzeugung) und `zahlen[0] = 5;` (Index 0 ist gültig).\n\nMerkregel: **Array = Attribut ohne Klammern, String = Methode mit Klammern, charAt = ein einzelner char.**",
+   "hints": [
+    "Zwei der drei Fehler betreffen dieselbe Eigenschaft, einmal bei einem Array und einmal bei einem String.",
+    "Welchen **Rückgabetyp** hat `charAt`? Passt er zur Variablen links vom `=`?",
+    "Alle drei Fehler fällt javac schon beim Übersetzen auf - keiner davon ist ein Laufzeitfehler."
+   ],
+   "pitfalls": [
+    "`int[] zahlen = new int[3];` fälschlich als Fehler markieren - das ist die Standardform.",
+    "Bei Zeile 8 nur 'Typfehler' schreiben, ohne den Rückgabetyp `char` zu benennen.",
+    "Nur zwei Fehler finden, weil man `length`/`length()` als einen einzigen Fehler zählt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 90,
+     "label": "5.2 == vs. equals, compareTo, length()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 91,
+     "label": "5.2 charAt, indexOf, substring, replace"
+    }
+   ],
+   "tags": [
+    "array",
+    "string",
+    "length",
+    "charAt",
+    "find-errors"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-013",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finde die 2 Compiler-Fehler",
+   "prompt": "Finde die **2 Compiler-Fehler**. Gib jeweils Zeilennummer, Grund und Korrektur an.\n\n(Die Zeilen ohne Fehler sollen Sie ausdrücklich *nicht* anfassen - prüfen Sie also auch, was hier alles erlaubt ist.)",
+   "code": "class TextFehler {\n  public static void main(String[] str) {\n    boolean ok = ! false;\n    if (ok) {\n      char[] zeichen = { 'J', 'a', 'v', 'a' };\n      String wort = new String(zeichen);\n      String str = wort.substring(0, 2);\n      int laenge = wort.length();\n      ok = (boolean) laenge;\n    }\n  }\n}",
+   "expectedOutput": "Ja 4 true",
+   "errors": [
+    {
+     "kind": "compiler",
+     "line": 7,
+     "wrong": "String str = wort.substring(0, 2);",
+     "fix": "String teil = wort.substring(0, 2);   // anderer Name",
+     "why": "`str` ist bereits der formale Parameter von `main(String[] str)`. Dessen Gültigkeitsbereich umfasst die **ganze** Methode, also auch diesen inneren Block - gleichnamige lokale Variablen dürfen sich nicht überlappen. javac: 'variable str is already defined in method main(String[])'."
+    },
+    {
+     "kind": "compiler",
+     "line": 9,
+     "wrong": "ok = (boolean) laenge;",
+     "fix": "ok = (laenge > 0);   // ein Vergleich liefert boolean",
+     "why": "Es gibt in Java **keine** Typkonversion zwischen Zahlen und `boolean` - auch nicht mit explizitem Cast. javac: 'incompatible types: int cannot be converted to boolean'."
+    }
+   ],
+   "solution": "class TextFehler {\n  public static void main(String[] str) {\n    boolean ok = ! false;\n    if (ok) {\n      char[] zeichen = { 'J', 'a', 'v', 'a' };\n      String wort = new String(zeichen);\n      String teil = wort.substring(0, 2);\n      int laenge = wort.length();\n      ok = (laenge > 0);\n      System.out.println(teil + \" \" + laenge + \" \" + ok);\n    }\n  }\n}",
+   "explanation": "Der Aufbau ist bewusst der von `Klausur03.java` aus dem Übungsordner des Professors - nur mit Arrays und Strings gefüllt.\n\n**Zeile 7 - Gültigkeitsbereich:** Der Parameter `str` gilt in der gesamten Methode `main`, auch in jedem verschachtelten Block. Java kennt - anders als Python - **kein Shadowing lokaler Variablen**: die Gültigkeitsbereiche gleichnamiger lokaler Variablen dürfen sich nicht überlappen. Dass die neue Variable ein `String` und der Parameter ein `String[]` ist, hilft nicht - entscheidend ist allein der Name.\n\n**Zeile 9 - `boolean` steht außerhalb der Zahlenwelt:** Weder `(boolean) 4` noch `(int) true` ist erlaubt. `boolean` hat nur zwei Werte und keinerlei numerische Konversion. Man braucht einen echten Vergleich, der einen `boolean` **liefert**.\n\nGanz bewusst **kein** Fehler sind:\n\n- `char[] zeichen = { 'J', 'a', 'v', 'a' };` - Initialisierer mit automatischem `new` (S. 75).\n- `String wort = new String(zeichen);` - der dokumentierte Weg von `char[]` zu `String` (S. 94).\n- `wort.substring(0, 2)` - liefert `\"Ja\"`, die Obergrenze ist exklusiv.\n- `int laenge = wort.length();` - `length()` mit Klammern, weil `wort` ein String ist.\n\nMerkregel: **Ein Name pro Methode - und `boolean` lässt sich nicht casten.**",
+   "hints": [
+    "Lesen Sie die Signatur von `main` sehr genau und vergleichen Sie die dort verwendeten Namen mit denen im Block.",
+    "Kann man in Java eine Zahl in einen Wahrheitswert casten?",
+    "Die Zeilen mit `char[]`, `new String(...)` und `substring` sind alle korrekt - lassen Sie sich davon nicht ablenken."
+   ],
+   "pitfalls": [
+    "`new String(zeichen)` für falsch halten - das ist genau der im Skript gezeigte Weg von `char[]` zu `String`.",
+    "`substring(0, 2)` als Fehler markieren, weil man die exklusive Obergrenze für einen Indexfehler hält.",
+    "Bei Zeile 9 nur den Cast entfernen (`ok = laenge;`) - das ist immer noch ein Typfehler."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "page": null,
+     "label": "Klausur-Übung: Finde die 2 Compiler-Fehler"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 94,
+     "label": "5.3 Strings und Arrays: toCharArray, new String"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 91,
+     "label": "5.2 charAt, indexOf, substring, replace"
+    }
+   ],
+   "tags": [
+    "string",
+    "char-array",
+    "scope",
+    "cast",
+    "find-errors"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-014",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Größten Wert eines int-Arrays bestimmen",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass eine lauffähige Klasse entsteht (je 2 P.).\n\nDie Ausgabe muss lauten:\n```\n17\n-3\n```",
+   "code": "class MaxWert {\n  // liefert den größten Wert des (nicht leeren) Arrays\n  public static int groesstes(int[] werte) {\n    int max = ____(1)____;\n    for (int i = 1; i < ____(2)____; i++) {\n      if ( ____(3)____ ) {\n        max = ____(4)____;\n      }\n    }\n    return ____(5)____;\n  }\n\n  public static void main(String[] s) {\n    int[] a = { 4, -2, 17, 9 };\n    System.out.println( ____(6)____ );\n    int[] b = { -5, -3, -8 };\n    System.out.println( groesstes(b) );\n  }\n}",
+   "expectedOutput": "17\n-3",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "werte[0]"
+     ],
+     "explanation": "Der Startwert muss ein **tatsächlich vorkommender** Wert sein. Mit `0` oder `Integer.MIN_VALUE` zu starten ist entweder falsch (bei lauter negativen Zahlen) oder unnötig kompliziert. Deshalb fängt die Schleife auch erst bei `i = 1` an."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "werte.length"
+     ],
+     "explanation": "Array-Länge als **Attribut**, ohne Klammernpaar. Mit `<` (nicht `<=`), sonst gibt es eine `ArrayIndexOutOfBoundsException`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "werte[i] > max",
+      "max < werte[i]"
+     ],
+     "explanation": "Nur wenn das aktuelle Element größer ist als das bisherige Maximum, muss `max` ersetzt werden. Mit `>=` wäre das Ergebnis dasselbe, aber `>` ist die übliche Form."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "werte[i]"
+     ],
+     "explanation": "Es wird der **Wert** des Elements übernommen, nicht der Index `i`."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "max"
+     ],
+     "explanation": "Das Ergebnis der Methode. `return werte[max];` wäre ein klassischer Verwechslungsfehler Wert/Index."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "groesstes(a)",
+      "MaxWert.groesstes(a)"
+     ],
+     "explanation": "Aufruf der statischen Methode mit dem Array als Argument. Übergeben wird die **Referenz** auf das Array, nicht eine Kopie der vier Zahlen."
+    }
+   ],
+   "solution": "class MaxWert {\n  // liefert den größten Wert des (nicht leeren) Arrays\n  public static int groesstes(int[] werte) {\n    int max = werte[0];\n    for (int i = 1; i < werte.length; i++) {\n      if (werte[i] > max) {\n        max = werte[i];\n      }\n    }\n    return max;\n  }\n\n  public static void main(String[] s) {\n    int[] a = { 4, -2, 17, 9 };\n    System.out.println( groesstes(a) );\n    int[] b = { -5, -3, -8 };\n    System.out.println( groesstes(b) );\n  }\n}",
+   "explanation": "Das ist Teil b) der Probeklausur-Aufgabe 4 - ein Standard-Algorithmus, den man auswendig können sollte.\n\n**Warum `max = werte[0]` und nicht `max = 0`?** Weil das Array negative Zahlen enthalten kann. Der zweite Testfall `{ -5, -3, -8 }` prüft genau das: mit `max = 0` käme fälschlich `0` heraus. Wer mit dem ersten Element startet, ist immer auf der sicheren Seite - deshalb ist die Vorbedingung *\"das Array ist nicht leer\"* in der Aufgabenstellung so wichtig.\n\n**Warum `i = 1`?** Element 0 ist schon als Startwert verbraucht; ein Vergleich mit sich selbst wäre überflüssig. Mit `i = 0` zu starten wäre trotzdem korrekt, nur minimal verschwenderisch.\n\n**Wert oder Index?** Die häufigste Fehlerquelle: `max = i;` merkt sich die *Position* statt des Werts. Wenn man den Index braucht (z.B. für 'an welcher Stelle steht das Maximum?'), speichert man ihn in einer eigenen Variablen `maxIndex` und gibt am Ende `werte[maxIndex]` zurück.\n\n**Array als Parameter:** `groesstes(a)` übergibt die Referenz. Die Methode könnte das Array also verändern - hier tut sie es bewusst nicht, sie liest nur.",
+   "hints": [
+    "Womit initialisiert man das Maximum, wenn im Array auch lauter negative Zahlen stehen können?",
+    "Lücke 2: Wie fragt man bei einem **Array** die Anzahl der Elemente ab?",
+    "Lücke 4: Wollen Sie sich die Position merken oder den Wert? Was gibt die Methode laut Signatur zurück?"
+   ],
+   "pitfalls": [
+    "`int max = 0;` als Startwert - liefert beim zweiten Testfall fälschlich `0`.",
+    "`max = i;` statt `max = werte[i];` (Index statt Wert).",
+    "`werte.length()` mit Klammern schreiben."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3/4 - Lücken, Klasse mit Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    }
+   ],
+   "tags": [
+    "array",
+    "methode",
+    "maximum",
+    "fill-gaps"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-015",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Palindrom-Test über ein char-Array",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____` (je 2 P.), sodass geprüft wird, ob `text` ein Palindrom ist (vorwärts wie rückwärts gleich).\n\nDie Ausgabe muss lauten:\n```\nlagerregal\nPalindrom\nLAGERREGAL\n```",
+   "code": "class Palindrom {\n  public static void main(String[] s) {\n    String text = \"lagerregal\";\n    char[] zeichen = text.____(1)____;          // String -> char[]\n    char[] rueck = new char[zeichen.____(2)____];\n    for (int i = 0; i < zeichen.length; i++) {\n      rueck[i] = zeichen[ ____(3)____ ];\n    }\n    String umgekehrt = ____(4)____;             // char[] -> String\n    System.out.println(umgekehrt);\n    if ( ! text.____(5)____(umgekehrt) ) {\n      System.out.print(\"Kein \");\n    }\n    System.out.println(\"Palindrom\");\n    System.out.println(text.____(6)____());\n  }\n}",
+   "expectedOutput": "lagerregal\nPalindrom\nLAGERREGAL",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "toCharArray()"
+     ],
+     "explanation": "`toCharArray()` liefert ein **neues** `char`-Array mit allen Zeichen des Strings (Skript S. 94)."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "length"
+     ],
+     "explanation": "`zeichen` ist ein Array - Länge als Attribut, ohne Klammern. Das Zielarray muss genauso lang sein."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "zeichen.length - 1 - i",
+      "zeichen.length-1-i",
+      "zeichen.length - i - 1",
+      "zeichen.length-i-1",
+      "rueck.length - 1 - i",
+      "rueck.length-1-i"
+     ],
+     "explanation": "Position `i` von vorne soll die Position `i` von hinten bekommen. Das letzte Element hat den Index `length - 1`, also ist der Spiegelindex `length - 1 - i`."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "new String(rueck)",
+      "new String( rueck )"
+     ],
+     "explanation": "Der Konstruktor `new String(char[])` baut aus einem `char`-Array einen String (S. 94). `rueck.toString()` wäre falsch - das liefert bei Arrays nur eine Adresse wie `[C@1b6d`."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "equals"
+     ],
+     "explanation": "Inhaltlicher Vergleich. `==` wäre hier immer `false`, weil `umgekehrt` zur Laufzeit als neues Objekt entstanden ist."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "toUpperCase"
+     ],
+     "explanation": "Liefert einen neuen String in Großbuchstaben; `text` selbst bleibt unverändert, weil Strings immutable sind."
+    }
+   ],
+   "solution": "class Palindrom {\n  public static void main(String[] s) {\n    String text = \"lagerregal\";\n    char[] zeichen = text.toCharArray();\n    char[] rueck = new char[zeichen.length];\n    for (int i = 0; i < zeichen.length; i++) {\n      rueck[i] = zeichen[zeichen.length - 1 - i];\n    }\n    String umgekehrt = new String(rueck);\n    System.out.println(umgekehrt);\n    if ( ! text.equals(umgekehrt) ) {\n      System.out.print(\"Kein \");\n    }\n    System.out.println(\"Palindrom\");\n    System.out.println(text.toUpperCase());\n  }\n}",
+   "explanation": "Die Aufgabe führt den kompletten Weg **String -> char[] -> String** vor, den das Skript in Abschnitt 5.3 beschreibt und den der Professor auch in `SimpleWordle` benutzt.\n\n**Warum überhaupt der Umweg über `char[]`?** Weil ein String immutable ist: man kann kein einzelnes Zeichen darin überschreiben. Ein `char`-Array dagegen ist veränderbar. Also: `toCharArray()` -> im Array arbeiten -> `new String(...)` zurück.\n\n**Der Spiegelindex** ist die eigentliche Denkarbeit. Bei Länge 10 soll `rueck[0]` das Zeichen `zeichen[9]` bekommen, `rueck[1]` das Zeichen `zeichen[8]` usw. Die Summe der beiden Indizes ist immer `length - 1`, also `spiegel = length - 1 - i`. Wer `length - i` schreibt, greift im ersten Durchlauf auf `zeichen[10]` zu -> `ArrayIndexOutOfBoundsException`.\n\n**`equals` statt `==`:** `umgekehrt` wurde gerade mit `new String(...)` erzeugt, ist also garantiert ein anderes Objekt als `text`. `==` liefert hier zuverlässig `false`, und die Ausgabe wäre fälschlich `Kein Palindrom`.\n\nDie letzte Zeile zeigt noch einmal die Immutability: `toUpperCase()` gibt `LAGERREGAL` aus, aber `text` selbst enthält danach immer noch `lagerregal`.",
+   "hints": [
+    "Es gibt genau eine String-Methode, die ein `char[]` liefert, und genau einen Konstruktor, der daraus wieder einen String macht.",
+    "Lücke 3: Welchen Index hat das **letzte** Element eines Arrays der Länge n? Und welchen das vorletzte?",
+    "Lücke 5: `umgekehrt` ist ein frisch erzeugtes Objekt - welcher der beiden Vergleiche funktioniert dann noch?"
+   ],
+   "pitfalls": [
+    "`zeichen.length - i` statt `zeichen.length - 1 - i` - führt sofort zum Indexüberlauf.",
+    "`rueck.toString()` statt `new String(rueck)` - liefert eine Adresse, keinen Text.",
+    "`text == umgekehrt` benutzen; das liefert immer `false`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 94,
+     "label": "5.3 Strings und Arrays: toCharArray, new String"
+    },
+    {
+     "file": "05_ArraysStrings/Strings03.java",
+     "page": null,
+     "label": "Übung: Palindrom"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 95,
+     "label": "5.3 Strings sind immutable"
+    }
+   ],
+   "tags": [
+    "string",
+    "char-array",
+    "toCharArray",
+    "equals",
+    "fill-gaps"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-016",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Klasse TextTools mit zwei Instanzmethoden",
+   "prompt": "Schreiben Sie eine Klasse `TextTools` mit den beiden folgenden **Instanzmethoden** (ohne `static`). Ergänzen Sie außerdem eine Klassenmethode `main`, die ein Objekt der Klasse erzeugt und beide Methoden testet.\n\n**a) (6 P.)** Eine Methode `zaehleGrossbuchstaben(String text)`, die zurückgibt, wie viele Großbuchstaben (A-Z) in `text` vorkommen. Beispiel: `\"Hallo Welt\"` -> `2`.\n\n**b) (6 P.)** Eine Methode, die den größten Wert eines Integer-Arrays zurückgibt (das Array ist nicht leer). Wählen Sie Rückgabetyp, Methodennamen und Parameter selbst passend.\n\nDie `main`-Methode soll genau diese Ausgabe erzeugen:\n```\n2\n4\n17\n```\n(Testwerte: `\"Hallo Welt\"`, `\"OFP Klausur 2026\"` und `{ 4, -2, 17, 9 }`.)",
+   "starterCode": "class TextTools {\n\n  // a) Instanzmethode: zählt die Großbuchstaben A-Z in text\n\n  // b) Instanzmethode: liefert den größten Wert eines int-Arrays\n\n  public static void main(String[] s) {\n    // Objekt erzeugen und beide Methoden testen:\n\n  }\n}",
+   "expectedOutput": "2\n4\n17",
+   "solution": "class TextTools {\n\n  // a) zählt die Großbuchstaben A-Z in text\n  public int zaehleGrossbuchstaben(String text) {\n    int anzahl = 0;\n    for (int i = 0; i < text.length(); i++) {\n      char c = text.charAt(i);\n      if (c >= 'A' && c <= 'Z') {\n        anzahl++;\n      }\n    }\n    return anzahl;\n  }\n\n  // b) liefert den größten Wert eines int-Arrays\n  public int groesster(int[] werte) {\n    int max = werte[0];\n    for (int i = 1; i < werte.length; i++) {\n      if (werte[i] > max) {\n        max = werte[i];\n      }\n    }\n    return max;\n  }\n\n  public static void main(String[] s) {\n    TextTools t = new TextTools();\n    System.out.println(t.zaehleGrossbuchstaben(\"Hallo Welt\"));\n    System.out.println(t.zaehleGrossbuchstaben(\"OFP Klausur 2026\"));\n    int[] zahlen = { 4, -2, 17, 9 };\n    System.out.println(t.groesster(zahlen));\n  }\n}",
+   "explanation": "Das ist Aufgabe 4 der Probeklausur, wörtlich übernommen.\n\n**a) Großbuchstaben zählen.** Man läuft mit `charAt(i)` über den String - die Schleifengrenze ist `text.length()` **mit** Klammern. Der Test `c >= 'A' && c <= 'Z'` funktioniert, weil `char` implizit nach `int` erweitert wird und die Großbuchstaben in Unicode/ASCII lückenlos von 65 bis 90 liegen. Alternativ ginge `Character.isUpperCase(c)`; das ist sogar korrekter für Umlaute, aber die Aufgabe fragt ausdrücklich nur nach A-Z, und die Bereichsprüfung ist genau die Technik aus der Vorlesung. `\"OFP Klausur 2026\"` enthält `O`, `F`, `P` und `K` - also 4.\n\n**b) Maximum.** Der Startwert ist `werte[0]`, danach läuft die Schleife ab `i = 1` mit `werte.length` **ohne** Klammern. Wichtig für volle Punktzahl: Rückgabetyp `int` und Parameter `int[]`.\n\n**Instanzmethoden statt static.** Weil beide Methoden ohne `static` deklariert sind, kann `main` sie nicht einfach aufrufen - `main` ist eine Klassenmethode und kennt kein `this`. Man braucht deshalb erst ein Objekt: `TextTools t = new TextTools();` und dann `t.zaehleGrossbuchstaben(...)`. Genau das wird in der Aufgabenstellung verlangt und ist ein beliebter Punktabzug.\n\n**Beide Längen im selben Programm:** `text.length()` für den String, `werte.length` für das Array - der Klassiker.",
+   "hints": [
+    "Für a): Laufen Sie mit einer Zählschleife über alle Positionen und holen Sie sich jedes Zeichen mit `charAt`.",
+    "`char` verhält sich beim Vergleich wie eine Zahl - `c >= 'A' && c <= 'Z'` ist also erlaubt.",
+    "Beide Methoden sind **ohne** `static` deklariert. Wie ruft `main` sie dann auf? Sie brauchen zuerst ein Objekt."
+   ],
+   "pitfalls": [
+    "Die Instanzmethoden direkt aus `main` aufrufen - das ist ein Compiler-Fehler ('non-static method cannot be referenced from a static context').",
+    "`text.length` ohne Klammern oder `werte.length()` mit Klammern.",
+    "Beim Maximum mit `int max = 0;` starten - falsch, sobald alle Werte negativ sind."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3/4 - Lücken, Klasse mit Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 91,
+     "label": "5.2 charAt, indexOf, substring, replace"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    }
+   ],
+   "tags": [
+    "string",
+    "array",
+    "methode",
+    "instanzmethode",
+    "code"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-017",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Welche Aussagen über Arrays sind richtig?",
+   "prompt": "Kreuzen Sie **alle** richtigen Aussagen über Arrays in Java an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`double y[];` ist eine gültige Deklaration, `double[] y;` ist aber die bevorzugte Schreibweise.",
+     "correct": true,
+     "why": "Richtig - beide Formen sind erlaubt; das Skript (S. 75) markiert `double[] x;` ausdrücklich als 'bevorzugte Schreibweise'."
+    },
+    {
+     "id": "b",
+     "text": "Nach `int[] m = new int[5];` kann man die Länge mit `m.length = 8;` nachträglich vergrößern.",
+     "correct": false,
+     "why": "Falsch. Die Länge eines Arrays steht bei der Erzeugung fest; `length` ist implizit `final`. Man müsste ein neues, größeres Array anlegen und umkopieren."
+    },
+    {
+     "id": "c",
+     "text": "`m = new int[3][4];` ist gleichbedeutend damit, erst `m = new int[3][];` anzulegen und dann jede Zeile einzeln mit `new int[4]` zu füllen.",
+     "correct": true,
+     "why": "Richtig - genau diese Äquivalenz zeigt das Skript auf S. 79."
+    },
+    {
+     "id": "d",
+     "text": "`m = new int[][4];` ist erlaubt, wenn die Zeilenanzahl erst später feststeht.",
+     "correct": false,
+     "why": "Falsch. Das Skript (S. 79) begründet es: die Referenzen auf die Zeilen könnten nirgends abgespeichert werden und die Anzahl der zu erzeugenden Zeilen ist unbekannt. Die **erste** Dimension muss angegeben werden."
+    },
+    {
+     "id": "e",
+     "text": "Bei einem zweidimensionalen Array dürfen die Zeilen unterschiedlich lang sein.",
+     "correct": true,
+     "why": "Richtig. Ein `int[][]` ist ein Array von Referenzen auf `int[]`. Das Skript zeigt es auf S. 78: nach `m[2] = new int[2];` gilt `m[0].length == 4`, aber `m[2].length == 2`."
+    },
+    {
+     "id": "f",
+     "text": "Übergibt man ein Array an eine Methode, arbeitet die Methode auf einer Kopie; Änderungen sind außerhalb nicht sichtbar.",
+     "correct": false,
+     "why": "Falsch. Übergeben wird die **Referenz**. Die Methode greift auf dasselbe Array zu, Änderungen an den Elementen sind nach der Rückkehr sichtbar."
+    }
+   ],
+   "solution": "Richtig sind **a**, **c** und **e**.\n\n- a) `double y[];` und `double[] y;` sind beide gültig; die zweite Form ist laut Skript die bevorzugte.\n- c) `new int[3][4]` ist die Kurzform für `new int[3][]` plus Schleife über die Zeilen.\n- e) Zeilen dürfen verschieden lang sein, weil jede Zeile ein eigenständiges Array ist.",
+   "explanation": "Die sechs Aussagen decken die typischen Missverständnisse rund um Arrays ab.\n\n**Zwei Schreibweisen (a):** `double[] x;` und `double y[];` bedeuten dasselbe. Die zweite stammt aus C und wird nur noch geduldet - das Skript nennt die erste ausdrücklich 'bevorzugt', weil der Typ dann vollständig links steht.\n\n**Feste Länge (b):** Ein Array wird mit `new` in einer festen Größe angelegt und kann danach nicht wachsen. `length` ist ein **lesendes** Pseudo-Attribut; eine Zuweisung darauf ist ein Compiler-Fehler. Wer eine variable Größe braucht, nimmt später eine `ArrayList`.\n\n**Mehrdimensionalität (c, d, e):** Java hat keine echten Matrizen, sondern nur *Arrays von Arrays*. `m` ist ein Array von **Referenzen** auf Zeilen. Daraus folgt zwingend: die erste Dimension muss beim `new` bekannt sein (sonst weiß Java nicht, wie viele Referenzen es anlegen soll) - deshalb ist `new int[][4]` verboten und `new int[3][]` erlaubt. Und weil jede Zeile ein eigenes Array ist, darf jede eine andere Länge haben ('jagged array').\n\n**Call by reference-Effekt (f):** Java übergibt zwar immer *by value*, aber der Wert einer Array-Variablen **ist** die Referenz. Die Methode kann das Array daher von innen verändern - genau das nutzt `Klausur06.java` als Falle aus.",
+   "hints": [
+    "Überlegen Sie bei jeder Aussage: Was speichert eine Array-Variable eigentlich - die Daten oder eine Adresse?",
+    "Bei mehrdimensionalen Arrays: Was genau steht in `m[0]`, wenn `m` vom Typ `int[][]` ist?",
+    "Für d) und c): Java muss beim `new` wissen, wie viele Referenzen es anlegen soll. Welche Dimension ist dafür unverzichtbar?"
+   ],
+   "pitfalls": [
+    "Glauben, ein Array lasse sich nachträglich vergrößern.",
+    "`new int[][4]` für erlaubt halten, weil `new int[3][]` erlaubt ist - es ist genau umgekehrt.",
+    "Bei Methodenparametern Arrays wie primitive Typen behandeln."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 75,
+     "label": "5.1 Arrays: Deklaration, Erzeugung, Initialisierung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 78,
+     "label": "5.1 Mehrdimensionale Arrays"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 79,
+     "label": "5.1 new int[3][] vs. new int[][4]"
+    }
+   ],
+   "tags": [
+    "array",
+    "mehrdimensional",
+    "referenz",
+    "multi-mc"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-018",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Warum ändert y[1] auch x[1]? Und wie kopiert man richtig?",
+   "prompt": "Betrachten Sie den folgenden Ausschnitt:\n\n```java\ndouble[] x = { 1.5, 2.0, 1.0 };\ndouble[] y = x;\ny[1] = 4.0;\nSystem.out.println(x[1]);\n```\n\na) Welchen Wert gibt `println` aus? **Begründen** Sie Ihre Antwort mit dem zugrunde liegenden Konzept.\n\nb) Was muss man stattdessen schreiben, damit `y` eine **echte Kopie** von `x` wird? Geben Sie den Code an.",
+   "code": "double[] x = { 1.5, 2.0, 1.0 };\ndouble[] y = x;\ny[1] = 4.0;\nSystem.out.println(x[1]);",
+   "solution": "**a) Ausgabe: `4.0`**\n\nEine Array-Variable speichert nicht das Array selbst, sondern nur eine **Referenz** (die Adresse) darauf. `double[] y = x;` kopiert deshalb nur diese Referenz - es entsteht **kein** zweites Array. `x` und `y` sind danach zwei Namen für dasselbe Objekt im Speicher. `y[1] = 4.0;` schreibt in dieses eine Array, also liest `x[1]` denselben veränderten Wert.\n\n**b) Echte Kopie:**\n\n```java\ndouble[] y = new double[x.length];\nfor (int j = 0; j < x.length; j++) {\n  y[j] = x[j];\n}\n```\n\nEntscheidend ist das `new`: Es legt ein zweites, eigenständiges Array an; die Schleife überträgt danach die Werte einzeln. Danach gilt `x != y` (verschiedene Objekte), aber elementweise Gleichheit.\n\n---\n\n**Bewertungsrubrik (4 P.)**\n\n| Kriterium | P. |\n|---|---|\n| Ausgabe `4.0` genannt (nicht `2.0`, nicht `4`) | 1 |\n| Begründung enthaelt 'Referenz' / 'beide zeigen auf dasselbe Array' / 'es wird nur die Adresse kopiert' | 1 |\n| `new double[x.length]` (neues Array anlegen) | 1 |\n| Schleife, die elementweise kopiert | 1 |",
+   "explanation": "Diese Frage ist die Kurzantwort-Variante des wichtigsten Konzepts im Kapitel und steht im Skript auf S. 76 fast wörtlich so - inklusive der Kommentare *\"erzeugt neue Referenzvariable y, die auf dasselbe Array zeigt wie x\"* und *\"So wird z eine echte Kopie von x\"*.\n\n**Warum `4.0` und nicht `4`?** Weil `x` ein `double[]` ist. `println` gibt einen `double` immer mit Nachkommastelle aus. In der Klausur kostet `4` statt `4.0` erfahrungsgemäß einen halben Punkt.\n\n**Warum reicht `new` allein nicht?** `double[] y = new double[x.length];` erzeugt zwar ein zweites Array, aber es ist mit Nullen gefüllt. Erst die Schleife macht daraus eine Kopie. (In der Praxis gäbe es `Arrays.copyOf` oder `x.clone()` - beide sind aber nicht Teil der Vorlesung, und `clone()` ist bei zweidimensionalen Arrays außerdem nur eine *flache* Kopie.)\n\n**Und Strings?** Bei `String b = a; b = b.replace(...)` passiert genau das Gegenteil: Strings sind immutable, also *kann* niemand das gemeinsame Objekt verändern. Deshalb verhalten sich Strings bei der Parameterübergabe wie einfache Datentypen (Skript S. 95), Arrays aber nicht.\n\nMerkregel: **`=` kopiert den Pfeil, `new` + Schleife kopiert die Kiste.**",
+   "hints": [
+    "Zeichnen Sie zwei Kästchen für `x` und `y` und daneben das eigentliche Array. Wie viele Pfeile, wie viele Arrays?",
+    "Überlegen Sie, welchen Typ die Elemente haben - das entscheidet über die Schreibweise der Ausgabe.",
+    "Für b): Ein zweites Array entsteht in Java ausschließlich durch `new` (oder einen Initialisierer)."
+   ],
+   "pitfalls": [
+    "`2.0` antworten, weil man `y = x` für eine Kopie hält.",
+    "`4` statt `4.0` schreiben - bei `double` gehört die Nachkommastelle dazu.",
+    "Bei b) nur `double[] y = new double[3];` angeben und das elementweise Kopieren vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 76,
+     "label": "5.1 Arrays: Referenzen, null, echte Kopie"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 354,
+     "label": "Überblick 5. Arrays und Strings"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 95,
+     "label": "5.3 Strings sind immutable"
+    }
+   ],
+   "tags": [
+    "array",
+    "referenz",
+    "kopie",
+    "short-answer"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-019",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms?",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Nebenwirkung {\n\n  public static double schrumpfe(int[] feld, int zahl) {\n    for (int z = 1; z < feld.length; z += 2)\n      feld[z] -= 3;\n    return zahl;\n  }\n\n  public static void main(String[] s) {\n    int[] daten = { 5, 12, 8, 1 };\n    daten[0] = daten.length * 2;\n    while (daten[1] > 3)\n      System.out.println( schrumpfe(daten, daten[1]) );\n    System.out.println( daten[0] + daten.length );\n  }\n}",
+   "expectedOutput": "12.0\n9.0\n6.0\n12",
+   "solution": "class Nebenwirkung {\n\n  public static double schrumpfe(int[] feld, int zahl) {\n    for (int z = 1; z < feld.length; z += 2)\n      feld[z] -= 3;\n    return zahl;\n  }\n\n  public static void main(String[] s) {\n    int[] daten = { 5, 12, 8, 1 };\n    daten[0] = daten.length * 2;\n    while (daten[1] > 3)\n      System.out.println( schrumpfe(daten, daten[1]) );\n    System.out.println( daten[0] + daten.length );\n  }\n}",
+   "explanation": "Diese Aufgabe ist nach dem Muster von `Klausur06.java` gebaut und kombiniert drei Fallen.\n\n**Falle 1 - das Array wird in der Methode verändert.** `schrumpfe(int[] feld, ...)` bekommt die **Referenz** auf `daten`. `feld` und `daten` sind derselbe Speicher, also wirken die `-= 3` nach außen. Nur so terminiert die `while`-Schleife überhaupt.\n\n**Falle 2 - die Argumente werden VOR dem Aufruf ausgewertet.** In `schrumpfe(daten, daten[1])` wird `daten[1]` gelesen, *bevor* der Rumpf läuft. Deshalb gibt die Methode immer den **alten** Wert zurück.\n\n**Falle 3 - der Rückgabetyp ist `double`.** Zurückgegeben wird zwar der `int`-Parameter `zahl`, aber er wird implizit erweitert. `println` druckt deshalb `12.0` statt `12`.\n\nAblauf: `daten = {5, 12, 8, 1}`, dann `daten[0] = 4 * 2 = 8` -> `{8, 12, 8, 1}`.\n\n| Runde | `daten[1]` vor Aufruf | zahl (Rückgabe) | Array danach | Ausgabe |\n|---|---|---|---|---|\n| 1 | 12 > 3 | 12 | `{8, 9, 8, -2}` | `12.0` |\n| 2 | 9 > 3 | 9 | `{8, 6, 8, -5}` | `9.0` |\n| 3 | 6 > 3 | 6 | `{8, 3, 8, -8}` | `6.0` |\n| 4 | 3 > 3 ist **false** | - | - | Schleife endet |\n\nDie Schleife modifiziert die Indizes 1 und 3 (`z = 1`, dann `z = 3`, dann `z = 5` >= `length`).\n\nZum Schluss `daten[0] + daten.length` = `8 + 4` = **12** - beides `int`, also Addition und **keine** Konkatenation (sonst `84`).",
+   "hints": [
+    "Legen Sie eine Tabelle mit dem Array-Inhalt nach jedem Aufruf an. Welche Indizes verändert die Schleife in `schrumpfe`?",
+    "Wann wird `daten[1]` für den zweiten Parameter gelesen - vor oder nach dem Ausführen des Methodenrumpfs?",
+    "Schauen Sie sehr genau auf den **Rückgabetyp** der Methode und darauf, ob in der letzten Zeile addiert oder konkateniert wird."
+   ],
+   "pitfalls": [
+    "`12`, `9`, `6` ohne `.0` schreiben - der Rückgabetyp ist `double`.",
+    "Glauben, die Methode arbeite auf einer Kopie, und deshalb eine Endlosschleife annehmen.",
+    "Am Ende `84` statt `12` erwarten (Konkatenation statt Addition)."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur06.java",
+     "page": null,
+     "label": "Klausur-Übung: Array als Methodenparameter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 76,
+     "label": "5.1 Arrays: Referenzen, null, echte Kopie"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 89,
+     "label": "5.2 Konkatenation, überladener + Operator"
+    }
+   ],
+   "tags": [
+    "array",
+    "methodenparameter",
+    "referenz",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-020",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Mehrdimensionale Arrays mit unterschiedlich langen Zeilen",
+   "prompt": "Was gibt dieses Programm auf der Konsole aus?",
+   "code": "class MatrixAusgabe {\n  public static void main(String[] s) {\n    int[][] m = new int[3][4];\n    m[2] = new int[2];\n    m[2][1] = 7;\n    m[0][3] = 5;\n    System.out.println(m.length);\n    System.out.println(m[0].length);\n    System.out.println(m[2].length);\n    System.out.println(m[1][1]);\n    System.out.println(m[2][1] + m[0][3]);\n\n    int[][] n = { {1, 2}, {3, 4, 5} };\n    int summe = 0;\n    for (int[] zeile : n)\n      for (int w : zeile)\n        summe += w;\n    System.out.println(summe);\n    System.out.println(n[1].length - n[0].length);\n  }\n}",
+   "expectedOutput": "3\n4\n2\n0\n12\n15\n1",
+   "solution": "class MatrixAusgabe {\n  public static void main(String[] s) {\n    int[][] m = new int[3][4];\n    m[2] = new int[2];\n    m[2][1] = 7;\n    m[0][3] = 5;\n    System.out.println(m.length);\n    System.out.println(m[0].length);\n    System.out.println(m[2].length);\n    System.out.println(m[1][1]);\n    System.out.println(m[2][1] + m[0][3]);\n\n    int[][] n = { {1, 2}, {3, 4, 5} };\n    int summe = 0;\n    for (int[] zeile : n)\n      for (int w : zeile)\n        summe += w;\n    System.out.println(summe);\n    System.out.println(n[1].length - n[0].length);\n  }\n}",
+   "explanation": "In Java gibt es keine echten Matrizen, sondern nur **Arrays von Arrays** (Skript S. 77/78). `int[][] m` ist ein Array, dessen Elemente vom Typ `int[]` sind - also Referenzen auf Zeilen.\n\n`new int[3][4]` legt drei Zeilen mit je vier Nullen an. `m[2] = new int[2];` hängt an Position 2 ein **komplett neues, kürzeres** Array ein; die alte 4er-Zeile ist danach unerreichbar und wird vom Garbage Collector abgeräumt. Das ist genau das Beispiel von Folie 78.\n\nDaraus folgen die Ausgaben:\n\n- `m.length` = **3** - die Anzahl der **Zeilen**(-referenzen).\n- `m[0].length` = **4** - unverändert.\n- `m[2].length` = **2** - die Zeilen dürfen verschieden lang sein ('jagged array').\n- `m[1][1]` = **0** - Default-Wert, nie beschrieben.\n- `m[2][1] + m[0][3]` = `7 + 5` = **12**.\n\nDer zweite Block zeigt den Initialisierer für 2D-Arrays und das **geschachtelte for-each**: Die äußere Schleife läuft über Zeilen, ihre Laufvariable hat deshalb den Typ `int[]` (nicht `int`!), erst die innere liefert die einzelnen Zahlen. Summe: `1+2+3+4+5` = **15**. Zum Schluss `n[1].length - n[0].length` = `3 - 2` = **1**.\n\nMerkregel: **`m.length` = Anzahl Zeilen, `m[i].length` = Länge der Zeile i.** Es gibt kein `m.length[0]` und kein `m.length(1)`.",
+   "hints": [
+    "Zeichnen Sie das Bild aus dem Skript: links eine Spalte mit drei Referenzen, rechts die eigentlichen Zeilen.",
+    "Was passiert mit der ursprünglichen vierelementigen Zeile, wenn `m[2] = new int[2];` ausgeführt wird?",
+    "Welchen Typ hat die Laufvariable der **äußeren** for-each-Schleife bei einem `int[][]`?"
+   ],
+   "pitfalls": [
+    "`m.length` für die Gesamtzahl aller Elemente (12) halten - es sind nur die Zeilen.",
+    "`m[0].length` nach `m[2] = new int[2];` auf 2 ändern - nur Zeile 2 wurde ersetzt.",
+    "In der äußeren for-each-Schleife `int zeile` statt `int[] zeile` erwarten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 78,
+     "label": "5.1 Mehrdimensionale Arrays"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 79,
+     "label": "5.1 new int[3][] vs. new int[][4]"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 75,
+     "label": "5.1 Arrays: Deklaration, Erzeugung, Initialisierung"
+    }
+   ],
+   "tags": [
+    "array",
+    "mehrdimensional",
+    "for-each",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-021",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "== gegen equals: wann liefert == zufällig true?",
+   "prompt": "Was gibt dieses Programm aus? (Zeichencodes: `'a'` = 97, `'b'` = 98.)",
+   "code": "class Identitaet {\n  public static void main(String[] s) {\n    String a = \"Java\";\n    String b = \"Java\";\n    String c = new String(\"Java\");\n    String d = \"Ja\" + \"va\";\n    String e = \"Ja\";\n    String f = e + \"va\";\n    System.out.println(a == b);\n    System.out.println(a == c);\n    System.out.println(a.equals(c));\n    System.out.println(a == d);\n    System.out.println(a == f);\n    System.out.println(a.equals(f));\n    System.out.println(a.compareTo(\"Jbva\"));\n  }\n}",
+   "expectedOutput": "true\nfalse\ntrue\ntrue\nfalse\ntrue\n-1",
+   "solution": "class Identitaet {\n  public static void main(String[] s) {\n    String a = \"Java\";\n    String b = \"Java\";\n    String c = new String(\"Java\");\n    String d = \"Ja\" + \"va\";\n    String e = \"Ja\";\n    String f = e + \"va\";\n    System.out.println(a == b);\n    System.out.println(a == c);\n    System.out.println(a.equals(c));\n    System.out.println(a == d);\n    System.out.println(a == f);\n    System.out.println(a.equals(f));\n    System.out.println(a.compareTo(\"Jbva\"));\n  }\n}",
+   "explanation": "`==` vergleicht bei Referenztypen die **Objektidentität** (Skript S. 90). Ob zwei inhaltsgleiche Strings dasselbe Objekt sind, hängt davon ab, **wann** sie entstanden sind.\n\n1. `a == b` -> **true**. Identische **Literale** legt der Compiler nur einmal an (String-Pool). Beide Variablen zeigen auf dasselbe Objekt.\n2. `a == c` -> **false**. `new String(\"Java\")` erzwingt ausdrücklich ein **neues** Objekt. Genau deshalb ist `new String(...)` in echtem Code verpönt - hier dient es als Lehrbeispiel.\n3. `a.equals(c)` -> **true**. Zeichenweiser Vergleich, Objektidentität ist dabei egal.\n4. `a == d` -> **true**. `\"Ja\" + \"va\"` besteht nur aus Konstanten, deshalb rechnet der **Compiler** das bereits aus und legt das Ergebnis in denselben Pool. Zur Laufzeit passiert hier gar nichts mehr.\n5. `a == f` -> **false**. `e + \"va\"` enthält eine **Variable**, wird also erst zur Laufzeit zusammengesetzt - neues Objekt.\n6. `a.equals(f)` -> **true**. Inhalt identisch.\n7. `a.compareTo(\"Jbva\")` -> **-1**. Verglichen wird zeichenweise bis zum ersten Unterschied: an Index 1 steht `'a'` (97) gegen `'b'` (98), die Differenz ist `97 - 98 = -1`. Negativ bedeutet: `\"Java\"` steht alphabetisch **vor** `\"Jbva\"`.\n\nDie Zeilen 4 und 5 sind die Pointe: Zwei Ausdrücke, die exakt gleich aussehen, liefern unterschiedliche Ergebnisse - je nachdem, ob der Compiler sie ausrechnen konnte. Genau deshalb darf man sich auf `==` bei Strings **nie** verlassen.\n\nMerkregel: **Für Inhalt immer `equals`. `==` sagt nur, ob es zufällig dasselbe Objekt ist.**",
+   "hints": [
+    "Fragen Sie sich bei jeder Variablen: Steht dieser String schon zur Übersetzungszeit fest, oder entsteht er erst beim Ausführen?",
+    "`new String(...)` hat genau einen Zweck: ein garantiert neues Objekt zu erzeugen.",
+    "`compareTo` liefert bei Strings die Differenz der ersten unterschiedlichen Zeichencodes."
+   ],
+   "pitfalls": [
+    "Alle `==`-Zeilen einheitlich mit `false` beantworten - bei Literalen liefert `==` durchaus `true`.",
+    "`a == d` und `a == f` gleich behandeln, obwohl nur einer der beiden zur Übersetzungszeit feststeht.",
+    "Bei `compareTo` `true`/`false` oder `-2` erwarten statt der Zeichencode-Differenz `-1`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 90,
+     "label": "5.2 == vs. equals, compareTo, length()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 87,
+     "label": "5.2 Strings: automatisches new, Positionen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 89,
+     "label": "5.2 Konkatenation, überladener + Operator"
+    }
+   ],
+   "tags": [
+    "string",
+    "equals",
+    "referenz",
+    "compareTo",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-022",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: genau 3 Fehler benennen und korrigieren",
+   "prompt": "Der folgende Code enthält genau **3 Fehler** - einen davon meldet bereits der Compiler, die beiden anderen erst beim Ausführen bzw. gar nicht. Benennen Sie alle drei und geben Sie die Korrektur an.\n\nDas korrigierte Programm muss ausgeben:\n```\n3\ntrue\n```",
+   "code": "class Woerter {\n  private String[] worte;\n\n  public Woerter(String[] worte) {\n    worte = worte;\n  }\n\n  public int anzahl() {\n    return worte.length();\n  }\n\n  public boolean enthaelt(String w) {\n    for (int i = 0; i < worte.length; i++)\n      if (worte[i] == w) return true;\n    return false;\n  }\n\n  public static void main(String[] s) {\n    String[] a = { \"der\", \"die\", \"das\" };\n    Woerter w = new Woerter(a);\n    System.out.println(w.anzahl());\n    String teil = \"di\";\n    System.out.println(w.enthaelt(teil + \"e\"));\n  }\n}",
+   "expectedOutput": "3\ntrue",
+   "errors": [
+    {
+     "kind": "logik",
+     "line": 5,
+     "wrong": "worte = worte;",
+     "fix": "this.worte = worte;",
+     "why": "**Logik-Fehler.** Der Parameter `worte` verdeckt (shadowed) das gleichnamige Attribut. `worte = worte;` weist den Parameter sich selbst zu - das Attribut bleibt `null`. Ohne `this.` findet der Compiler immer die 'nächste' Deklaration, also den Parameter. Folge zur Laufzeit: `NullPointerException: Cannot read the array length because \"this.worte\" is null`."
+    },
+    {
+     "kind": "compiler",
+     "line": 9,
+     "wrong": "return worte.length();",
+     "fix": "return worte.length;",
+     "why": "**Compiler-Fehler.** `worte` ist ein `String[]`; die Anzahl der Elemente steht im Attribut `length` ohne Klammernpaar. javac: 'cannot find symbol: method length(), location: variable worte of type String[]'."
+    },
+    {
+     "kind": "logik",
+     "line": 14,
+     "wrong": "if (worte[i] == w) return true;",
+     "fix": "if (worte[i].equals(w)) return true;",
+     "why": "**Logik-Fehler.** `==` vergleicht bei Strings die Referenzen. Der Aufruf übergibt `teil + \"e\"`, also einen erst zur Laufzeit erzeugten String - `==` liefert `false`, obwohl der Inhalt `\"die\"` im Array steht. Richtig ist der zeichenweise Vergleich mit `equals`."
+    }
+   ],
+   "solution": "class Woerter {\n  private String[] worte;\n\n  public Woerter(String[] worte) {\n    this.worte = worte;\n  }\n\n  public int anzahl() {\n    return worte.length;\n  }\n\n  public boolean enthaelt(String w) {\n    for (int i = 0; i < worte.length; i++)\n      if (worte[i].equals(w)) return true;\n    return false;\n  }\n\n  public static void main(String[] s) {\n    String[] a = { \"der\", \"die\", \"das\" };\n    Woerter w = new Woerter(a);\n    System.out.println(w.anzahl());\n    String teil = \"di\";\n    System.out.println(w.enthaelt(teil + \"e\"));\n  }\n}",
+   "explanation": "Diese Aufgabe hat genau das Format von Aufgabe 1b der Probeklausur: *\"Der folgende Code enthält genau 3 Fehler. Benennen Sie sie und geben Sie die Korrektur an.\"* Wie dort sind die Fehler bewusst **von unterschiedlicher Art** - man darf sich nicht darauf verlassen, dass der Compiler alles findet.\n\n**Fehler 1 (Zeile 5) - das fehlende `this`.** Heißt der Konstruktorparameter genauso wie das Attribut, verdeckt er es im gesamten Konstruktorrumpf. `worte = worte;` ist syntaktisch völlig korrekt und wird anstandslos übersetzt - es tut nur schlicht nichts. Das Attribut behält seinen Default-Wert `null`. Der Fehler fällt erst auf, wenn eine Methode das Attribut benutzt, und äußert sich dann als `NullPointerException`. Exakt dieser Fehler steckt in der Probeklausur als `marke = marke;`.\n\n**Fehler 2 (Zeile 9) - `length()` beim Array.** Der einzige Fehler, den javac meldet. Deshalb ist er auch der ungefährlichste.\n\n**Fehler 3 (Zeile 14) - `==` statt `equals`.** Der heimtückischste: Er kompiliert, wirft keine Exception und liefert einfach ein falsches Ergebnis. Hätte man `w.enthaelt(\"die\")` mit einem Literal aufgerufen, wäre sogar zufällig `true` herausgekommen (String-Pool) - der Testfall `teil + \"e\"` erzeugt den String dagegen zur Laufzeit und entlarvt den Bug.\n\nMerkregel für die Klausur: **Fehlersuche heißt nicht nur Compiler-Fehler suchen.** Prüfen Sie zusätzlich immer: Werden alle Attribute im Konstruktor wirklich gesetzt (`this.`)? Wird bei Strings `equals` benutzt?",
+   "hints": [
+    "Verfolgen Sie, welchen Wert das **Attribut** `worte` nach dem Konstruktoraufruf hat. Was passiert, wenn Parameter und Attribut denselben Namen tragen?",
+    "Eine der drei Zeilen fällt schon javac auf - sie betrifft die Länge.",
+    "Der Testaufruf übergibt bewusst `teil + \"e\"` statt des Literals `\"die\"`. Warum wohl?"
+   ],
+   "pitfalls": [
+    "Nur den einen Compiler-Fehler nennen und die beiden Logik-Fehler übersehen.",
+    "Bei Fehler 1 den Parameter umbenennen statt `this.` zu benutzen - möglich, aber die Vorlesung zeigt ausdrücklich `this.attribut = parameter`.",
+    "Bei Fehler 3 `.equals` mit vertauschten Seiten oder auf `w` statt `worte[i]` schreiben und dabei die NullPointer-Gefahr übersehen."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 1b - Fehlersuche (genau 3 Fehler)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 90,
+     "label": "5.2 == vs. equals, compareTo, length()"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    }
+   ],
+   "tags": [
+    "array",
+    "string",
+    "equals",
+    "this",
+    "find-errors"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-023",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "code",
+   "difficulty": 4,
+   "points": 10,
+   "examStyle": false,
+   "title": "Summenmatrix n x n aufbauen",
+   "prompt": "Erstellen Sie ein Programm, das für eine gegebene Größe `n` eine Matrix aus `n x n` ganzen Zahlen erzeugt. Die Matrix wird mit den Zahlen `1, 2, ..., n` für die **erste Zeile und die erste Spalte** gefüllt. Füllen Sie dann alle anderen Zellen mit der **Summe aus dem Element oberhalb und dem Element links** von der Zelle.\n\nGeben Sie die Matrix zeilenweise aus, die Werte einer Zeile durch Kommata getrennt (kein Komma am Zeilenende).\n\nFür `n = 4` muss die Ausgabe exakt so aussehen:\n```\n1,2,3,4\n2,4,7,11\n3,7,14,25\n4,11,25,50\n```",
+   "starterCode": "class Summenmatrix {\n  public static void main(String[] str) {\n    int n = 4;   // kann später noch geändert werden\n\n    // 1. Matrix n x n anlegen\n\n    // 2. erste Zeile und erste Spalte mit 1..n füllen\n\n    // 3. jede weitere Zelle = Zelle darüber + Zelle links davon\n\n    // 4. zeilenweise ausgeben, Werte mit Komma getrennt\n\n  }\n}",
+   "expectedOutput": "1,2,3,4\n2,4,7,11\n3,7,14,25\n4,11,25,50",
+   "solution": "class Summenmatrix {\n  public static void main(String[] str) {\n    int n = 4;\n    int[][] m = new int[n][n];\n\n    // erste Zeile und erste Spalte: 1, 2, ..., n\n    for (int i = 0; i < n; i++) {\n      m[i][0] = i + 1;\n      m[0][i] = i + 1;\n    }\n\n    // jede weitere Zelle: oben + links\n    for (int i = 1; i < n; i++) {\n      for (int j = 1; j < n; j++) {\n        m[i][j] = m[i - 1][j] + m[i][j - 1];\n      }\n    }\n\n    // zeilenweise ausgeben\n    for (int i = 0; i < n; i++) {\n      String zeile = \"\";\n      for (int j = 0; j < n; j++) {\n        zeile = zeile + m[i][j];\n        if (j < n - 1) {\n          zeile = zeile + \",\";\n        }\n      }\n      System.out.println(zeile);\n    }\n  }\n}",
+   "explanation": "Beispiel 3 aus dem Skript (S. 82). Der Kern ist der Umgang mit **zwei Indizes**, wobei `m[i][j]` immer *Zeile i, Spalte j* bedeutet.\n\n**Schritt 1 - anlegen:** `new int[n][n]` erzeugt `n` Zeilen mit je `n` Nullen. Man muss also nichts explizit mit 0 initialisieren.\n\n**Schritt 2 - Ränder:** Eine einzige Schleife genügt für beides, weil die Werte gleich sind: `m[i][0] = i + 1` füllt die erste **Spalte**, `m[0][i] = i + 1` die erste **Zeile**. Das `+ 1` ist nötig, weil Indizes ab 0 zählen, die Werte aber ab 1.\n\n**Schritt 3 - Inneres:** Die beiden Schleifen starten bei `1`, nicht bei `0` - sonst würde `m[i-1][j]` mit `i = 0` auf `m[-1][j]` zugreifen (`ArrayIndexOutOfBoundsException`). Die **Reihenfolge** ist entscheidend: Weil `i` außen und `j` innen läuft, sind `m[i-1][j]` (oben) und `m[i][j-1]` (links) beim Zugriff garantiert schon berechnet. Das ist das gleiche Prinzip wie beim Pascalschen Dreieck.\n\n**Schritt 4 - Ausgabe:** Trennzeichen nur *zwischen* den Werten, deshalb `if (j < n - 1)`. Sammelt man die Zeile erst in einem String und gibt sie mit einem `println` aus, vermeidet man das häufige Problem eines überzähligen Kommas am Zeilenende. Beachten Sie: `zeile + m[i][j]` ist Konkatenation (links steht ein String), **nicht** Addition.\n\nProbe für `m[1][1]`: oben `m[0][1] = 2`, links `m[1][0] = 2`, macht `4`. Und `m[3][3]`: `25 + 25 = 50`.",
+   "hints": [
+    "Legen Sie die Matrix mit `new int[n][n]` an - alle Zellen sind danach automatisch 0.",
+    "Für die Ränder genügt eine Schleife: `m[i][0]` und `m[0][i]` bekommen denselben Wert `i + 1`.",
+    "Die inneren Schleifen müssen bei Index 1 starten, sonst greifen `m[i-1][j]` bzw. `m[i][j-1]` daneben. Überlegen Sie außerdem, wie Sie das Komma am Zeilenende vermeiden."
+   ],
+   "pitfalls": [
+    "Die inneren Schleifen bei 0 starten -> `ArrayIndexOutOfBoundsException` bei `m[-1][j]`.",
+    "`i` und `j` vertauschen und dadurch eine gespiegelte Matrix erzeugen (fällt hier nur bei unsymmetrischen Varianten auf).",
+    "Ein Komma zu viel am Zeilenende ausgeben."
+   ],
+   "sources": [
+    {
+     "file": "05_ArraysStrings/Arrays03.java",
+     "page": 82,
+     "label": "Beispiel 3: Summenmatrix n x n"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 78,
+     "label": "5.1 Mehrdimensionale Arrays"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 89,
+     "label": "5.2 Konkatenation, überladener + Operator"
+    }
+   ],
+   "tags": [
+    "array",
+    "mehrdimensional",
+    "matrix",
+    "code"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-024",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "short-answer",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Warum verhalten sich Strings wie einfache Datentypen?",
+   "prompt": "Im Skript steht: *\"Strings können nicht verändert werden ('immutable') ... dadurch verhalten sich Strings wie einfache Datentypen, z.B. call-by-value-Semantik bei Parameterübergabe.\"*\n\na) Erklären Sie, was mit *immutable* gemeint ist, obwohl `String` doch ein **Referenztyp** ist.\n\nb) Warum kann eine Methode `void aendere(String s)` den String des Aufrufers nicht verändern, eine Methode `void aendere(char[] a)` das entsprechende Array aber schon?\n\nc) Wie muss man vorgehen, wenn man den Inhalt eines Strings tatsächlich zeichenweise bearbeiten will?",
+   "solution": "**a) Immutable heißt: Das String-Objekt selbst ist unveränderlich.**\n\nEine `String`-Variable ist zwar eine Referenz, aber das Objekt, auf das sie zeigt, kann nach seiner Erzeugung nicht mehr geändert werden. Es gibt in der Klasse `String` keine einzige Methode, die die Zeichen des Objekts überschreibt. Methoden wie `replace`, `toUpperCase`, `substring`, `trim` oder der Operator `+` erzeugen jeweils ein **neues** String-Objekt und liefern eine Referenz darauf zurück. Veränderbar ist nur die *Variable* (sie kann auf ein anderes Objekt zeigen), nicht der *Inhalt*.\n\n**b) Weil die Methode das Objekt gar nicht anfassen kann.**\n\nIn beiden Fällen wird die Referenz **by value** übergeben, die Methode arbeitet also mit einer Kopie des Verweises auf dasselbe Objekt.\n\n- Bei `char[] a` kann die Methode über diese Referenz **in** das Array schreiben (`a[0] = 'X';`). Der Aufrufer sieht die Änderung, weil es dasselbe Array ist - das ist der 'call by reference-Effekt'.\n- Bei `String s` gibt es keine Schreiboperation auf dem Objekt. `s = s.toUpperCase();` weist nur der **lokalen Kopie der Referenz** ein neues Objekt zu; die Variable des Aufrufers zeigt weiterhin auf den alten String. Nach außen wirkt das exakt wie call by value.\n\n**c) Umweg über ein `char`-Array:**\n\n```java\nchar[] zeichen = text.toCharArray();  // String -> char[]\nzeichen[0] = 'X';                     // hier ist Ändern erlaubt\ntext = new String(zeichen);           // char[] -> String\n```\n\n(Alternativ die Klasse `StringBuffer`, die das Skript auf S. 95 als veränderbare Variante erwähnt.)\n\n---\n\n**Bewertungsrubrik (4 P.)**\n\n| Kriterium | P. |\n|---|---|\n| a) Objekt unveränderlich; Methoden liefern **neue** Strings zurück | 1 |\n| b) `char[]`: Schreibzugriff auf dasselbe Objekt -> von außen sichtbar | 1 |\n| b) `String`: Zuweisung trifft nur die lokale Referenzkopie -> nicht sichtbar | 1 |\n| c) `toCharArray()` -> ändern -> `new String(...)` (oder `StringBuffer`) | 1 |",
+   "explanation": "Diese Frage verknüpft zwei Dinge, die in der Klausur gern zusammen geprüft werden: **Immutability** (S. 95) und **Parameterübergabe** (Kapitel 6).\n\nJava übergibt **immer** by value - auch Objekte. Der übergebene Wert ist bei Referenztypen aber die Referenz. Deshalb entsteht der berühmte 'call by reference-Effekt': Die Methode kann das *Objekt* verändern, aber niemals die *Variable* des Aufrufers auf ein anderes Objekt umbiegen.\n\nBei `String` fällt die erste Hälfte weg, weil es keine verändernden Operationen gibt. Damit bleibt nur noch das Verhalten übrig, das man von `int` oder `double` kennt - genau das meint das Skript mit *\"verhalten sich wie einfache Datentypen\"*.\n\nEin sehr häufiger Anfängerfehler folgt direkt daraus:\n\n```java\nString t = \"java\";\nt.toUpperCase();          // Rückgabewert wird weggeworfen!\nSystem.out.println(t);    // gibt java aus, nicht JAVA\nt = t.toUpperCase();      // so ist es richtig\n```\n\nDas ist exakt die Falle aus `ArrayVersusString.java` mit `s2.replace('!','?')`.\n\nNebeneffekt der Immutability: Strings dürfen gefahrlos im String-Pool geteilt werden - deshalb liefert `==` bei zwei gleichen Literalen `true`.\n\nMerkregel: **Ein String-Objekt ändert sich nie. Wenn sich etwas ändert, ist es ein neues Objekt - und die Variable muss neu zugewiesen werden.**",
+   "hints": [
+    "Unterscheiden Sie sauber zwischen der **Variablen** (die kann auf etwas anderes zeigen) und dem **Objekt** (das kann sich ändern - oder eben nicht).",
+    "Was macht `s = s.toUpperCase();` innerhalb einer Methode mit der Variablen des Aufrufers?",
+    "Für c): Es gibt im Skript genau ein Paar von Umwandlungen zwischen `String` und `char[]`."
+   ],
+   "pitfalls": [
+    "'Immutable' mit 'final' verwechseln - `final` verbietet die Neuzuweisung der Variablen, immutable betrifft das Objekt.",
+    "Behaupten, Java übergebe Objekte 'by reference' - es übergibt die Referenz by value; der Unterschied wird bei einer Neuzuweisung im Methodenrumpf sichtbar.",
+    "Bei c) `text.toCharArray()[0] = 'X';` schreiben - das ändert ein sofort weggeworfenes Zwischenarray."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 95,
+     "label": "5.3 Strings sind immutable"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 94,
+     "label": "5.3 Strings und Arrays: toCharArray, new String"
+    },
+    {
+     "file": "05_ArraysStrings/ArrayVersusString.java",
+     "page": null,
+     "label": "Array vs. String Referenzsemantik"
+    }
+   ],
+   "tags": [
+    "string",
+    "immutable",
+    "call-by-value",
+    "char-array",
+    "short-answer"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-025",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "Wordle: Hinweiszeile aus Rateversuchen aufbauen",
+   "prompt": "Das Programm spielt eine Wordle-Runde mit fest vorgegebenen Rateversuchen. Für jeden Versuch wird `hint` neu berechnet: an jeder Position, an der der geratene Buchstabe mit dem Lösungsbuchstaben übereinstimmt, erscheint dieser Buchstabe, sonst ein `-`.\n\nErgänzen Sie die 6 Lücken `____(n)____` (je 2 P.). Die Ausgabe muss lauten:\n```\nwharf -> w-ar-\nwears -> wear-\nweary -> weary\nGewonnen nach 3 Versuchen\n```",
+   "code": "class WordleHinweis {\n  public static void main(String[] str) {\n    String loesung = \"weary\";\n    String[] versuche = { \"wharf\", \"wears\", \"weary\" };\n    String hint = \"-----\";\n\n    for (int v = 0; v < versuche.____(1)____; v++) {\n      String in = versuche[v];\n      char[] hintChar = hint.____(2)____;        // hint veränderbar machen\n      if (in.____(3)____ >= loesung.length()) {\n        for (int i = 0; i < loesung.length(); i++) {\n          if ( in.____(4)____ == loesung.charAt(i) ) {\n            hintChar[i] = in.charAt(i);\n          } else {\n            hintChar[i] = '-';\n          }\n        }\n      }\n      hint = ____(5)____;                        // zurück in einen String\n      System.out.println(in + \" -> \" + hint);\n      if ( in.____(6)____(loesung) ) {\n        System.out.println(\"Gewonnen nach \" + (v + 1) + \" Versuchen\");\n      }\n    }\n  }\n}",
+   "expectedOutput": "wharf -> w-ar-\nwears -> wear-\nweary -> weary\nGewonnen nach 3 Versuchen",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "length"
+     ],
+     "explanation": "`versuche` ist ein **`String[]`** - Anzahl der Elemente als Attribut, ohne Klammernpaar."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "toCharArray()"
+     ],
+     "explanation": "Ein String ist immutable, man kann `hint.charAt(i)` nicht überschreiben. Deshalb wird der Hinweis in ein veränderbares `char`-Array umgewandelt."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "length()"
+     ],
+     "explanation": "`in` ist ein **`String`** - Länge als Methode, **mit** Klammernpaar. Der Kontrast zu Lücke 1 ist Absicht."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "charAt(i)"
+     ],
+     "explanation": "`charAt(i)` liefert das Zeichen an Position i als `char`. Zwei `char`-Werte darf man mit `==` vergleichen, weil `char` ein **primitiver** Typ ist - anders als bei Strings."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "new String(hintChar)",
+      "new String( hintChar )"
+     ],
+     "explanation": "Der Konstruktor `new String(char[])` baut aus dem bearbeiteten Array wieder einen String (Skript S. 94)."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "equals"
+     ],
+     "explanation": "Inhaltlicher Vergleich zweier Strings. `in == loesung` wäre hier zwar zufällig `true` (beides Literale im selben Compilat), aber sachlich falsch."
+    }
+   ],
+   "solution": "class WordleHinweis {\n  public static void main(String[] str) {\n    String loesung = \"weary\";\n    String[] versuche = { \"wharf\", \"wears\", \"weary\" };\n    String hint = \"-----\";\n\n    for (int v = 0; v < versuche.length; v++) {\n      String in = versuche[v];\n      char[] hintChar = hint.toCharArray();\n      if (in.length() >= loesung.length()) {\n        for (int i = 0; i < loesung.length(); i++) {\n          if ( in.charAt(i) == loesung.charAt(i) ) {\n            hintChar[i] = in.charAt(i);\n          } else {\n            hintChar[i] = '-';\n          }\n        }\n      }\n      hint = new String(hintChar);\n      System.out.println(in + \" -> \" + hint);\n      if ( in.equals(loesung) ) {\n        System.out.println(\"Gewonnen nach \" + (v + 1) + \" Versuchen\");\n      }\n    }\n  }\n}",
+   "explanation": "Das ist der Kern von `SimpleWordle.java` (Skript S. 104), nur mit fest vorgegebenen Rateversuchen statt Scanner-Eingabe, damit die Ausgabe reproduzierbar ist.\n\n**Der zentrale Trick** ist der Ringtausch `String -> char[] -> String`: Ein String lässt sich nicht zeichenweise beschreiben, ein `char`-Array schon. Also `toCharArray()`, im Array arbeiten, dann `new String(...)`.\n\n**Beide Längen im selben Programm:** Lücke 1 fragt die Länge eines Arrays ab (`versuche.length`), Lücke 3 die eines Strings (`in.length()`). Genau dieses Paar ist die häufigste Verwechslung des Kapitels - hier stehen sie sieben Zeilen auseinander.\n\n**Ablauf:**\n\n| Versuch | Vergleich mit `weary` | neuer hint |\n|---|---|---|\n| `wharf` | w passt, h nicht, a passt, r passt, f nicht | `w-ar-` |\n| `wears` | w, e, a, r passen, s nicht | `wear-` |\n| `weary` | alles passt | `weary` |\n\nBeachten Sie: `hintChar` wird in **jedem** Durchlauf neu aus `hint` erzeugt, und im `else`-Zweig wird ausdrücklich `'-'` gesetzt. Bereits gefundene Buchstaben verschwinden also wieder, wenn der nächste Versuch sie nicht trifft - genau so steht es im Original des Professors (das echte Wordle wäre hier gnädiger).\n\n**Warum `==` bei `char` erlaubt ist:** `charAt` liefert einen primitiven `char`, und bei primitiven Typen vergleicht `==` die Werte. Nur bei **Referenz**typen wie `String` wäre `==` ein Identitätsvergleich.",
+   "hints": [
+    "Lücke 1 und Lücke 3 fragen beide nach einer Länge - aber einmal bei einem Array und einmal bei einem String.",
+    "Warum wird `hint` überhaupt in ein `char`-Array umgewandelt? Was könnte man mit einem String nicht machen?",
+    "In Lücke 4 werden zwei einzelne Zeichen verglichen. Welcher Vergleichsoperator ist bei einem primitiven Typ richtig?"
+   ],
+   "pitfalls": [
+    "`versuche.length()` mit Klammern oder `in.length` ohne Klammern.",
+    "In Lücke 4 `in.charAt(i).equals(...)` schreiben - auf einem primitiven `char` gibt es keine Methoden.",
+    "In Lücke 5 `hintChar.toString()` benutzen - das liefert eine Adresse wie `[C@1b6d`, keinen Text."
+   ],
+   "sources": [
+    {
+     "file": "05_ArraysStrings/SimpleWordle.java",
+     "page": 104,
+     "label": "SimpleWordle: hint über char[] ändern"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 94,
+     "label": "5.3 Strings und Arrays: toCharArray, new String"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 90,
+     "label": "5.2 == vs. equals, compareTo, length()"
+    }
+   ],
+   "tags": [
+    "string",
+    "char-array",
+    "wordle",
+    "toCharArray",
+    "fill-gaps"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-026",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "code",
+   "difficulty": 5,
+   "points": 12,
+   "examStyle": false,
+   "title": "DNA-Sequenzsuche in einem char-Array",
+   "prompt": "Vervollständigen Sie die Methode `sucheSequenz(char[] dna, char[] seq)`. Sie soll die DNA-Sequenz durchgehen und alle Stellen melden, an denen `seq` genau mit einem Abschnitt von `dna` übereinstimmt.\n\nDie Methode gibt zuerst `Suche <seq>:` aus (die Sequenz als Text!) und danach für jede Fundstelle eine Zeile `Treffer an Position <i>`.\n\nDie Ausgabe muss exakt so aussehen:\n```\nSuche at:\nTreffer an Position 0\nTreffer an Position 9\nSuche cg:\nTreffer an Position 2\nTreffer an Position 4\nTreffer an Position 6\nSuche ttt:\n```",
+   "starterCode": "class DnaSuche {\n\n  // Sucht seq in dna und meldet jede Fundstelle:\n  public static void sucheSequenz(char[] dna, char[] seq) {\n\n  }\n\n  public static void main(String[] str) {\n    char[] dna = { 'a','t','c','g','c','g','c','g','a','a','t','t' };\n    sucheSequenz(dna, \"at\".toCharArray());\n    sucheSequenz(dna, \"cg\".toCharArray());\n    sucheSequenz(dna, \"ttt\".toCharArray());\n  }\n}",
+   "expectedOutput": "Suche at:\nTreffer an Position 0\nTreffer an Position 9\nSuche cg:\nTreffer an Position 2\nTreffer an Position 4\nTreffer an Position 6\nSuche ttt:",
+   "solution": "class DnaSuche {\n\n  // Sucht seq in dna und meldet jede Fundstelle:\n  public static void sucheSequenz(char[] dna, char[] seq) {\n    System.out.println(\"Suche \" + new String(seq) + \":\");\n    for (int i = 0; i <= dna.length - seq.length; i++) {\n      boolean treffer = true;\n      for (int j = 0; j < seq.length; j++) {\n        if (dna[i + j] != seq[j]) {\n          treffer = false;\n        }\n      }\n      if (treffer) {\n        System.out.println(\"Treffer an Position \" + i);\n      }\n    }\n  }\n\n  public static void main(String[] str) {\n    char[] dna = { 'a','t','c','g','c','g','c','g','a','a','t','t' };\n    sucheSequenz(dna, \"at\".toCharArray());\n    sucheSequenz(dna, \"cg\".toCharArray());\n    sucheSequenz(dna, \"ttt\".toCharArray());\n  }\n}",
+   "explanation": "Beispiel 4 aus dem Skript (S. 83), leicht erweitert. Es ist die klassische Teilstring-Suche - nur auf `char`-Arrays statt auf Strings.\n\n**Die Schleifengrenze ist der eigentliche Knackpunkt.** Die äußere Schleife darf nur bis zu der Position laufen, an der `seq` noch vollständig hineinpasst: `i <= dna.length - seq.length`. Bei `dna.length = 12` und `seq.length = 2` ist das `i <= 10` - der letzte mögliche Start ist Index 10, weil dann noch die Indizes 10 und 11 gelesen werden. Wer `i < dna.length` schreibt, bekommt eine `ArrayIndexOutOfBoundsException`; wer `i < dna.length - seq.length` schreibt, übersieht die letzte mögliche Stelle.\n\nBesonders schön zeigt das der dritte Aufruf mit `\"ttt\"` (Länge 3): `12 - 3 = 9`, also läuft `i` von 0 bis 9, findet aber nichts - die Ausgabe besteht nur aus der Überschrift.\n\n**Die innere Schleife** vergleicht `dna[i + j]` mit `seq[j]`. Das `+ j` ist der Versatz innerhalb des Fensters. Ein `boolean treffer` merkt sich, ob alle Zeichen gepasst haben. (Eleganter wäre `break`, sobald ein Zeichen nicht passt - beides ist korrekt.)\n\n**`char`-Vergleich mit `!=`:** Erlaubt, weil `char` ein primitiver Typ ist. Bei `String`-Elementen müsste man `equals` benutzen.\n\n**`new String(seq)`** wandelt das `char`-Array für die Überschrift in Text um (S. 94). Würde man `\"Suche \" + seq` schreiben, käme etwas wie `Suche [C@1b6d3586` heraus - denn nur `println(char[])` allein hat eine Sonderbehandlung, die Konkatenation mit `+` hat sie **nicht**.\n\nProbe: `dna` = a t c g c g c g a a t t. `at` steht bei 0 (a,t) und bei 9 (a,t) - bei 8 steht (a,a), passt nicht. `cg` steht bei 2, 4 und 6.",
+   "hints": [
+    "Denken Sie an ein Fenster der Breite `seq.length`, das über `dna` geschoben wird. Bis zu welchem Startindex passt es noch vollständig hinein?",
+    "Für jede Startposition brauchen Sie eine innere Schleife, die `dna[i + j]` mit `seq[j]` vergleicht, und ein Merkflag.",
+    "Für die Überschrift: Wie macht man aus einem `char[]` einen ausgebbaren String? `\"Suche \" + seq` funktioniert **nicht**."
+   ],
+   "pitfalls": [
+    "Die äußere Schleife bis `dna.length` laufen lassen -> `ArrayIndexOutOfBoundsException`.",
+    "`<` statt `<=` bei `dna.length - seq.length` benutzen und dadurch die letzte mögliche Fundstelle verlieren.",
+    "`\"Suche \" + seq` schreiben - bei Konkatenation gibt es keine `char[]`-Sonderbehandlung, es erscheint eine Adresse."
+   ],
+   "sources": [
+    {
+     "file": "05_ArraysStrings/Arrays04.java",
+     "page": 83,
+     "label": "Beispiel 4: DNA-Sequenzsuche"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 94,
+     "label": "5.3 Strings und Arrays: toCharArray, new String"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 74,
+     "label": "5.1 Arrays: new, Index, length"
+    }
+   ],
+   "tags": [
+    "array",
+    "char-array",
+    "suche",
+    "methodenparameter",
+    "code"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-027",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "code",
+   "difficulty": 5,
+   "points": 12,
+   "examStyle": false,
+   "title": "Histogramm über ein 2D-boolean-Array zeichnen",
+   "prompt": "Zeichnen Sie ein Histogramm der Werte in `liste`. Gehen Sie dabei in **zwei Schritten** vor (so wie in der Vorlesung):\n\n1. Füllen Sie ein zweidimensionales `boolean`-Array `hist` der Größe `hoehe x liste.length`. `hist[zeile][spalte]` soll genau dann `true` sein, wenn der Balken der Spalte höher als `zeile` ist.\n2. Zeichnen Sie das Histogramm **von oben nach unten**: `\"#\"` für `true`, ein Leerzeichen für `false`, pro Zeile ein `println`.\n\nFür `liste = { 3, 1, 4, 2, 5 }` und `hoehe = 5` muss die Ausgabe exakt so aussehen (die führenden Leerzeichen gehören dazu):\n```\n    #\n  # #\n# # #\n# ###\n#####\n```",
+   "starterCode": "class Histogramm {\n  public static void main(String[] str) {\n    int[] liste = { 3, 1, 4, 2, 5 };\n    int hoehe = 5;\n\n    // 1. Fülle ein 2D-Array von booleans:\n    //    hist[zeile][spalte] ist true, wenn der Balken der Spalte\n    //    hoch genug für diese Zeile ist.\n\n    // 2. Zeichne das Histogramm von oben nach unten,\n    //    \"#\" für true und \" \" für false.\n\n  }\n}",
+   "expectedOutput": "    #\n  # #\n# # #\n# ###\n#####",
+   "solution": "class Histogramm {\n  public static void main(String[] str) {\n    int[] liste = { 3, 1, 4, 2, 5 };\n    int hoehe = 5;\n\n    // 1. 2D-Array von booleans füllen:\n    boolean[][] hist = new boolean[hoehe][liste.length];\n    for (int zeile = 0; zeile < hoehe; zeile++) {\n      for (int spalte = 0; spalte < liste.length; spalte++) {\n        if (liste[spalte] > zeile) {\n          hist[zeile][spalte] = true;\n        } else {\n          hist[zeile][spalte] = false;\n        }\n      }\n    }\n\n    // 2. Histogramm von oben nach unten zeichnen:\n    for (int zeile = hoehe - 1; zeile >= 0; zeile--) {\n      for (int spalte = 0; spalte < liste.length; spalte++) {\n        if (hist[zeile][spalte] == true) {\n          System.out.print(\"#\");\n        } else {\n          System.out.print(\" \");\n        }\n      }\n      System.out.println();\n    }\n  }\n}",
+   "explanation": "Beispiel 5 des Skripts (S. 84-86) mit fester Liste statt Zufallszahlen. Die Aufgabe ist deshalb lehrreich, weil sie **zwei getrennte Denkschritte** verlangt: erst ein Modell aufbauen, dann es zeichnen.\n\n**Schritt 1 - das boolean-Raster.** `hist[zeile][spalte] = liste[spalte] > zeile;` ist die ganze Logik. Warum `>` und nicht `>=`? Weil die Zeilen ab 0 zählen: Ein Balken der Höhe 3 füllt die Zeilen 0, 1 und 2 - also genau die Zeilen mit `zeile < 3`, was `liste[spalte] > zeile` entspricht. Mit `>=` wäre jeder Balken eine Einheit zu hoch.\n\n**Schritt 2 - die Ausgabe steht Kopf.** Ein Array wächst nach unten (Index 0 zuerst), ein Histogramm wächst nach oben. Deshalb läuft die Ausgabeschleife **rückwärts**: `for (int zeile = hoehe - 1; zeile >= 0; zeile--)`. Wer vorwärts läuft, bekommt ein an der Waagerechten gespiegeltes Bild.\n\n**`print` gegen `println`.** Innerhalb einer Zeile muss `System.out.print` benutzt werden (ohne Zeilenumbruch), und erst nach der Spaltenschleife ein leeres `System.out.println()`, um die Zeile abzuschließen. Das ist die häufigste Fehlerquelle bei allen ASCII-Grafik-Aufgaben.\n\n**Warum überhaupt der Umweg über `boolean[][]`?** Man könnte direkt zeichnen. Der Professor wählt den Umweg bewusst, um zweidimensionale Arrays zu üben - und weil das Modell danach beliebig oft anders gerendert werden kann.\n\nIn der Vorlesung wird als Zeichen `\"\\u2589\"` (ein Vollblock) empfohlen; hier wird `\"#\"` benutzt, damit die Ausgabe unabhängig von der Konsolenkodierung vergleichbar bleibt.",
+   "hints": [
+    "Überlegen Sie zuerst nur für eine einzige Spalte: bis zu welcher Zeilennummer muss dort `true` stehen, wenn der Wert 3 ist?",
+    "Ein Array beginnt oben bei Index 0, ein Histogramm wächst nach oben. In welche Richtung muss die Ausgabeschleife also laufen?",
+    "Innerhalb einer Zeile `System.out.print(...)` benutzen und erst nach der inneren Schleife ein leeres `System.out.println()`."
+   ],
+   "pitfalls": [
+    "`>=` statt `>` benutzen - jeder Balken wäre eine Zeile zu hoch.",
+    "Die Ausgabeschleife vorwärts laufen lassen - das Histogramm steht dann auf dem Kopf.",
+    "`println` statt `print` innerhalb der Spaltenschleife - dann steht jedes Zeichen in einer eigenen Zeile."
+   ],
+   "sources": [
+    {
+     "file": "05_ArraysStrings/Histogram.java",
+     "page": 85,
+     "label": "Beispiel 5: Histogramm mit 2D-boolean-Array"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 78,
+     "label": "5.1 Mehrdimensionale Arrays"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 75,
+     "label": "5.1 Arrays: Deklaration, Erzeugung, Initialisierung"
+    }
+   ],
+   "tags": [
+    "array",
+    "mehrdimensional",
+    "boolean",
+    "histogramm",
+    "code"
+   ]
+  },
+  {
+   "id": "java-arrays-strings-028",
+   "lang": "java",
+   "topicId": "java-arrays-strings",
+   "type": "code",
+   "difficulty": 5,
+   "points": 12,
+   "examStyle": false,
+   "title": "Run-Length-Encoding eines Strings",
+   "prompt": "Implementieren Sie Run-Length-Encoding (RLE) für einen String: Jede Folge **aufeinanderfolgender gleicher Zeichen** wird durch das Zeichen und ihre Anzahl ersetzt.\n\nBeispiel: `\"aaabbbcc\"` ergibt `\"a3b3c2\"`. Nicht zusammenhängende Vorkommen zählen getrennt: `\"aabbaa\"` ergibt `\"a2b2a2\"` (nicht `\"a4b2\"`).\n\nSchreiben Sie die Methode `kodiere(String input)`. Die Ausgabe muss exakt so aussehen:\n```\nKomprimiert: a3b3c2\nKomprimiert: x1y1z1\nKomprimiert: a2b2a2\n```",
+   "starterCode": "class RunLength {\n\n  // liefert die RLE-Kodierung von input, z.B. \"aaabbbcc\" -> \"a3b3c2\"\n  public static String kodiere(String input) {\n\n  }\n\n  public static void main(String[] s) {\n    System.out.println(\"Komprimiert: \" + kodiere(\"aaabbbcc\"));\n    System.out.println(\"Komprimiert: \" + kodiere(\"xyz\"));\n    System.out.println(\"Komprimiert: \" + kodiere(\"aabbaa\"));\n  }\n}",
+   "expectedOutput": "Komprimiert: a3b3c2\nKomprimiert: x1y1z1\nKomprimiert: a2b2a2",
+   "solution": "class RunLength {\n\n  // liefert die RLE-Kodierung von input, z.B. \"aaabbbcc\" -> \"a3b3c2\"\n  public static String kodiere(String input) {\n    String ergebnis = \"\";\n    int i = 0;\n    while (i < input.length()) {\n      char c = input.charAt(i);\n      int anzahl = 0;\n      while (i < input.length() && input.charAt(i) == c) {\n        anzahl++;\n        i++;\n      }\n      ergebnis = ergebnis + c + anzahl;\n    }\n    return ergebnis;\n  }\n\n  public static void main(String[] s) {\n    System.out.println(\"Komprimiert: \" + kodiere(\"aaabbbcc\"));\n    System.out.println(\"Komprimiert: \" + kodiere(\"xyz\"));\n    System.out.println(\"Komprimiert: \" + kodiere(\"aabbaa\"));\n  }\n}",
+   "explanation": "Beispiel 6 des Skripts (S. 99). Der Algorithmus ist ein sogenannter *Run-Scan*: Man steht auf einem Zeichen und läuft so lange weiter, wie sich nichts ändert.\n\n**Warum zwei geschachtelte `while`-Schleifen mit derselben Variable `i`?** Weil sich `i` bei jedem Lauf um unterschiedlich viel weiterbewegt. Eine `for`-Schleife mit festem `i++` würde hier nicht passen. Die innere Schleife zählt den aktuellen Lauf und schiebt `i` gleich bis hinter dessen Ende; die äußere Schleife startet dann direkt beim nächsten neuen Zeichen.\n\n**Die Reihenfolge der Bedingung ist sicherheitsrelevant:**\n\n```java\nwhile (i < input.length() && input.charAt(i) == c)\n```\n\n`&&` wertet **kurzschlüssig** von links nach rechts aus. Steht `i` bereits hinter dem letzten Zeichen, ist der linke Teil `false` und `charAt(i)` wird gar nicht mehr aufgerufen. Dreht man die Bedingungen um, gibt es beim letzten Lauf eine `StringIndexOutOfBoundsException`.\n\n**Der Aufbau des Ergebnisses:** `ergebnis + c + anzahl` funktioniert, weil links ein `String` steht - danach ist alles Konkatenation. Wäre die Reihenfolge `c + anzahl + ergebnis`, würde Java zuerst `char + int` **addieren** (also z.B. `'a' + 3` = 100) - genau die Falle aus dem Konkatenationskapitel.\n\n**Warum wird `\"aabbaa\"` zu `a2b2a2`?** Weil nur *aufeinanderfolgende* Zeichen zählen. Wer stattdessen alle Vorkommen zählt, bekommt `a4b2` und hat die Aufgabe falsch gelöst - dieser Testfall prüft genau das.\n\nHinweis zur Effizienz: Jedes `ergebnis = ergebnis + ...` erzeugt einen **neuen** String, weil Strings immutable sind. Bei sehr langen Eingaben nimmt man deshalb `StringBuffer` (Skript S. 95) - für die Klausur ist die einfache Variante völlig in Ordnung.",
+   "hints": [
+    "Merken Sie sich das aktuelle Zeichen und zählen Sie, wie oft es unmittelbar hintereinander vorkommt.",
+    "Eine `for`-Schleife mit festem `i++` passt schlecht - die Sprungweite ist die Lauflänge. Nehmen Sie zwei `while`-Schleifen, die sich dieselbe Variable `i` teilen.",
+    "Achten Sie bei der inneren Bedingung darauf, **zuerst** `i < input.length()` zu prüfen, bevor Sie `charAt(i)` aufrufen."
+   ],
+   "pitfalls": [
+    "`input.charAt(i) == c && i < input.length()` schreiben -> `StringIndexOutOfBoundsException` am Ende.",
+    "Alle Vorkommen eines Zeichens zählen statt nur die zusammenhängenden -> `\"aabbaa\"` würde fälschlich zu `a4b2`.",
+    "`ergebnis + c + anzahl` in eine Reihenfolge bringen, bei der links kein String steht - dann wird `char + int` addiert."
+   ],
+   "sources": [
+    {
+     "file": "05_ArraysStrings/Strings06.java",
+     "page": 99,
+     "label": "Beispiel 6: Run-Length-Encoding"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 89,
+     "label": "5.2 Konkatenation, überladener + Operator"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 95,
+     "label": "5.3 Strings sind immutable"
+    }
+   ],
+   "tags": [
+    "string",
+    "charAt",
+    "konkatenation",
+    "rle",
+    "code"
+   ]
+  }
+ ]
+}

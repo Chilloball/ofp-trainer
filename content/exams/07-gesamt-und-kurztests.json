@@ -1,0 +1,275 @@
+[
+  {
+    "id": "gesamtklausur",
+    "lang": "both",
+    "title": "Gesamtklausur — Python und Java",
+    "subtitle": "Beide Teile hintereinander, so wie am Prüfungstag",
+    "minutes": 120,
+    "totalPoints": 103,
+    "origin": "generated",
+    "note": "Die eigentliche Klausur besteht aus beiden Teilen. Diese Simulation zieht 103 Punkte aus der gesamten Aufgabenbank und läuft über zwei Stunden — der ehrlichste Test vor dem Termin. Plane die Zeit bewusst ein: pro Punkt gut eine Minute.",
+    "tasks": [
+      {
+        "id": "gk1",
+        "label": "Teil 1 · Aufgabe 1",
+        "title": "Python — Kurzfragen",
+        "points": 8,
+        "instructions": "Vier Kurzfragen zu je 2 Punkten.",
+        "blueprint": {
+          "topicIds": ["py-funcprog", "py-scope-mutability", "py-recursion", "py-mfr", "py-basics"],
+          "type": "short-answer",
+          "count": 4
+        }
+      },
+      {
+        "id": "gk2",
+        "label": "Teil 1 · Aufgabe 2",
+        "title": "Python — Ausgabe vorhersagen",
+        "points": 10,
+        "instructions": "Vollständige Ausgabe oder Fehlertyp angeben.",
+        "blueprint": {
+          "topicIds": ["py-scope-mutability", "py-strings", "py-lists", "py-control", "py-funcprog"],
+          "type": "predict-output",
+          "count": 5,
+          "minDifficulty": 2
+        }
+      },
+      {
+        "id": "gk3",
+        "label": "Teil 1 · Aufgabe 3",
+        "title": "Python — map, filter, reduce",
+        "points": 11,
+        "instructions": "Keine Schleifen. `lambda` verwenden.",
+        "blueprint": {
+          "topicIds": ["py-mfr"],
+          "type": "code",
+          "count": 4,
+          "minDifficulty": 2
+        }
+      },
+      {
+        "id": "gk4",
+        "label": "Teil 1 · Aufgabe 4",
+        "title": "Python — Rekursion",
+        "points": 12,
+        "instructions": "Ausschließlich rekursiv.",
+        "blueprint": {
+          "topicIds": ["py-recursion"],
+          "type": "code",
+          "count": 3,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "gk5",
+        "label": "Teil 1 · Aufgabe 5",
+        "title": "Python — Currying und Decorators",
+        "points": 8,
+        "instructions": "Funktionen höherer Ordnung.",
+        "blueprint": {
+          "topicIds": ["py-currying-decorators", "py-funcprog"],
+          "type": "code",
+          "count": 3,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "gk6",
+        "label": "Teil 2 · Aufgabe 1",
+        "title": "Java — Theorie und Fehlersuche",
+        "points": 12,
+        "instructions": "Multiple Choice und eine Fehlersuche.",
+        "blueprint": {
+          "topicIds": ["java-types", "java-objects", "java-inheritance", "java-arrays-strings", "java-basics-syntax", "java-exceptions"],
+          "type": ["mc", "multi-mc", "find-errors"],
+          "count": 7
+        }
+      },
+      {
+        "id": "gk7",
+        "label": "Teil 2 · Aufgabe 2",
+        "title": "Java — Ausgabe vorhersagen",
+        "points": 8,
+        "instructions": "Achte auf Ganzzahldivision, dynamische Bindung und Referenzvergleiche.",
+        "blueprint": {
+          "topicIds": ["java-statements", "java-types", "java-arrays-strings", "java-inheritance", "java-objects"],
+          "type": "predict-output",
+          "count": 4,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "gk8",
+        "label": "Teil 2 · Aufgabe 3",
+        "title": "Java — Code-Lücken",
+        "points": 10,
+        "instructions": "Lücken so ergänzen, dass eine übersetzbare Klasse entsteht.",
+        "blueprint": {
+          "topicIds": ["java-objects", "java-inheritance", "java-exceptions"],
+          "type": "fill-gaps",
+          "count": 2,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "gk9",
+        "label": "Teil 2 · Aufgabe 4",
+        "title": "Java — Klasse schreiben",
+        "points": 10,
+        "instructions": "Vollständige Klasse mit Kapselung und `main`.",
+        "blueprint": {
+          "topicIds": ["java-objects", "java-arrays-strings"],
+          "type": "code",
+          "count": 1,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "gk10",
+        "label": "Teil 2 · Aufgabe 5",
+        "title": "Java — Vererbung und Polymorphie",
+        "points": 14,
+        "instructions": "Unterklasse schreiben, Methode überschreiben, Polymorphie zeigen.",
+        "blueprint": {
+          "topicIds": ["java-inheritance"],
+          "type": "code",
+          "count": 1,
+          "minDifficulty": 4
+        }
+      }
+    ]
+  },
+  {
+    "id": "kurztest-python",
+    "lang": "python",
+    "title": "Schnelltest Python",
+    "subtitle": "Zwölf gemischte Aufgaben in zwanzig Minuten",
+    "minutes": 20,
+    "totalPoints": 24,
+    "origin": "generated",
+    "note": "Kurz genug für zwischendurch, lang genug für ein ehrliches Bild. Gut geeignet, um vor dem Lernen zu prüfen, wo man gerade steht.",
+    "tasks": [
+      {
+        "id": "kp1",
+        "label": "Teil 1",
+        "title": "Theorie",
+        "points": 8,
+        "instructions": "Vier Fragen mit vorgegebenen Antworten.",
+        "blueprint": {
+          "topicIds": ["py-basics", "py-strings", "py-lists", "py-control", "py-functions", "py-funcprog", "py-mfr", "py-recursion", "py-scope-mutability"],
+          "type": ["mc", "multi-mc"],
+          "count": 4
+        }
+      },
+      {
+        "id": "kp2",
+        "label": "Teil 2",
+        "title": "Ausgabe vorhersagen",
+        "points": 10,
+        "instructions": "Fünf kurze Programme.",
+        "blueprint": {
+          "topicIds": ["py-basics", "py-strings", "py-lists", "py-control", "py-scope-mutability", "py-mfr"],
+          "type": "predict-output",
+          "count": 5
+        }
+      },
+      {
+        "id": "kp3",
+        "label": "Teil 3",
+        "title": "Kleine Programmieraufgaben",
+        "points": 6,
+        "instructions": "Zwei kurze Funktionen und eine Lückenaufgabe.",
+        "blueprint": {
+          "topicIds": ["py-mfr", "py-recursion", "py-lists", "py-strings", "py-functions"],
+          "type": ["code", "fill-gaps"],
+          "count": 3,
+          "maxDifficulty": 3
+        }
+      }
+    ]
+  },
+  {
+    "id": "kurztest-java",
+    "lang": "java",
+    "title": "Schnelltest Java",
+    "subtitle": "Zwölf gemischte Aufgaben in zwanzig Minuten",
+    "minutes": 20,
+    "totalPoints": 24,
+    "origin": "generated",
+    "note": "Deckt in kurzer Zeit die typischen Java-Fallen ab: Typumwandlung, Ganzzahldivision, Referenzen und dynamische Bindung.",
+    "tasks": [
+      {
+        "id": "kj1",
+        "label": "Teil 1",
+        "title": "Theorie",
+        "points": 8,
+        "instructions": "Vier Fragen mit vorgegebenen Antworten.",
+        "blueprint": {
+          "topicIds": ["java-types", "java-statements", "java-arrays-strings", "java-objects", "java-inheritance", "java-exceptions", "java-basics-syntax", "java-uml"],
+          "type": ["mc", "multi-mc"],
+          "count": 4
+        }
+      },
+      {
+        "id": "kj2",
+        "label": "Teil 2",
+        "title": "Ausgabe vorhersagen",
+        "points": 10,
+        "instructions": "Fünf kurze Programme.",
+        "blueprint": {
+          "topicIds": ["java-types", "java-statements", "java-arrays-strings", "java-objects", "java-inheritance"],
+          "type": "predict-output",
+          "count": 5
+        }
+      },
+      {
+        "id": "kj3",
+        "label": "Teil 3",
+        "title": "Lücken und Fehlersuche",
+        "points": 6,
+        "instructions": "Zwei Lückenaufgaben und eine Fehlersuche.",
+        "blueprint": {
+          "topicIds": ["java-objects", "java-statements", "java-types", "java-arrays-strings", "java-inheritance"],
+          "type": ["fill-gaps", "find-errors"],
+          "count": 3
+        }
+      }
+    ]
+  },
+  {
+    "id": "endspurt",
+    "lang": "both",
+    "title": "Endspurt — nur Klausurformate",
+    "subtitle": "Zwanzig Aufgaben quer durch beide Sprachen, ausschließlich in Prüfungsform",
+    "minutes": 45,
+    "totalPoints": 44,
+    "origin": "generated",
+    "note": "Für die letzten Tage vor der Klausur: keine Aufwärmaufgaben, nur Formate und Schwierigkeitsgrade, wie sie tatsächlich drankommen.",
+    "tasks": [
+      {
+        "id": "es1",
+        "label": "Block 1",
+        "title": "Python — gemischt in Prüfungsform",
+        "points": 20,
+        "instructions": "Zehn Aufgaben aus dem Python-Teil.",
+        "blueprint": {
+          "topicIds": ["py-funcprog", "py-mfr", "py-recursion", "py-scope-mutability", "py-currying-decorators", "py-strings", "py-lists", "py-control", "py-functions", "py-basics"],
+          "count": 10,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "es2",
+        "label": "Block 2",
+        "title": "Java — gemischt in Prüfungsform",
+        "points": 24,
+        "instructions": "Zehn Aufgaben aus dem Java-Teil.",
+        "blueprint": {
+          "topicIds": ["java-types", "java-statements", "java-arrays-strings", "java-objects", "java-inheritance", "java-exceptions", "java-uml", "java-basics-syntax"],
+          "count": 10,
+          "minDifficulty": 3
+        }
+      }
+    ]
+  }
+]

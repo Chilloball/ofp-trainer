@@ -1,0 +1,1640 @@
+{
+ "topicId": "py-funcprog",
+ "exercises": [
+  {
+   "type": "short-answer",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Die zwei Bedingungen für eine pure function",
+   "prompt": "Nennen Sie die **zwei Bedingungen**, die eine Funktion erfüllen muss, um eine *pure function* zu sein. Formulieren Sie beide Bedingungen so präzise wie in der Vorlesung. **(2 P)**",
+   "solution": "**Musterlösung**\n\nEine Funktion ist genau dann *pure*, wenn sie\n\n1. **nur von ihren Eingabeargumenten abhängt** (sie greift weder auf globale Variablen noch auf irgendwelche anderen externen Daten zu; man sagt auch: sie hängt von keinem *state* ab und ist *referentially transparent*), und\n2. **keine Nebeneffekte hat** - ihr einziger Effekt ist die Rückgabe von Werten.\n\n**Bewertungsrubrik (2 P)**\n\n- 1 P: Bedingung 1 sinngemäß korrekt (\"hängt nur von den Eingabeargumenten ab\" / \"keine globalen Variablen, keine states\").\n- 1 P: Bedingung 2 sinngemäß korrekt (\"keine Nebeneffekte\" / \"einziger Effekt ist die Rückgabe\").\n- 0 P für Antworten, die nur \"gibt immer dasselbe zurück\" nennen, ohne die Nebeneffekt-Bedingung.\n",
+   "explanation": "Der Professor formuliert es auf der Folie wörtlich so: Wir sollten unsere Programme (soweit es geht) durch pure functions aufbauen, d. h. durch Funktionen, die **1) nur von ihren Eingabeargumenten abhängen** und **2) keine Nebeneffekte haben** - ihr einziger Effekt ist die Rückgabe von Werten.\n\nBedingung 1 beschreibt die *Eingabeseite*: Nichts fließt heimlich in die Funktion hinein. Bedingung 2 beschreibt die *Ausgabeseite*: Nichts fließt heimlich aus der Funktion heraus (kein `print`, kein `input`, keine Mutation von globalen Variablen oder übergebenen mutable Objekten, kein Schreiben in Dateien).\n\nBedingung 1 wird oft als das Vermeiden der Abhängigkeit von sogenannten **states** (Zuständen) beschrieben. Eine Funktion, die nur von ihren Eingabeargumenten abhängt, nennt man **referentially transparent**.\n\nTypischer Denkfehler: Nur eine der beiden Bedingungen nennen. In der Klausur gibt es hier zwei Punkte - also gehören auch zwei Bedingungen in die Antwort.\n\n**Merkregel:** *Nichts rein außer den Argumenten, nichts raus außer dem return.* Eine pure function verhält sich wie eine mathematische Funktion f(x).",
+   "hints": [
+    "Denken Sie an die Analogie zur Mathematik: Wenn dort f(x) steht, wovon darf das Ergebnis abhängen?",
+    "Eine Bedingung betrifft, was in die Funktion hineinfließt, die andere, was aus ihr herausfließt.",
+    "Das Stichwort für die zweite Bedingung lautet 'Nebeneffekte' - ihr einziger Effekt ist die Rückgabe von Werten."
+   ],
+   "pitfalls": [
+    "Nur die Nebeneffekt-Bedingung nennen und die Abhängigkeit von globalen Variablen/states vergessen.",
+    "'Pure' mit 'gibt immer dasselbe zurück' gleichsetzen - das ist eine Folge, nicht die Definition.",
+    "Behaupten, eine pure function dürfe keine anderen Funktionen aufrufen. Sie darf - solange diese ebenfalls pure sind."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Funktionale Programmierung: die zwei Bedingungen"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 2,
+     "label": "Wiederholung pure functions"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1a) Kurzfragen"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 13,
+     "label": "Überblick VL3: Pure functions"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "definition",
+    "nebeneffekte",
+    "kurzfrage"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-001"
+  },
+  {
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": false,
+   "title": "Was bedeutet referential transparency?",
+   "prompt": "In der Vorlesung fällt im Zusammenhang mit pure functions der Begriff **referentially transparent**. Welche Aussage beschreibt diesen Begriff korrekt?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Die Funktion hängt ausschließlich von ihren Eingabeargumenten ab; sie greift weder auf globale Variablen noch auf andere externe Daten zu.",
+     "correct": true,
+     "why": "Genau die Formulierung der Vorlesung: 'Eine Funktion, die nur von ihren Eingabeargumenten abhängt, wird auch referentially transparent genannt.'"
+    },
+    {
+     "id": "b",
+     "text": "Die Funktion gibt bei gleicher Eingabe absichtlich unterschiedliche Werte zurück, damit Zufall möglich ist.",
+     "correct": false,
+     "why": "Das ist das genaue Gegenteil - eine Funktion mit verstecktem Zufall ist gerade nicht referentially transparent."
+    },
+    {
+     "id": "c",
+     "text": "Die Funktion hat keinen Rückgabewert, sondern schreibt ihr Ergebnis in eine globale Variable.",
+     "correct": false,
+     "why": "Das Schreiben in eine globale Variable ist ein Nebeneffekt und verletzt Bedingung 2 einer pure function."
+    },
+    {
+     "id": "d",
+     "text": "Die Funktion ist als lambda-Ausdruck definiert und passt deshalb in eine einzige Zeile.",
+     "correct": false,
+     "why": "Die Schreibweise (lambda oder def) hat nichts mit referential transparency zu tun. Auch ein lambda kann auf globale Variablen zugreifen."
+    },
+    {
+     "id": "e",
+     "text": "Die Funktion darf ihre Eingabeliste verändern, solange sie diese anschließend zurückgibt.",
+     "correct": false,
+     "why": "Das Verändern einer übergebenen mutable Variable ist ein klassischer Nebeneffekt - unabhängig davon, ob sie zurückgegeben wird."
+    }
+   ],
+   "solution": "a",
+   "explanation": "*Referential transparency* ist in der Vorlesung der Name für **Bedingung 1** einer pure function: Die Funktion hängt von nichts anderem ab als von ihren Eingabeargumenten.\n\nDer Name kommt daher, dass man einen Aufruf einer solchen Funktion gefahrlos durch seinen Wert **ersetzen** (referenzieren) kann: Wenn `f(3)` einmal `7` ergibt, ergibt es immer `7`, also darf man überall im Programm `f(3)` durch `7` ersetzen, ohne das Verhalten zu ändern. Genau das ist bei `random.randint(1, 6)` oder bei einer Funktion, die eine globale Variable liest, nicht möglich.\n\nWichtig für die Klausur: Referential transparency ist **nicht** dasselbe wie 'pure'. Pure = referentially transparent **plus** keine Nebeneffekte. Eine Funktion, die nur von ihren Argumenten abhängt, aber `print` aufruft, ist referentially transparent und trotzdem nicht pure.\n\n**Merkregel:** Referential transparency betrifft die *Eingabeseite*, Nebeneffektfreiheit die *Ausgabeseite*.",
+   "hints": [
+    "Der Begriff gehört zu genau einer der beiden Bedingungen für pure functions - zu welcher?",
+    "'Transparent' heißt hier: Man sieht an der Signatur alles, wovon das Ergebnis abhängt.",
+    "Überlegen Sie: Darf man einen Aufruf gefahrlos durch seinen Rückgabewert ersetzen?"
+   ],
+   "pitfalls": [
+    "Referential transparency mit 'pure' gleichsetzen - es ist nur Bedingung 1 von zweien.",
+    "Glauben, der Begriff hätte etwas mit der Schreibweise (lambda vs. def) zu tun."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "'Eine Funktion die nur von ihren Eingabeargumenten abhängt, wird auch referentially transparent genannt.'"
+    }
+   ],
+   "tags": [
+    "referential-transparency",
+    "pure-function",
+    "theorie"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-002"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ist diese Funktion pure? Vier Fälle mit Begründung",
+   "prompt": "Entscheiden Sie für jede der vier Funktionen, ob sie eine **pure function** ist. Begründen Sie Ihre Antwort jeweils in einem Satz und geben Sie bei den nicht-pure Funktionen an, **welche der beiden Bedingungen** verletzt wird. **(je 1 P)**",
+   "code": "# a)\ndef flaeche(laenge, breite):\n    return laenge * breite\n\n# b)\nmwst = 19\ndef brutto(netto):\n    return netto * (1 + mwst / 100)\n\n# c)\ndef anhaengen(liste, element):\n    liste.append(element)\n    return liste\n\n# d)\ndef summe_ausgeben(zahlen):\n    s = sum(zahlen)\n    print(s)\n    return s",
+   "solution": "**Musterlösung**\n\n**a) pure.** Das Ergebnis hängt ausschließlich von `laenge` und `breite` ab, und die Funktion verändert nichts außerhalb ihrer selbst - ihr einziger Effekt ist die Rückgabe.\n\n**b) nicht pure - Bedingung 1 verletzt.** `brutto` liest die globale Variable `mwst`, hängt also nicht nur von ihrem Eingabeargument ab (nicht referentially transparent). Ändert jemand `mwst`, liefert derselbe Aufruf `brutto(100)` ein anderes Ergebnis. Reparatur: `def brutto(netto, mwst): ...`\n\n**c) nicht pure - Bedingung 2 verletzt.** `liste.append(element)` verändert die übergebene Liste *in place*. Weil `list` mutable ist, sieht der Aufrufer diese Änderung - das ist ein Nebeneffekt. Reparatur: `return liste + [element]`.\n\n**d) nicht pure - Bedingung 2 verletzt.** `print` schreibt auf die Kommandozeile, das ist ein Nebeneffekt. Die Berechnung selbst hängt zwar nur von `zahlen` ab, aber der einzige Effekt darf die Rückgabe sein. Reparatur: `print` an der Aufrufstelle machen, die Funktion nur `s` zurückgeben lassen.\n\n**Bewertungsrubrik (4 P):** je 0,5 P für die richtige Einordnung und je 0,5 P für eine tragfähige Begründung (bei b/c/d muss der konkrete Grund genannt werden: globale Variable / Mutation des Arguments / print).",
+   "explanation": "Diese Aufgabe ist exakt das Format 'Ist diese Funktion pure?' aus dem Klausur-Überblick. Gehen Sie immer die gleiche Checkliste durch:\n\n1. **Eingabeseite:** Kommen im Funktionskörper Namen vor, die weder Parameter noch lokale Variablen sind? (Fall b: `mwst`.) Auch versteckte Quellen zählen: `input()`, `random.*`, `time.time()`, Dateien, Datenbanken.\n2. **Ausgabeseite:** Passiert irgendetwas außer `return`? `print`, `input`, Zuweisung an eine globale Variable, `append`/`sort`/`clear`/`update`/Index-Zuweisung auf einem übergebenen mutable Objekt. (Fälle c und d.)\n\nDer häufigste Denkfehler steckt in c): Weil die Funktion etwas zurückgibt, wirkt sie harmlos. Sie gibt aber **dieselbe** Liste zurück, die sie verändert hat - der Aufrufer sieht die Mutation. Bei einem immutable Typ (`tuple`) wäre dieser Fehler gar nicht möglich, deshalb sind immutable Datenstrukturen ein Charakteristikum funktionaler Programmierung.\n\nWichtig ist auch die Einsicht aus den Übungen: 'nicht pure' ist **kein Werturteil**. Irgendwo muss ein Programm Nebeneffekte haben, sonst erscheint nichts auf dem Bildschirm. Ziel ist, die Logik von den Nebeneffekten zu **trennen**.",
+   "hints": [
+    "Prüfen Sie zuerst: Welche Namen im Funktionskörper sind weder Parameter noch lokal definiert?",
+    "Prüfen Sie dann: Passiert im Körper irgendetwas außer Rechnen und Zurückgeben?",
+    "Achtung bei c): `list` ist mutable - was bedeutet `append` für die Liste des Aufrufers?"
+   ],
+   "pitfalls": [
+    "c) für pure halten, weil ja etwas zurückgegeben wird - die übergebene Liste wird trotzdem verändert.",
+    "d) für pure halten, weil das Ergebnis immer gleich ist - `print` bleibt ein Nebeneffekt.",
+    "b) für pure halten, weil `mwst` sich 'ja nie ändert' - entscheidend ist, dass es kein Eingabeargument ist."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Bedingungen für pure functions"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 13,
+     "label": "'(Code) Ist diese Funktion pure?'"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Stufe B1 - Pure functions: Welche unserer Funktionen ist eine?"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "nebeneffekte",
+    "global",
+    "mutable",
+    "begruendung"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-003"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Welche dieser Funktionen sind pure?",
+   "prompt": "Angenommen, ganz oben im Modul steht `import random`. Welche der folgenden Funktionen sind **pure functions**? (Mehrfachauswahl)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "def doppelt(x):\n    return 2 * x",
+     "correct": true,
+     "why": "Hängt nur von `x` ab und hat als einzigen Effekt die Rückgabe. Lehrbuch-pure."
+    },
+    {
+     "id": "b",
+     "text": "def zufallskarte(karten):\n    return random.choice(karten)",
+     "correct": false,
+     "why": "`random.choice` liest und verändert den versteckten globalen Zustand des Zufallsgenerators. Gleiche Eingabe, verschiedene Ausgabe - Bedingung 1 verletzt. Der Prof löst das im Goofspiel, indem er den `seed` explizit als Argument durchreicht und mit zurückgibt."
+    },
+    {
+     "id": "c",
+     "text": "def sortiert(liste):\n    return sorted(liste)",
+     "correct": true,
+     "why": "`sorted` erzeugt eine **neue** Liste und lässt die übergebene unangetastet - keine Mutation, kein externer Zugriff."
+    },
+    {
+     "id": "d",
+     "text": "def sortiere(liste):\n    liste.sort()\n    return liste",
+     "correct": false,
+     "why": "`liste.sort()` sortiert *in place* und verändert damit die Liste des Aufrufers - ein Nebeneffekt (Bedingung 2 verletzt)."
+    },
+    {
+     "id": "e",
+     "text": "def ohne_karte(kartenspiel, karte):\n    i = kartenspiel.index(karte)\n    return kartenspiel[:i] + kartenspiel[i+1:]",
+     "correct": true,
+     "why": "Genau die `entferne_karte` aus `helper.py`: Slicing erzeugt neue Objekte, das Original bleibt unverändert."
+    },
+    {
+     "id": "f",
+     "text": "def frage_karte():\n    return int(input('Welche Karte? '))",
+     "correct": false,
+     "why": "`input` holt Daten von außen (Bedingung 1) und schreibt zusätzlich einen Prompt auf die Konsole (Bedingung 2)."
+    },
+    {
+     "id": "g",
+     "text": "def gewinner(punkte1, punkte2):\n    if punkte1 > punkte2:\n        return 'Spieler 1'\n    elif punkte2 > punkte1:\n        return 'Spieler 2'\n    return 'Unentschieden'",
+     "correct": true,
+     "why": "Verzweigungen sind völlig unproblematisch: Das Ergebnis hängt nur von den beiden Argumenten ab, es passiert nichts außer der Rückgabe."
+    }
+   ],
+   "solution": "a, c, e, g",
+   "explanation": "Die Aufgabe trainiert genau die Unterscheidung, die der Prof im Goofspiel dauernd macht: **neue Objekte erzeugen statt vorhandene verändern**.\n\nDas Paar c) / d) ist der Kern: `sorted(liste)` gibt eine neue sortierte Liste zurück (pure), `liste.sort()` sortiert an Ort und Stelle (nicht pure). Dasselbe Muster: `liste + [x]` vs. `liste.append(x)`, `dict | {...}` vs. `dict.update(...)`.\n\nb) ist der interessanteste Fall. `random.choice` sieht aus wie eine harmlose Funktion mit einem Argument, greift aber auf den globalen Zustand des Zufallsgenerators zu und verändert ihn - deswegen liefert derselbe Aufruf verschiedene Ergebnisse. Im `helper.py` des Profs steht deshalb `ziehe_karte(kartenspiel, seed)` mit `random.Random(seed)` und der Rückgabe `karte, seed+1`: Der Zufall wird zu einem **expliziten Eingabeargument** gemacht und die Funktion damit pure.\n\ng) zeigt: Kontrollstrukturen wie `if`/`elif` machen eine Funktion nicht unpure. Nur *versteckte Eingaben* und *sichtbare Effekte nach außen* tun das.\n\n**Merkregel:** Methodenname im Imperativ (`sort`, `append`, `clear`, `update`, `shuffle`) → verändert meist in place → Nebeneffekt. Funktionsname im Partizip (`sorted`, `reversed`) → gibt Neues zurück.",
+   "hints": [
+    "Bei zwei Optionen unterscheidet sich nur, ob eine neue Liste entsteht oder die alte verändert wird.",
+    "Zählt der Zufallsgenerator als 'Eingabeargument'? Überlegen Sie, warum derselbe Aufruf verschiedene Ergebnisse liefert.",
+    "`if`/`elif` allein macht keine Funktion unpure - suchen Sie nach Zugriffen nach außen."
+   ],
+   "pitfalls": [
+    "`sortiere` (mit `.sort()`) für pure halten, weil sie ja etwas zurückgibt.",
+    "`zufallskarte` für pure halten, weil `karten` das einzige sichtbare Argument ist.",
+    "Denken, eine Funktion mit `if` sei 'zu prozedural' und deshalb nicht pure."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Pure functions"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika: immutable Datenstrukturen"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "entferne_karte / ziehe_karte(kartenspiel, seed)"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "random",
+    "seed",
+    "mutable",
+    "sorted-vs-sort"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-004"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Zweimal derselbe Aufruf, zwei verschiedene Ergebnisse",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben? Begründen Sie kurz, warum `runde_auswerten` **keine** pure function ist.",
+   "code": "punkte = 0\n\ndef runde_auswerten(karte1, karte2, preiskarte):\n    global punkte\n    if karte1 > karte2:\n        punkte = punkte + preiskarte\n    return punkte\n\nprint(runde_auswerten(5, 3, 10))\nprint(runde_auswerten(5, 3, 10))\nprint(punkte)",
+   "expectedOutput": "10\n20\n20",
+   "solution": "```\n10\n20\n20\n```\n\n`runde_auswerten` ist nicht pure, weil sie **beide** Bedingungen verletzt: Sie liest die globale Variable `punkte` (Bedingung 1: sie hängt nicht nur von ihren Eingabeargumenten ab) und sie schreibt mittels `global` in diese globale Variable (Bedingung 2: Nebeneffekt).",
+   "explanation": "Der entscheidende Beobachtungspunkt: Die ersten beiden `print`-Zeilen enthalten **exakt denselben Aufruf** `runde_auswerten(5, 3, 10)` - und liefern trotzdem `10` und `20`. Das Ergebnis hängt also von etwas ab, das man am Aufruf gar nicht sieht: vom aktuellen **state** der globalen Variable `punkte`.\n\nDamit ist die Funktion nicht *referentially transparent*: Man kann den Aufruf nicht durch seinen Wert ersetzen. Und weil `global punkte` eine Zuweisung an eine Variable außerhalb der Funktion erlaubt, hat sie zusätzlich einen Nebeneffekt - deshalb steht am Ende auch `20` in `punkte`.\n\nGenau das ist der Vorteil Nr. 1 funktionaler Programmierung aus der Vorlesung, von hinten betrachtet: Wenn `y = f(x)` ein falsches Ergebnis liefert und `f` pure ist, steckt der Fehler in `f`. Ist `f` nicht pure, muss man beim Zurückverfolgen **jede** globale Variable und **jeden** vorherigen Funktionsaufruf mit überprüfen.\n\nDie pure Variante steht in `helper.py` des Profs: `runde_auswerten(k1, k2, pk, punkte1, punkte2)` bekommt den Punktestand als Argument und gibt den **neuen** Punktestand zurück.\n\n**Merkregel:** Sobald `global` im Funktionskörper steht, ist die Funktion garantiert nicht pure.",
+   "hints": [
+    "Verfolgen Sie den Wert von `punkte` Zeile für Zeile - er überlebt den Funktionsaufruf.",
+    "Was bewirkt das Schlüsselwort `global` genau? Wird hier eine lokale oder die äußere Variable beschrieben?",
+    "Der zweite Aufruf startet nicht wieder bei 0."
+   ],
+   "pitfalls": [
+    "`10`, `10`, `10` erwarten, weil der Aufruf identisch ist - der versteckte state ist aber inzwischen ein anderer.",
+    "`10`, `20`, `0` erwarten und übersehen, dass `global` die äußere Variable dauerhaft verändert.",
+    "Nur einen der beiden Purity-Verstöße nennen (lesen UND schreiben der globalen Variable)."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 9,
+     "label": "Schlüsselwort global"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 13,
+     "label": "Vorteil 1: Einfacheres Finden von Fehlern"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "pure runde_auswerten mit Punktestand als Argument"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "global",
+    "state",
+    "predict-output",
+    "referential-transparency"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-005"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Der Nebeneffekt, der zwei Variablen gleichzeitig trifft",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?",
+   "code": "def karten_geben(spielerkarten, karte):\n    spielerkarten.append(karte)\n    return spielerkarten\n\nhand = [1, 2]\nneue_hand = karten_geben(hand, 7)\nneue_hand.append(9)\nprint(hand)\nprint(neue_hand)\nprint(hand is neue_hand)",
+   "expectedOutput": "[1, 2, 7, 9]\n[1, 2, 7, 9]\nTrue",
+   "solution": "```\n[1, 2, 7, 9]\n[1, 2, 7, 9]\nTrue\n```\n\nPure Alternative:\n\n```python\ndef karten_geben(spielerkarten, karte):\n    return spielerkarten + [karte]\n```\n\nDann wäre die Ausgabe `[1, 2]`, `[1, 2, 7, 9]`, `False`.",
+   "explanation": "`karten_geben` sieht aus wie eine saubere Funktion mit Rückgabewert - sie ist aber nicht pure, weil `append` die übergebene Liste *in place* verändert. `return spielerkarten` gibt anschließend **dieselbe** Liste zurück, keine Kopie. `hand` und `neue_hand` sind daher zwei Namen für ein und dasselbe Listenobjekt; `hand is neue_hand` ist `True`.\n\nDeshalb wirkt sich auch `neue_hand.append(9)` auf `hand` aus. Wer glaubt, ein `return` erzeuge automatisch ein neues Objekt, tappt hier in die Falle. In Python werden Objekte per Referenz übergeben; nur weil `list` **mutable** ist, kann diese Verwechslung überhaupt passieren - mit einem `tuple` wäre `append` gar nicht möglich.\n\nGenau darum sind **immutable Datenstrukturen** ein Charakteristikum funktionaler Programmierung: Sie haben keine Gefahr, an unterschiedlichen Stellen geändert zu werden. Der Prof verwendet im Goofspiel für die Kartenspiele deshalb `tuple(range(1, n+1))` statt einer Liste.\n\n**Merkregel:** `liste + [x]` erzeugt ein neues Objekt (pure), `liste.append(x)` verändert das alte (Nebeneffekt).",
+   "hints": [
+    "Was gibt `return spielerkarten` zurück - eine Kopie oder das Original?",
+    "`is` vergleicht nicht die Inhalte, sondern ob es sich um dasselbe Objekt handelt.",
+    "Wenn beide Namen auf dasselbe Objekt zeigen, wirkt jede Änderung an einem auch auf den anderen."
+   ],
+   "pitfalls": [
+    "`[1, 2]` für die erste Zeile erwarten - `append` hat die Liste des Aufrufers längst verändert.",
+    "`False` bei `is` erwarten, weil die Werte 'zufällig' gleich aussehen - sie sind ein einziges Objekt.",
+    "Glauben, ein `return` erstelle automatisch eine Kopie."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika: Immutable Datenstrukturen"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Goofspiel funktionaler machen: Nebeneffekte vermeiden, immutable Variablen verwenden"
+    }
+   ],
+   "tags": [
+    "nebeneffekte",
+    "mutable",
+    "aliasing",
+    "predict-output",
+    "immutable"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-006"
+  },
+  {
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": false,
+   "title": "Paradigmen und ihre Beispielsprachen",
+   "prompt": "Welche Zuordnung von **Programmierparadigma** und **Beispielsprachen** entspricht der Einführungsvorlesung?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "prozedural: C, Pascal - deklarativ: Prolog, SQL - objektorientiert: Java, C++ - funktional: Haskell, ML",
+     "correct": true,
+     "why": "Genau die Zuordnung von der Folie 'Programmiersprachen?' der Einführung."
+    },
+    {
+     "id": "b",
+     "text": "prozedural: Java, C++ - deklarativ: Haskell, ML - objektorientiert: C, Pascal - funktional: Prolog, SQL",
+     "correct": false,
+     "why": "Alles durchgeschoben: Java/C++ sind die OO-Beispiele, Haskell/ML die funktionalen."
+    },
+    {
+     "id": "c",
+     "text": "prozedural: Prolog, SQL - deklarativ: C, Pascal - objektorientiert: Java, C++ - funktional: Haskell, ML",
+     "correct": false,
+     "why": "Prolog und SQL sind gerade die deklarativen Beispiele, C und Pascal die prozeduralen."
+    },
+    {
+     "id": "d",
+     "text": "prozedural: C, Pascal - deklarativ: Haskell, ML - objektorientiert: Java, C++ - funktional: Prolog, SQL",
+     "correct": false,
+     "why": "Haskell und ML sind in der Vorlesung die funktionalen Beispielsprachen, Prolog und SQL die deklarativen."
+    },
+    {
+     "id": "e",
+     "text": "prozedural: C, Pascal - deklarativ: Prolog, SQL - objektorientiert: Java, Python - funktional: Haskell, Python",
+     "correct": false,
+     "why": "Python nennt der Prof ausdrücklich als *hybride* Sprache und nicht als Paradigmen-Beispiel; die Folie nennt Java und C++ bzw. Haskell und ML."
+    }
+   ],
+   "solution": "a",
+   "explanation": "Die Einführungsfolie unterscheidet vier Paradigmen:\n\n- **Prozedural** - eine Sequenz von Befehlen, die dem Computer sagen, was getan werden muss, gesteuert durch Kontrollstrukturen wie `if` oder Schleifen. *Beispiele: C, Pascal.*\n- **Deklarativ** - man beschreibt, **was** gelöst werden soll, die genaue Umsetzung überlässt man der Sprache/Umgebung. *Beispiele: Prolog, SQL.*\n- **Objektorientiert** - Lösungen entstehen aus Objekten (definiert über Klassen), die Daten enthalten und Funktionen ausführen; Spezialisierung und Vererbung spielen eine große Rolle. *Beispiele: Java, C++.*\n- **Funktional** - die Lösung wird strikt durch Auswertung von (pure) Funktionen beschrieben, deren Verhalten ausschließlich von den Eingaben abhängt und deren Auswirkung nur das Ausgabeargument ist. *Beispiele: Haskell, Meta Language (ML).*\n\nMerkhilfe für die beiden am leichtesten verwechselbaren: **SQL** sagt man, *welche* Daten man will, nicht *wie* man sie holt → deklarativ. **Haskell** ist nach dem Logiker Haskell B. Curry benannt (daher auch 'Currying') → funktional.",
+   "hints": [
+    "Vier Paradigmen, acht Sprachen - sortieren Sie zuerst die, bei denen Sie sicher sind.",
+    "Bei welcher Sprache beschreibt man nur das gewünschte Ergebnis und nicht den Weg dorthin?",
+    "Der Name 'Currying' verrät, aus welcher Sprachfamilie Haskell stammt."
+   ],
+   "pitfalls": [
+    "SQL für prozedural halten, weil man dort auch 'Befehle' schreibt.",
+    "Python als Beispielsprache für ein Paradigma einordnen - der Prof nennt es ausdrücklich hybrid."
+   ],
+   "sources": [
+    {
+     "file": "OFP -- Einleitung_SoSe26.pdf",
+     "page": 19,
+     "label": "Programmiersprachen? Prozedural / deklarativ / objektorientiert / funktional"
+    }
+   ],
+   "tags": [
+    "paradigmen",
+    "theorie",
+    "sprachen"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-007"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Die vier Paradigmen erklären",
+   "prompt": "Erklären Sie die vier in der Vorlesung genannten Programmierparadigmen jeweils in **einem Satz** und nennen Sie zu jedem **eine Beispielsprache**. Ordnen Sie anschließend **Python** ein und begründen Sie Ihre Einordnung. **(5 P)**",
+   "solution": "**Musterlösung**\n\n1. **Prozedurale Programmierung** - basiert auf einer Sequenz von Befehlen, die dem Computer sagen, was getan werden muss; diese werden von Kontrollstrukturen wie `if`-Statements oder Schleifen kontrolliert. *Beispiel: C oder Pascal.*\n2. **Deklarative Programmierung** - man beschreibt, wie bzw. was ein Problem gelöst werden soll, während die genaue Umsetzung der Sprache/Umgebung überlassen wird. *Beispiel: Prolog oder SQL.*\n3. **Objektorientierte Programmierung** - erstellt Lösungen anhand von (als Klassen definierten) Objekten, die Daten beinhalten und bestimmte Funktionen ausführen können; Spezialisierung und Vererbung spielen eine große Rolle. *Beispiel: Java oder C++.*\n4. **Funktionale Programmierung** - beschreibt die Lösung eines Problems strikt durch Auswertung von (pure) Funktionen, deren Verhalten ausschließlich von den Eingaben und nicht von externen Einflüssen abhängt und deren Auswirkung nur das Ausgabeargument ist (es gibt keine Nebeneffekte). *Beispiel: Haskell oder Meta Language (ML).*\n\n**Python:** Python ist eine **hybride** und keine funktionale Sprache. Es unterstützt funktionale Konzepte (`lambda`, `map`, `filter`, `reduce`, Funktionen höherer Ordnung, Rekursion), erlaubt aber gleichzeitig prozedurale Programmierung mit Schleifen, mutable Datenstrukturen und globale Variablen sowie vollständige Objektorientierung mit Klassen und Vererbung. Nebeneffekte sind in Python also möglich und nicht durch die Sprache verboten.\n\n**Bewertungsrubrik (5 P):** je 1 P pro Paradigma (Erklärung + passende Beispielsprache; halber Punkt bei fehlender Sprache), 1 P für die Einordnung von Python als hybride Sprache mit Begründung.",
+   "explanation": "Diese Kurzfrage stammt direkt von der Übersichtsfolie der Einführungsvorlesung und ist typisches Kurzfragen-Material (Aufgabe 1 der Klausur). Achten Sie auf die Trennschärfe:\n\n- prozedural vs. funktional: Beide beschreiben den **Weg**, aber prozedural über eine Sequenz von Befehlen mit Schleifen, funktional über die Auswertung von Funktionen ohne Nebeneffekte.\n- deklarativ vs. funktional: Deklarativ beschreibt nur das **Ziel** (SQL: `SELECT ... WHERE ...`), funktional ist streng genommen eine besondere Ausprägung davon, aber die Vorlesung führt beide getrennt auf.\n\nDer Satz zu Python ist wichtig, weil er die ganze Veranstaltung motiviert: 'Python ist eine hybride und keine funktionale Sprache. Die Bedeutung von Python in der Praxis geht aber weit über die von Haskell oder ML hinaus, weshalb wir uns für eine Einführung in Python mit einigen funktionalen Konzepten entschieden haben.'\n\n**Merkregel:** C = wie, SQL = was, Java = wer (Objekte), Haskell = womit (Funktionen).",
+   "hints": [
+    "Die vier Paradigmen stehen alle auf einer einzigen Folie der Einführungsvorlesung.",
+    "Zu jedem Paradigma nennt der Prof genau zwei Beispielsprachen.",
+    "Bei Python lautet das Stichwort 'hybrid' - was heißt das konkret für Nebeneffekte?"
+   ],
+   "pitfalls": [
+    "Python als funktionale Sprache bezeichnen - der Prof sagt ausdrücklich 'hybrid und keine funktionale Sprache'.",
+    "Beispielsprachen vergessen, obwohl sie explizit gefordert sind.",
+    "Prozedural und objektorientiert vermischen ('C++ hat ja auch Klassen') - gefragt ist das Paradigma, nicht die Sprache."
+   ],
+   "sources": [
+    {
+     "file": "OFP -- Einleitung_SoSe26.pdf",
+     "page": 19,
+     "label": "Programmiersprachen? Vier Paradigmen mit Beispielsprachen"
+    },
+    {
+     "file": "OFP -- Einleitung_SoSe26.pdf",
+     "page": 19,
+     "label": "'Python ist eine hybride und keine funktionale Sprache'"
+    }
+   ],
+   "tags": [
+    "paradigmen",
+    "hybrid",
+    "python",
+    "kurzfrage",
+    "theorie"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-008"
+  },
+  {
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": false,
+   "title": "Python als hybride Sprache",
+   "prompt": "Der Professor bezeichnet Python als **hybride Sprache**. Welche Aussage gibt das korrekt wieder?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Python unterstützt funktionale Konzepte (lambda, map/filter/reduce, Rekursion, Funktionen höherer Ordnung), erzwingt sie aber nicht: mutable Datenstrukturen, Schleifen, globale Variablen und Klassen sind ebenso möglich.",
+     "correct": true,
+     "why": "Genau das meint 'hybrid': mehrere Paradigmen sind gleichzeitig nutzbar, keines wird erzwungen."
+    },
+    {
+     "id": "b",
+     "text": "Python ist eine rein funktionale Sprache wie Haskell, nur mit anderer Syntax.",
+     "correct": false,
+     "why": "Der Prof sagt ausdrücklich: 'Python ist eine hybride und keine funktionale Sprache.'"
+    },
+    {
+     "id": "c",
+     "text": "In Python sind Nebeneffekte technisch unmöglich, weil alle Datentypen immutable sind.",
+     "correct": false,
+     "why": "`list`, `dict`, `set` und selbstgeschriebene Klassen sind mutable - Nebeneffekte sind jederzeit möglich."
+    },
+    {
+     "id": "d",
+     "text": "Weil Python hybrid ist, kann man darin keine pure functions schreiben.",
+     "correct": false,
+     "why": "Man kann sehr wohl pure functions schreiben - die Sprache prüft es nur nicht für einen; das ist Disziplin der Programmiererin."
+    },
+    {
+     "id": "e",
+     "text": "'Hybrid' bedeutet, dass Python sowohl compiliert als auch interpretiert wird.",
+     "correct": false,
+     "why": "Hier geht es um Programmierparadigmen, nicht um die Übersetzungsstrategie."
+    }
+   ],
+   "solution": "a",
+   "explanation": "'Hybrid' bezieht sich auf die **Paradigmen**: In Python kann man prozedural (Schleifen, Sequenzen von Befehlen), objektorientiert (Klassen, Vererbung - der Java-Teil der Veranstaltung) und funktional (pure functions, `lambda`, `map`, `filter`, `reduce`, Rekursion) programmieren - oft sogar innerhalb derselben Datei.\n\nDie Konsequenz für die Klausur: Python **verbietet** nichts. Es gibt keinen Compilerfehler dafür, dass eine Funktion eine globale Variable ändert. Ob Ihr Code funktional ist, hängt allein daran, wie Sie ihn schreiben - deshalb übt die Vorlesung das Umschreiben (Goofspiel: imperativ → Funktionen → pure functions → states → Rekursion → map/filter/reduce).\n\nDer Prof begründet die Wahl von Python damit, dass seine praktische Bedeutung weit über die von Haskell oder ML hinausgeht, man aber trotzdem die funktionalen Konzepte daran lernen kann.\n\n**Merkregel:** Haskell zwingt Sie zur Reinheit, Python lädt Sie dazu ein.",
+   "hints": [
+    "'Hybrid' bezieht sich auf Programmierparadigmen, nicht auf die Ausführung.",
+    "Welche Datentypen in Python sind mutable? Was heißt das für Nebeneffekte?",
+    "Kann man in Python freiwillig funktional programmieren, auch wenn die Sprache es nicht erzwingt?"
+   ],
+   "pitfalls": [
+    "'Hybrid' auf Compiler/Interpreter beziehen statt auf Paradigmen.",
+    "Denken, in einer hybriden Sprache seien pure functions sinnlos oder unmöglich."
+   ],
+   "sources": [
+    {
+     "file": "OFP -- Einleitung_SoSe26.pdf",
+     "page": 19,
+     "label": "'Python ist eine hybride und keine funktionale Sprache'"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 11,
+     "label": "Es gibt keine ganz formale Definition von Funktionaler Programmierung"
+    }
+   ],
+   "tags": [
+    "hybrid",
+    "python",
+    "paradigmen",
+    "theorie"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-009"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Vorteile funktionaler Programmierung",
+   "prompt": "Welche der folgenden Punkte nennt die Vorlesung als **Vorteile funktionaler Programmierung**? (Mehrfachauswahl)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Einfacheres Finden von Fehlern: Liefert `y = meine_pure_function(x)` ein falsches Ergebnis, liegt der Fehler in der Funktion (vorausgesetzt, die Eingabe stimmt).",
+     "correct": true,
+     "why": "Vorteil 1 der Vorlesung."
+    },
+    {
+     "id": "b",
+     "text": "Gefahrloses Wiederverwenden von Funktionen, weil sie nicht von globalen Variablen oder äußeren Umständen abhängen.",
+     "correct": true,
+     "why": "Vorteil 2 der Vorlesung."
+    },
+    {
+     "id": "c",
+     "text": "Pure functions können immer gefahrlos parallelisiert werden.",
+     "correct": true,
+     "why": "Vorteil 3: `y = f(x)` und `z = f(x)` dürfen gleichzeitig laufen, weil sie sich nicht gegenseitig beeinflussen können."
+    },
+    {
+     "id": "d",
+     "text": "Teilweise kompakterer/kürzerer Code.",
+     "correct": true,
+     "why": "Vorteil 4 der Vorlesung - z. B. wird aus einer for-Schleife mit Mutation eine Zeile map/filter/reduce."
+    },
+    {
+     "id": "e",
+     "text": "Für einige Probleme hohe Effizienz durch Memoisation (Zwischenspeichern von Rückgabewerten).",
+     "correct": true,
+     "why": "Vorteil 5. Memoisation ist nur zulässig, weil eine pure function bei gleicher Eingabe garantiert dasselbe liefert."
+    },
+    {
+     "id": "f",
+     "text": "Verzögerte Auswertung (Lazy Evaluation): Auswertungen müssen erst dann gemacht werden, wenn sie auch gebraucht werden.",
+     "correct": true,
+     "why": "Vorteil 6 der Vorlesung - in Python z. B. bei `map` und `filter`, die Iteratoren zurückgeben."
+    },
+    {
+     "id": "g",
+     "text": "Funktionale Programme laufen grundsätzlich schneller als imperative Programme.",
+     "correct": false,
+     "why": "Das behauptet die Vorlesung nirgends. Im Gegenteil: Rekursion ist laut Folie oft *weniger* laufzeiteffizient als eine Schleife."
+    },
+    {
+     "id": "h",
+     "text": "Rekursion braucht weniger Speicher als eine Schleife, weil keine Variablen mutiert werden.",
+     "correct": false,
+     "why": "Genau umgekehrt: Rekursion ist laut Vorlesung oft speicherhungriger, weil die Daten aller rekursiven Aufrufe auf dem Stack liegen."
+    },
+    {
+     "id": "i",
+     "text": "Pure functions machen print-Befehle im Programm überflüssig.",
+     "correct": false,
+     "why": "Jedes nützliche Programm braucht irgendwo Nebeneffekte. Das Ziel ist, sie zu *bündeln* und von der Logik zu trennen, nicht sie abzuschaffen."
+    }
+   ],
+   "solution": "a, b, c, d, e, f",
+   "explanation": "Die Vorlesung listet genau **sechs** Vorteile: (1) einfacheres Finden von Fehlern, (2) gefahrloses Wiederverwenden, (3) gefahrlose Parallelisierung, (4) teilweise kompakterer/kürzerer Code, (5) Effizienz durch Memoisation, (6) verzögerte Auswertung (Lazy Evaluation). Diese Liste sollte man in der Klausur aufsagen können.\n\nInteressant sind die Begründungen: (1) und (2) folgen direkt aus Bedingung 1 (keine versteckten Abhängigkeiten), (3) folgt aus Bedingung 2 (kein gemeinsam beschriebener Zustand), (5) folgt daraus, dass gleiche Eingabe garantiert gleiche Ausgabe bedeutet - nur deshalb darf man das Ergebnis überhaupt zwischenspeichern.\n\nDie drei Falschaussagen sind typische Übertreibungen. Insbesondere h) steht wörtlich falsch herum: Die Folie 'Warum nicht Rekursion?' nennt als **Nachteile** genau 'oft weniger laufzeiteffizient' und 'oft speicherhungriger, weil die Daten aller rekursiver Aufrufe auf dem Stack gespeichert werden müssen'.\n\n**Merkregel für die sechs:** *Fehler - Wiederverwendung - Parallelisierung - Kompaktheit - Memoisation - Lazy.*",
+   "hints": [
+    "Es sind mehr richtige als falsche Antworten - suchen Sie gezielt nach den Übertreibungen.",
+    "Zwei Aussagen behaupten pauschale Performance-Vorteile. Was sagt die Folie 'Warum nicht Rekursion?' dazu?",
+    "Kann ein Programm ganz ohne Nebeneffekte überhaupt etwas Sichtbares tun?"
+   ],
+   "pitfalls": [
+    "Memoisation oder Lazy Evaluation abwählen, weil sie exotisch klingen - beide stehen auf der Vorteilsliste.",
+    "Glauben, funktionaler Code sei automatisch schneller.",
+    "Glauben, in funktionalen Programmen dürfe es gar keine Nebeneffekte geben."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 13,
+     "label": "Vorteil 1: Einfacheres Finden von Fehlern"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 15,
+     "label": "Vorteile 2-5"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 16,
+     "label": "Vorteil 6: Verzögerte Auswertung (Lazy Evaluations)"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 8,
+     "label": "Warum nicht Rekursion? Nachteile"
+    }
+   ],
+   "tags": [
+    "vorteile",
+    "memoisation",
+    "lazy-evaluation",
+    "parallelisierung",
+    "theorie"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-010"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Warum lassen sich pure functions gefahrlos parallelisieren?",
+   "prompt": "In der Vorlesung steht neben den beiden Zeilen\n\n```python\ny = f(x)\nz = f(x)\n```\n\ndie Aussage: *Pure functions können immer gefahrlos parallelisiert werden.*\n\na) Begründen Sie, warum diese beiden Zeilen gleichzeitig ausgeführt werden dürfen, wenn `f` pure ist. **(2 P)**\n\nb) Geben Sie ein konkretes Beispiel an, warum das bei einer Funktion mit Nebeneffekt zu unkontrolliertem Verhalten führen kann. **(1 P)**",
+   "solution": "**Musterlösung**\n\n**a)** Weil `f` pure ist, hängt das Ergebnis ausschließlich von `x` ab (Bedingung 1) und der einzige Effekt des Aufrufs ist die Rückgabe eines Wertes (Bedingung 2). Es gibt damit **keinen gemeinsamen Speicher**, den die beiden Aufrufe lesen oder beschreiben könnten. Kein Aufruf kann das Ergebnis des anderen beeinflussen, und die Reihenfolge der Ausführung spielt keine Rolle - also ist es egal, ob nacheinander, in umgekehrter Reihenfolge oder gleichzeitig gerechnet wird.\n\n**b)** Beispiel:\n\n```python\nzaehler = 0\n\ndef f(x):\n    global zaehler\n    zaehler = zaehler + 1\n    return x * zaehler\n```\n\nBeide Aufrufe lesen und schreiben `zaehler`. Je nachdem, wer zuerst liest, ergibt sich `y = x` und `z = 2*x` oder umgekehrt - oder, wenn beide vor dem Schreiben lesen, sogar `y = z = x` und `zaehler` steht am Ende auf 1 statt 2. Das Ergebnis hängt vom Timing ab (race condition). Der Prof nennt als typisches komplexeres Beispiel das Lesen und Schreiben in einer **Datenbank**.\n\n**Bewertungsrubrik (3 P):** 1 P für 'keine Abhängigkeit von externem/gemeinsamem Zustand', 1 P für 'kein Aufruf kann den anderen beeinflussen / Reihenfolge egal', 1 P für ein tragfähiges Gegenbeispiel mit gemeinsam beschriebenem Zustand.",
+   "explanation": "Parallelisierung ist Vorteil 3 der Vorlesungsliste und der direkteste praktische Nutzen von Reinheit. Der Gedanke dahinter: Zwei Berechnungen dürfen nur dann gleichzeitig laufen, wenn sie sich nicht gegenseitig 'in die Quere kommen' können. Genau das garantieren die beiden Purity-Bedingungen:\n\n- Bedingung 1 stellt sicher, dass kein Aufruf von etwas abhängt, das ein anderer Aufruf gerade ändert.\n- Bedingung 2 stellt sicher, dass kein Aufruf etwas ändert, wovon ein anderer Aufruf abhängt.\n\nOhne Reinheit hat man geteilten veränderlichen Zustand - und damit **race conditions**, deren Ergebnis vom Zufall des Schedulings abhängt und die deshalb extrem schwer zu reproduzieren und zu debuggen sind.\n\nTypischer Denkfehler: 'Man müsste ja nur einen Lock setzen.' Das stimmt - aber genau dieser zusätzliche Aufwand (und die damit einhergehenden Deadlock-Risiken) entfällt bei pure functions vollständig. Deshalb steht auf der Folie das Wort *gefahrlos*.\n\n**Merkregel:** Kein geteilter Zustand → keine Reihenfolgeabhängigkeit → beliebig parallelisierbar.",
+   "hints": [
+    "Überlegen Sie, was zwei gleichzeitig laufende Berechnungen überhaupt stören könnte.",
+    "Beide Purity-Bedingungen haben hier eine Rolle: eine schützt die Eingabeseite, die andere die Ausgabeseite.",
+    "Für b) genügt eine Funktion, die eine globale Variable liest und schreibt."
+   ],
+   "pitfalls": [
+    "Nur 'weil sie schnell ist' oder 'weil sie keine Schleife hat' argumentieren - entscheidend ist der fehlende geteilte Zustand.",
+    "Bei b) einen reinen Lesezugriff als Gegenbeispiel wählen - gemeinsames Lesen allein ist unproblematisch, erst das Schreiben macht es gefährlich."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 15,
+     "label": "Vorteil 3: Parallelisierung, y = f(x) / z = f(x)"
+    }
+   ],
+   "tags": [
+    "parallelisierung",
+    "vorteile",
+    "nebeneffekte",
+    "state",
+    "begruendung"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-011"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 3,
+   "examStyle": false,
+   "title": "Memoisation: wie viele Aufrufe wirklich passieren",
+   "prompt": "Der folgende Code implementiert **Memoisation** (Zwischenspeichern von Rückgabewerten) für die Fibonacci-Funktion und zählt dabei alle Funktionsaufrufe mit. Was wird auf der Kommandozeile ausgegeben?\n\n*Hinweis:* `fib(10)` ohne Memoisation würde 177 Aufrufe benötigen.",
+   "code": "aufrufe = 0\nspeicher = {}\n\ndef fib(n):\n    global aufrufe\n    aufrufe = aufrufe + 1\n    if n in speicher:\n        return speicher[n]\n    if n < 2:\n        ergebnis = n\n    else:\n        ergebnis = fib(n - 1) + fib(n - 2)\n    speicher[n] = ergebnis\n    return ergebnis\n\nprint(fib(10))\nprint(aufrufe)\nprint(fib(10))\nprint(aufrufe)",
+   "expectedOutput": "55\n19\n55\n20",
+   "solution": "```\n55\n19\n55\n20\n```",
+   "explanation": "Drei Dinge muss man hier auseinanderhalten.\n\n**1. Der Wert.** `fib(10) = 55` (Folge 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55).\n\n**2. Die Aufrufzahl beim ersten Mal: 19.** Jedes `n` von 10 bis 0 wird genau einmal *wirklich* berechnet - das sind 11 Aufrufe. Zusätzlich landet für jedes `n` von 8 abwärts bis 0 ein zweiter Aufruf im Cache und kehrt sofort zurück - das sind 8 weitere. Zusammen 19 statt 177.\n\n**3. Der zweite `fib(10)`-Aufruf kostet genau 1.** `10` steht bereits in `speicher`, der Wert wird direkt zurückgegeben - also `19 + 1 = 20`.\n\nDas ist Vorteil 5 der Vorlesung: *Für einige Probleme hohe Effizienz durch Memoisation (Zwischenspeichern von Rückgabewerten)*. Entscheidend ist die Einsicht, **warum** man das darf: Nur weil die eigentliche Rechenvorschrift von Fibonacci pure ist (gleiche Eingabe → garantiert gleiche Ausgabe), ist es zulässig, das Ergebnis einmal zu berechnen und danach aus dem Cache zu liefern. Bei einer Funktion mit `random` oder `input` wäre Memoisation schlicht falsch.\n\nKleine Ironie, die man kennen sollte: Der gezeigte Code selbst ist *nicht* pure - `speicher` und `aufrufe` sind globale Variablen, die verändert werden. In der Praxis versteckt man das hinter einem Decorator (`functools.lru_cache`), sodass die Funktion von außen wie eine pure function aussieht.\n\n**Merkregel:** Memoisation ist nur bei referentially transparenten Funktionen erlaubt.",
+   "hints": [
+    "Rechnen Sie zuerst `fib(10)` von Hand über die Fibonacci-Folge aus.",
+    "Der Zähler wird ganz oben in JEDEM Aufruf erhöht - also auch bei den Aufrufen, die sofort aus dem Cache antworten.",
+    "Was kostet der zweite `fib(10)`-Aufruf, wenn 10 bereits im Speicher steht?"
+   ],
+   "pitfalls": [
+    "`177` erwarten und die Wirkung des Caches übersehen.",
+    "Beim zweiten `fib(10)` glauben, der Zähler bleibe bei 19 - der Aufruf selbst wird ja auch gezählt.",
+    "Denken, `speicher` werde zwischen den beiden `fib(10)`-Aufrufen zurückgesetzt."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 15,
+     "label": "Vorteil 5: Hohe Effizienz durch Memoisation"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 7,
+     "label": "Stack von Funktionsaufrufen bei Rekursion"
+    }
+   ],
+   "tags": [
+    "memoisation",
+    "vorteile",
+    "rekursion",
+    "predict-output",
+    "cache"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-012"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Lazy Evaluation bei map",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben? Achten Sie besonders auf die **Reihenfolge** der Zeilen und auf die letzte Ausgabe.",
+   "code": "def quadriere(x):\n    print(\"rechne\", x)\n    return x * x\n\nergebnis = map(quadriere, [1, 2, 3])\nprint(\"map erzeugt\")\nliste = list(ergebnis)\nprint(liste)\nprint(list(ergebnis))",
+   "expectedOutput": "map erzeugt\nrechne 1\nrechne 2\nrechne 3\n[1, 4, 9]\n[]",
+   "solution": "```\nmap erzeugt\nrechne 1\nrechne 2\nrechne 3\n[1, 4, 9]\n[]\n```",
+   "explanation": "Diese Aufgabe verbindet drei klausurrelevante Punkte.\n\n**1. `map` gibt keine Liste zurück, sondern einen Iterator.** Das ist eine der Kurzfragen der Probeklausur ('Was gibt `map(f, liste)` zurück - eine Liste oder etwas anderes?'). Die Zeile `ergebnis = map(...)` rechnet daher noch **gar nichts**; deshalb erscheint `map erzeugt` **vor** allen `rechne`-Zeilen.\n\n**2. Lazy Evaluation.** Gerechnet wird erst, wenn jemand die Elemente anfordert - hier durch `list(ergebnis)`. Das ist Vorteil 6 der Vorlesung: *Auswertungen müssen erst dann gemacht werden, wenn sie auch gebraucht werden.* Erst jetzt laufen `rechne 1`, `rechne 2`, `rechne 3` durch, dann wird `[1, 4, 9]` gedruckt.\n\n**3. Ein Iterator ist danach verbraucht.** Der interne Zählerstand des map-Objekts steht am Ende; ein zweites `list(ergebnis)` findet nichts mehr vor und liefert `[]` - ohne dass `quadriere` noch einmal aufgerufen wird (es erscheint keine weitere `rechne`-Zeile). Wer das Ergebnis mehrfach braucht, muss es einmal in einer Liste/einem Tupel materialisieren.\n\n`quadriere` ist übrigens wegen des `print` **nicht** pure - genau dieser Nebeneffekt macht die verzögerte Auswertung hier überhaupt sichtbar.\n\n**Merkregel:** `map`/`filter` sind Versprechen, keine Ergebnisse - und ein Versprechen kann man nur einmal einlösen.",
+   "hints": [
+    "Was genau passiert in der Zeile `ergebnis = map(quadriere, [1, 2, 3])`? Wird `quadriere` dort schon aufgerufen?",
+    "Vergleichen Sie die Position von `map erzeugt` mit den `rechne`-Zeilen.",
+    "Ein Iterator hat einen internen Zählerstand (`__next__`). Was steht dort nach dem ersten `list(...)`?"
+   ],
+   "pitfalls": [
+    "`rechne 1/2/3` vor `map erzeugt` erwarten - map rechnet erst beim Materialisieren.",
+    "Beim zweiten `list(ergebnis)` wieder `[1, 4, 9]` erwarten - der Iterator ist erschöpft.",
+    "Glauben, `map` liefere eine Liste zurück."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 16,
+     "label": "Vorteil 6: Verzögerte Auswertung (Lazy Evaluations)"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 17,
+     "label": "map gibt einen Iterator zurück, __next__(), interner Zählerstand"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1d) Was gibt map(f, liste) zurück?"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Stufe B4: 'map gibt einen Iterator zurück ... das ist lazy evaluation!'"
+    }
+   ],
+   "tags": [
+    "lazy-evaluation",
+    "map",
+    "iterator",
+    "predict-output",
+    "vorteile"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-013"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Lernspiel für Kinder mit lambda-Notation",
+   "prompt": "Vervollständigen Sie folgendes Lernspiel für Kinder der dritten Klasse: Es werden zwei zufällige Zahlen von 0 bis 9 und eine zufällige Rechenoperation aus {+, -, *} gezogen. Das Ergebnis der Rechenoperation mit den Zahlen wird ausgegeben. Die Kinder werden gefragt, welche Operation verwendet wurde. **Verwenden Sie die `lambda`-Notation, um die Funktionen zu definieren** (kein `def`). Füllen Sie die Lücken 1 bis 6.",
+   "code": "from random import randint, choice, seed\nseed(7)\n\naddition       = ## Lücke 1 ##   # Funktion, die zwei Zahlen addiert\nmultiplikation = ## Lücke 2 ##   # Funktion, die zwei Zahlen multipliziert\nsubtraktion    = ## Lücke 3 ##   # Funktion, die zwei Zahlen subtrahiert\nzufallszahl    = ## Lücke 4 ##   # Funktion OHNE Argumente, liefert eine zufällige\n                                 #   natürliche Zahl zwischen 0 und 9\n\nliste = [addition, multiplikation, subtraktion]\nx = zufallszahl()\ny = zufallszahl()\nop = ## Lücke 5 ##               # wähle ein zufälliges Element aus \"liste\"\n\nprint(\"Das Ergebnis von {} und {} ist {}. Welche Operation wurde durchgefuehrt?\".format(x, y, ## Lücke 6 ##))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "lambda a, b: a + b",
+      "lambda a,b: a+b",
+      "lambda x, y: x + y",
+      "lambda x,y: x+y",
+      "lambda zahl1, zahl2: zahl1 + zahl2"
+     ],
+     "explanation": "Ein lambda mit zwei Parametern; der Ausdruck hinter dem Doppelpunkt ist automatisch der Rückgabewert (kein `return`!)."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "lambda a, b: a * b",
+      "lambda a,b: a*b",
+      "lambda x, y: x * y",
+      "lambda x,y: x*y",
+      "lambda zahl1, zahl2: zahl1 * zahl2"
+     ],
+     "explanation": "Analog zur Addition, nur mit `*`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "lambda a, b: a - b",
+      "lambda a,b: a-b",
+      "lambda x, y: x - y",
+      "lambda x,y: x-y",
+      "lambda zahl1, zahl2: zahl1 - zahl2"
+     ],
+     "explanation": "Analog, mit `-`. Achtung: Die Reihenfolge der Parameter bestimmt, ob a-b oder b-a gerechnet wird."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "lambda: randint(0, 9)",
+      "lambda : randint(0,9)",
+      "lambda: randint(0,9)",
+      "lambda: choice(range(10))",
+      "lambda: choice(range(0, 10))"
+     ],
+     "explanation": "Ein lambda **ohne** Parameter: direkt nach `lambda` folgt der Doppelpunkt. `randint(0, 9)` schließt beide Grenzen ein."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "choice(liste)",
+      "liste[randint(0, 2)]",
+      "liste[randint(0,2)]"
+     ],
+     "explanation": "`choice` wählt ein zufälliges Element aus einer Sequenz - hier eine der drei Funktionen. Funktionen sind ganz normale Objekte und können in Listen stehen."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "op(x, y)",
+      "op(x,y)"
+     ],
+     "explanation": "`op` ist eine Funktion (aus der Liste gezogen) und wird hier auf `x` und `y` angewendet."
+    }
+   ],
+   "solution": "```python\nfrom random import randint, choice, seed\nseed(7)\n\naddition       = lambda a, b: a + b\nmultiplikation = lambda a, b: a * b\nsubtraktion    = lambda a, b: a - b\nzufallszahl    = lambda: randint(0, 9)\n\nliste = [addition, multiplikation, subtraktion]\nx = zufallszahl()\ny = zufallszahl()\nop = choice(liste)\n\nprint(\"Das Ergebnis von {} und {} ist {}. Welche Operation wurde durchgefuehrt?\".format(x, y, op(x, y)))\n```\n\nAusgabe mit `seed(7)`:\n\n```\nDas Ergebnis von 5 und 2 ist 10. Welche Operation wurde durchgefuehrt?\n```",
+   "explanation": "Diese Aufgabe ist die Lambda-Beispielaufgabe der Vorlesung. Sie prüft vier Dinge auf einmal:\n\n**1. lambda-Syntax:** `lambda parameter1, parameter2, ...: rückgabewert`. Der Ausdruck hinter dem Doppelpunkt **ist** der Rückgabewert - ein `return` wäre ein Syntaxfehler. Ein lambda erlaubt es, kurze Funktionen schnell in einer Zeile zu schreiben, ohne dass man ein `def` benötigt.\n\n**2. lambda ohne Parameter (Lücke 4):** Direkt nach `lambda` kommt der Doppelpunkt. `lambda: randint(0, 9)` ist eine Funktion, die man mit `zufallszahl()` aufrufen muss. Wer stattdessen `randint(0, 9)` (ohne `lambda:`) einträgt, speichert eine **Zahl** statt einer Funktion - und `zufallszahl()` scheitert dann mit `TypeError: 'int' object is not callable`.\n\n**3. Funktionen als Daten (Lücke 5):** In `liste` stehen drei Funktionsobjekte. `choice(liste)` zieht eines davon. Genau so übergibt der Prof im Goofspiel die Strategien (`strategie_spieler1`) im state-dictionary.\n\n**4. Aufruf des gezogenen Funktionsobjekts (Lücke 6):** `op` ist erst eine Funktion, `op(x, y)` ist das Ergebnis.\n\nDas `seed(7)` macht den Ablauf reproduzierbar - genau dieser Trick macht im `helper.py` des Profs aus dem unpure `random.choice` eine pure Funktion `ziehe_karte(kartenspiel, seed)`.\n\n**Merkregel:** In einer lambda-Zeile steht nie ein `return` und nie ein `=`.",
+   "hints": [
+    "Die lambda-Syntax lautet `lambda eingaben: rückgabewert` - schreiben Sie niemals `return` hinein.",
+    "Lücke 4 braucht eine Funktion, die man später mit `zufallszahl()` aufruft - wie viele Parameter hat sie?",
+    "In `liste` stehen Funktionen, keine Zahlen. Was muss man mit dem gezogenen Element noch tun, damit ein Wert entsteht?"
+   ],
+   "pitfalls": [
+    "In Lücke 4 direkt `randint(0, 9)` schreiben - dann ist `zufallszahl` eine Zahl und kein Funktionsobjekt.",
+    "In Lücke 6 nur `op` statt `op(x, y)` einsetzen - dann wird die Funktion selbst (`<function <lambda> at 0x...>`) gedruckt.",
+    "`return` in ein lambda schreiben - das ist ein SyntaxError."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 3,
+     "label": "Lambda - Beispielaufgabe (Lernspiel dritte Klasse)"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 2,
+     "label": "lambda x1, x2, ...: Rückgabewert"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Was haben wir gelernt: lambda"
+    }
+   ],
+   "tags": [
+    "lambda",
+    "fill-gaps",
+    "hof",
+    "funktionen-als-daten",
+    "random"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-014"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "lambda-Warmup: drei Einzeiler",
+   "prompt": "Ersetzen Sie die drei `def`-Funktionen durch **lambda-Ausdrücke**, sodass der Code die Ausgabe\n\n```\n25 5 True False\n```\n\nerzeugt. Füllen Sie die Lücken 1 bis 3.",
+   "code": "quadrat    = ## Lücke 1 ##   # eine Zahl -> ihr Quadrat\naddiere    = ## Lücke 2 ##   # zwei Zahlen -> ihre Summe\nist_gerade = ## Lücke 3 ##   # eine Zahl -> True, falls sie gerade ist\n\nprint(quadrat(5), addiere(2, 3), ist_gerade(4), ist_gerade(7))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "lambda x: x * x",
+      "lambda x: x*x",
+      "lambda x: x ** 2",
+      "lambda x: x**2",
+      "lambda a: a * a"
+     ],
+     "explanation": "Ein Parameter, ein Ausdruck. `x * x` und `x ** 2` sind beide korrekt."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "lambda x, y: x + y",
+      "lambda x,y: x+y",
+      "lambda a, b: a + b",
+      "lambda a,b: a+b"
+     ],
+     "explanation": "Zwei Parameter werden durch Komma getrennt, danach folgt der Doppelpunkt."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "lambda x: x % 2 == 0",
+      "lambda x: x%2==0",
+      "lambda a: a % 2 == 0",
+      "lambda x: not x % 2",
+      "lambda x: x % 2 == 0"
+     ],
+     "explanation": "Der Ausdruck darf auch ein Vergleich sein - sein Wahrheitswert ist dann der Rückgabewert."
+    }
+   ],
+   "solution": "```python\nquadrat    = lambda x: x * x\naddiere    = lambda x, y: x + y\nist_gerade = lambda x: x % 2 == 0\n\nprint(quadrat(5), addiere(2, 3), ist_gerade(4), ist_gerade(7))\n```\n\nAusgabe: `25 5 True False`",
+   "explanation": "`lambda` erzeugt eine **anonyme Funktion** - eine Funktion ohne Namen. Weist man sie einer Variablen zu, hat sie faktisch doch einen Namen und verhält sich exakt wie eine mit `def` geschriebene Funktion:\n\n```python\nquadrat = lambda x: x * x     # ist gleichwertig zu\ndef quadrat(x):\n    return x * x\n```\n\nDer Unterschied ist nur die Kompaktheit: Ein lambda erlaubt es, kurze Funktionen schnell in einer Zeile zu schreiben, ohne dass man ein `def` benötigt. Der Körper darf genau **ein Ausdruck** sein - keine Zuweisungen, keine `if`-Blöcke (ein bedingter Ausdruck `a if bedingung else b` ist aber erlaubt), kein `return`.\n\nAnonyme Funktionen sind eines der sieben Charakteristika funktionaler Programmierung aus der Vorlesung. Ihr eigentlicher Zweck ist, kurze Funktionen direkt dort hinzuschreiben, wo sie gebraucht werden - typischerweise als Argument von `map`, `filter` oder `reduce`.\n\n**Merkregel:** `lambda` = `def` ohne Namen, ohne `return`, mit genau einem Ausdruck.",
+   "hints": [
+    "Die Syntax lautet `lambda parameter: ausdruck` - alles in einer Zeile.",
+    "Bei zwei Parametern werden diese vor dem Doppelpunkt durch Komma getrennt.",
+    "Für 'ist gerade' brauchen Sie den Modulo-Operator `%` und einen Vergleich mit 0."
+   ],
+   "pitfalls": [
+    "`return` in das lambda schreiben - das ist ein SyntaxError.",
+    "Klammern um die Parameter setzen (`lambda (x, y): ...`) - in Python 3 nicht erlaubt.",
+    "`ist_gerade = lambda x: x % 2` schreiben - das liefert 0 bzw. 1 statt True/False (im print sichtbar!)."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 2,
+     "label": "lambda x1, x2, ... : aus Eingaben bestimmter Rückgabewert"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Aufgabe A1 - Lambda als Warmup"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika: Anonyme Funktionen"
+    }
+   ],
+   "tags": [
+    "lambda",
+    "anonyme-funktionen",
+    "fill-gaps",
+    "einstieg"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-015"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Strategien durch Parameterbindung erzeugen",
+   "prompt": "Im Push-Your-Luck-Spiel entscheidet eine *Strategie*, ob weitergewürfelt wird. Aus einer allgemeinen Strategie mit zwei Parametern sollen durch **Binden des zweiten Parameters** konkrete Strategien entstehen. Füllen Sie die Lücken 1 bis 3 so aus, dass der Code die Ausgabe\n\n```\nTrue False True\n```\n\nerzeugt. Verwenden Sie in allen drei Lücken die `lambda`-Notation.",
+   "code": "allgemeine_strategie = lambda punkte, aufhoerzahl: punkte < aufhoerzahl\n\n# Konkrete Strategien durch Binden des zweiten Parameters:\nstrategie_bei_15 = ## Lücke 1 ##\nstrategie_bei_20 = ## Lücke 2 ##\n\n# Gecurryte Fassung: eine Funktionsfabrik, die eine Funktion zurückgibt\ndef strategie_ab(aufhoerzahl):\n    return ## Lücke 3 ##\n\nstrategie_bei_25 = strategie_ab(25)\n\nprint(strategie_bei_15(10), strategie_bei_20(20), strategie_bei_25(24))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "lambda punkte: allgemeine_strategie(punkte, 15)",
+      "lambda p: allgemeine_strategie(p, 15)",
+      "lambda x: allgemeine_strategie(x, 15)",
+      "lambda punkte: punkte < 15"
+     ],
+     "explanation": "Ein lambda mit nur noch einem Parameter, das die allgemeine Strategie mit fest verdrahteter 15 aufruft. Auch die direkte Fassung `lambda punkte: punkte < 15` ist inhaltlich richtig, nutzt aber die Wiederverwendung nicht."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "lambda punkte: allgemeine_strategie(punkte, 20)",
+      "lambda p: allgemeine_strategie(p, 20)",
+      "lambda x: allgemeine_strategie(x, 20)",
+      "lambda punkte: punkte < 20"
+     ],
+     "explanation": "Analog mit 20."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "lambda punkte: allgemeine_strategie(punkte, aufhoerzahl)",
+      "lambda p: allgemeine_strategie(p, aufhoerzahl)",
+      "lambda punkte: punkte < aufhoerzahl",
+      "lambda x: allgemeine_strategie(x, aufhoerzahl)"
+     ],
+     "explanation": "Der entscheidende Schritt: Das zurückgegebene lambda merkt sich den Wert von `aufhoerzahl` aus dem Aufruf von `strategie_ab` (closure). Damit ist `strategie_ab` eine Funktion höherer Ordnung, die eine Funktion zurückgibt."
+    }
+   ],
+   "solution": "```python\nallgemeine_strategie = lambda punkte, aufhoerzahl: punkte < aufhoerzahl\n\nstrategie_bei_15 = lambda punkte: allgemeine_strategie(punkte, 15)\nstrategie_bei_20 = lambda punkte: allgemeine_strategie(punkte, 20)\n\ndef strategie_ab(aufhoerzahl):\n    return lambda punkte: allgemeine_strategie(punkte, aufhoerzahl)\n\nstrategie_bei_25 = strategie_ab(25)\n\nprint(strategie_bei_15(10), strategie_bei_20(20), strategie_bei_25(24))\n```\n\nAusgabe: `True False True`",
+   "explanation": "Hier stecken zwei Konzepte in einem Beispiel.\n\n**Parameterbindung (Lücken 1 und 2).** Aus einer abstrakten Funktion mit zwei Parametern wird eine spezialisierte Funktion mit einem Parameter, indem man den zweiten auf einen festen Wert bindet. Genau so steht es in `neues_spiel.py` des Profs:\n\n```python\nallgemeine_strategie = lambda x, aufhörzahl: x < aufhörzahl\nstrategie_aufhören_bei_15 = lambda x: allgemeine_strategie(x, 15)\n```\n\n**Currying (Lücke 3).** Statt für jede Schwelle eine Zeile zu schreiben, baut man eine **Funktionsfabrik**: `strategie_ab(25)` gibt eine *Funktion* zurück. Das ist die Vorlesungsdefinition von Currying - eine von mehreren Parametern abhängige Funktion als Verkettung von Funktionen zu schreiben, die nur von einem Parameter abhängen und eine Funktion zurückgeben. Es gilt `f_curry(a1)(a2) = f(a1, a2)`.\n\nDas innere lambda merkt sich `aufhoerzahl` (closure). Damit ist `strategie_ab` eine **Funktion höherer Ordnung**: Sie gibt eine Funktion zurück. Man kann so mit einer Zeile fünf Strategien erzeugen: `strategien = list(map(strategie_ab, [10, 15, 20, 25, 30]))`.\n\nPrüfen Sie die Ausgabe: `10 < 15` → `True`, `20 < 20` → `False` (echt kleiner!), `24 < 25` → `True`.\n\n**Merkregel:** Lücke 3 gibt keine Zahl und keinen Wahrheitswert zurück, sondern eine Funktion.",
+   "hints": [
+    "In Lücke 1 und 2 darf das lambda nur noch EINEN Parameter haben - der zweite wird fest eingesetzt.",
+    "Lücke 3 steht hinter einem `return`. Was muss `strategie_ab` zurückgeben, damit `strategie_ab(25)(24)` funktioniert?",
+    "Das innere lambda darf `aufhoerzahl` aus dem umgebenden Funktionsaufruf benutzen."
+   ],
+   "pitfalls": [
+    "In Lücke 3 `allgemeine_strategie(punkte, aufhoerzahl)` ohne `lambda punkte:` schreiben - `punkte` existiert dort noch gar nicht (NameError).",
+    "In Lücke 3 `allgemeine_strategie` zurückgeben - dann bräuchte man immer noch zwei Argumente.",
+    "`20 < 20` für True halten - der Vergleich ist echt kleiner."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying: Binden bestimmter Parameter an fixe Werte"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "f_curry(a1)(a2) = f(a1, a2)"
+    },
+    {
+     "file": "neues_spiel.py",
+     "page": 1,
+     "label": "allgemeine_strategie / strategie_aufhören_bei_15"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Stufe B2: hold_at(schwelle) als Funktions-Fabrik"
+    }
+   ],
+   "tags": [
+    "lambda",
+    "currying",
+    "hof",
+    "closure",
+    "fill-gaps"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-016"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Drei Fehler im lambda-Code finden",
+   "prompt": "Der folgende Code soll drei Dinge tun: das Quadrat von 3 berechnen, aus `zahlen` die geraden Zahlen filtern und alle Zahlen verdoppeln. Er enthält **genau 3 Fehler**. Geben Sie an, in welchen Zeilen die Fehler liegen, was jeweils falsch ist und wie man es korrigiert.",
+   "code": "1  zahlen = [1, 2, 3, 4]\n2  quadrat = lambda x: return x * x\n3  gerade = lambda x, x % 2 == 0\n4  def verdoppeln(liste):\n5      return list(map(lambda a, b: a * 2, liste))\n6  print(quadrat(3), list(filter(gerade, zahlen)), verdoppeln(zahlen))",
+   "errors": [
+    {
+     "line": 2,
+     "wrong": "quadrat = lambda x: return x * x",
+     "fix": "quadrat = lambda x: x * x",
+     "why": "In einem lambda steht **nie** ein `return`. Der Ausdruck hinter dem Doppelpunkt IST bereits der Rückgabewert. Mit `return` gibt es einen SyntaxError."
+    },
+    {
+     "line": 3,
+     "wrong": "gerade = lambda x, x % 2 == 0",
+     "fix": "gerade = lambda x: x % 2 == 0",
+     "why": "Zwischen Parameterliste und Ausdruck gehört ein **Doppelpunkt**, kein Komma. Mit dem Komma liest Python `x` und `x % 2 == 0` als zwei Parameter - und ein Parameter darf kein Ausdruck sein (SyntaxError)."
+    },
+    {
+     "line": 5,
+     "wrong": "return list(map(lambda a, b: a * 2, liste))",
+     "fix": "return list(map(lambda a: a * 2, liste))",
+     "why": "`map` übergibt pro iterierbarem Objekt genau ein Argument. Bei nur einer Liste bekommt das lambda ein Argument, erwartet aber zwei → `TypeError: <lambda>() missing 1 required positional argument: 'b'`. Zwei Parameter wären nur bei `map(f, liste1, liste2)` richtig."
+    }
+   ],
+   "solution": "```python\nzahlen = [1, 2, 3, 4]\nquadrat = lambda x: x * x\ngerade = lambda x: x % 2 == 0\n\ndef verdoppeln(liste):\n    return list(map(lambda a: a * 2, liste))\n\nprint(quadrat(3), list(filter(gerade, zahlen)), verdoppeln(zahlen))\n```\n\nAusgabe des korrigierten Codes:\n\n```\n9 [2, 4] [2, 4, 6, 8]\n```",
+   "explanation": "Die drei Fehler decken die drei häufigsten lambda-Stolperstellen ab.\n\n**Zeile 2 - `return` im lambda.** Ein lambda ist ein *Ausdruck*, keine Anweisungsfolge. `lambda x: x * x` bedeutet bereits 'gib `x * x` zurück'. Wer aus dem `def`-Denken kommt, schreibt hier reflexhaft `return` - das ist ein SyntaxError.\n\n**Zeile 3 - Komma statt Doppelpunkt.** Die Syntax ist `lambda parameter1, parameter2, ...: ausdruck`. Das Komma trennt *Parameter*, der Doppelpunkt trennt Parameterliste und Rückgabeausdruck.\n\n**Zeile 5 - falsche Stelligkeit bei `map`.** Die Vorlesung sagt: `map(f, liste1, liste2, ..., liste_m)` bildet `[f(liste1[0], ..., liste_m[0]), ...]` - die Funktion braucht genau so viele Parameter, wie iterierbare Objekte übergeben werden. Bei einer einzigen Liste muss das lambda also genau einen Parameter haben. Dieser Fehler ist besonders tückisch, weil er kein SyntaxError ist, sondern erst zur Laufzeit beim Materialisieren mit `list(...)` auffällt - eine Folge der Lazy Evaluation.\n\n**Merkregel:** lambda ohne `return`, mit Doppelpunkt, und so viele Parameter wie `map` Listen bekommt.",
+   "hints": [
+    "Zwei der Fehler sind reine Syntaxfehler in derselben Zeile-Art: Schauen Sie sich die beiden lambda-Zuweisungen genau an.",
+    "Wie viele Argumente übergibt `map` an die Funktion, wenn nur eine Liste angegeben ist?",
+    "Der dritte Fehler ist kein SyntaxError - er würde erst beim Ausführen auffallen."
+   ],
+   "pitfalls": [
+    "Zeile 6 für fehlerhaft halten, weil `filter` und `map` in `list(...)` gepackt werden - das ist korrekt und nötig, da beide Iteratoren liefern.",
+    "Nur die zwei Syntaxfehler finden und die falsche Parameteranzahl bei `map` übersehen.",
+    "Den Fehler in Zeile 5 in der Zeile `def verdoppeln(liste):` verorten - dort ist alles in Ordnung."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 2,
+     "label": "lambda-Syntax"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 6,
+     "label": "map(f, liste1, ..., liste_m) und die Anzahl der Argumente"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3: Programmieren mit map, filter und reduce"
+    }
+   ],
+   "tags": [
+    "lambda",
+    "find-errors",
+    "map",
+    "syntax",
+    "filter"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-017"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Drei Verstöße gegen die pure-function-Bedingungen",
+   "prompt": "Die folgende Funktion soll eine **pure function** sein, ist es aber nicht. Benennen Sie **genau 3 Stellen** (mit Zeilennummer), an denen sie gegen die Bedingungen für pure functions verstößt. Geben Sie jeweils an, **welche der beiden Bedingungen** verletzt wird, und wie man die Stelle korrigiert. Schreiben Sie anschließend die pure Fassung der Funktion auf.",
+   "code": "1  mwst = 19\n2  protokoll = []\n3\n4  def bestellung_abschliessen(warenkorb, kunde):\n5      protokoll.append(kunde)\n6      gesamt = sum(warenkorb)\n7      warenkorb.clear()\n8      return gesamt * (1 + mwst / 100)",
+   "errors": [
+    {
+     "line": 5,
+     "wrong": "protokoll.append(kunde)",
+     "fix": "Nichts anhängen, sondern das neue Protokoll zurückgeben: `protokoll + [kunde]` (mit `protokoll` als Parameter).",
+     "why": "Verstoß gegen Bedingung 2 (keine Nebeneffekte): Die globale Liste `protokoll` wird von außen sichtbar verändert. Zusätzlich ist es ein Verstoß gegen Bedingung 1, da `protokoll` keine Eingabe der Funktion ist."
+    },
+    {
+     "line": 7,
+     "wrong": "warenkorb.clear()",
+     "fix": "Zeile ersatzlos streichen - der Aufrufer entscheidet selbst, was mit seinem Warenkorb geschieht.",
+     "why": "Verstoß gegen Bedingung 2: `clear()` leert die **übergebene** Liste in place. Weil `list` mutable ist, sieht der Aufrufer diese Änderung - ein Nebeneffekt am Eingabeargument."
+    },
+    {
+     "line": 8,
+     "wrong": "return gesamt * (1 + mwst / 100)",
+     "fix": "`mwst` als Parameter übergeben: `def bestellung_abschliessen(warenkorb, kunde, mwst, protokoll)`.",
+     "why": "Verstoß gegen Bedingung 1: Die Funktion liest die globale Variable `mwst` und hängt damit von mehr ab als von ihren Eingabeargumenten - sie ist nicht referentially transparent."
+    }
+   ],
+   "solution": "```python\ndef bestellung_abschliessen(warenkorb, kunde, mwst, protokoll):\n    gesamt = sum(warenkorb)\n    return gesamt * (1 + mwst / 100), protokoll + [kunde]\n\n# Aufruf (die Nebeneffekte bleiben an einer Stelle, außerhalb der Funktion):\nprotokoll = []\nbetrag, protokoll = bestellung_abschliessen([10, 15], \"Anna\", 19, protokoll)\nprint(betrag, protokoll)\n```\n\nAusgabe: `29.75 ['Anna']`\n\n**Bewertung (4 P):** je 1 P pro korrekt benannter Stelle mit Zuordnung zur verletzten Bedingung, 1 P für die pure Fassung.",
+   "explanation": "Die Aufgabe trainiert das systematische Abklopfen einer Funktion nach dem Muster der Vorlesung.\n\n**Bedingung 1 (nur Eingabeargumente):** Suchen Sie Namen im Körper, die weder Parameter noch lokal definiert sind. Hier: `mwst` (Zeile 8) und `protokoll` (Zeile 5). Der Test: Wenn jemand oben `mwst = 7` schreibt, liefert derselbe Aufruf ein anderes Ergebnis.\n\n**Bedingung 2 (keine Nebeneffekte):** Suchen Sie alles, was außer `return` nach außen wirkt. Hier: `protokoll.append(...)` verändert eine globale Liste, `warenkorb.clear()` verändert ein Argument. Beides sind Mutationen an mutable Objekten und damit von außen sichtbar.\n\nDie pure Fassung folgt genau dem Rezept aus dem Goofspiel: **alle Abhängigkeiten offenlegen** (alles, was gebraucht wird, wird Parameter) und **neue Werte zurückgeben statt alte zu verändern** (`protokoll + [kunde]` erzeugt eine neue Liste). Dass jetzt zwei Werte zurückkommen, ist typisch: Wo vorher ein Nebeneffekt stand, steht nun ein zusätzlicher Rückgabewert - genau wie bei `runde_auswerten` und `ziehe_karte` im `helper.py`.\n\n**Merkregel:** Jede versteckte Eingabe wird ein Parameter, jeder Nebeneffekt wird ein Rückgabewert.",
+   "hints": [
+    "Gehen Sie beide Bedingungen getrennt durch: erst die Eingabeseite, dann die Ausgabeseite.",
+    "Welche Namen im Funktionskörper sind weder Parameter noch lokal definiert?",
+    "Welche Methodenaufrufe verändern ein Objekt in place, statt ein neues zu erzeugen?"
+   ],
+   "pitfalls": [
+    "Zeile 6 (`sum(warenkorb)`) als Verstoß werten - `sum` liest nur und ist selbst pure.",
+    "`warenkorb.clear()` für unproblematisch halten, weil `warenkorb` ja ein Parameter ist - Parameter dürfen gelesen, aber nicht verändert werden.",
+    "In der pure Fassung `protokoll.append(kunde)` als lokale Kopie beibehalten - `protokoll + [kunde]` ist die Fassung ohne Mutation."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Die zwei Bedingungen"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Goofspiel funktionaler machen: alle Abhängigkeiten offenlegen"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 13,
+     "label": "'(Imperativer Code) Schreiben Sie diesen Code funktional'"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "find-errors",
+    "nebeneffekte",
+    "global",
+    "mutable"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-018"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Eine unreine Rundenauswertung pure machen",
+   "prompt": "Gegeben ist die folgende **unreine** Auswertung einer Goofspiel-Runde:\n\n```python\npunkte_spieler1 = 0\npunkte_spieler2 = 0\n\ndef runde_auswerten(karte1, karte2, preiskarte):\n    global punkte_spieler1, punkte_spieler2\n    if karte1 > karte2:\n        punkte_spieler1 = punkte_spieler1 + preiskarte\n    elif karte2 > karte1:\n        punkte_spieler2 = punkte_spieler2 + preiskarte\n    print(punkte_spieler1, punkte_spieler2)\n```\n\nSchreiben Sie eine **pure function**\n\n```python\nrunde_auswerten(karte1, karte2, preiskarte, punkte1, punkte2)\n```\n\ndie den neuen Punktestand beider Spieler als **Tupel** `(neue_punkte1, neue_punkte2)` zurückgibt. Regeln: Wer die höhere Karte legt, bekommt den Wert der Preiskarte gutgeschrieben; bei Gleichstand bekommt niemand Punkte. Verwenden Sie weder `global` noch `print`.",
+   "starterCode": "def runde_auswerten(karte1, karte2, preiskarte, punkte1, punkte2):\n    # Ihre Lösung: nur von den Eingabeargumenten abhängen,\n    # keine Nebeneffekte, Rückgabe als Tupel\n    pass",
+   "constraints": [
+    "kein global",
+    "kein print",
+    "keine Veränderung der Eingabeargumente"
+   ],
+   "tests": [
+    {
+     "name": "Spieler 1 gewinnt die Runde",
+     "call": "runde_auswerten(5, 3, 10, 0, 0)",
+     "expected": "(10, 0)"
+    },
+    {
+     "name": "Spieler 2 gewinnt die Runde",
+     "call": "runde_auswerten(3, 5, 10, 0, 0)",
+     "expected": "(0, 10)"
+    },
+    {
+     "name": "Gleichstand - niemand bekommt Punkte",
+     "call": "runde_auswerten(4, 4, 7, 2, 5)",
+     "expected": "(2, 5)"
+    },
+    {
+     "name": "Punkte werden zum bisherigen Stand addiert",
+     "call": "runde_auswerten(9, 1, 4, 12, 3)",
+     "expected": "(16, 3)"
+    },
+    {
+     "name": "Zweimal derselbe Aufruf liefert dasselbe (referential transparency)",
+     "call": "runde_auswerten(9, 1, 4, 12, 3) == runde_auswerten(9, 1, 4, 12, 3)",
+     "expected": "True"
+    },
+    {
+     "name": "Spieler 2 holt auf",
+     "call": "runde_auswerten(2, 13, 13, 40, 5)",
+     "expected": "(40, 18)"
+    }
+   ],
+   "forbidden": [
+    "global ",
+    "print(",
+    "input("
+   ],
+   "solution": "def runde_auswerten(karte1, karte2, preiskarte, punkte1, punkte2):\n    if karte1 > karte2:\n        return punkte1 + preiskarte, punkte2\n    elif karte2 > karte1:\n        return punkte1, punkte2 + preiskarte\n    else:\n        return punkte1, punkte2",
+   "explanation": "Das ist genau der Schritt, den der Prof im Goofspiel macht, um aus imperativem Code funktionalen zu machen - und die Musterlösung entspricht der `runde_auswerten` aus seiner `helper.py`.\n\nZwei Umbauten sind nötig:\n\n**1. Versteckte Eingaben werden Parameter.** Der bisherige Punktestand lag in globalen Variablen. Jetzt wird er hereingereicht (`punkte1`, `punkte2`). Damit hängt die Funktion nur noch von ihren Argumenten ab (Bedingung 1) - der Test 'zweimal derselbe Aufruf' prüft genau diese referential transparency.\n\n**2. Nebeneffekte werden Rückgabewerte.** Statt globale Variablen zu ändern und zu drucken, gibt die Funktion den **neuen** Punktestand zurück. Der Aufrufer schreibt dann `p1, p2 = runde_auswerten(...)`. Das `print` wandert an den Rand des Programms - die Vorlesung nennt das 'Logik und Dokumentation trennen'.\n\nWichtig ist der `else`-Zweig: Bei Gleichstand muss der unveränderte Stand zurückgegeben werden. Wer ihn vergisst, gibt implizit `None` zurück - der Klassiker aus VL2. Alternativ geht auch eine Zuweisung an lokale Variablen mit einem einzigen `return` am Ende; wichtig ist nur, dass in **jedem** Pfad ein Wert zurückkommt.\n\n**Merkregel:** Aus 'ändert etwas' wird 'gibt etwas Neues zurück'.",
+   "hints": [
+    "Der bisherige Punktestand darf nicht mehr aus globalen Variablen kommen - er steht jetzt in den Parametern.",
+    "Statt eine Variable zu erhöhen, geben Sie den erhöhten Wert direkt zurück. Denken Sie an ein Tupel: `return a, b`.",
+    "Vergessen Sie den Fall Gleichstand nicht - auch dort muss ein Tupel zurückkommen, sonst ist das Ergebnis `None`."
+   ],
+   "pitfalls": [
+    "Den `else`-Zweig weglassen: Bei Gleichstand gibt die Funktion dann `None` zurück statt des unveränderten Standes.",
+    "`punkte1 += preiskarte` schreiben und dann nichts zurückgeben - die Zuweisung wirkt nur lokal.",
+    "Ein `print` in der Funktion stehen lassen - damit bleibt sie unpure."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Goofspiel funktionaler machen"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "def runde_auswerten(...)"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 13,
+     "label": "'(Imperativer Code) Schreiben Sie diesen Code funktional'"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "code",
+    "goofspiel",
+    "state",
+    "refactoring"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-019"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Funktionsfabrik mit lambda",
+   "prompt": "Schreiben Sie eine Funktion `strategie_ab(schwelle)`, die **eine Funktion zurückgibt**. Die zurückgegebene Funktion nimmt die aktuelle Rundensumme entgegen und liefert `True`, wenn weitergewürfelt werden soll (also wenn die Rundensumme **echt kleiner** als `schwelle` ist), sonst `False`.\n\nDie zurückgegebene Funktion **muss** mit einem `lambda`-Ausdruck erzeugt werden. Verwenden Sie kein `global`.\n\nBeispiel:\n\n```python\nhold_at_15 = strategie_ab(15)\nprint(hold_at_15(10))   # True\nprint(hold_at_15(15))   # False\n```",
+   "starterCode": "def strategie_ab(schwelle):\n    # gib mit lambda eine Funktion zurück\n    pass",
+   "constraints": [
+    "die zurückgegebene Funktion muss ein lambda sein",
+    "kein global"
+   ],
+   "tests": [
+    {
+     "name": "unter der Schwelle -> weiterwürfeln",
+     "call": "strategie_ab(15)(10)",
+     "expected": "True"
+    },
+    {
+     "name": "genau auf der Schwelle -> aufhören",
+     "call": "strategie_ab(15)(15)",
+     "expected": "False"
+    },
+    {
+     "name": "knapp unter einer anderen Schwelle",
+     "call": "strategie_ab(20)(19)",
+     "expected": "True"
+    },
+    {
+     "name": "Schwelle 0 -> immer aufhören",
+     "call": "strategie_ab(0)(0)",
+     "expected": "False"
+    },
+    {
+     "name": "Rückgabe ist wirklich eine Funktion",
+     "call": "callable(strategie_ab(25))",
+     "expected": "True"
+    },
+    {
+     "name": "mehrere Strategien auf einmal erzeugen",
+     "call": "list(map(lambda s: s(12), map(strategie_ab, [10, 15, 20])))",
+     "expected": "[False, True, True]"
+    },
+    {
+     "name": "zwei Fabrikate sind unabhängig voneinander",
+     "call": "(strategie_ab(10)(12), strategie_ab(30)(12))",
+     "expected": "(False, True)"
+    }
+   ],
+   "required": [
+    "lambda"
+   ],
+   "forbidden": [
+    "global "
+   ],
+   "solution": "def strategie_ab(schwelle):\n    return lambda rundensumme: rundensumme < schwelle",
+   "explanation": "`strategie_ab` ist eine **Funktion höherer Ordnung**: Sie hat eine Funktion als Rückgabewert. Genau das ist die Vorlesungsdefinition von Currying - eine von mehreren Parametern abhängige Funktion als Verkettung von Funktionen zu schreiben, die nur von einem Parameter abhängen und eine Funktion zurückgeben. Es gilt `strategie_ab(schwelle)(rundensumme) = (rundensumme < schwelle)`.\n\nDer Trick liegt darin, dass das zurückgegebene lambda sich den Wert von `schwelle` **merkt** (closure). Jeder Aufruf von `strategie_ab` erzeugt ein neues Funktionsobjekt mit seiner eigenen Schwelle - deshalb sind `strategie_ab(10)` und `strategie_ab(30)` völlig unabhängig voneinander.\n\nDer praktische Nutzen zeigt sich im vorletzten Test: Mit `map(strategie_ab, [10, 15, 20])` erzeugt man in einer Zeile drei verschiedene Strategien - eine Funktionsfabrik ist wesentlich kompakter, als drei `def`-Blöcke zu schreiben (Vorteil 4: kompakterer Code).\n\nHäufigster Fehler: `return lambda: rundensumme < schwelle` (ohne Parameter) oder `return schwelle` bzw. der direkte Aufruf `return rundensumme < schwelle` - dabei existiert `rundensumme` an dieser Stelle noch gar nicht.\n\n**Merkregel:** Eine Funktionsfabrik gibt keine Zahl und keinen Wahrheitswert zurück, sondern eine Funktion.",
+   "hints": [
+    "Was steht hinter `return`, wenn `strategie_ab(15)` selbst noch keine Rundensumme kennt?",
+    "Die Syntax lautet `return lambda parameter: ausdruck` - der Parameter ist die Rundensumme.",
+    "Das innere lambda darf `schwelle` aus dem umgebenden Aufruf benutzen (closure)."
+   ],
+   "pitfalls": [
+    "`return schwelle` oder `return rundensumme < schwelle` schreiben - im zweiten Fall gibt es einen NameError.",
+    "`<=` statt `<` verwenden: Bei Rundensumme genau gleich der Schwelle soll aufgehört werden.",
+    "Das lambda ohne Parameter schreiben (`lambda: ...`) - dann kann man die Strategie nicht mit der Rundensumme aufrufen."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 13,
+     "label": "f_curry(a1)(a2) = f(a1, a2)"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 26,
+     "label": "Aufgabe A5 - Currying / hold_at als Funktions-Fabrik"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika: Funktionen höherer Ordnung"
+    }
+   ],
+   "tags": [
+    "lambda",
+    "hof",
+    "currying",
+    "code",
+    "closure"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-020"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": true,
+   "title": "Pure state-Übergangsfunktion für ein Würfelspiel",
+   "prompt": "Der Zustand eines Push-Your-Luck-Spiels wird - wie im Goofspiel des Profs - in einem **state-dictionary** gespeichert:\n\n```python\n{'runde': 0, 'punkte': 0, 'verlauf': ()}\n```\n\nSchreiben Sie eine **pure function** `naechster_state(state, wurf)`, die einen **neuen** state zurückgibt:\n\n- `'runde'` wird um 1 erhöht,\n- bei `wurf == 1` fällt der Spieler auf `'punkte': 0` zurück, sonst wird `wurf` zu `'punkte'` addiert,\n- `'verlauf'` ist ein **Tupel**, an das der Wurf angehängt wird.\n\n**Wichtig:** Der übergebene `state` darf dabei **nicht verändert** werden - er muss nach dem Aufruf exakt so aussehen wie vorher. Verwenden Sie kein `global` und keine Schleife.",
+   "starterCode": "def naechster_state(state, wurf):\n    # Rückgabe: ein NEUES dictionary,\n    # der übergebene state bleibt unverändert\n    pass",
+   "constraints": [
+    "keine Mutation des übergebenen state",
+    "kein global",
+    "keine Schleife"
+   ],
+   "tests": [
+    {
+     "name": "normaler Wurf aus dem Startzustand",
+     "call": "naechster_state({'runde': 0, 'punkte': 0, 'verlauf': ()}, 5)",
+     "expected": "{'runde': 1, 'punkte': 5, 'verlauf': (5,)}"
+    },
+    {
+     "name": "eine 1 setzt die Punkte zurück",
+     "call": "naechster_state({'runde': 2, 'punkte': 12, 'verlauf': (4, 8)}, 1)",
+     "expected": "{'runde': 3, 'punkte': 0, 'verlauf': (4, 8, 1)}"
+    },
+    {
+     "name": "Punkte werden aufaddiert",
+     "call": "naechster_state({'runde': 1, 'punkte': 3, 'verlauf': (3,)}, 6)",
+     "expected": "{'runde': 2, 'punkte': 9, 'verlauf': (3, 6)}"
+    },
+    {
+     "name": "der übergebene state bleibt unverändert (keine Mutation)",
+     "call": "(lambda s: (naechster_state(s, 6), s)[1])({'runde': 1, 'punkte': 3, 'verlauf': (3,)})",
+     "expected": "{'runde': 1, 'punkte': 3, 'verlauf': (3,)}"
+    },
+    {
+     "name": "zweimal derselbe Aufruf liefert dasselbe (referential transparency)",
+     "call": "naechster_state({'runde': 0, 'punkte': 0, 'verlauf': ()}, 4) == naechster_state({'runde': 0, 'punkte': 0, 'verlauf': ()}, 4)",
+     "expected": "True"
+    },
+    {
+     "name": "zwei Runden hintereinander (Verkettung)",
+     "call": "naechster_state(naechster_state({'runde': 0, 'punkte': 0, 'verlauf': ()}, 2), 3)",
+     "expected": "{'runde': 2, 'punkte': 5, 'verlauf': (2, 3)}"
+    }
+   ],
+   "forbidden": [
+    "global ",
+    "for ",
+    "while ",
+    ".update(",
+    ".append("
+   ],
+   "solution": "def naechster_state(state, wurf):\n    if wurf == 1:\n        neue_punkte = 0\n    else:\n        neue_punkte = state['punkte'] + wurf\n    return {'runde': state['runde'] + 1,\n            'punkte': neue_punkte,\n            'verlauf': state['verlauf'] + (wurf,)}",
+   "explanation": "Diese Aufgabe vereint drei Bausteine, die der Prof im Goofspiel zusammenführt: **state**, **Immutability** und **pure functions**.\n\n**1. Alles, was für den Spielverlauf wichtig ist, steckt in einer state-Variablen.** Genau so baut der Prof `spielrunde(state)` in `helper.py`: Die Funktion bekommt den alten state und gibt den nächsten zurück. Ein ganzes Spiel ist dann nur noch eine Kette solcher Übergänge - und weil man alle states aufhebt, kann man den kompletten Spielverlauf am Ende aus den states rekonstruieren, ohne während des Spiels ein einziges Mal `print` aufzurufen.\n\n**2. Neu bauen statt verändern.** Der Schlüssel ist, ein **neues** dictionary im `return` zu konstruieren, statt `state['runde'] += 1` zu schreiben. Weil `dict` mutable ist, wäre letzteres von außen sichtbar - genau das prüft der Test 'keine Mutation'. Für `verlauf` verwenden wir ein **Tupel**: `state['verlauf'] + (wurf,)` erzeugt ein neues Tupel; ein `.append` gibt es bei Tupeln gar nicht - immutable Datenstrukturen schützen also von selbst vor dieser Fehlerklasse.\n\n**3. Die Falle bei `(wurf,)`.** Ein einelementiges Tupel braucht das Komma. `(wurf)` ist nur eine geklammerte Zahl, und `tupel + (5)` wirft `TypeError: can only concatenate tuple (not \"int\") to tuple`.\n\nWer eine Kopie bevorzugt, kann auch `neuer = dict(state)` bzw. `{**state, 'runde': ...}` schreiben - Hauptsache, das Original bleibt unangetastet. Ein flaches `state.copy()` genügt hier, weil alle Werte immutable sind.\n\n**Merkregel:** Ein state-Übergang ist eine pure function `state -> state`, kein Verändern des alten state.",
+   "hints": [
+    "Bauen Sie das Ergebnis-dictionary komplett neu auf, statt Einträge des übergebenen zu überschreiben.",
+    "`'verlauf'` ist ein Tupel: Wie hängt man an ein Tupel ein Element an, ohne es zu verändern?",
+    "Achten Sie auf das Komma in `(wurf,)` - ohne Komma ist das kein Tupel."
+   ],
+   "pitfalls": [
+    "`state['runde'] += 1` schreiben und den übergebenen state damit verändern - der Purity-Test schlägt fehl.",
+    "`state['verlauf'] + (wurf)` ohne Komma schreiben - TypeError, weil `(wurf)` kein Tupel ist.",
+    "Bei `wurf == 1` die Runde nicht hochzählen oder den Verlauf nicht fortschreiben."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Alles was als 'state' wichtig ist, in einer state-Variablen sammeln"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 4,
+     "label": "Tupel mit allen states, an das in jeder Runde angehängt wird"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "def spielrunde(state) - gibt neuen state zurück"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika: Immutable Datenstrukturen"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "state",
+    "immutable",
+    "dictionary",
+    "tuple",
+    "code"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-021"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Der mutable Default-Parameter",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben? Begründen Sie Ihre Antwort.",
+   "code": "def karte_anlegen(karte, ablage=[]):\n    ablage.append(karte)\n    return ablage\n\nprint(karte_anlegen(1))\nprint(karte_anlegen(2))\nprint(karte_anlegen(3, []))\nprint(karte_anlegen(4))",
+   "expectedOutput": "[1]\n[1, 2]\n[3]\n[1, 2, 4]",
+   "solution": "```\n[1]\n[1, 2]\n[3]\n[1, 2, 4]\n```\n\nDie Default-Liste wird **einmal** bei der Definition der Funktion erzeugt und danach von allen Aufrufen ohne zweites Argument **geteilt**. `append` verändert sie dauerhaft. Nur der dritte Aufruf übergibt eine eigene, frische Liste und bleibt deshalb bei `[3]`; der vierte Aufruf greift wieder auf die (inzwischen gefüllte) Default-Liste zu.\n\nPure Fassung ohne diese Falle:\n\n```python\ndef karte_anlegen(karte, ablage=()):\n    return ablage + (karte,)\n```",
+   "explanation": "Das ist die berühmteste Nebeneffekt-Falle in Python - und ein Musterbeispiel dafür, warum die Vorlesung vor verstecktem **state** warnt.\n\nDer Default-Wert `[]` wird **genau einmal** ausgewertet: beim Ausführen der `def`-Zeile, nicht bei jedem Aufruf. Die Funktion trägt danach eine einzige Liste als versteckten Zustand mit sich herum. `ablage.append(karte)` verändert diese Liste in place, und weil sie zwischen den Aufrufen überlebt, wächst sie: `[1]`, dann `[1, 2]`, dann - nach dem 'Zwischenruf' des dritten Aufrufs - `[1, 2, 4]`.\n\nDer dritte Aufruf `karte_anlegen(3, [])` übergibt eine **neue** leere Liste. Der Default kommt nicht zum Einsatz, das Ergebnis ist `[3]` - und die Default-Liste bleibt bei `[1, 2]`, weshalb der vierte Aufruf `[1, 2, 4]` liefert. Wer diese Zeile als 'Reset' interpretiert, erwartet fälschlich `[4]`.\n\nBeide Purity-Bedingungen sind verletzt: Das Ergebnis hängt von etwas ab, das kein Eingabeargument ist (dem angesammelten Zustand der Default-Liste), und die Funktion verändert dieses Objekt. Mit einem **immutable** Default (`()` oder `None`) kann das nicht passieren - ein weiteres Argument für immutable Datenstrukturen.\n\n**Merkregel:** Niemals ein mutable Objekt (`[]`, `{}`, `set()`) als Default-Wert verwenden.",
+   "hints": [
+    "Wann genau wird der Ausdruck `[]` in der `def`-Zeile ausgewertet - bei jedem Aufruf oder nur einmal?",
+    "Überlegen Sie beim dritten Aufruf: Wird der Default überhaupt benutzt? Und wird er dabei zurückgesetzt?",
+    "Verfolgen Sie den Inhalt der Default-Liste über alle vier Aufrufe hinweg."
+   ],
+   "pitfalls": [
+    "`[1]`, `[2]`, `[3]`, `[4]` erwarten, weil man annimmt, `ablage` starte bei jedem Aufruf leer.",
+    "Nach dem dritten Aufruf `[4]` erwarten und glauben, das explizite `[]` habe den Default zurückgesetzt.",
+    "Denken, das Problem läge an `return ablage` - der eigentliche Übeltäter ist das gemeinsam genutzte Default-Objekt."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Vermeiden der Abhängigkeit von states"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika: Immutable Datenstrukturen"
+    }
+   ],
+   "tags": [
+    "nebeneffekte",
+    "mutable",
+    "default-argument",
+    "state",
+    "predict-output"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-022"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": false,
+   "title": "Die sieben Charakteristika funktionaler Programmierung",
+   "prompt": "Die Vorlesung nennt sieben Dinge, die für eine gute Umsetzung funktionaler Programmierung **charakteristisch** sind. Nennen Sie alle sieben und geben Sie zu jedem ein konkretes **Python-Beispiel** (Codeschnipsel oder Befehl) an. **(5 P)**\n\nErklären Sie außerdem, warum die Vorlesung von *Charakteristika* und nicht von einer *Definition* spricht.",
+   "solution": "**Musterlösung**\n\n| # | Charakteristikum | Python-Beispiel |\n|---|---|---|\n| 1 | **Pure Functions** - hängen nur von den Eingabeargumenten ab und haben keine Nebeneffekte | `def flaeche(a, b): return a * b` |\n| 2 | **Funktionen höherer Ordnung** - Funktionen, die Funktionen als Eingabe bekommen und/oder als Rückgabewert haben | `map(quadrat, liste)`; `def strategie_ab(s): return lambda p: p < s` |\n| 3 | **Immutable (unveränderbare) Datenstrukturen** - keine Gefahr, an unterschiedlichen Stellen geändert zu werden | `tuple(range(1, 14))` statt `list(...)`; `str` |\n| 4 | **Anonyme Funktionen** - kurze Funktionen einfach in einer Zeile erstellen | `lambda x: x * x` |\n| 5 | **Rekursion** - Funktionen, die sich selbst aufrufen | `def summe(t): return 0 if len(t) == 0 else t[0] + summe(t[1:])` |\n| 6 | **Funktionen auf Iteratoren** - besonders `map`, `filter`, `reduce` | `reduce(lambda a, b: a + b, filter(lambda x: x % 2 == 0, zahlen))` |\n| 7 | **Currying** - eine von mehreren Parametern abhängige Funktion als Verkettung von Funktionen schreiben, die je nur von einem Parameter abhängen und eine Funktion zurückgeben | `def addiere(x): return lambda y: x + y`; `addiere(5)(3)` → `8` |\n\n**Warum Charakteristika und keine Definition?** Weil es laut Vorlesung *keine ganz formale Definition* funktionaler Programmierung gibt. Die **Grundpfeiler** sind das Vermeiden von Nebeneffekten und von Abhängigkeiten von states; alles andere sind verbreitete **Werkzeuge**, die oft mit funktionaler Programmierung in Verbindung gebracht werden, dafür aber *nicht zwingend notwendig* sind. Man kann z. B. `lambda` benutzen und trotzdem völlig unfunktional programmieren - und umgekehrt pure functions ausschließlich mit `def` schreiben.\n\n**Bewertungsrubrik (5 P):** 3,5 P für die sieben Charakteristika (je 0,5 P), 1 P für passende Python-Beispiele, 0,5 P für die Begründung mit den Grundpfeilern.",
+   "explanation": "Diese Liste steht auf einer eigenen Folie und ist damit klassisches Kurzfragen-Material. Der Prof leitet sie mit 'sind einige Dinge charakteristisch, z. B. ...' ein - das *z. B.* ist wichtig: Die Liste ist nicht abschließend und keine Definition.\n\nZum Verständnis der Struktur: Punkt 1 ist der Kern (die zwei Bedingungen). Punkte 2, 4, 6 und 7 sind **Werkzeuge**, um Programme aus Funktionen zusammenzusetzen, statt aus Anweisungsfolgen. Punkte 3 und 5 sind **Ersatz für Mutation**: Immutable Datenstrukturen verhindern versehentliche Änderungen, und Rekursion ersetzt die Schleife samt Zählvariable, die man sonst hochzählen (= mutieren) müsste. Der Prof formuliert das explizit: 'Rekursion kann oft die Mutation von Variablen verhindern und ist daher für die funktionale Programmierung sehr interessant.'\n\nDer häufigste Fehler in der Klausur ist, die Charakteristika mit den **Vorteilen** zu verwechseln. Merken Sie sich die Trennung: Charakteristika = *womit* man funktional programmiert (7 Stück, Werkzeuge), Vorteile = *warum* man es tut (6 Stück: Fehlersuche, Wiederverwendung, Parallelisierung, kompakterer Code, Memoisation, Lazy Evaluation).\n\n**Merkeselsbrücke für die sieben:** *Pure - Höher - Immutable - Anonym - Rekursiv - Iteratoren - Currying* (PHIARIC).",
+   "hints": [
+    "Beginnen Sie mit dem, was Sie schon aus VL2 und VL3 kennen: pure functions, HOF, lambda.",
+    "Zwei der sieben Punkte hat der Prof auf der Folie mit 'noch zu besprechen' markiert - sie kommen erst in VL4 und VL5.",
+    "Zwei Punkte dienen dazu, Mutation zu vermeiden - welche Datenstrukturen und welche Alternative zur Schleife?"
+   ],
+   "pitfalls": [
+    "Die Charakteristika mit den sechs Vorteilen verwechseln (Memoisation und Lazy Evaluation gehören zu den Vorteilen).",
+    "Currying vergessen - es kommt erst in der letzten Vorlesung und wird deshalb oft übersehen.",
+    "Behaupten, funktionale Programmierung sei durch diese sieben Punkte definiert - der Prof betont ausdrücklich, dass es keine formale Definition gibt."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika funktionaler Programmierung (7 Punkte)"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 11,
+     "label": "'Eine ganz formale Definition ... gibt es nicht'"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 8,
+     "label": "Rekursion verhindert Mutation"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying"
+    }
+   ],
+   "tags": [
+    "charakteristika",
+    "theorie",
+    "hof",
+    "immutable",
+    "currying",
+    "rekursion",
+    "kurzfrage"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-023"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": false,
+   "title": "Wenn ein lambda sich eine äußere Variable merkt",
+   "prompt": "Beide Codehälften erzeugen jeweils drei Funktionen, die eine Zahl mit 0, 1 bzw. 2 multiplizieren sollen. Was wird auf der Kommandozeile ausgegeben?",
+   "code": "faktoren = []\nfor i in range(3):\n    faktoren.append(lambda x: x * i)\n\nprint([f(10) for f in faktoren])\n\nfaktoren2 = list(map(lambda i: lambda x: x * i, range(3)))\n\nprint([f(10) for f in faktoren2])",
+   "expectedOutput": "[20, 20, 20]\n[0, 10, 20]",
+   "solution": "```\n[20, 20, 20]\n[0, 10, 20]\n```",
+   "explanation": "Ein Musterbeispiel dafür, warum die Vorlesung vor Abhängigkeiten von veränderlichen **states** warnt.\n\n**Erste Hälfte.** Das lambda `lambda x: x * i` speichert **nicht** den Wert von `i`, sondern die **Variable** `i` selbst - es schaut erst beim Aufruf nach, was gerade darin steht. Die Schleife mutiert `i` von 0 über 1 bis 2, und nach der Schleife existiert `i` weiter (Schleifenvariablen sind in Python nicht auf den Schleifenkörper beschränkt) mit dem Wert `2`. Da alle drei Funktionen erst danach in der Listcomprehension aufgerufen werden, sehen alle drei `i == 2` und liefern `20`. Man nennt das *late binding*.\n\n**Zweite Hälfte.** Hier ist `i` der **Parameter** des äußeren lambda. Bei jedem der drei Aufrufe durch `map` entsteht ein eigener, unveränderlicher Aufrufkontext mit seinem eigenen `i` - deshalb behält jedes innere lambda sein eigenes `i` und man erhält korrekt `[0, 10, 20]`. Genau dieselbe Technik steckt in der Funktionsfabrik `def strategie_ab(schwelle): return lambda p: p < schwelle`.\n\nDie Lehre: Der Unterschied zwischen den beiden Hälften ist nicht `lambda` gegen `map`, sondern **mutierte Schleifenvariable** gegen **gebundenes Funktionsargument**. Die erste Hälfte hängt von einem state ab, der sich später noch ändert; die zweite nicht. Deshalb sind die Funktionen der zweiten Hälfte pure, die der ersten nicht - `faktoren[0](10)` liefert nach `i = 7` plötzlich `70`.\n\n*Übrigens:* `list(map(...))` ist nötig, weil `map` sonst nur einen Iterator liefert - würde man das `list` weglassen, wäre die zweite Listcomprehension trotzdem korrekt, aber ein zweiter Durchlauf ergäbe `[]`.\n\n**Merkregel:** Ein lambda merkt sich Variablen, keine Werte - es sei denn, der Wert kommt als Parameter herein.",
+   "hints": [
+    "Wann werden die drei Funktionen der ersten Hälfte tatsächlich aufgerufen - während der Schleife oder danach?",
+    "Welchen Wert hat `i` nach dem Ende der for-Schleife? Existiert `i` dann überhaupt noch?",
+    "In der zweiten Hälfte ist `i` kein Schleifenzähler, sondern ein Parameter. Was ändert das?"
+   ],
+   "pitfalls": [
+    "`[0, 10, 20]` für die erste Hälfte erwarten - das lambda hält die Variable fest, nicht ihren damaligen Wert.",
+    "Glauben, `map` verhalte sich hier anders als eine Schleife - entscheidend ist der Parameter des äußeren lambda, nicht `map`.",
+    "Denken, `i` sei nach der Schleife nicht mehr sichtbar (in Python ist es das)."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 10,
+     "label": "Vermeiden der Abhängigkeit von states"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 12,
+     "label": "Charakteristika: anonyme Funktionen, HOF"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 12,
+     "label": "Currying / Binden von Parametern"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Stufe B5-Bonus: adaptive Strategie als lambda mit einer closure"
+    }
+   ],
+   "tags": [
+    "lambda",
+    "closure",
+    "late-binding",
+    "state",
+    "predict-output",
+    "hof"
+   ],
+   "lang": "python",
+   "topicId": "py-funcprog",
+   "id": "py-funcprog-024"
+  }
+ ]
+}

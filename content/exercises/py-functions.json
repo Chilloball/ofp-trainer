@@ -1,0 +1,1696 @@
+{
+ "topicId": "py-functions",
+ "exercises": [
+  {
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Funktion ohne return - was kommt zurück?",
+   "prompt": "Was wird beim Ausführen des folgenden Codes auf der Kommandozeile ausgegeben?",
+   "code": "def erhoehe_um_1(zahl):\n    zahl = zahl + 1\n\na = 5\nergebnis = erhoehe_um_1(a)\nprint(ergebnis)\nprint(a)",
+   "expectedOutput": "None\n5",
+   "solution": "None\n5",
+   "explanation": "Eine Funktion gibt in Python **nur dann** einen Wert zurück, wenn sie ein `return` ausführt. `erhoehe_um_1` hat kein `return`, also ist der Rückgabewert automatisch `None` - und genau das landet in `ergebnis` und wird ausgegeben.\n\nDie zweite Ausgabe zeigt den zweiten Denkfehler: `zahl = zahl + 1` bindet **innerhalb** der Funktion den lokalen Namen `zahl` neu. Die äußere Variable `a` (ein `int`, also immutable) bleibt davon vollkommen unberührt. Die Funktion hat damit weder einen Rückgabewert noch einen sichtbaren Effekt - sie ist praktisch wirkungslos.\n\nDer Prof zeigt genau dieses Beispiel in der Vorlesung und repariert es anschließend mit `return zahl` **und** `a = erhoehe_um_1(a)` an der Aufrufstelle.\n\nMerkregel: **Kein return → None.** Und: Eine Zuweisung an einen Parameter ändert nie die übergebene Variable des Aufrufers.",
+   "hints": [
+    "Suchen Sie im Funktionskörper nach einem `return`. Was passiert, wenn keins da ist?",
+    "`ergebnis` bekommt genau das, was die Funktion zurückgibt - nicht das, was in der Funktion gerechnet wurde.",
+    "`zahl` ist ein rein lokaler Name. Kann eine Zuweisung an einen lokalen Namen die Variable `a` draußen verändern?"
+   ],
+   "pitfalls": [
+    "Glauben, die Funktion gäbe `6` zurück, weil intern 6 berechnet wurde.",
+    "Glauben, `a` sei nach dem Aufruf 6 (Verwechslung mit call-by-reference).",
+    "`None` als leeren String oder als `0` ausgeben - Python druckt wörtlich `None`."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 5,
+     "label": "Funktionen: 'return rückgabewert (falls gewünscht)'"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Zellen 9-11: erhöhe_um_1 mit und ohne return"
+    }
+   ],
+   "tags": [
+    "def",
+    "return",
+    "None",
+    "scope"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-001"
+  },
+  {
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "Begrüßungsfunktion mit Docstring und Default-Wert",
+   "prompt": "Schreiben Sie eine Funktion `begruessung(name, gruss=\"Hallo\")`, die einen Begrüßungsstring der Form `\"<gruss>, <name>!\"` **zurückgibt** (nicht druckt).\n\nAnforderungen:\n- Die Funktion beginnt mit einem **Docstring** (`\"\"\" ... \"\"\"`), der kurz beschreibt, was sie tut.\n- `name` ist ein positional argument, `gruss` ein keyword argument mit dem Default-Wert `\"Hallo\"`.\n\nBeispiele:\n`begruessung(\"Anna\")` → `'Hallo, Anna!'`\n`begruessung(\"Ben\", \"Moin\")` → `'Moin, Ben!'`",
+   "starterCode": "def begruessung(name, gruss=\"Hallo\"):\n    \"\"\"\n    # Ihr Docstring hier\n    \"\"\"\n    # Ihr Code hier",
+   "solution": "def begruessung(name, gruss=\"Hallo\"):\n    \"\"\"\n    Baut einen Begruessungsstring zusammen.\n    Eingabe:\n    - name: String - der Name der zu begruessenden Person\n    - gruss: String - das Begruessungswort (Default \"Hallo\")\n    Ausgabe: String der Form \"<gruss>, <name>!\"\n    \"\"\"\n    return gruss + \", \" + name + \"!\"",
+   "tests": [
+    {
+     "name": "Default-Wert wird benutzt",
+     "call": "begruessung(\"Anna\")",
+     "expected": "'Hallo, Anna!'"
+    },
+    {
+     "name": "gruss positional überschrieben",
+     "call": "begruessung(\"Ben\", \"Moin\")",
+     "expected": "'Moin, Ben!'"
+    },
+    {
+     "name": "beide als keyword arguments, vertauschte Reihenfolge",
+     "call": "begruessung(gruss=\"Hi\", name=\"Cem\")",
+     "expected": "'Hi, Cem!'"
+    },
+    {
+     "name": "leerer Name",
+     "call": "begruessung(\"\")",
+     "expected": "'Hallo, !'"
+    }
+   ],
+   "required": [
+    "\"\"\"",
+    "def begruessung"
+   ],
+   "forbidden": [
+    "input(",
+    "print("
+   ],
+   "explanation": "Drei Bausteine aus Vorlesung 2 stecken hier drin.\n\n1. **`def` + `return`**: Die Funktion soll den String *liefern*, nicht drucken. Nur ein `return`-Wert lässt sich weiterverwenden (weiterreichen, testen, zusammensetzen); ein `print` ist ein Nebeneffekt.\n2. **Docstring**: Der String direkt nach der `def`-Zeile ist kein Kommentar, sondern die Dokumentation der Funktion - `help(begruessung)` zeigt ihn an. Der Prof dokumentiert im `helper.py` immer Eingabe und Ausgabe.\n3. **Default-Wert**: `gruss=\"Hallo\"` macht `gruss` zu einem keyword argument. Es darf weggelassen, positional übergeben oder per Namen (dann sogar in beliebiger Reihenfolge) gesetzt werden.\n\nMerkregel: Erst alle Parameter **ohne** Default, dann die **mit** Default - umgekehrt gibt es einen SyntaxError.",
+   "hints": [
+    "Der Default-Wert steht direkt in der Kopfzeile: `def begruessung(name, gruss=\"Hallo\"):`.",
+    "Der Docstring ist die erste Anweisung im Funktionskörper, eingerückt und in drei Anführungszeichen.",
+    "Die Funktion soll den String mit `return` liefern - ein `print` würde `None` zurückgeben."
+   ],
+   "pitfalls": [
+    "`print(...)` statt `return ...` - die Tests bekommen dann `None`.",
+    "Den Docstring als `#`-Kommentar schreiben; `help()` zeigt dann nichts an.",
+    "Das Ausrufezeichen oder das Komma-Leerzeichen im Format vergessen."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 5,
+     "label": "Funktionen: def, docstring, return"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 12,
+     "label": "positional arguments vs. keyword arguments"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "neues_kartenspiel(n=13) mit Docstring und Default-Wert"
+    }
+   ],
+   "tags": [
+    "def",
+    "docstring",
+    "default",
+    "keyword-argument"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-002"
+  },
+  {
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Was zeigt help() an?",
+   "prompt": "Was gibt die letzte Zeile des folgenden Codes auf der Kommandozeile aus?",
+   "code": "def neues_kartenspiel(n=13):\n    \"\"\"\n    Erstellt ein neues Kartenspiel in Form einer Liste mit Zahlen von 1 bis n\n    Eingabe: Integer n\n    Ausgabe: Liste mit Integern von 1 bis n\n    \"\"\"\n    return list(range(1, n + 1))\n\nhelp(neues_kartenspiel)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Den vollständigen Quelltext der Funktion Zeile für Zeile.",
+     "correct": false,
+     "why": "`help` zeigt keinen Quelltext an. Es liest nur die Signatur und den Docstring aus dem Funktionsobjekt."
+    },
+    {
+     "id": "b",
+     "text": "Die Signatur `neues_kartenspiel(n=13)` zusammen mit dem Docstring.",
+     "correct": true,
+     "why": "Genau das ist die Aufgabe von `help`: Name, Parameter (inkl. Default-Werte) und der Docstring, eingeleitet durch 'Help on function neues_kartenspiel in module __main__:'."
+    },
+    {
+     "id": "c",
+     "text": "Nichts, weil `help` nur für eingebaute Funktionen wie `len` funktioniert.",
+     "correct": false,
+     "why": "`help` funktioniert für jedes Objekt, auch für selbst geschriebene Funktionen - genau dafür gibt es Docstrings."
+    },
+    {
+     "id": "d",
+     "text": "Nur die hexadezimale Speicheradresse des Funktionsobjekts.",
+     "correct": false,
+     "why": "Die Adresse sieht man, wenn man das Funktionsobjekt selbst druckt (`print(neues_kartenspiel)`), nicht bei `help`."
+    }
+   ],
+   "solution": "Help on function neues_kartenspiel in module __main__:\n\nneues_kartenspiel(n=13)\n    Erstellt ein neues Kartenspiel in Form einer Liste mit Zahlen von 1 bis n\n    Eingabe: Integer n\n    Ausgabe: Liste mit Integern von 1 bis n",
+   "explanation": "Ein **Docstring** ist der String, der als allererste Anweisung im Funktionskörper steht (üblicherweise in drei Anführungszeichen, damit er über mehrere Zeilen gehen darf). Python hängt ihn als Attribut `__doc__` an das Funktionsobjekt - er ist damit zur Laufzeit verfügbar, im Gegensatz zu `#`-Kommentaren, die der Interpreter komplett wegwirft.\n\n`help(objekt)` gibt Signatur und Docstring aus. Deshalb lohnt es sich, in den Docstring zu schreiben, **was** die Funktion tut sowie **Eingabe** und **Ausgabe** - genau so macht es der Prof in `helper.py`.\n\nTypischer Denkfehler: Docstring und Kommentar als dasselbe ansehen. Merkregel: **`#` ist für den Leser des Codes, der Docstring für den Benutzer der Funktion.**",
+   "hints": [
+    "Woher könnte `help` überhaupt wissen, was die Funktion tut? Welche Information steht dafür im Code?",
+    "Der Docstring wird an der Funktion gespeichert - Kommentare mit `#` dagegen verschwinden beim Einlesen.",
+    "`help` zeigt zusätzlich immer, wie die Funktion aufzurufen ist (inklusive Default-Werten)."
+   ],
+   "pitfalls": [
+    "Docstring mit `#`-Kommentaren verwechseln - Kommentare tauchen bei `help` nie auf.",
+    "Den Docstring unter den Code statt an den Anfang der Funktion schreiben."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 9,
+     "label": "Docstring der Funktion / help"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 21,
+     "label": "Klausurrelevante Dinge: 'Docstrings, help'"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Zelle 1: help(neues_kartenspiel)"
+    }
+   ],
+   "tags": [
+    "docstring",
+    "help",
+    "kommentare"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-003"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "positional arguments vs. keyword arguments",
+   "prompt": "Was wird beim Ausführen des folgenden Codes ausgegeben?",
+   "code": "def division(nenner, zaehler):\n    return zaehler / nenner\n\nprint(division(2, 4.084))\nprint(division(zaehler=4.084, nenner=2))\nprint(division(4.084, 2))",
+   "expectedOutput": "2.042\n2.042\n0.4897159647404506",
+   "solution": "2.042\n2.042\n0.4897159647404506",
+   "explanation": "Bei **positional arguments** zählt ausschließlich die *Reihenfolge*: Der erste Wert landet in `nenner`, der zweite in `zaehler`. `division(2, 4.084)` rechnet also `4.084 / 2 = 2.042`.\n\nBei **keyword arguments** spricht man die Parameter über ihren in der `def`-Zeile vergebenen Namen an. Die Reihenfolge ist dann egal: `division(zaehler=4.084, nenner=2)` liefert exakt dasselbe Ergebnis.\n\nDer dritte Aufruf zeigt die Falle: `division(4.084, 2)` bindet `nenner = 4.084` und `zaehler = 2`, rechnet also `2 / 4.084`. Kein Fehler, kein Warnhinweis - nur ein falsches Ergebnis. Genau deshalb sind keyword arguments bei Funktionen mit mehreren gleichartigen Parametern die sicherere Wahl.\n\nMerkregel: **Position bindet stumm, Name bindet sicher.** Und: `/` liefert immer einen float, deshalb steht überall eine Nachkommastelle.",
+   "hints": [
+    "Schreiben Sie für jeden Aufruf auf, welcher Wert in `nenner` und welcher in `zaehler` landet.",
+    "Beim keyword-Aufruf ist die Reihenfolge egal - der Name entscheidet.",
+    "Der dritte Aufruf ist gerade nicht dasselbe wie der erste: hier wird durch 4.084 geteilt."
+   ],
+   "pitfalls": [
+    "Annehmen, `division(zaehler=..., nenner=...)` sei wegen der Schreibreihenfolge etwas anderes.",
+    "Beim dritten Aufruf mechanisch wieder 2.042 hinschreiben.",
+    "Vergessen, dass `/` auch bei glatten Ergebnissen einen float liefert."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 12,
+     "label": "positional arguments vs. keyword arguments"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Zelle 13: division(zähler=4.084, nenner=2)"
+    }
+   ],
+   "tags": [
+    "positional",
+    "keyword",
+    "argumente"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-004"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Beispielfunktion mit positional und keyword Argument",
+   "prompt": "**Original-Aufgabenstellung aus dem Klausurüberblick (Vorlesung 2):**\n\nSchreiben Sie eine Beispielfunktion `beispielfunktion` mit mindestens einem positional und einem keyword Argument. Ihre Funktion soll mit einem Docstring beginnen und als Rückgabe **nur das positional Argument** liefern.\n\nNennen Sie das positional Argument `wert` und das keyword Argument `faktor` (Default-Wert `2`).\n\nBeispiele:\n`beispielfunktion(7)` → `7`\n`beispielfunktion(\"hallo\", faktor=10)` → `'hallo'`",
+   "starterCode": "def beispielfunktion(wert, faktor=2):\n    \"\"\"\n    # Ihr Docstring hier\n    \"\"\"\n    # Ihr Code hier",
+   "solution": "def beispielfunktion(wert, faktor=2):\n    \"\"\"\n    Beispielfunktion mit einem positional und einem keyword Argument.\n    Eingabe:\n    - wert: beliebiges Objekt (positional argument)\n    - faktor: Zahl (keyword argument mit Default-Wert 2), wird hier nicht verwendet\n    Ausgabe: das positional Argument wert, unveraendert\n    \"\"\"\n    return wert",
+   "tests": [
+    {
+     "name": "nur das positional Argument",
+     "call": "beispielfunktion(7)",
+     "expected": "7"
+    },
+    {
+     "name": "keyword Argument per Namen gesetzt",
+     "call": "beispielfunktion(\"hallo\", faktor=10)",
+     "expected": "'hallo'"
+    },
+    {
+     "name": "keyword Argument positional gesetzt",
+     "call": "beispielfunktion(3, 99)",
+     "expected": "3"
+    },
+    {
+     "name": "Liste als Wert bleibt unverändert",
+     "call": "beispielfunktion([1, 2])",
+     "expected": "[1, 2]"
+    },
+    {
+     "name": "Default-Wert ist wirklich 2",
+     "call": "beispielfunktion.__defaults__",
+     "expected": "(2,)"
+    },
+    {
+     "name": "Docstring vorhanden",
+     "call": "beispielfunktion.__doc__ is not None",
+     "expected": "True"
+    }
+   ],
+   "required": [
+    "\"\"\""
+   ],
+   "forbidden": [
+    "print(",
+    "input("
+   ],
+   "explanation": "Diese Aufgabe steht wörtlich auf der Überblicksfolie zur Vorlesung 2 - sie prüft, ob Sie die Begriffe sauber auseinanderhalten:\n\n- **positional argument**: ein Parameter ohne Default-Wert (`wert`); er *muss* beim Aufruf versorgt werden und wird über seine Position zugeordnet.\n- **keyword argument**: ein Parameter mit Default-Wert (`faktor=2`); er *darf* weggelassen werden und ist unter seinem Namen ansprechbar.\n- **Docstring**: der String direkt nach der `def`-Zeile.\n\nDass `faktor` im Rumpf gar nicht benutzt wird, ist hier ausdrücklich in Ordnung - gefordert ist die Rückgabe von *nur* dem positional Argument. Ein Parameter mit Default-Wert kann übrigens auch positional übergeben werden (`beispielfunktion(3, 99)`); die Begriffe beschreiben die *Definition*, nicht den Aufruf.\n\nMerkregel: **Default in der def-Zeile ⇒ keyword argument.**",
+   "hints": [
+    "Ein keyword argument erkennt man an einem `=` in der `def`-Zeile.",
+    "Der Docstring muss die *erste* Anweisung im Funktionskörper sein.",
+    "Die Funktion darf `faktor` ruhig ignorieren - gefordert ist `return wert`."
+   ],
+   "pitfalls": [
+    "`return wert * faktor` schreiben - gefordert ist ausschließlich das positional Argument.",
+    "Die Reihenfolge vertauschen: `def beispielfunktion(faktor=2, wert)` ist ein SyntaxError.",
+    "Statt Docstring einen `#`-Kommentar setzen."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 10,
+     "label": "Überblick VL2: 'Schreiben sie eine Beispielfunktion mit mindestens einem positional und einem keyword Argument ...'"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 12,
+     "label": "positional vs. keyword arguments"
+    }
+   ],
+   "tags": [
+    "positional",
+    "keyword",
+    "docstring",
+    "default"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-005"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "*args - beliebig viele positional arguments",
+   "prompt": "Was wird beim Ausführen des folgenden Codes ausgegeben?",
+   "code": "def meine_funktion(*args):\n    print(type(args))\n    print(len(args))\n    for index, el in enumerate(args):\n        print(\"Die Eingabe an Stelle\", index, \"ist\", el)\n\nmeine_funktion(1, \"hallo\", True)\nmeine_funktion()",
+   "expectedOutput": "<class 'tuple'>\n3\nDie Eingabe an Stelle 0 ist 1\nDie Eingabe an Stelle 1 ist hallo\nDie Eingabe an Stelle 2 ist True\n<class 'tuple'>\n0",
+   "solution": "<class 'tuple'>\n3\nDie Eingabe an Stelle 0 ist 1\nDie Eingabe an Stelle 1 ist hallo\nDie Eingabe an Stelle 2 ist True\n<class 'tuple'>\n0",
+   "explanation": "Der Stern in `def meine_funktion(*args)` sagt: *sammle alle positional arguments ein*. Python packt sie in ein **tuple** - deshalb `<class 'tuple'>` und nicht `<class 'list'>`. Der Name `args` ist reine Konvention, der Stern macht die Arbeit.\n\nWichtig ist der zweite Aufruf: `meine_funktion()` ist **erlaubt**, `args` ist dann das leere Tupel `()` mit Länge 0. Die `for`-Schleife läuft null Mal, deshalb kommt nach dem `0` nichts mehr.\n\nZur Ausgabe: `print` mit mehreren Argumenten trennt sie durch ein Leerzeichen und ruft `str` auf jedes Element auf - `\"hallo\"` erscheint deshalb ohne Anführungszeichen, `True` als `True`. `enumerate` liefert Paare `(index, element)`, gezählt ab 0.\n\nMerkregel: **`*args` → tuple, `**kwargs` → dict.**",
+   "hints": [
+    "Welchen Typ hat das Objekt, in dem Python die eingesammelten Argumente ablegt - Liste oder Tupel?",
+    "Denken Sie an den zweiten Aufruf: Wie viele Argumente sind es dort, und wie oft läuft die Schleife?",
+    "`print(\"a\", 1)` setzt automatisch ein Leerzeichen zwischen die Teile und druckt Strings ohne Anführungszeichen."
+   ],
+   "pitfalls": [
+    "`<class 'list'>` erwarten - `*args` ist immer ein Tupel.",
+    "Denken, ein Aufruf ohne Argumente sei ein Fehler.",
+    "Anführungszeichen um `hallo` in die Ausgabe schreiben."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 13,
+     "label": "Funktionen mit variabler Anzahl an Argumenten: *args"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Zelle 14: meine_funktion(*args) mit enumerate"
+    }
+   ],
+   "tags": [
+    "args",
+    "tuple",
+    "enumerate"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-006"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "**kwargs: Optionen eines Spiels ausgeben",
+   "prompt": "Vervollständigen Sie den folgenden Code. Die Funktion soll neben dem Spielnamen **beliebig viele zusätzliche keyword arguments** entgegennehmen; diese sollen unter dem Namen `optionen` verfügbar sein und mit Schlüssel und Wert ausgegeben werden.\n\nErwartete Ausgabe:\n\n```\nSpiel: Goofspiel\nspieler = 2\nseed = 42\n```",
+   "code": "def spiel_starten(name, ## Lücke 1 ##):\n    \"\"\"Startet ein Spiel und gibt alle zusaetzlichen Optionen aus.\"\"\"\n    print(\"Spiel:\", name)\n    for schluessel, wert in ## Lücke 2 ##:\n        print(schluessel, \"=\", wert)\n\nspiel_starten(\"Goofspiel\", spieler=2, seed=42)",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "**optionen"
+     ],
+     "explanation": "Zwei Sterne sammeln alle *keyword* arguments ein. Der Name dahinter (`optionen`) ist frei wählbar, hier vorgegeben."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "optionen.items()",
+      "optionen.items ()"
+     ],
+     "explanation": "`optionen` ist ein **dictionary**. `.items()` liefert die Paare (Schlüssel, Wert), die sich direkt auf zwei Schleifenvariablen verteilen lassen."
+    }
+   ],
+   "solution": "def spiel_starten(name, **optionen):\n    \"\"\"Startet ein Spiel und gibt alle zusaetzlichen Optionen aus.\"\"\"\n    print(\"Spiel:\", name)\n    for schluessel, wert in optionen.items():\n        print(schluessel, \"=\", wert)\n\nspiel_starten(\"Goofspiel\", spieler=2, seed=42)",
+   "expectedOutput": "Spiel: Goofspiel\nspieler = 2\nseed = 42",
+   "explanation": "`*` sammelt positional arguments in ein **tuple**, `**` sammelt keyword arguments in ein **dictionary**. In `optionen` steht hier also `{'spieler': 2, 'seed': 42}`.\n\nÜber ein dictionary iteriert man mit `.items()`, wenn man Schlüssel *und* Wert braucht - `for k in optionen:` allein liefert nur die Schlüssel. Seit Python 3.7 bleibt dabei die Einfügereihenfolge erhalten, deshalb kommt `spieler` vor `seed`.\n\nBeachten Sie außerdem, dass `name` ein ganz normales positional argument bleibt: `**optionen` fängt nur das ein, was *nicht* schon von einem benannten Parameter aufgenommen wurde.\n\nMerkregel: **ein Stern = Tupel, zwei Sterne = Dictionary.**",
+   "hints": [
+    "Für beliebig viele *keyword* arguments braucht man zwei Sterne.",
+    "Was für einen Datentyp bekommt man mit `**`? Und wie iteriert man darüber, wenn man Schlüssel und Wert braucht?",
+    "Die Schleife hat zwei Laufvariablen - die passende dict-Methode liefert genau Paare."
+   ],
+   "pitfalls": [
+    "Nur einen Stern schreiben - dann kommt `TypeError: spiel_starten() got an unexpected keyword argument`.",
+    "`for schluessel, wert in optionen:` schreiben - das iteriert nur über die Schlüssel und wirft einen Fehler.",
+    "`optionen.items` ohne Klammern - das ist die Methode selbst, kein iterierbares Objekt."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 13,
+     "label": "**kwargs: beliebig viele keyword Argumente"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Zelle 15: meine_funktion(**kwargs) mit kwargs.items()"
+    }
+   ],
+   "tags": [
+    "kwargs",
+    "dict",
+    "keyword-argument"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-007"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Alle vier Argumentarten in einer Funktion",
+   "prompt": "Was wird beim Ausführen des folgenden Codes ausgegeben?",
+   "code": "def info(a, b=2, *args, **kwargs):\n    print(a, b, args, kwargs)\n\ninfo(1)\ninfo(1, 3, 5, 7, x=9)\ninfo(1, b=10, y=11)",
+   "expectedOutput": "1 2 () {}\n1 3 (5, 7) {'x': 9}\n1 10 () {'y': 11}",
+   "solution": "1 2 () {}\n1 3 (5, 7) {'x': 9}\n1 10 () {'y': 11}",
+   "explanation": "Python verteilt die Argumente streng von links nach rechts:\n\n1. `info(1)`: `a = 1`, `b` nimmt seinen Default `2`, es bleibt nichts übrig → `args = ()` und `kwargs = {}`. Ein leeres Tupel druckt Python als `()`, ein leeres Dictionary als `{}`.\n2. `info(1, 3, 5, 7, x=9)`: `a = 1`, `b = 3` (der Default wird überschrieben!), die *übrigen* positional arguments `5` und `7` landen in `args = (5, 7)`, das keyword argument `x` in `kwargs = {'x': 9}`.\n3. `info(1, b=10, y=11)`: `a = 1`, `b` wird per Namen gesetzt, deshalb bleibt `args` leer; `y` ist kein definierter Parameter und wandert nach `kwargs`.\n\nDer klassische Denkfehler ist Nummer 2: Weil `b` einen Default hat, meinen viele, die `3` gehöre schon zu `args`. Ein Default macht einen Parameter aber nicht *optional in der Reihenfolge* - er wird weiterhin als zweiter positional gefüllt.\n\nMerkregel: **Erst die benannten Parameter der Reihe nach, dann `*args`, ganz zuletzt `**kwargs`.**",
+   "hints": [
+    "Gehen Sie Aufruf für Aufruf durch und notieren Sie für jeden der vier Namen a, b, args, kwargs den Inhalt.",
+    "Wie druckt Python ein leeres Tupel, wie ein leeres Dictionary?",
+    "Beim dritten Aufruf wird `b` per Namen gesetzt - bleibt für `args` dann noch etwas übrig?"
+   ],
+   "pitfalls": [
+    "Denken, `b` behalte im zweiten Aufruf seinen Default 2 und `args` sei `(3, 5, 7)`.",
+    "Leeres Tupel als `[]` oder leeres Dict als `()` schreiben.",
+    "Die Anführungszeichen bei den dict-Schlüsseln vergessen: Python druckt `{'x': 9}`."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 13,
+     "label": "*args und **kwargs"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 12,
+     "label": "positional vs. keyword arguments, Default-Werte"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 10,
+     "label": "Überblick VL2: * und ** für variable Anzahl an Argumenten"
+    }
+   ],
+   "tags": [
+    "args",
+    "kwargs",
+    "default",
+    "argumente"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-008"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler in Definition und Aufruf",
+   "prompt": "In welchen **3 Zeilen** des folgenden Programms befinden sich Fehler? Benennen Sie jeden Fehler und geben Sie eine Korrektur an.",
+   "code": "def punkte_addieren(punkte=0, zuwachs):\n    \"\"\"Addiert zuwachs zu punkte und gibt die neue Punktzahl zurueck.\"\"\"\n    return punkte + zuwachs\n\ndef begruessen(name, gruss=\"Hallo\")\n    return gruss + \", \" + name\n\nprint(punkte_addieren(3, 5))\nprint(begruessen(gruss=\"Moin\", \"Anna\"))",
+   "errors": [
+    {
+     "line": 1,
+     "wrong": "def punkte_addieren(punkte=0, zuwachs):",
+     "fix": "def punkte_addieren(zuwachs, punkte=0):",
+     "why": "Ein Parameter **ohne** Default darf nicht hinter einem Parameter **mit** Default stehen: `SyntaxError: non-default argument follows default argument`. Python könnte sonst beim Aufruf `f(5)` nicht entscheiden, welchen Parameter die 5 meint. Regel: erst alle Parameter ohne Default, dann die mit Default. (Achtung: nach der Korrektur muss der Aufruf in Zeile 8 zu den neuen Positionen passen.)"
+    },
+    {
+     "line": 5,
+     "wrong": "def begruessen(name, gruss=\"Hallo\")",
+     "fix": "def begruessen(name, gruss=\"Hallo\"):",
+     "why": "Der Doppelpunkt am Ende der `def`-Zeile fehlt. Jede Kopfzeile, die einen eingerückten Block eröffnet (def, if, for, while, else ...), endet in Python mit `:` - sonst SyntaxError."
+    },
+    {
+     "line": 9,
+     "wrong": "print(begruessen(gruss=\"Moin\", \"Anna\"))",
+     "fix": "print(begruessen(\"Anna\", gruss=\"Moin\"))",
+     "why": "Ein positional argument darf nicht nach einem keyword argument stehen: `SyntaxError: positional argument follows keyword argument`. Sobald man einmal auf Namen umgestiegen ist, müssen alle folgenden Argumente ebenfalls benannt werden (`begruessen(name=\"Anna\", gruss=\"Moin\")` ginge auch)."
+    }
+   ],
+   "solution": "def punkte_addieren(zuwachs, punkte=0):\n    \"\"\"Addiert zuwachs zu punkte und gibt die neue Punktzahl zurueck.\"\"\"\n    return punkte + zuwachs\n\ndef begruessen(name, gruss=\"Hallo\"):\n    return gruss + \", \" + name\n\nprint(punkte_addieren(5, 3))\nprint(begruessen(\"Anna\", gruss=\"Moin\"))",
+   "explanation": "Alle drei Fehler sind **SyntaxError**, das Programm startet also gar nicht erst - eine beliebte Klausurfalle, weil man sonst gern über die Ausgabe nachdenkt.\n\nDie beiden Argument-Regeln sind spiegelbildlich:\n- In der **Definition**: erst Parameter ohne Default, dann Parameter mit Default.\n- Im **Aufruf**: erst positional arguments, dann keyword arguments.\n\nDer Grund ist in beiden Fällen derselbe: Python muss jede Angabe eindeutig einem Parameter zuordnen können. Der dritte Fehler (fehlender Doppelpunkt) ist der klassische Flüchtigkeitsfehler beim Abschreiben.\n\nMerkregel: **Erst ohne Namen, dann mit Namen - in der Definition wie im Aufruf.**",
+   "hints": [
+    "Zwei der drei Fehler haben mit der *Reihenfolge* von Argumenten zu tun - einer in einer def-Zeile, einer in einem Aufruf.",
+    "Vergleichen Sie die beiden `def`-Zeilen ganz genau Zeichen für Zeichen.",
+    "Fragen Sie sich bei Zeile 1: Wie sollte Python `punkte_addieren(5)` interpretieren?"
+   ],
+   "pitfalls": [
+    "Zeile 8 für falsch halten - `punkte_addieren(3, 5)` ist syntaktisch völlig in Ordnung.",
+    "Nur den fehlenden Doppelpunkt sehen und die Argumentreihenfolge übersehen.",
+    "Nach der Korrektur von Zeile 1 den Aufruf in Zeile 8 nicht anpassen."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 12,
+     "label": "positional arguments vs. keyword arguments"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 5,
+     "label": "Aufbau einer Funktionsdefinition"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabenformat 'In welchen 3 Zeilen befinden sich Fehler?'"
+    }
+   ],
+   "tags": [
+    "syntaxerror",
+    "default",
+    "keyword",
+    "fehlersuche"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-009"
+  },
+  {
+   "type": "mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Type Hints zur Laufzeit",
+   "prompt": "Was passiert beim Ausführen des folgenden Codes?",
+   "code": "def verdopple(x: int) -> int:\n    return x * 2\n\na: int = 3.1415\nprint(verdopple(\"ab\"), a)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Es gibt einen TypeError, weil `\"ab\"` kein `int` ist.",
+     "correct": false,
+     "why": "Type Hints werden zur Laufzeit **nicht** geprüft. Python ruft die Funktion ganz normal auf."
+    },
+    {
+     "id": "b",
+     "text": "Es wird `abab 3.1415` ausgegeben.",
+     "correct": true,
+     "why": "Richtig: `\"ab\" * 2` ist die String-Wiederholung `abab`, und `a: int = 3.1415` speichert kommentarlos den float 3.1415."
+    },
+    {
+     "id": "c",
+     "text": "Es wird `abab 3` ausgegeben, weil `a` durch den Hint zu `int` konvertiert wird.",
+     "correct": false,
+     "why": "Ein Type Hint konvertiert nichts. Es findet keinerlei Umwandlung statt - `a` bleibt ein float."
+    },
+    {
+     "id": "d",
+     "text": "Es gibt eine Warnung und die Funktion liefert `None`.",
+     "correct": false,
+     "why": "Der Interpreter gibt keine Warnung aus; nur externe Werkzeuge (z.B. mypy) oder eine IDE könnten meckern."
+    }
+   ],
+   "solution": "abab 3.1415",
+   "explanation": "Type Hints (`x: int`, `-> int`, `a: int = 3.1415`) sind **Hinweise**, die auf den Ablauf des Programms KEINEN Einfluss haben - das schreibt der Prof auf der Folie in Großbuchstaben. Python speichert sie nur in `__annotations__`; geprüft oder umgewandelt wird nichts.\n\nDeshalb passieren hier zwei Dinge, die man auf den ersten Blick für Fehler hält:\n- `verdopple(\"ab\")` funktioniert, weil `*` für Strings die Wiederholung ist: `\"ab\" * 2` → `\"abab\"`. Der Hint `int` ändert daran nichts.\n- `a: int = 3.1415` legt einen float an, ganz ohne Beschwerde.\n\nNützlich sind Hints trotzdem: für Lesbarkeit, für die IDE und für Prüfwerkzeuge wie mypy. Merkregel: **Type Hints sind Dokumentation, keine Zusicherung.**",
+   "hints": [
+    "Fragen Sie sich zuerst: Prüft der Python-Interpreter Typangaben überhaupt?",
+    "Was bedeutet der Operator `*` zwischen einem String und einer Zahl?",
+    "Was steht am Ende in `a` - und mit welchem Typ?"
+   ],
+   "pitfalls": [
+    "Type Hints für eine Typprüfung wie in Java halten.",
+    "Glauben, `a: int = 3.1415` runde oder konvertiere den Wert.",
+    "`\"ab\" * 2` als Multiplikationsfehler ansehen statt als String-Wiederholung."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 14,
+     "label": "Type Hints: 'Dies sind Hinweise, die auf den Ablauf des Programms KEINEN Einfluss haben'"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Zellen 4/13: Type Hints in Funktionsköpfen"
+    }
+   ],
+   "tags": [
+    "type-hints",
+    "annotations",
+    "laufzeit"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-010"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Docstrings, Kommentare und Type Hints - welche Aussagen stimmen?",
+   "prompt": "Welche der folgenden Aussagen sind **richtig**? (Mehrfachauswahl)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Ein Docstring steht als erste Anweisung im Funktionskörper und wird von `help()` angezeigt.",
+     "correct": true,
+     "why": "Genau so ist er definiert; Python legt ihn als `__doc__` am Funktionsobjekt ab."
+    },
+    {
+     "id": "b",
+     "text": "Type Hints werden zur Laufzeit geprüft; `a: int = 3.1415` löst deshalb einen TypeError aus.",
+     "correct": false,
+     "why": "Falsch - Type Hints haben KEINEN Einfluss auf den Ablauf. `a` wird einfach zum float 3.1415."
+    },
+    {
+     "id": "c",
+     "text": "Alles, was in einer Zeile hinter `#` steht, wird vom Interpreter ignoriert.",
+     "correct": true,
+     "why": "Richtig: `# alles was hier steht wird vom Interpreter ignoriert`."
+    },
+    {
+     "id": "d",
+     "text": "Die Notation mit drei Anführungszeichen kann man auch als Blockkommentar nutzen; formal ist das ein String über mehrere Zeilen, der keiner Variablen zugewiesen wird.",
+     "correct": true,
+     "why": "Das ist wörtlich die Erklärung aus der Vorlesung."
+    },
+    {
+     "id": "e",
+     "text": "Eine Funktion ohne `return` liefert beim Aufruf `0` zurück.",
+     "correct": false,
+     "why": "Falsch - sie liefert `None`."
+    },
+    {
+     "id": "f",
+     "text": "Type Hints gibt es nicht nur für Funktionsparameter, sondern auch für normale Variablen, z.B. `name: str = \"Michael\"`.",
+     "correct": true,
+     "why": "Richtig, die Vorlesung zeigt genau diese Beispiele (`a: int = 3`, `meine_liste: list = [...]`)."
+    }
+   ],
+   "solution": "Richtig sind a, c, d und f. Falsch sind b (Type Hints werden nicht geprüft) und e (ohne return kommt None zurück).",
+   "explanation": "Die drei Formen von 'Text im Code' haben klar getrennte Rollen:\n\n- **`#`-Kommentar**: für Leserinnen und Leser des Quelltextes. Der Interpreter wirft ihn weg; zur Laufzeit existiert er nicht mehr. Sinnvoll ist, die *Logik* zu erklären - nicht das, was ohnehin dasteht.\n- **Docstring**: Dokumentation *der Funktion*, direkt nach der `def`-Zeile. Bleibt zur Laufzeit erhalten und wird von `help()` gezeigt.\n- **Type Hints**: Hinweise auf erwartete Typen - reine Dokumentation, keine Prüfung.\n\nDer Sonderfall in Antwort d: Drei Anführungszeichen irgendwo mitten im Code ergeben einen String, der nirgends zugewiesen wird; er wird erzeugt und sofort verworfen - praktisch als Blockkommentar.\n\nMerkregel: **`#` verschwindet, Docstring bleibt, Type Hints tun nichts.**",
+   "hints": [
+    "Zwei der sechs Aussagen sind falsch - beide betreffen Dinge, von denen man fälschlich eine 'Wirkung' erwartet.",
+    "Was steht auf der Folie zu Type Hints in Großbuchstaben?",
+    "Was liefert eine Funktion ohne `return`?"
+   ],
+   "pitfalls": [
+    "Docstring und Kommentar für dasselbe halten.",
+    "Von Type Hints eine Typprüfung erwarten.",
+    "`None` mit `0` oder dem leeren String verwechseln."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 10,
+     "label": "Kommentare mit #"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 11,
+     "label": "Blockkommentare mit drei Anführungszeichen"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 14,
+     "label": "Type Hints - kein Einfluss zur Laufzeit"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 21,
+     "label": "Klausurrelevante Dinge/Befehle"
+    }
+   ],
+   "tags": [
+    "docstring",
+    "kommentare",
+    "type-hints"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-011"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Funktionen in Variablen speichern",
+   "prompt": "Was wird beim Ausführen des folgenden Codes ausgegeben?",
+   "code": "def sag_hallo():\n    print(\"Hallo zusammen\")\n\nmeine_funktion = sag_hallo\nprint(type(meine_funktion))\nprint(meine_funktion is sag_hallo)\nprint(meine_funktion())",
+   "expectedOutput": "<class 'function'>\nTrue\nHallo zusammen\nNone",
+   "solution": "<class 'function'>\nTrue\nHallo zusammen\nNone",
+   "explanation": "`meine_funktion = sag_hallo` **ohne Klammern** kopiert keinen Wert und ruft nichts auf - es bindet lediglich einen zweiten Namen an dasselbe Funktionsobjekt. Deshalb ist der Typ `<class 'function'>` und der Identitätsvergleich `is` liefert `True`: beide Namen zeigen auf dieselbe Stelle im Speicher (druckt man das Objekt direkt, sieht man die hexadezimale Speicheradresse).\n\nDie letzte Zeile ist zweistufig: Erst wird `meine_funktion()` **aufgerufen** - dabei druckt die Funktion `Hallo zusammen`. Danach druckt das äußere `print` den Rückgabewert. Da `sag_hallo` kein `return` hat, ist der `None`. Genau dieses `None` zeigt der Prof auf der Folie 'Funktionen als Variablen'.\n\nMerkregel: **Ohne Klammern = die Funktion selbst, mit Klammern = ihr Ergebnis.** Diese Unterscheidung ist die Grundlage für higher order functions.",
+   "hints": [
+    "Achten Sie genau darauf, wo Klammern stehen und wo nicht.",
+    "`is` fragt nach Identität: Sind es zwei verschiedene Objekte oder dasselbe?",
+    "Die letzte Zeile erzeugt zwei Ausgabezeilen - eine aus der Funktion, eine vom äußeren print."
+   ],
+   "pitfalls": [
+    "Denken, `meine_funktion = sag_hallo` rufe die Funktion auf.",
+    "Die `None`-Zeile am Ende vergessen.",
+    "`<class 'function'>` als `<class 'method'>` oder `<function ...>` schreiben."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 15,
+     "label": "Funktionen als Variablen: 'Da die Funktion say_hello keinen Rückgabewert hat, wird hier None ausgegeben'"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Zelle 16: mein_fun = rechne_plus"
+    }
+   ],
+   "tags": [
+    "funktionen-als-variablen",
+    "None",
+    "identität"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-012"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Rechenoperation als Argument übergeben (Lücke 1 und Lücke 2)",
+   "prompt": "**Original-Aufgabenstellung aus dem Klausurüberblick (Vorlesung 2):**\n\nFüllen Sie **Lücke 1** so aus, dass die Rechenoperation auf `x` und `y` angewendet wird. Füllen Sie **Lücke 2** so aus, dass die letzte Zeile zu einem Anwenden von `meine_rechenoperation` auf 1 und 5 führt.\n\nDie Ausgabe soll `6` sein.",
+   "code": "def meine_rechenoperation(x, y):\n    \"\"\"Multipliziert x und y und addiert 1.\"\"\"\n    return x * y + 1\n\ndef anwenden(x, y, rechenoperation):\n    \"\"\"Wendet die uebergebene Rechenoperation auf x und y an.\"\"\"\n    return ## Lücke 1 ##\n\nprint(anwenden(1, 5, ## Lücke 2 ##))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "rechenoperation(x, y)",
+      "rechenoperation(x,y)"
+     ],
+     "explanation": "`rechenoperation` ist ein ganz normaler Parameter, in dem ein Funktionsobjekt steckt. Mit Klammern dahinter ruft man es auf. Ohne Klammern gäbe man das Funktionsobjekt selbst zurück."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "meine_rechenoperation",
+      "lambda x, y: x * y + 1",
+      "lambda x,y: x*y+1",
+      "lambda x, y: x*y+1"
+     ],
+     "explanation": "Hier wird die Funktion **ohne Klammern** übergeben - man reicht das Funktionsobjekt weiter, nicht sein Ergebnis. Der Prof fragt in derselben Aufgabe außerdem, ob man die Definition von `meine_rechenoperation` vermeiden und stattdessen direkt einen `lambda`-Ausdruck einsetzen kann - beides wird hier akzeptiert."
+    }
+   ],
+   "solution": "def meine_rechenoperation(x, y):\n    \"\"\"Multipliziert x und y und addiert 1.\"\"\"\n    return x * y + 1\n\ndef anwenden(x, y, rechenoperation):\n    \"\"\"Wendet die uebergebene Rechenoperation auf x und y an.\"\"\"\n    return rechenoperation(x, y)\n\nprint(anwenden(1, 5, meine_rechenoperation))",
+   "expectedOutput": "6",
+   "explanation": "Das ist der Einstieg in **higher order functions**: `anwenden` nimmt als drittes Argument eine *Funktion* entgegen. Innerhalb von `anwenden` ist `rechenoperation` ein Name wie jeder andere - `rechenoperation(x, y)` ruft das dahinterliegende Objekt auf.\n\nDer entscheidende Punkt steckt in Lücke 2: Beim Übergeben schreibt man `meine_rechenoperation` **ohne** Klammern. Mit Klammern (`meine_rechenoperation(1, 5)`) würde die Funktion sofort ausgeführt und ihr *Ergebnis* (eine Zahl) übergeben - `anwenden` würde dann versuchen, eine Zahl aufzurufen: `TypeError: 'int' object is not callable`.\n\nRechnung: `1 * 5 + 1 = 6`.\n\nDer Vorteil dieses Musters: Die auszuführende Operation lässt sich zur Laufzeit austauschen - genau so macht der Prof im Goofspiel die Spielerstrategien austauschbar.\n\nMerkregel: **Funktion übergeben = Name ohne Klammern.**",
+   "hints": [
+    "In `rechenoperation` steckt ein Funktionsobjekt. Wie ruft man ein Funktionsobjekt auf?",
+    "Überlegen Sie für Lücke 2: Soll das *Ergebnis* oder die *Funktion selbst* übergeben werden?",
+    "Für Lücke 2 gibt es zwei Lösungen - eine mit dem Namen der Funktion, eine mit `lambda`."
+   ],
+   "pitfalls": [
+    "In Lücke 2 `meine_rechenoperation(1, 5)` schreiben - dann wird eine Zahl übergeben und der Aufruf scheitert.",
+    "In Lücke 1 die Klammern vergessen und das Funktionsobjekt zurückgeben.",
+    "In Lücke 1 `meine_rechenoperation(x, y)` fest verdrahten - dann ist der Parameter sinnlos."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 11,
+     "label": "Überblick VL2: 'Füllen sie Lücke 1 so aus, dass die Rechenoperation auf x und y angewendet wird ...'"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 16,
+     "label": "Funktionen als Variablen - Beispiel 'anwenden'"
+    }
+   ],
+   "tags": [
+    "higher-order-function",
+    "lambda",
+    "funktionen-als-variablen"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-013"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Funktion auf jedes Element einer Liste anwenden",
+   "prompt": "**Aufgabe aus den Übungsaufgaben zur 2. Vorlesung:**\n\nSchreiben Sie eine Funktion `verarbeite_liste(liste, funktion)`, die eine andere Funktion als Eingabe erhält und diese auf jedes Element einer Liste anwendet. Die bearbeitete Liste soll **zurückgegeben** werden; die Eingabeliste darf dabei nicht verändert werden.\n\nSchreiben Sie außerdem zwei Funktionen, die Sie an `verarbeite_liste` übergeben können:\n- `verdoppeln(x)` - verdoppelt eine Zahl\n- `quadrieren(x)` - quadriert eine Zahl\n\nBeispiel: `verarbeite_liste([1, 2, 3, 4, 5], verdoppeln)` → `[2, 4, 6, 8, 10]`",
+   "constraints": [
+    "Ohne `map` - map wird erst in Vorlesung 3 eingeführt."
+   ],
+   "starterCode": "def verdoppeln(x):\n    # Ihr Code hier\n\ndef quadrieren(x):\n    # Ihr Code hier\n\ndef verarbeite_liste(liste, funktion):\n    \"\"\"\n    Wendet funktion auf jedes Element von liste an.\n    Rueckgabe: neue Liste mit den Ergebnissen\n    \"\"\"\n    # Ihr Code hier",
+   "solution": "def verdoppeln(x):\n    \"\"\"Verdoppelt die Zahl x.\"\"\"\n    return x * 2\n\ndef quadrieren(x):\n    \"\"\"Quadriert die Zahl x.\"\"\"\n    return x * x\n\ndef verarbeite_liste(liste, funktion):\n    \"\"\"\n    Wendet funktion auf jedes Element von liste an.\n    Eingabe:\n    - liste: Liste von Werten\n    - funktion: Funktionsobjekt, das einen Wert entgegennimmt und einen Wert liefert\n    Rueckgabe: neue Liste mit den Ergebnissen\n    \"\"\"\n    ergebnis = []\n    for element in liste:\n        ergebnis.append(funktion(element))\n    return ergebnis",
+   "tests": [
+    {
+     "name": "Beispiel mit verdoppeln",
+     "call": "verarbeite_liste([1, 2, 3, 4, 5], verdoppeln)",
+     "expected": "[2, 4, 6, 8, 10]"
+    },
+    {
+     "name": "Beispiel mit quadrieren",
+     "call": "verarbeite_liste([1, 2, 3, 4, 5], quadrieren)",
+     "expected": "[1, 4, 9, 16, 25]"
+    },
+    {
+     "name": "leere Liste",
+     "call": "verarbeite_liste([], verdoppeln)",
+     "expected": "[]"
+    },
+    {
+     "name": "beliebige Funktion (lambda)",
+     "call": "verarbeite_liste([3, 4], lambda x: x + 100)",
+     "expected": "[103, 104]"
+    },
+    {
+     "name": "Eingabeliste bleibt unverändert",
+     "call": "(lambda l: (verarbeite_liste(l, quadrieren), l)[1])([1, 2, 3])",
+     "expected": "[1, 2, 3]"
+    },
+    {
+     "name": "die Hilfsfunktionen selbst",
+     "call": "(verdoppeln(7), quadrieren(5))",
+     "expected": "(14, 25)"
+    }
+   ],
+   "forbidden": [
+    "map(",
+    "input("
+   ],
+   "required": [
+    "def verarbeite_liste",
+    "def verdoppeln",
+    "def quadrieren"
+   ],
+   "explanation": "`verarbeite_liste` ist eine **higher order function**: Sie nimmt eine Funktion als Eingabeargument. Innerhalb der Funktion ist `funktion` ein ganz normaler Name, der auf ein Funktionsobjekt zeigt - mit `funktion(element)` wird es aufgerufen.\n\nBeim Aufruf wird der Name **ohne Klammern** übergeben (`verarbeite_liste(zahlen, verdoppeln)`). Mit Klammern würde `verdoppeln` sofort ausgeführt, was ohne Argument sowieso einen TypeError gäbe.\n\nDamit die Eingabeliste unverändert bleibt, baut man eine **neue** Liste auf, statt in `liste` herumzuschreiben. Das ist bereits ein Schritt Richtung funktionale Programmierung: keine Nebeneffekte, nur eine Rückgabe. In Vorlesung 3 werden Sie sehen, dass genau dieses Muster `map(funktion, liste)` heißt.\n\nMerkregel: **Funktion rein, neue Liste raus.**",
+   "hints": [
+    "Legen Sie eine leere Ergebnisliste an und hängen Sie in einer Schleife die Ergebnisse an.",
+    "`funktion` ist ein Parameter, in dem ein Funktionsobjekt steckt - Sie rufen es mit `funktion(element)` auf.",
+    "Beim Aufruf von `verarbeite_liste` wird der Funktionsname ohne Klammern übergeben."
+   ],
+   "pitfalls": [
+    "`verarbeite_liste(zahlen, verdoppeln())` schreiben - der Aufruf mit Klammern ist falsch.",
+    "Die Eingabeliste in-place verändern statt eine neue Liste zurückzugeben.",
+    "Das `return` am Ende vergessen - dann kommt `None` zurück."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL2.pdf",
+     "page": 3,
+     "label": "Aufgabe 5: 'Aktionen auf einer Liste' - verarbeite_liste(liste, funktion)"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 16,
+     "label": "higher order functions"
+    }
+   ],
+   "tags": [
+    "higher-order-function",
+    "listen",
+    "funktionen-als-variablen"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-014"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Eine Funktion, die eine Funktion zurückgibt",
+   "prompt": "**Aufgabe aus dem Klausurüberblick (Vorlesung 2):** *Schreiben Sie eine Funktion, die eine Funktion als Rückgabewert liefert.*\n\nKonkret: Schreiben Sie `mache_multiplizierer(faktor)`. Der Rückgabewert ist eine **Funktion**, die eine Zahl entgegennimmt und sie mit `faktor` multipliziert.\n\nBeispiel:\n```python\nverdreifachen = mache_multiplizierer(3)\nprint(verdreifachen(5))   # 15\n```",
+   "starterCode": "def mache_multiplizierer(faktor):\n    \"\"\"\n    Erzeugt eine Funktion, die ihr Argument mit faktor multipliziert.\n    Eingabe: faktor - Zahl\n    Rueckgabe: Funktionsobjekt\n    \"\"\"\n    # Ihr Code hier",
+   "solution": "def mache_multiplizierer(faktor):\n    \"\"\"\n    Erzeugt eine Funktion, die ihr Argument mit faktor multipliziert.\n    Eingabe: faktor - Zahl\n    Rueckgabe: Funktionsobjekt, das eine Zahl entgegennimmt\n    \"\"\"\n    def multipliziere(zahl):\n        return zahl * faktor\n    return multipliziere",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "mache_multiplizierer(3)(5)",
+     "expected": "15"
+    },
+    {
+     "name": "Faktor 0",
+     "call": "mache_multiplizierer(0)(99)",
+     "expected": "0"
+    },
+    {
+     "name": "negativer Faktor",
+     "call": "mache_multiplizierer(-1)(7)",
+     "expected": "-7"
+    },
+    {
+     "name": "float-Faktor",
+     "call": "mache_multiplizierer(1.5)(4)",
+     "expected": "6.0"
+    },
+    {
+     "name": "Rückgabe ist wirklich aufrufbar",
+     "call": "callable(mache_multiplizierer(2))",
+     "expected": "True"
+    },
+    {
+     "name": "zwei unabhängige Multiplizierer",
+     "call": "(lambda f2, f10: (f2(3), f10(3)))(mache_multiplizierer(2), mache_multiplizierer(10))",
+     "expected": "(6, 30)"
+    }
+   ],
+   "required": [
+    "def mache_multiplizierer",
+    "return"
+   ],
+   "forbidden": [
+    "input("
+   ],
+   "explanation": "Eine **higher order function** ist eine Funktion, die Funktionen als Eingabe nimmt **oder** als Ausgabe liefert. Hier ist der zweite Fall gefragt.\n\nDer Trick: Innerhalb von `mache_multiplizierer` wird mit `def` eine neue Funktion definiert und deren Name **ohne Klammern** zurückgegeben. Die innere Funktion 'merkt sich' dabei den Wert von `faktor` aus dem umgebenden Geltungsbereich - deshalb liefern zwei Aufrufe mit verschiedenen Faktoren zwei voneinander unabhängige Funktionen.\n\nKürzer geht es mit `lambda`: `return lambda zahl: zahl * faktor` - beides zeigt der Prof in der Zusammenfassung nebeneinander.\n\nDer doppelte Klammerausdruck `mache_multiplizierer(3)(5)` liest sich von links nach rechts: Der erste Aufruf liefert eine Funktion, die zweite Klammer ruft diese sofort auf. Dieses Muster ist die Vorstufe zum **Currying** aus der funktionalen Programmierung.\n\nMerkregel: **`return funktionsname` (ohne Klammern) gibt die Funktion zurück, mit Klammern ihr Ergebnis.**",
+   "hints": [
+    "Sie dürfen innerhalb einer Funktion mit `def` eine weitere Funktion definieren.",
+    "Die innere Funktion darf `faktor` einfach benutzen - sie sieht den Namen aus der äußeren Funktion.",
+    "Zurückgegeben wird der Name der inneren Funktion, ohne Klammern. Alternativ ein `lambda`."
+   ],
+   "pitfalls": [
+    "`return multipliziere(zahl)` schreiben - `zahl` existiert an dieser Stelle gar nicht.",
+    "Die innere Funktion definieren, aber das `return` vergessen: dann kommt `None` zurück und `mache_multiplizierer(3)(5)` wirft `TypeError: 'NoneType' object is not callable`.",
+    "`mache_multiplizierer(3, 5)` aufrufen - es sind zwei getrennte Aufrufe."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 11,
+     "label": "Überblick VL2: 'Schreiben sie eine Funktion, die eine Funktion als Rückgabewert liefert'"
+    },
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "Zelle 5: funktion_die_um_eins_hochzählt - mit lambda und mit innerem def"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 16,
+     "label": "higher order functions"
+    }
+   ],
+   "tags": [
+    "higher-order-function",
+    "closure",
+    "rückgabewert"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-015"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Endpreis mit austauschbarem Preismodifikator",
+   "prompt": "Vervollständigen Sie das Preisprogramm aus der Vorlesung. Schreiben Sie:\n\n- `nichts(preis)` - lässt den Preis unverändert\n- `rabatt_zehn_prozent(preis)` - zieht 10 % ab\n- `gutschein_fuenf_euro(preis)` - zieht 5 Euro ab\n- `rechne_finalen_preis_aus(preis, mws=19, preismodifikator=nichts)` - wendet zuerst den `preismodifikator` auf `preis` an, schlägt dann `mws` Prozent Mehrwertsteuer auf und gibt das Ergebnis **auf 2 Nachkommastellen gerundet** zurück.\n\nBeispiele:\n`rechne_finalen_preis_aus(100)` → `119.0`\n`rechne_finalen_preis_aus(100, 19, rabatt_zehn_prozent)` → `107.1`\n`rechne_finalen_preis_aus(100, 19, gutschein_fuenf_euro)` → `113.05`",
+   "starterCode": "def nichts(preis):\n    # Ihr Code hier\n\ndef rabatt_zehn_prozent(preis):\n    # Ihr Code hier\n\ndef gutschein_fuenf_euro(preis):\n    # Ihr Code hier\n\ndef rechne_finalen_preis_aus(preis, mws=19, preismodifikator=nichts):\n    \"\"\"\n    Wendet preismodifikator auf preis an und schlaegt mws Prozent Mehrwertsteuer auf.\n    Rueckgabe: Endpreis, auf 2 Nachkommastellen gerundet\n    \"\"\"\n    # Ihr Code hier",
+   "solution": "def nichts(preis):\n    \"\"\"Laesst den Preis unveraendert.\"\"\"\n    return preis\n\ndef rabatt_zehn_prozent(preis):\n    \"\"\"Zieht 10 Prozent vom Preis ab.\"\"\"\n    return preis * 0.9\n\ndef gutschein_fuenf_euro(preis):\n    \"\"\"Zieht 5 Euro vom Preis ab.\"\"\"\n    return preis - 5\n\ndef rechne_finalen_preis_aus(preis, mws=19, preismodifikator=nichts):\n    \"\"\"\n    Wendet preismodifikator auf preis an und schlaegt mws Prozent Mehrwertsteuer auf.\n    Eingabe:\n    - preis: Zahl - Nettopreis\n    - mws: Zahl - Mehrwertsteuersatz in Prozent (Default 19)\n    - preismodifikator: Funktion, die einen Preis entgegennimmt und einen Preis liefert (Default: nichts)\n    Rueckgabe: Endpreis, auf 2 Nachkommastellen gerundet\n    \"\"\"\n    preis = preismodifikator(preis)\n    return round(preis * (1 + mws / 100), 2)",
+   "tests": [
+    {
+     "name": "beide Defaults benutzt",
+     "call": "rechne_finalen_preis_aus(100)",
+     "expected": "119.0"
+    },
+    {
+     "name": "mit 10 % Rabatt",
+     "call": "rechne_finalen_preis_aus(100, 19, rabatt_zehn_prozent)",
+     "expected": "107.1"
+    },
+    {
+     "name": "mit 5-Euro-Gutschein",
+     "call": "rechne_finalen_preis_aus(100, 19, gutschein_fuenf_euro)",
+     "expected": "113.05"
+    },
+    {
+     "name": "Modifikator per keyword, mws als Default",
+     "call": "rechne_finalen_preis_aus(50, preismodifikator=rabatt_zehn_prozent)",
+     "expected": "53.55"
+    },
+    {
+     "name": "anderer Steuersatz positional",
+     "call": "rechne_finalen_preis_aus(200, 7)",
+     "expected": "214.0"
+    },
+    {
+     "name": "ohne Steuer, mit Gutschein",
+     "call": "rechne_finalen_preis_aus(100, mws=0, preismodifikator=gutschein_fuenf_euro)",
+     "expected": "95.0"
+    },
+    {
+     "name": "beliebige Funktion (lambda) als Modifikator",
+     "call": "rechne_finalen_preis_aus(100, 0, lambda p: p / 2)",
+     "expected": "50.0"
+    }
+   ],
+   "required": [
+    "def rechne_finalen_preis_aus",
+    "round("
+   ],
+   "forbidden": [
+    "input("
+   ],
+   "explanation": "Diese Aufgabe kombiniert drei Konzepte aus Vorlesung 2:\n\n1. **Default-Werte**: `mws=19` und `preismodifikator=nichts`. Der zweite ist besonders interessant - der Default-Wert ist hier ein **Funktionsobjekt**. Das ist erlaubt, weil Funktionen ganz normale Objekte sind. Wichtig: `nichts` muss vor der `def`-Zeile von `rechne_finalen_preis_aus` definiert sein, denn der Default-Wert wird **beim Definieren** ausgewertet.\n2. **higher order function**: Der Modifikator wird als Argument hereingereicht und mit `preismodifikator(preis)` aufgerufen. Neue Rabattarten kommen dazu, ohne dass man die Preisfunktion anfassen muss - dasselbe Muster wie bei den austauschbaren Spielerstrategien im Goofspiel.\n3. **keyword arguments**: `rechne_finalen_preis_aus(50, preismodifikator=...)` überspringt `mws` und spricht den dritten Parameter direkt über seinen Namen an.\n\nMerkregel: **Was sich ändern könnte, wird zum Argument - notfalls als Funktion.**",
+   "hints": [
+    "Der Default-Wert eines Parameters darf auch eine Funktion sein - schreiben Sie den Namen ohne Klammern.",
+    "Reihenfolge im Rumpf: zuerst den Modifikator anwenden, dann die Mehrwertsteuer aufschlagen.",
+    "Mehrwertsteuer aufschlagen heißt `preis * (1 + mws / 100)`; danach mit `round(..., 2)` runden."
+   ],
+   "pitfalls": [
+    "`preismodifikator=nichts()` als Default schreiben - das ruft die Funktion sofort auf (und scheitert mangels Argument).",
+    "Erst die Steuer aufschlagen und dann den Rabatt anwenden - das ergibt bei prozentualem Rabatt zwar dasselbe, beim 5-Euro-Gutschein aber nicht.",
+    "`nichts` erst nach `rechne_finalen_preis_aus` definieren - dann gibt es beim Definieren einen NameError.",
+    "Das Runden vergessen: `100*0.9*1.19` liefert sonst manchmal `107.10000000000001`."
+   ],
+   "sources": [
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "Zelle 17: rechne_finalen_preis_aus(preis, mws, preismodifikator)"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 16,
+     "label": "Funktionen als Variablen - Beispiel"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 12,
+     "label": "Default-Werte / keyword arguments"
+    }
+   ],
+   "tags": [
+    "higher-order-function",
+    "default",
+    "keyword-argument"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-016"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "import, from ... import und import ... as",
+   "prompt": "Was wird beim Ausführen des folgenden Codes ausgegeben?",
+   "code": "import math\nfrom math import sqrt\nimport random as zufall\nimport time\n\nprint(math.floor(3.7))\nprint(sqrt(16))\nzufall.seed(42)\nprint(zufall.randint(1, 6))\nprint(round(math.pi, 2))\nprint(type(time.time()))",
+   "expectedOutput": "3\n4.0\n6\n3.14\n<class 'float'>",
+   "solution": "3\n4.0\n6\n3.14\n<class 'float'>",
+   "explanation": "Die vier Import-Zeilen zeigen alle Varianten aus der Vorlesung:\n\n- `import math` legt den **Namespace** `math` an; alles daraus wird als `math.xyz` angesprochen. `math.floor(3.7)` rundet ab → `3` (ein int).\n- `from math import sqrt` holt **nur den Namen** `sqrt` in den aktuellen Namespace, deshalb ohne Präfix aufrufbar. `sqrt(16)` liefert `4.0` - Wurzeln sind immer float.\n- `import random as zufall` legt den Namespace unter einem **selbst gewählten Namen** an. Der Name `random` existiert danach nicht.\n- `zufall.seed(42)` initialisiert den Zufallsgenerator fest; danach ist `randint(1, 6)` reproduzierbar `6`. Genau dieser Trick macht Programme mit Zufall testbar - der Prof führt im funktionalen Goofspiel aus demselben Grund einen `seed` im state mit.\n- `time.time()` liefert die Sekunden seit dem 1.1.1970 als **float** (nützlich für Zeitmessungen; `time.sleep(x)` pausiert dagegen).\n\nMerkregel: **`import modul` → Namespace, `from modul import name` → Name direkt, `as` → Wunschname.**",
+   "hints": [
+    "Notieren Sie sich zuerst, welche Namen nach den vier Import-Zeilen überhaupt existieren.",
+    "`math.floor` liefert einen int, `math.sqrt` einen float - achten Sie auf die Nachkommastelle.",
+    "Nach `seed(42)` ist die 'Zufallszahl' festgelegt und immer dieselbe. Und was ist der Typ von `time.time()`?"
+   ],
+   "pitfalls": [
+    "`sqrt(16)` als `4` statt `4.0` angeben.",
+    "Nach `import random as zufall` weiter `random.randint(...)` schreiben - das wäre ein NameError.",
+    "Denken, `math.pi` sei eine Funktion und müsse `math.pi()` heißen."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 18,
+     "label": "Funktionen in ausgelagerten Dateien: import, from ... import, import ... as"
+    },
+    {
+     "file": "pythonvorlesung_03.ipynb",
+     "page": 1,
+     "label": "Zelle 6: import random und der Namespace random"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "random.Random(seed) - reproduzierbarer Zufall"
+    }
+   ],
+   "tags": [
+    "import",
+    "namespace",
+    "random",
+    "math",
+    "time"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-017"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Namespaces: from ... import kopiert den Namen",
+   "prompt": "Was wird beim Ausführen des folgenden Codes ausgegeben? Begründen Sie das Ergebnis der zweiten Zeile.",
+   "code": "from math import pi\n\npi = 3\nimport math\n\nprint(pi)\nprint(math.pi == pi)\nprint(round(math.pi, 5))",
+   "expectedOutput": "3\nFalse\n3.14159",
+   "solution": "3\nFalse\n3.14159",
+   "explanation": "`from math import pi` **kopiert** den aktuellen Wert unter dem Namen `pi` in den globalen Namespace des Skripts. Danach gibt es zwei völlig getrennte Namen: `pi` (hier) und `math.pi` (im Modul-Namespace).\n\nDie Zeile `pi = 3` bindet nur den lokalen Namen neu - im Modul `math` ändert sich dadurch nichts. Deshalb ist `math.pi == pi` falsch: links steht 3.141592653589793, rechts die 3.\n\nDass `import math` erst danach kommt, spielt keine Rolle: Ein Modul wird beim ersten Import geladen und im Speicher behalten; ein zweiter Import bindet nur noch den Namen `math` an das bereits geladene Modul.\n\nGenau deshalb ist `from modul import *` in größeren Programmen gefährlich: Namen aus dem Modul und eigene Namen können sich gegenseitig überschreiben, ohne dass es auffällt. Ein Namespace (`math.pi`) verhindert solche Kollisionen.\n\nMerkregel: **`from ... import` holt eine Kopie des Namens - das Modul bleibt davon unberührt.**",
+   "hints": [
+    "Wie viele verschiedene Namen zeigen nach den ersten beiden Zeilen auf die Kreiszahl?",
+    "Ändert eine Zuweisung an `pi` in meinem Skript etwas im Modul `math`?",
+    "Der zweite `import math` lädt nichts neu - das Modul ist längst geladen."
+   ],
+   "pitfalls": [
+    "Denken, `pi = 3` überschreibe auch `math.pi`.",
+    "Denken, der spätere `import math` setze `pi` wieder auf 3.14159...",
+    "`round(math.pi, 5)` als `3.1416` (4 Stellen) angeben."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 18,
+     "label": "'Mit from (name_des_moduls) import (name_der_funktion) kann man Funktionen verwenden ohne dass diese in einem Namespace sind'"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 21,
+     "label": "Klausurrelevante Dinge: Namespaces"
+    }
+   ],
+   "tags": [
+    "namespace",
+    "import",
+    "shadowing"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-018"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Die drei Import-Varianten erklären",
+   "prompt": "Sie haben eine Datei `helper.py` mit der Funktion `neues_kartenspiel(n=13)` und daneben Ihr Hauptprogramm `goofspiel.py`.\n\na) Geben Sie die **drei** in der Vorlesung besprochenen Import-Varianten an - jeweils mit der Import-Zeile **und** dem dazu passenden Aufruf der Funktion. (3 P)\n\nb) Erklären Sie in ein bis zwei Sätzen den Begriff **Namespace** und wo `helper.py` liegen muss, damit der Import funktioniert. (1 P)",
+   "solution": "a) Die drei Varianten:\n\n1) import helper\n   karten = helper.neues_kartenspiel()\n   -> Der Dateiname wird zum Namespace; alle Funktionen daraus heißen helper.<funktion>.\n\n2) from helper import neues_kartenspiel\n   karten = neues_kartenspiel()\n   -> Nur dieser eine Name wird in den eigenen Namespace geholt und ist direkt (ohne Präfix) nutzbar;\n      der Name \"helper\" existiert dann nicht.\n\n3) import helper as h\n   karten = h.neues_kartenspiel()\n   -> Der Namespace bekommt einen selbst gewählten Namen (z.B. kürzer oder kollisionsfrei).\n\nb) Ein Namespace ist ein Namensraum, unter dem die Namen (Funktionen, Variablen) eines Moduls\n   zusammengefasst sind, damit gleichnamige Dinge aus verschiedenen Modulen sich nicht in die Quere\n   kommen. Beispiel aus der Vorlesung: random.shuffle(karten).\n   helper.py muss im gleichen Ordner wie das ausgeführte Skript liegen (oder im PYTHONPATH).\n   Liegt sie im Unterordner \"module\", schreibt man import module.helper.\n\nBewertungsrubrik (4 P):\n- je 1 P für jede der drei Varianten MIT passendem Aufruf (max. 3 P);\n  halber Punkt, wenn nur die Import-Zeile ohne Aufruf genannt wird\n- 1 P für eine korrekte Namespace-Erklärung UND den Hinweis auf den Ordner/PYTHONPATH",
+   "explanation": "Die drei Varianten unterscheiden sich nur darin, **welche Namen** nach dem Import in Ihrem Programm sichtbar sind:\n\n- `import helper`: ein neuer Name `helper`, alles darunter.\n- `from helper import neues_kartenspiel`: nur der Name `neues_kartenspiel`, ohne Präfix - dafür ist `helper` **nicht** verfügbar.\n- `import helper as h`: wie Variante 1, aber unter Wunschnamen. Übliche Beispiele: `import numpy as np`.\n\nDer Prof benutzt in seinem Goofspiel-Code alle drei Formen nebeneinander: `import helper` und `from random import choice, shuffle`. Der Sinn eines Namespace ist Kollisionsfreiheit: Zwei Module dürfen problemlos beide eine Funktion `mische` haben, solange man sie als `a.mische` und `b.mische` anspricht.\n\nMerkregel: **Namespace = Nachname für Funktionen.**",
+   "hints": [
+    "Denken Sie an die Goofspiel-Dateien: Welche Import-Zeilen stehen dort ganz oben?",
+    "Für jede Variante gehört ein Aufruf dazu - der unterscheidet sich nämlich jeweils.",
+    "Für Teil b): Warum kann `random.shuffle` und `helper.shuffle` gleichzeitig existieren?"
+   ],
+   "pitfalls": [
+    "Nach `from helper import neues_kartenspiel` trotzdem `helper.neues_kartenspiel()` aufrufen - NameError.",
+    "Nach `import helper as h` weiter `helper....` schreiben - der alte Name ist weg.",
+    "Vergessen, dass die Datei im selben Ordner (oder im PYTHONPATH) liegen muss."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 18,
+     "label": "Funktionen in ausgelagerten Dateien"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 20,
+     "label": "'Beim import Befehl muss die Datei im gleichen Ordner ... sein'"
+    },
+    {
+     "file": "goofspiel26-2.py",
+     "page": 1,
+     "label": "from random import choice, shuffle / import helper"
+    }
+   ],
+   "tags": [
+    "import",
+    "namespace",
+    "module"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-019"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ein Modul aus einem Unterordner importieren",
+   "prompt": "Ihr Projekt hat folgende Struktur:\n\n```\nspiel.py\nstrategien/\n    helfer.py\n```\n\nIn `strategien/helfer.py` steht die Funktion `zufaellige_karte(karten)`.\n\nFüllen Sie die Lücken in `spiel.py`:\n- **Lücke 1**: Import des Moduls mit `import` (ohne `from`, ohne `as`).\n- **Lücke 2**: der dazu passende Funktionsaufruf mit vollständigem Namespace.\n- **Lücke 3**: eine Import-Zeile, nach der die Funktion direkt als `zufaellige_karte(...)` aufrufbar ist.\n- **Lücke 4**: eine Import-Zeile, nach der das Modul unter dem Namen `st` erreichbar ist.",
+   "code": "# Datei spiel.py\n## Lücke 1 ##\n\nkarten = [1, 2, 3, 4, 5]\nkarte = ## Lücke 2 ##(karten)\n\n# Variante B: Funktion ohne Namespace nutzbar machen\n## Lücke 3 ##\nkarte = zufaellige_karte(karten)\n\n# Variante C: Modul unter dem Namen st erreichbar machen\n## Lücke 4 ##\nkarte = st.zufaellige_karte(karten)",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "import strategien.helfer"
+     ],
+     "explanation": "Für Unterordner verbindet man Ordnername und Dateiname mit einem **Punkt** - genau wie auf der Folie 'Unterordner mit .'."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "strategien.helfer.zufaellige_karte"
+     ],
+     "explanation": "Nach `import strategien.helfer` ist der vollständige Namespace `strategien.helfer`; die Funktion heißt darunter `zufaellige_karte`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "from strategien.helfer import zufaellige_karte"
+     ],
+     "explanation": "`from ... import ...` holt genau diesen Namen in den eigenen Namespace, deshalb ist er ohne Präfix aufrufbar."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "import strategien.helfer as st"
+     ],
+     "explanation": "`as` vergibt einen Wunschnamen für den Namespace - praktisch, wenn der Pfad lang ist."
+    }
+   ],
+   "solution": "# Datei spiel.py\nimport strategien.helfer\n\nkarten = [1, 2, 3, 4, 5]\nkarte = strategien.helfer.zufaellige_karte(karten)\n\n# Variante B: Funktion ohne Namespace nutzbar machen\nfrom strategien.helfer import zufaellige_karte\nkarte = zufaellige_karte(karten)\n\n# Variante C: Modul unter dem Namen st erreichbar machen\nimport strategien.helfer as st\nkarte = st.zufaellige_karte(karten)",
+   "explanation": "Beim `import` muss die Datei im gleichen Ordner wie das ausgeführte Skript liegen (oder im `PYTHONPATH`). Für **Unterordner** schreibt man `(Name des Unterordners).(Name der Datei)` - genau diese Folie ist klausurrelevant.\n\nWichtig ist die Konsequenz für den Aufruf: Nach `import strategien.helfer` heißt der Namespace vollständig `strategien.helfer`, der Aufruf lautet also `strategien.helfer.zufaellige_karte(...)`. Wer nur `helfer.zufaellige_karte(...)` schreibt, bekommt einen NameError, denn `helfer` allein ist kein bekannter Name.\n\nDie beiden anderen Varianten kürzen das ab: `from strategien.helfer import zufaellige_karte` bringt nur den Funktionsnamen mit, `import strategien.helfer as st` vergibt einen kurzen Namespace-Namen.\n\nMerkregel: **Ordnertrennung im Dateisystem ist `/`, im import ist es `.`**",
+   "hints": [
+    "Wie trennt man in einem `import` einen Unterordner vom Dateinamen? Nicht mit Schrägstrich.",
+    "Nach `import a.b` lautet der vollständige Namespace `a.b` - so muss auch der Aufruf beginnen.",
+    "Für Lücke 3 und 4 brauchen Sie die beiden anderen Schlüsselwörter aus der Vorlesung: `from ... import` und `as`."
+   ],
+   "pitfalls": [
+    "`import strategien/helfer` schreiben - im import steht ein Punkt, kein Schrägstrich.",
+    "Nach `import strategien.helfer` nur `helfer.zufaellige_karte(...)` aufrufen.",
+    "`.py` an den Dateinamen hängen - importiert wird der Modulname ohne Endung."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 20,
+     "label": "'Für Unterordner kann man (Name des Unterordners) . (Name der Datei) verwenden'"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 21,
+     "label": "Klausurrelevante Dinge: 'Unterordner mit .'"
+    }
+   ],
+   "tags": [
+    "import",
+    "unterordner",
+    "namespace",
+    "module"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-020"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Imports und Module - welche Aussagen sind richtig?",
+   "prompt": "Ein Programm beginnt mit diesen Zeilen:\n\n```python\nfrom helper import neues_kartenspiel\nimport random as zufall\nimport math\nimport time\n```\n\nWelche der folgenden Aussagen sind **richtig**? (Mehrfachauswahl)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`neues_kartenspiel(13)` ist korrekt, `helper.neues_kartenspiel(13)` dagegen wirft einen NameError.",
+     "correct": true,
+     "why": "`from ... import ...` holt nur den Funktionsnamen; der Modulname `helper` wird dabei nicht gebunden."
+    },
+    {
+     "id": "b",
+     "text": "Nach `import random as zufall` ist der Name `random` nicht mehr verfügbar; `random.randint(1, 6)` wirft einen NameError.",
+     "correct": true,
+     "why": "`as` legt ausschließlich den Wunschnamen an - der Originalname wird nicht zusätzlich gebunden."
+    },
+    {
+     "id": "c",
+     "text": "`math.pi` ist eine Funktion und muss deshalb als `math.pi()` aufgerufen werden.",
+     "correct": false,
+     "why": "`math.pi` ist eine Konstante (ein float). `math.pi()` gäbe `TypeError: 'float' object is not callable`."
+    },
+    {
+     "id": "d",
+     "text": "`time.sleep(2)` hält das Programm für ca. 2 Sekunden an.",
+     "correct": true,
+     "why": "Genau dafür ist `sleep` da; `time.time()` liefert dagegen den aktuellen Zeitstempel als float."
+    },
+    {
+     "id": "e",
+     "text": "Liegt `helper.py` im Unterordner `module`, lautet die Import-Zeile `from module.helper import neues_kartenspiel`.",
+     "correct": true,
+     "why": "Unterordner werden mit Punkt angebunden - `module.helper` ist der vollständige Modulname."
+    },
+    {
+     "id": "f",
+     "text": "`zufall.shuffle(karten)` gibt die gemischte Liste zurück; `karten` selbst bleibt unverändert.",
+     "correct": false,
+     "why": "`shuffle` mischt die Liste **in place** und gibt `None` zurück - deshalb steht im Goofspiel `shuffle(preiskarten)` allein in einer Zeile und nicht auf der rechten Seite einer Zuweisung."
+    }
+   ],
+   "solution": "Richtig sind a, b, d und e. Falsch sind c (math.pi ist eine Konstante) und f (shuffle mischt in place und liefert None).",
+   "explanation": "Die Aufgabe prüft, welche **Namen** nach den Import-Zeilen existieren und was die Standardmodule tatsächlich tun.\n\nZu den Namen: `from helper import neues_kartenspiel` bindet genau einen Namen, `import random as zufall` genau einen (nämlich `zufall`), `import math` bindet `math`. Alles andere ist unbekannt - typische NameError-Quelle in der Klausur.\n\nZu den Modulen: `random` liefert `randint`, `choice`, `shuffle`, `seed`; `math` liefert `sqrt`, `floor`, `ceil` und die **Konstante** `pi`; `time` liefert `time()` (Zeitstempel als float) und `sleep(sekunden)`.\n\nDer Klassiker ist Antwort f: `shuffle` ist eine der Funktionen mit **Nebeneffekt** - sie verändert die übergebene (mutable!) Liste und gibt `None` zurück. `karten = zufall.shuffle(karten)` macht die Liste deshalb zu `None`.\n\nMerkregel: **Was in-place arbeitet, gibt `None` zurück.**",
+   "hints": [
+    "Schreiben Sie auf, welche Namen nach den vier Zeilen im globalen Namespace stehen.",
+    "Zwei Aussagen sind falsch - eine betrifft eine Konstante, eine einen Nebeneffekt.",
+    "Was passiert im Goofspiel-Code direkt nach `shuffle(preiskarten)`? Wird dort etwas zugewiesen?"
+   ],
+   "pitfalls": [
+    "Denken, `import x as y` binde auch `x`.",
+    "`math.pi` als Funktion aufrufen.",
+    "`karten = random.shuffle(karten)` schreiben und sich wundern, dass `karten` danach `None` ist."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 18,
+     "label": "import / from ... import / import ... as"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 20,
+     "label": "Unterordner mit Punkt"
+    },
+    {
+     "file": "pythonvorlesung_03.ipynb",
+     "page": 1,
+     "label": "Zelle 6: random.shuffle(preiskarten) mischt in place"
+    },
+    {
+     "file": "goofspiel26-2.py",
+     "page": 1,
+     "label": "shuffle(preiskarten) als eigenständige Zeile"
+    }
+   ],
+   "tags": [
+    "import",
+    "namespace",
+    "random",
+    "math",
+    "time"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-021"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Fehlersuche: Module im Goofspiel",
+   "prompt": "Ein Kollege hat den folgenden Code geschrieben und bittet Sie um Hilfe. Die Datei `helper.py` liegt im selben Ordner und enthält u.a. `neues_kartenspiel(n=13)` und `gewinner_ausgeben(p1, p2)`.\n\nIn welchen **3 Zeilen** befinden sich Fehler? Benennen Sie jeden Fehler und geben Sie eine Korrektur an.",
+   "code": "import helper\nfrom random import shuffle\n\nkarten = neues_kartenspiel()\nrandom.shuffle(karten)\npreiskarte = karten.pop()\nprint(math.sqrt(preiskarte))\nhelper.gewinner_ausgeben(3, 5)",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "karten = neues_kartenspiel()",
+     "fix": "karten = helper.neues_kartenspiel()",
+     "why": "Nach `import helper` liegen alle Funktionen im Namespace `helper` - der nackte Name `neues_kartenspiel` ist nicht definiert (`NameError`). Alternative Korrektur: die Import-Zeile zu `from helper import neues_kartenspiel` ändern."
+    },
+    {
+     "line": 5,
+     "wrong": "random.shuffle(karten)",
+     "fix": "shuffle(karten)",
+     "why": "Mit `from random import shuffle` wurde **nur** der Name `shuffle` importiert, nicht das Modul `random` selbst - `random.shuffle` gibt daher `NameError: name 'random' is not defined`. Alternative Korrektur: zusätzlich `import random` schreiben."
+    },
+    {
+     "line": 7,
+     "wrong": "print(math.sqrt(preiskarte))",
+     "fix": "import math   # oben ergänzen, dann bleibt die Zeile so stehen",
+     "why": "Das Modul `math` wurde nie importiert - `NameError: name 'math' is not defined`. Standardmodule muss man genauso importieren wie eigene Dateien."
+    }
+   ],
+   "solution": "import helper\nimport math\nfrom random import shuffle\n\nkarten = helper.neues_kartenspiel()\nshuffle(karten)\npreiskarte = karten.pop()\nprint(math.sqrt(preiskarte))\nhelper.gewinner_ausgeben(3, 5)",
+   "explanation": "Alle drei Fehler sind **NameError** und haben dieselbe Ursache: Es wird ein Name benutzt, den der jeweilige Import gar nicht angelegt hat.\n\n- `import helper` legt **nur** den Namen `helper` an. Alles darin heißt `helper.xyz`.\n- `from random import shuffle` legt **nur** den Namen `shuffle` an - `random` bleibt unbekannt.\n- Für `math` fehlt der Import vollständig.\n\nZeile 8 ist übrigens korrekt: `helper.gewinner_ausgeben(3, 5)` benutzt den Namespace richtig, und da die Funktion selbst druckt, steht kein `print` davor (sonst käme zusätzlich `None` auf die Konsole).\n\nMerkregel: **Der Import bestimmt den Namen, nicht die Datei.** Fragen Sie sich bei jedem NameError zuerst: Welchen Namen hat mein Import überhaupt angelegt?",
+   "hints": [
+    "Schreiben Sie nach den ersten beiden Zeilen auf, welche Namen jetzt existieren - und nur diese.",
+    "Zwei Fehler sind Namespace-Verwechslungen, einer ist ein komplett fehlender Import.",
+    "Zeile 8 ist korrekt - konzentrieren Sie sich auf die Zeilen davor."
+   ],
+   "pitfalls": [
+    "Zeile 8 als Fehler markieren, weil dort kein `print` steht.",
+    "Denken, `import helper` importiere die Funktionsnamen direkt.",
+    "`from random import shuffle` und `import random` für gleichwertig halten."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 18,
+     "label": "Namespaces beim Import"
+    },
+    {
+     "file": "goofspiel26-2.py",
+     "page": 1,
+     "label": "import helper + from random import choice, shuffle"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "neues_kartenspiel, gewinner_ausgeben"
+    }
+   ],
+   "tags": [
+    "import",
+    "namespace",
+    "nameerror",
+    "fehlersuche"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-022"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": true,
+   "title": "Der Default-Wert wird nur einmal erzeugt",
+   "prompt": "Was wird beim Ausführen des folgenden Codes ausgegeben? Begründen Sie Ihre Antwort.",
+   "code": "def merke(eintrag, protokoll=[]):\n    protokoll.append(eintrag)\n    return protokoll\n\nprint(merke(\"a\"))\nprint(merke(\"b\"))\nprint(merke(\"c\", []))\nprint(merke(\"d\"))",
+   "expectedOutput": "['a']\n['a', 'b']\n['c']\n['a', 'b', 'd']",
+   "solution": "['a']\n['a', 'b']\n['c']\n['a', 'b', 'd']",
+   "explanation": "Der Default-Wert wird **einmal beim Definieren** der Funktion ausgewertet, nicht bei jedem Aufruf. Die leere Liste aus der `def`-Zeile existiert also genau ein einziges Mal und hängt am Funktionsobjekt (nachsehen kann man das in `merke.__defaults__`).\n\nDa Listen **mutable** sind, verändert `protokoll.append(eintrag)` genau dieses eine Objekt - die Ergänzungen sammeln sich über alle Aufrufe hinweg an. Deshalb wächst die Liste von `['a']` auf `['a', 'b']`.\n\nDer dritte Aufruf übergibt explizit eine **frische** Liste; nur die wird befüllt, der Default bleibt unangetastet. Beim vierten Aufruf greift wieder der Default - und der steht immer noch bei `['a', 'b']`, wird also zu `['a', 'b', 'd']`.\n\nSauber löst man das mit einem immutable Default: `def merke(eintrag, protokoll=None):` und im Rumpf `if protokoll is None: protokoll = []`. Noch besser im Sinne der funktionalen Programmierung: gar nicht mutieren, sondern `return protokoll + [eintrag]` - dann ist die Funktion pure.\n\nMerkregel: **Niemals ein mutable Objekt als Default-Wert.**",
+   "hints": [
+    "Wann genau wird `[]` in der `def`-Zeile ausgewertet - bei jedem Aufruf oder nur einmal?",
+    "`append` verändert die Liste in place. Welche Liste ist das im ersten und im zweiten Aufruf?",
+    "Der dritte Aufruf übergibt eine eigene Liste. Was heißt das für den vierten?"
+   ],
+   "pitfalls": [
+    "Erwarten, dass jeder Aufruf ohne zweites Argument mit einer frischen leeren Liste startet.",
+    "Denken, der dritte Aufruf setze den Default zurück.",
+    "Die Ausgabe ohne Anführungszeichen schreiben - `print` einer Liste zeigt `['a']` mit Quotes."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 12,
+     "label": "Default-(Initial-)Werte für Eingabeargumente"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 3,
+     "label": "mutable vs. immutable Datentypen"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse Geltungsbereiche und Mutability"
+    }
+   ],
+   "tags": [
+    "default",
+    "mutable",
+    "falle"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-023"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "Statistikbericht mit *args und **kwargs",
+   "prompt": "**Aufgabe aus den Übungsaufgaben zur 3. Vorlesung (leicht angepasst: Rückgabe statt print):**\n\nSchreiben Sie eine Funktion `erstelle_bericht(*werte, **optionen)`, die eine beliebige Anzahl von Zahlen entgegennimmt und über keyword arguments gesteuert einen Bericht als **String zurückgibt**.\n\nMögliche Optionen (jeweils nur ausgeben, wenn sie übergeben **und** `True` sind), in genau dieser Reihenfolge:\n\n| Option | Zeile im Bericht |\n|---|---|\n| `mittelwert=True` | `Mittelwert: <wert>` (auf 2 Nachkommastellen gerundet) |\n| `max=True` | `Max: <wert>` |\n| `min=True` | `Min: <wert>` |\n| `anzahl=True` | `Anzahl: <wert>` |\n\nJede Zeile endet mit `\\n`. Wurden **gar keine Zahlen** übergeben, ist die Rückgabe genau `\"Keine Zahlen uebergeben!\"`.\n\nBeispiel:\n`erstelle_bericht(3, 5, 7, 2, 9, mittelwert=True, max=True, anzahl=True)`\n→ `'Mittelwert: 5.2\\nMax: 9\\nAnzahl: 5\\n'`\n\nHinweis: `sum()`, `len()`, `max()`, `min()` und `round()` dürfen Sie verwenden.",
+   "starterCode": "def erstelle_bericht(*werte, **optionen):\n    \"\"\"\n    Erstellt einen Statistikbericht ueber beliebig viele Zahlen.\n    Eingabe:\n    - werte: beliebig viele Zahlen (positional)\n    - optionen: mittelwert, max, min, anzahl (jeweils True/False)\n    Rueckgabe: String\n    \"\"\"\n    # Ihr Code hier",
+   "solution": "def erstelle_bericht(*werte, **optionen):\n    \"\"\"\n    Erstellt einen Statistikbericht ueber beliebig viele Zahlen.\n    Eingabe:\n    - werte: beliebig viele Zahlen (positional arguments, landen in einem tuple)\n    - optionen: keyword arguments mittelwert, max, min, anzahl (jeweils True/False)\n    Rueckgabe: String mit einer Zeile pro gesetzter Option\n    \"\"\"\n    if len(werte) == 0:\n        return \"Keine Zahlen uebergeben!\"\n\n    bericht = \"\"\n    if optionen.get(\"mittelwert\", False):\n        bericht = bericht + \"Mittelwert: \" + str(round(sum(werte) / len(werte), 2)) + \"\\n\"\n    if optionen.get(\"max\", False):\n        bericht = bericht + \"Max: \" + str(max(werte)) + \"\\n\"\n    if optionen.get(\"min\", False):\n        bericht = bericht + \"Min: \" + str(min(werte)) + \"\\n\"\n    if optionen.get(\"anzahl\", False):\n        bericht = bericht + \"Anzahl: \" + str(len(werte)) + \"\\n\"\n    return bericht",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "erstelle_bericht(3, 5, 7, 2, 9, mittelwert=True, max=True, anzahl=True)",
+     "expected": "'Mittelwert: 5.2\\nMax: 9\\nAnzahl: 5\\n'"
+    },
+    {
+     "name": "nur min",
+     "call": "erstelle_bericht(4, 8, min=True)",
+     "expected": "'Min: 4\\n'"
+    },
+    {
+     "name": "Option auf False gesetzt",
+     "call": "erstelle_bericht(1, 2, mittelwert=False)",
+     "expected": "''"
+    },
+    {
+     "name": "gar keine Option",
+     "call": "erstelle_bericht(1, 2, 3)",
+     "expected": "''"
+    },
+    {
+     "name": "keine Zahlen übergeben",
+     "call": "erstelle_bericht(mittelwert=True)",
+     "expected": "'Keine Zahlen uebergeben!'"
+    },
+    {
+     "name": "Mittelwert wird gerundet",
+     "call": "erstelle_bericht(1, 2, 3, mittelwert=True)",
+     "expected": "'Mittelwert: 2.0\\n'"
+    },
+    {
+     "name": "Reihenfolge ist fest, nicht die der Aufrufargumente",
+     "call": "erstelle_bericht(10, 20, anzahl=True, min=True, max=True)",
+     "expected": "'Max: 20\\nMin: 10\\nAnzahl: 2\\n'"
+    }
+   ],
+   "required": [
+    "*werte",
+    "**optionen"
+   ],
+   "forbidden": [
+    "input("
+   ],
+   "explanation": "Hier arbeiten beide Sterne zusammen: `*werte` sammelt alle positional arguments in ein **tuple**, `**optionen` alle keyword arguments in ein **dictionary**.\n\nZwei Details entscheiden über die Korrektheit:\n1. Eine Option soll nur wirken, wenn sie übergeben **und** `True` ist. `optionen.get(\"max\", False)` erledigt beides in einem Schritt: nicht vorhanden → `False`. Mit `optionen[\"max\"]` gäbe es dagegen einen `KeyError`, sobald die Option fehlt.\n2. Die Reihenfolge der Zeilen ist durch den Code festgelegt, nicht durch die Reihenfolge im Aufruf - deshalb liefert der letzte Test `Max`, `Min`, `Anzahl` in genau dieser Folge.\n\n`sum(werte) / len(werte)` funktioniert direkt auf dem Tupel; `round(..., 2)` liefert bei 5.2 wieder `5.2` und bei 2.0 die Ausgabe `2.0`, weil `round` mit zwei Argumenten einen float zurückgibt.\n\nMerkregel: **`*` = Positionen einsammeln, `**` = Namen einsammeln, `.get` = sicher nachschlagen.**",
+   "hints": [
+    "Prüfen Sie ganz am Anfang, ob überhaupt Werte angekommen sind - `len(werte) == 0`.",
+    "`optionen` ist ein dictionary. Wie fragt man einen Schlüssel ab, der vielleicht gar nicht existiert?",
+    "Bauen Sie den Bericht Zeile für Zeile als String zusammen und geben Sie ihn am Ende zurück."
+   ],
+   "pitfalls": [
+    "`optionen[\"mittelwert\"]` direkt zugreifen - KeyError, wenn die Option fehlt.",
+    "Die Zeilen drucken statt den String zurückzugeben.",
+    "Den Mittelwert nicht runden - `sum/len` liefert oft lange Nachkommastellen.",
+    "Bei `mittelwert=False` trotzdem eine Zeile erzeugen."
+   ],
+   "sources": [
+    {
+     "file": "Beispielaufgaben_VL3.pdf",
+     "page": 1,
+     "label": "Aufgabe 1: 'Statistikbericht mit Optionen' - erstelle_bericht(*werte, **optionen)"
+    },
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 13,
+     "label": "*args und **kwargs"
+    }
+   ],
+   "tags": [
+    "args",
+    "kwargs",
+    "dict",
+    "strings"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-024"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "Strategie-Register: Funktionen in einem Dictionary",
+   "prompt": "Im Goofspiel sollen die Strategien der Spieler nicht mehr fest verdrahtet sein, sondern über einen **Namen** ausgewählt werden können.\n\nSchreiben Sie:\n\n1. `spiele_hoechste_karte(karten, preiskarte)` - gibt die höchste Karte der Hand zurück.\n2. `spiele_niedrigste_karte(karten, preiskarte)` - gibt die niedrigste Karte der Hand zurück.\n3. ein Dictionary `STRATEGIEN`, das die Namen `\"hoch\"` und `\"niedrig\"` auf die **Funktionsobjekte** abbildet.\n4. `hole_strategie(name)` - liefert die passende Strategie-**Funktion** zurück; ist der Name unbekannt, wird `spiele_niedrigste_karte` zurückgegeben.\n5. `spiele_runde(karten1, karten2, preiskarte, strategie1, strategie2)` - lässt beide Spieler mit ihrer Strategie eine Karte spielen und gibt das Punktepaar `(punkte1, punkte2)` dieser Runde zurück: Die höhere Karte gewinnt und bekommt `preiskarte` Punkte, bei Gleichstand bekommt niemand Punkte.\n\nBeispiel:\n`spiele_runde([3, 7], [5, 2], 10, hole_strategie(\"hoch\"), hole_strategie(\"niedrig\"))` → `(10, 0)`",
+   "constraints": [
+    "`hole_strategie` soll das Dictionary benutzen, keine lange if/elif-Kette."
+   ],
+   "starterCode": "def spiele_hoechste_karte(karten, preiskarte):\n    # Ihr Code hier\n\ndef spiele_niedrigste_karte(karten, preiskarte):\n    # Ihr Code hier\n\nSTRATEGIEN = {}  # Namen auf Funktionsobjekte abbilden\n\ndef hole_strategie(name):\n    # Ihr Code hier\n\ndef spiele_runde(karten1, karten2, preiskarte, strategie1, strategie2):\n    # Ihr Code hier",
+   "solution": "def spiele_hoechste_karte(karten, preiskarte):\n    \"\"\"Strategie: spielt die hoechste Karte auf der Hand.\"\"\"\n    return max(karten)\n\ndef spiele_niedrigste_karte(karten, preiskarte):\n    \"\"\"Strategie: spielt die niedrigste Karte auf der Hand.\"\"\"\n    return min(karten)\n\nSTRATEGIEN = {\"hoch\": spiele_hoechste_karte,\n              \"niedrig\": spiele_niedrigste_karte}\n\ndef hole_strategie(name):\n    \"\"\"\n    Liefert die zum Namen passende Strategie-Funktion.\n    Unbekannte Namen ergeben spiele_niedrigste_karte.\n    \"\"\"\n    return STRATEGIEN.get(name, spiele_niedrigste_karte)\n\ndef spiele_runde(karten1, karten2, preiskarte, strategie1, strategie2):\n    \"\"\"\n    Wertet eine Goofspiel-Runde aus.\n    Eingabe:\n    - karten1, karten2: Listen mit den Handkarten\n    - preiskarte: Zahl - Wert der aufgedeckten Preiskarte\n    - strategie1, strategie2: Funktionen (karten, preiskarte) -> Karte\n    Rueckgabe: Tupel (punkte_spieler1, punkte_spieler2) fuer diese Runde\n    \"\"\"\n    karte1 = strategie1(karten1, preiskarte)\n    karte2 = strategie2(karten2, preiskarte)\n    if karte1 > karte2:\n        return (preiskarte, 0)\n    elif karte2 > karte1:\n        return (0, preiskarte)\n    else:\n        return (0, 0)",
+   "tests": [
+    {
+     "name": "Strategie hoch",
+     "call": "hole_strategie(\"hoch\")([3, 7, 5], 4)",
+     "expected": "7"
+    },
+    {
+     "name": "Strategie niedrig",
+     "call": "hole_strategie(\"niedrig\")([3, 7, 5], 4)",
+     "expected": "3"
+    },
+    {
+     "name": "unbekannter Name -> Default-Strategie",
+     "call": "hole_strategie(\"gibt_es_nicht\")([3, 7, 5], 4)",
+     "expected": "3"
+    },
+    {
+     "name": "hole_strategie liefert wirklich das Funktionsobjekt",
+     "call": "hole_strategie(\"hoch\") is spiele_hoechste_karte",
+     "expected": "True"
+    },
+    {
+     "name": "Beispielrunde aus der Aufgabe",
+     "call": "spiele_runde([3, 7], [5, 2], 10, hole_strategie(\"hoch\"), hole_strategie(\"niedrig\"))",
+     "expected": "(10, 0)"
+    },
+    {
+     "name": "Gleichstand",
+     "call": "spiele_runde([4], [4], 6, hole_strategie(\"hoch\"), hole_strategie(\"hoch\"))",
+     "expected": "(0, 0)"
+    },
+    {
+     "name": "Spieler 2 gewinnt",
+     "call": "spiele_runde([1, 2], [9], 5, hole_strategie(\"hoch\"), hole_strategie(\"hoch\"))",
+     "expected": "(0, 5)"
+    },
+    {
+     "name": "Strategien lassen sich auch direkt übergeben",
+     "call": "spiele_runde([1, 9], [8], 3, spiele_niedrigste_karte, spiele_hoechste_karte)",
+     "expected": "(0, 3)"
+    }
+   ],
+   "required": [
+    "STRATEGIEN",
+    "def hole_strategie",
+    "def spiele_runde"
+   ],
+   "forbidden": [
+    "input("
+   ],
+   "explanation": "Diese Aufgabe ist der Transfer, den der Prof im Goofspiel selbst macht: Statt die Strategie fest in den Spielcode zu schreiben, liegt sie **in einer Variablen** und wird von außen hereingereicht (`strategie_spieler1 = choice(liste_aller_strategien)`).\n\nDrei Ideen greifen ineinander:\n1. **Funktionen sind Objekte.** Sie können in einer Liste oder - wie hier - als Werte in einem Dictionary stehen. Beim Eintragen steht der Name **ohne Klammern**; mit Klammern stünde dort das Ergebnis eines Aufrufs.\n2. **Rückgabe einer Funktion.** `hole_strategie` ist eine higher order function: Ihr Rückgabewert ist ein Funktionsobjekt. Deshalb funktioniert die Doppelklammer `hole_strategie(\"hoch\")([3, 7, 5], 4)`.\n3. **Funktion als Argument.** `spiele_runde` weiß nichts über die Strategien - es ruft nur `strategie1(karten1, preiskarte)` auf. Neue Strategien kann man hinzufügen, ohne `spiele_runde` anzufassen.\n\n`STRATEGIEN.get(name, default)` ersetzt die if/elif-Kette und liefert bei unbekanntem Schlüssel den zweiten Parameter.\n\nMerkregel: **Alles, was sich ändern kann, wird zum Argument - auch Verhalten.**",
+   "hints": [
+    "Ein Dictionary darf beliebige Objekte als Werte haben - auch Funktionen. Namen dabei ohne Klammern eintragen.",
+    "`dict.get(schluessel, ersatz)` liefert den Ersatzwert, wenn der Schlüssel fehlt - ideal für die Default-Strategie.",
+    "`spiele_runde` ruft die übergebenen Strategien einfach auf und vergleicht dann die beiden Karten."
+   ],
+   "pitfalls": [
+    "Im Dictionary `\"hoch\": spiele_hoechste_karte(...)` eintragen - damit landet ein Ergebnis statt der Funktion darin.",
+    "`STRATEGIEN` definieren, bevor die Funktionen existieren - NameError.",
+    "Bei Gleichstand Punkte vergeben; im Goofspiel bekommt dann niemand die Preiskarte.",
+    "Ein Tupel statt zweier Einzelwerte vergessen: gefordert ist `(punkte1, punkte2)`."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 17,
+     "label": "'Unser vorheriger Goofspiel-Code hat die Strategien der Spieler immer noch hart festgelegt'"
+    },
+    {
+     "file": "goofspiel26-2.py",
+     "page": 1,
+     "label": "liste_aller_strategien / strategie_spieler1 = choice(liste_aller_strategien)"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "spiele_den_wert_der_preiskarte, spiele_zufällige_karte, runde_auswerten"
+    }
+   ],
+   "tags": [
+    "higher-order-function",
+    "dict",
+    "goofspiel",
+    "funktionen-als-variablen"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-025"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Wieso wirft dieser Code einen Fehler?",
+   "prompt": "Was passiert, wenn der folgende Code ausgeführt wird? Geben Sie die vollständige Ausgabe an, benennen Sie den auftretenden Fehler und erklären Sie in ein bis zwei Sätzen die Ursache. Wie muss die vorletzte Zeile lauten, damit das Programm wie beabsichtigt funktioniert?",
+   "code": "def strategie():\n    print(\"Ich spiele die letzte Karte\")\n\nmeine_strategie = strategie()\nmeine_strategie()",
+   "solution": "Ausgabe und Fehler:\n\n    Ich spiele die letzte Karte\n    TypeError: 'NoneType' object is not callable\n\nBegründung:\n- In Zeile 4 stehen Klammern hinter \"strategie\". Damit wird die Funktion sofort AUFGERUFEN\n  (deshalb erscheint zuerst der print-Text) und in \"meine_strategie\" landet ihr\n  RUECKGABEWERT. Da \"strategie\" kein return hat, ist dieser Rückgabewert None.\n- In Zeile 5 wird dann versucht, None aufzurufen. None ist kein Funktionsobjekt,\n  also TypeError: 'NoneType' object is not callable.\n\nKorrektur der vorletzten Zeile (Funktionsobjekt statt Ergebnis speichern):\n\n    meine_strategie = strategie      # ohne Klammern!\n\nDanach ist \"meine_strategie\" ein zweiter Name für dieselbe Funktion und\n\"meine_strategie()\" druckt \"Ich spiele die letzte Karte\".\n\nBewertungsrubrik (4 P):\n- 1 P: die print-Ausgabe erscheint (einmal!), bevor der Fehler auftritt\n- 1 P: Fehlertyp TypeError bzw. \"NoneType object is not callable\" benannt\n- 1 P: Begründung \"Klammern rufen auf; ohne return ist der Rückgabewert None\"\n- 1 P: Korrektur \"meine_strategie = strategie\" ohne Klammern",
+   "explanation": "Der Unterschied zwischen `strategie` und `strategie()` ist eines der Kernkonzepte aus Vorlesung 2:\n\n- `strategie` ist das **Funktionsobjekt** - man kann es in Variablen speichern, in Listen oder Dictionaries ablegen und an andere Funktionen übergeben.\n- `strategie()` ist der **Aufruf** - der Ausdruck steht für den Rückgabewert.\n\nDa `strategie` kein `return` besitzt, ist ihr Rückgabewert `None`. In `meine_strategie` steckt also `None`, und `None()` ist kein gültiger Aufruf: `TypeError: 'NoneType' object is not callable`.\n\nWichtig für die Klausur ist die Reihenfolge der Ereignisse: Die print-Ausgabe erscheint **einmal** (beim Aufruf in Zeile 4), erst danach kracht es in Zeile 5. Wer nur 'Fehler' schreibt, verschenkt Punkte - der Prof verlangt in Aufgabe 2 der Probeklausur ausdrücklich eine Begründung.\n\nMerkregel: **Klammern = jetzt ausführen. Kein return = None. None ist nicht aufrufbar.**",
+   "hints": [
+    "Achten Sie auf die Klammern in Zeile 4 - was genau steht danach in `meine_strategie`?",
+    "Was liefert eine Funktion ohne `return` zurück?",
+    "Überlegen Sie, ob vor dem Fehler noch etwas ausgegeben wird."
+   ],
+   "pitfalls": [
+    "Nur 'TypeError' hinschreiben und die print-Ausgabe vergessen.",
+    "Denken, `meine_strategie = strategie()` speichere die Funktion.",
+    "Als Korrektur `meine_strategie()()` vorschlagen."
+   ],
+   "sources": [
+    {
+     "file": "2_functions_and_comments_26.pdf",
+     "page": 15,
+     "label": "Funktionen als Variablen - 'Da die Funktion say_hello keinen Rückgabewert hat, wird hier None ausgegeben'"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: 'Geben Sie an, was ausgegeben wird oder ob ein Fehler auftritt. Begründen Sie.'"
+    }
+   ],
+   "tags": [
+    "funktionen-als-variablen",
+    "None",
+    "typeerror"
+   ],
+   "lang": "python",
+   "topicId": "py-functions",
+   "id": "py-functions-026"
+  }
+ ]
+}

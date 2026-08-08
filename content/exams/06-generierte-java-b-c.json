@@ -1,0 +1,179 @@
+[
+  {
+    "id": "generiert-java-b",
+    "lang": "java",
+    "title": "Simulierte Klausur Java — Variante B",
+    "subtitle": "Schwerpunkt Datentypen, Anweisungen, Arrays und Zeichenketten",
+    "minutes": 60,
+    "totalPoints": 54,
+    "origin": "generated",
+    "note": "Kapitel 3 bis 5 des Skripts: Typumwandlung, Überlauf, Schleifen, Arrays und Strings. Genau die Stellen, an denen in der Klausur die meisten unnötigen Punkte verloren gehen.",
+    "tasks": [
+      {
+        "id": "jb1",
+        "label": "Aufgabe 1",
+        "title": "Theorie (Multiple Choice)",
+        "points": 6,
+        "instructions": "Sechs Fragen, jeweils genau eine richtige Antwort.",
+        "blueprint": {
+          "topicIds": ["java-types", "java-statements", "java-arrays-strings", "java-basics-syntax"],
+          "type": ["mc", "multi-mc"],
+          "count": 6
+        }
+      },
+      {
+        "id": "jb2",
+        "label": "Aufgabe 2",
+        "title": "Ausgabe vorhersagen",
+        "points": 8,
+        "instructions": "Was gibt das Programm aus? Achte auf Ganzzahldivision, Überlauf und Typumwandlung.",
+        "blueprint": {
+          "topicIds": ["java-types", "java-statements", "java-arrays-strings"],
+          "type": "predict-output",
+          "count": 4,
+          "minDifficulty": 2
+        }
+      },
+      {
+        "id": "jb3",
+        "label": "Aufgabe 3",
+        "title": "Fehlersuche",
+        "points": 8,
+        "instructions": "Benenne jeden Fehler und gib die Korrektur an.",
+        "blueprint": {
+          "topicIds": ["java-types", "java-statements", "java-arrays-strings", "java-basics-syntax"],
+          "type": "find-errors",
+          "count": 2,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "jb4",
+        "label": "Aufgabe 4",
+        "title": "Code-Lücken ausfüllen",
+        "points": 10,
+        "instructions": "Ergänze die Lücken, sodass eine übersetzbare Klasse entsteht.",
+        "blueprint": {
+          "topicIds": ["java-arrays-strings", "java-statements", "java-basics-syntax"],
+          "type": "fill-gaps",
+          "count": 2,
+          "minDifficulty": 2
+        }
+      },
+      {
+        "id": "jb5",
+        "label": "Aufgabe 5",
+        "title": "Programmieren mit Arrays und Strings",
+        "points": 10,
+        "instructions": "Vollständige, übersetzbare Klasse mit `main`.",
+        "blueprint": {
+          "topicIds": ["java-arrays-strings"],
+          "type": "code",
+          "count": 1,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "jb6",
+        "label": "Aufgabe 6",
+        "title": "Klasse mit Kapselung schreiben",
+        "points": 12,
+        "instructions": "Felder privat, Zugriff nur über Methoden. `toString` nicht vergessen.",
+        "blueprint": {
+          "topicIds": ["java-objects"],
+          "type": "code",
+          "count": 1,
+          "minDifficulty": 3
+        }
+      }
+    ]
+  },
+  {
+    "id": "generiert-java-c",
+    "lang": "java",
+    "title": "Simulierte Klausur Java — Variante C",
+    "subtitle": "Schwerpunkt Objektorientierung: UML, Vererbung und Ausnahmen",
+    "minutes": 60,
+    "totalPoints": 54,
+    "origin": "generated",
+    "note": "Kapitel 6 bis 8: Klassen und Objekte, Vererbung und Polymorphie, Ausnahmebehandlung — dazu das Lesen und Schreiben von UML-Klassendiagrammen.",
+    "tasks": [
+      {
+        "id": "jc1",
+        "label": "Aufgabe 1",
+        "title": "UML-Klassendiagramm",
+        "points": 8,
+        "instructions": "Diagramm lesen beziehungsweise aus dem Code ableiten. Sichtbarkeiten und Beziehungen zählen.",
+        "blueprint": {
+          "topicIds": ["java-uml"],
+          "type": ["uml", "short-answer"],
+          "count": 2
+        }
+      },
+      {
+        "id": "jc2",
+        "label": "Aufgabe 2",
+        "title": "Theorie (Multiple Choice)",
+        "points": 4,
+        "instructions": "Vier Fragen zu Objektorientierung und Ausnahmen.",
+        "blueprint": {
+          "topicIds": ["java-objects", "java-inheritance", "java-exceptions"],
+          "type": ["mc", "multi-mc"],
+          "count": 4
+        }
+      },
+      {
+        "id": "jc3",
+        "label": "Aufgabe 3",
+        "title": "Ausgabe vorhersagen",
+        "points": 10,
+        "instructions": "Dynamische Bindung, Konstruktorreihenfolge und die Reihenfolge von catch und finally beachten.",
+        "blueprint": {
+          "topicIds": ["java-inheritance", "java-objects", "java-exceptions"],
+          "type": "predict-output",
+          "count": 5,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "jc4",
+        "label": "Aufgabe 4",
+        "title": "Ausnahmebehandlung",
+        "points": 10,
+        "instructions": "Eigene Ausnahmeklasse, throw, throws und try-catch-finally.",
+        "blueprint": {
+          "topicIds": ["java-exceptions"],
+          "type": ["fill-gaps", "code"],
+          "count": 2,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "jc5",
+        "label": "Aufgabe 5",
+        "title": "Klasse und Interface",
+        "points": 10,
+        "instructions": "Schnittstelle implementieren und die geforderten Methoden ausprogrammieren.",
+        "blueprint": {
+          "topicIds": ["java-objects", "java-uml"],
+          "type": "code",
+          "count": 1,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "jc6",
+        "label": "Aufgabe 6",
+        "title": "Vererbung und Polymorphie",
+        "points": 12,
+        "instructions": "Unterklasse schreiben und Polymorphie über ein Array des Obertyps zeigen.",
+        "blueprint": {
+          "topicIds": ["java-inheritance"],
+          "type": "code",
+          "count": 1,
+          "minDifficulty": 4
+        }
+      }
+    ]
+  }
+]

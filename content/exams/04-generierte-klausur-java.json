@@ -1,0 +1,64 @@
+{
+  "id": "generiert-java-a",
+  "lang": "java",
+  "title": "Simulierte Klausur Java — Variante A",
+  "subtitle": "Gleicher Bauplan wie das Original, aber mit anderen Aufgaben aus der Bank",
+  "minutes": 60,
+  "totalPoints": 54,
+  "origin": "generated",
+  "note": "Die Aufgaben werden nach dem Bauplan der Originalklausur gezogen: Theorie & Fehlersuche, Ausgabe vorhersagen, Code-Lücken, Klasse schreiben und Vererbung.",
+  "tasks": [
+    {
+      "id": "gj1",
+      "label": "Aufgabe 1a",
+      "title": "Theorie (Multiple Choice)",
+      "points": 6,
+      "instructions": "Sechs Fragen, jeweils genau eine richtige Antwort.",
+      "blueprint": {
+        "topicIds": ["java-types", "java-objects", "java-inheritance", "java-arrays-strings", "java-basics-syntax", "java-exceptions"],
+        "type": "mc",
+        "count": 6
+      }
+    },
+    {
+      "id": "gj1b",
+      "label": "Aufgabe 1b",
+      "title": "Fehlersuche",
+      "points": 6,
+      "instructions": "Benenne jeden Fehler und gib die Korrektur an.",
+      "blueprint": { "topicIds": ["java-types", "java-objects", "java-statements"], "type": "find-errors", "count": 1, "minDifficulty": 3 }
+    },
+    {
+      "id": "gj2",
+      "label": "Aufgabe 2",
+      "title": "Ausgabe vorhersagen",
+      "points": 4,
+      "instructions": "Was gibt das Programm auf der Konsole aus?",
+      "blueprint": { "topicIds": ["java-statements", "java-arrays-strings", "java-objects"], "type": "predict-output", "count": 2, "minDifficulty": 3 }
+    },
+    {
+      "id": "gj3",
+      "label": "Aufgabe 3",
+      "title": "Code-Lücken ausfüllen",
+      "points": 12,
+      "instructions": "Ergänze die Lücken, sodass eine lauffähige Klasse entsteht.",
+      "blueprint": { "topicIds": ["java-objects", "java-inheritance"], "type": "fill-gaps", "count": 2, "minDifficulty": 3 }
+    },
+    {
+      "id": "gj4",
+      "label": "Aufgabe 4",
+      "title": "Klasse mit Methoden schreiben",
+      "points": 12,
+      "instructions": "Schreibe eine vollständige, kompilierbare Klasse inklusive `main`.",
+      "blueprint": { "topicIds": ["java-objects", "java-arrays-strings"], "type": "code", "count": 1, "minDifficulty": 3 }
+    },
+    {
+      "id": "gj5",
+      "label": "Aufgabe 5",
+      "title": "Vererbung & Polymorphie",
+      "points": 14,
+      "instructions": "Unterklasse schreiben und Polymorphie über ein Array des Obertyps zeigen.",
+      "blueprint": { "topicIds": ["java-inheritance"], "type": "code", "count": 1, "minDifficulty": 4 }
+    }
+  ]
+}

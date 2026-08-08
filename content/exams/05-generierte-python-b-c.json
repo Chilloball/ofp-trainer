@@ -1,0 +1,167 @@
+[
+  {
+    "id": "generiert-python-b",
+    "lang": "python",
+    "title": "Simulierte Klausur Python — Variante B",
+    "subtitle": "Schwerpunkt auf der ersten Kurshälfte: Strings, Listen und Kontrollfluss",
+    "minutes": 60,
+    "totalPoints": 49,
+    "origin": "generated",
+    "note": "Die Klausur enthält erfahrungsgemäß nicht nur funktionale Aufgaben. Diese Variante prüft die Grundlagen, auf denen alles andere aufbaut: Datentypen, Zeichenketten, Listen und Verzweigungen.",
+    "tasks": [
+      {
+        "id": "pb1",
+        "label": "Aufgabe 1",
+        "title": "Kurzfragen zu den Grundlagen",
+        "points": 8,
+        "instructions": "Vier Kurzfragen zu je 2 Punkten. Antworte knapp und mit den passenden Fachbegriffen.",
+        "blueprint": {
+          "topicIds": ["py-basics", "py-strings", "py-lists", "py-control"],
+          "type": "short-answer",
+          "count": 4
+        }
+      },
+      {
+        "id": "pb2",
+        "label": "Aufgabe 2",
+        "title": "Was gibt der Code aus?",
+        "points": 10,
+        "instructions": "Gib jeweils die vollständige Ausgabe an — oder den Fehlertyp, falls das Programm abbricht.",
+        "blueprint": {
+          "topicIds": ["py-strings", "py-lists", "py-control", "py-basics"],
+          "type": "predict-output",
+          "count": 5,
+          "minDifficulty": 2
+        }
+      },
+      {
+        "id": "pb3",
+        "label": "Aufgabe 3",
+        "title": "Lücken im Code schließen",
+        "points": 6,
+        "instructions": "Ergänze die fehlenden Ausdrücke, sodass das Programm die beschriebene Ausgabe erzeugt.",
+        "blueprint": {
+          "topicIds": ["py-functions", "py-lists", "py-strings"],
+          "type": "fill-gaps",
+          "count": 3,
+          "minDifficulty": 2
+        }
+      },
+      {
+        "id": "pb4",
+        "label": "Aufgabe 4",
+        "title": "Programmieren mit Zeichenketten und Listen",
+        "points": 12,
+        "instructions": "Schreibe jeweils eine vollständige Funktion. Achte auf die Rückgabewerte — `print` allein reicht nicht.",
+        "blueprint": {
+          "topicIds": ["py-strings", "py-lists"],
+          "type": "code",
+          "count": 3,
+          "minDifficulty": 2
+        }
+      },
+      {
+        "id": "pb5",
+        "label": "Aufgabe 5",
+        "title": "Rekursion",
+        "points": 8,
+        "instructions": "Ausschließlich rekursiv lösen, keine Schleifen.",
+        "blueprint": {
+          "topicIds": ["py-recursion"],
+          "type": "code",
+          "count": 2,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "pb6",
+        "label": "Aufgabe 6",
+        "title": "Fehlersuche",
+        "points": 5,
+        "instructions": "Benenne jeden Fehler und gib die Korrektur an.",
+        "blueprint": {
+          "topicIds": ["py-control", "py-functions", "py-lists", "py-strings"],
+          "type": "find-errors",
+          "count": 1,
+          "minDifficulty": 3
+        }
+      }
+    ]
+  },
+  {
+    "id": "generiert-python-c",
+    "lang": "python",
+    "title": "Simulierte Klausur Python — Variante C",
+    "subtitle": "Schwerpunkt funktionale Programmierung — der Teil mit dem größten Punktegewicht",
+    "minutes": 60,
+    "totalPoints": 49,
+    "origin": "generated",
+    "note": "In der Originalklausur entfällt der größte Punkteblock auf map/filter/reduce, Rekursion und Currying. Diese Variante geht genau dort in die Tiefe.",
+    "tasks": [
+      {
+        "id": "pc1",
+        "label": "Aufgabe 1",
+        "title": "Theorie zur funktionalen Programmierung",
+        "points": 6,
+        "instructions": "Sechs Fragen, jeweils genau eine richtige Antwort.",
+        "blueprint": {
+          "topicIds": ["py-funcprog", "py-mfr", "py-recursion", "py-currying-decorators", "py-scope-mutability"],
+          "type": ["mc", "multi-mc"],
+          "count": 6
+        }
+      },
+      {
+        "id": "pc2",
+        "label": "Aufgabe 2",
+        "title": "Ausgabe vorhersagen",
+        "points": 10,
+        "instructions": "Was gibt der Code aus? Achte besonders auf Auswertungsreihenfolge und Closures.",
+        "blueprint": {
+          "topicIds": ["py-funcprog", "py-mfr", "py-currying-decorators", "py-scope-mutability"],
+          "type": "predict-output",
+          "count": 5,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "pc3",
+        "label": "Aufgabe 3",
+        "title": "map, filter und reduce",
+        "points": 12,
+        "instructions": "Keine `for`- oder `while`-Schleifen, keine List Comprehensions. `lambda` ist erlaubt.",
+        "blueprint": {
+          "topicIds": ["py-mfr"],
+          "type": "code",
+          "count": 4,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "pc4",
+        "label": "Aufgabe 4",
+        "title": "Currying und Decorators",
+        "points": 9,
+        "instructions": "Funktionen, die Funktionen zurückgeben — auf die richtige Verschachtelung achten.",
+        "blueprint": {
+          "topicIds": ["py-currying-decorators"],
+          "type": "code",
+          "count": 3,
+          "minDifficulty": 3
+        }
+      },
+      {
+        "id": "pc5",
+        "label": "Aufgabe 5",
+        "title": "Rekursion",
+        "points": 12,
+        "instructions": "Ausschließlich rekursiv. Denk zuerst an den Basisfall.",
+        "blueprint": {
+          "topicIds": ["py-recursion"],
+          "type": "code",
+          "count": 3,
+          "minDifficulty": 3
+        }
+      }
+    ]
+  }
+]

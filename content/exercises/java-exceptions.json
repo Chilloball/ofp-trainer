@@ -1,0 +1,1225 @@
+{
+ "topicId": "java-exceptions",
+ "exercises": [
+  {
+   "id": "java-exceptions-001",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Die Wurzel der Exception-Hierarchie",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nWelche Klasse steht in der Java-Exception-Hierarchie direkt unter `Object` und ist die gemeinsame Oberklasse von `Error` und `Exception`?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`Exception`",
+     "correct": false,
+     "why": "`Exception` ist selbst eine Unterklasse von `Throwable` und hat `Error` NICHT unter sich."
+    },
+    {
+     "id": "b",
+     "text": "`Throwable`",
+     "correct": true,
+     "why": "Die Kette lautet `Object` -> `Throwable` -> {`Error`, `Exception`} -> `RuntimeException`. Nur Objekte vom Typ `Throwable` (oder Untertypen) dürfen mit `throw` geworfen und in `catch` aufgefangen werden."
+    },
+    {
+     "id": "c",
+     "text": "`RuntimeException`",
+     "correct": false,
+     "why": "`RuntimeException` liegt noch eine Ebene tiefer: sie ist eine Unterklasse von `Exception`."
+    },
+    {
+     "id": "d",
+     "text": "`Error`",
+     "correct": false,
+     "why": "`Error` ist ein Geschwisterknoten von `Exception`, kein gemeinsamer Vorfahr. `Error` steht für Probleme in der JVM und sollte nicht gefangen werden."
+    }
+   ],
+   "solution": "b) `Throwable`",
+   "explanation": "Die Hierarchie aus dem Skript (S. 252) sieht so aus:\n\n```\nObject\n  └── Throwable\n        ├── Error            (Probleme in der JVM  -> sollten NICHT gefangen werden)\n        └── Exception        (Probleme im Java-Code -> koennen gefangen werden)\n              └── RuntimeException  (unchecked -> muessen nicht behandelt werden)\n```\n\n`Throwable` ist die einzige Klasse, deren Objekte der `throw`-Anweisung übergeben werden dürfen; deshalb steht sie ganz oben. Der typische Denkfehler ist, `Exception` für die Wurzel zu halten - dann übersieht man, dass `catch (Exception e)` gerade **keine** `Error`-Objekte (z. B. `OutOfMemoryError`, `StackOverflowError`) fängt. Merkregel: *Throwable* ist der Stamm, *Error* und *Exception* sind die beiden Äste, *RuntimeException* ist ein Zweig am Exception-Ast.",
+   "hints": [
+    "Überlegen Sie, welchen Typ der Ausdruck hinter `throw` haben muss - das schränkt die Kandidaten stark ein.",
+    "`Error` und `Exception` sind Geschwister. Gesucht ist ihr gemeinsamer Vater.",
+    "Der Name der Klasse bedeutet wörtlich 'werfbar'."
+   ],
+   "pitfalls": [
+    "`Exception` für die Wurzel halten und daher glauben, `catch (Exception e)` fange wirklich alles ab.",
+    "`Error` und `Exception` als Ober-/Unterklasse-Paar verwechseln - sie liegen auf derselben Ebene."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 252,
+     "label": "8. Ausnahmebehandlung - Exceptions: Objekthierarchie"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 374,
+     "label": "Überblick: 8. Ausnahmebehandlung"
+    }
+   ],
+   "tags": [
+    "hierarchie",
+    "throwable",
+    "theorie",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-exceptions-002",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "try/catch bei ganzzahliger Division durch 0",
+   "prompt": "Was gibt dieses Programm auf der Konsole aus?",
+   "code": "class Ex002 {\n  public static void main(String[] args) {\n    int a = 12, b = 0;\n    try {\n      System.out.println(\"Start\");\n      System.out.println(\"a/b=\" + (a / b));\n      System.out.println(\"Nach der Division\");\n    }\n    catch (ArithmeticException e) {\n      System.out.println(\"Problem: \" + e.getMessage());\n    }\n    System.out.println(\"Ende\");\n  }\n}",
+   "expectedOutput": "Start\nProblem: / by zero\nEnde",
+   "solution": "Start\nProblem: / by zero\nEnde",
+   "explanation": "Bei einer **ganzzahligen** Division durch 0 wirft die JVM implizit eine `ArithmeticException` mit der Meldung `/ by zero`. Entscheidend ist der Kontrollfluss:\n\n1. `\"Start\"` wird normal gedruckt.\n2. Beim Auswerten von `a / b` entsteht die Exception. Der **restliche try-Block wird sofort verlassen** - `\"Nach der Division\"` wird nie erreicht. Auch der begonnene String `\"a/b=\"` wird nicht ausgegeben, weil `println` gar nicht mehr aufgerufen wird.\n3. Der erste passende `catch`-Block läuft; `e.getMessage()` liefert genau den Text, den die JVM in das Exception-Objekt gelegt hat: `/ by zero` (englisch, ohne Klassennamen!).\n4. Nach dem letzten `catch`-Block geht es normal weiter: `\"Ende\"`.\n\nMerkregel: `getMessage()` liefert **nur** den Meldungstext, `System.out.println(e)` würde dagegen `java.lang.ArithmeticException: / by zero` ausgeben.",
+   "hints": [
+    "Zählen Sie zuerst, welche Zeilen im try-Block überhaupt noch erreicht werden.",
+    "Wird der Text `a/b=` gedruckt, obwohl der String schon zusammengebaut wird? Überlegen Sie, wann `println` tatsächlich aufgerufen wird.",
+    "`getMessage()` einer implizit geworfenen `ArithmeticException` bei `x/0` ist immer derselbe kurze englische Text."
+   ],
+   "pitfalls": [
+    "Glauben, der try-Block laufe nach dem Fehler an der nächsten Zeile weiter - er wird sofort verlassen.",
+    "`a/b=` mit ausgeben, obwohl der `println`-Aufruf gar nicht mehr stattfindet.",
+    "`getMessage()` mit `toString()` verwechseln und `java.lang.ArithmeticException: / by zero` schreiben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 250,
+     "label": "8. Ausnahmebehandlung - try/catch Beispiel ExceptTest"
+    },
+    {
+     "file": "08_Ausnahmebehandlung/ExceptTest.java",
+     "page": 0,
+     "label": "Beispielcode des Dozenten"
+    }
+   ],
+   "tags": [
+    "try-catch",
+    "arithmeticexception",
+    "getmessage",
+    "kontrollfluss"
+   ]
+  },
+  {
+   "id": "java-exceptions-003",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 4,
+   "examStyle": true,
+   "title": "Division durch 0: int gegen double",
+   "prompt": "Was gibt dieses Programm aus? Achten Sie genau auf die Datentypen.",
+   "code": "class Ex003 {\n  public static void main(String[] args) {\n    double x = 5.0, y = 0.0;\n    int    a = 5,   b = 0;\n    try {\n      System.out.println(x / y);\n      System.out.println(0.0 / 0.0);\n      System.out.println(a / b);\n      System.out.println(\"fertig\");\n    }\n    catch (ArithmeticException e) {\n      System.out.println(\"Fehler: \" + e.getMessage());\n    }\n  }\n}",
+   "expectedOutput": "Infinity\nNaN\nFehler: / by zero",
+   "solution": "Infinity\nNaN\nFehler: / by zero",
+   "explanation": "Das ist die klassischste Falle des Kapitels: **Division durch 0 wirft nur bei Ganzzahlen eine Exception.**\n\n- `5.0 / 0.0` -> `Infinity`. Gleitkommazahlen folgen dem IEEE-754-Standard, der die Sonderwerte `Infinity`, `-Infinity` und `NaN` kennt. Es gibt keinen Fehler.\n- `0.0 / 0.0` -> `NaN` ('not a number'), ebenfalls ohne Exception.\n- `5 / 0` mit zwei `int`-Operanden -> `ArithmeticException: / by zero`. Der Ganzzahlbereich kennt keinen Wert 'unendlich', also bleibt der JVM nur die Ausnahme.\n\nDadurch wird der try-Block bei der dritten Zeile verlassen, `\"fertig\"` wird nie gedruckt, und der catch-Block gibt `Fehler: / by zero` aus.\n\nMerkregel: *Ein einziger `double`-Operand rettet vor der Exception* - `5 / 0.0` liefert wegen der impliziten Typanpassung ebenfalls `Infinity`. Dasselbe gilt übrigens für den Modulo-Operator: `5 % 0` wirft, `5.0 % 0.0` liefert `NaN`.",
+   "hints": [
+    "Der Skriptsatz lautet: 'ArithmeticException: z.B. 1/0 (ganzzahlig)'. Was bedeutet das Wort in Klammern?",
+    "Gleitkommazahlen kennen laut IEEE-754 drei Sonderwerte. Wie heißen sie in Javas Ausgabe?",
+    "Sobald eine der drei Zeilen wirft, ist der Rest des try-Blocks tot."
+   ],
+   "pitfalls": [
+    "Annehmen, jede Division durch 0 werfe eine Exception - bei `double` passiert das nie.",
+    "`Infinity`/`NaN` klein oder anders schreiben; Java gibt exakt `Infinity` und `NaN` aus.",
+    "`fertig` mit ausgeben, obwohl der try-Block vorher verlassen wird."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 253,
+     "label": "Unterklasse RuntimeException - ArithmeticException: z.B. 1/0 (ganzzahlig)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 64,
+     "label": "3. Datentypen - Division (/ und %) durch 0"
+    }
+   ],
+   "tags": [
+    "arithmeticexception",
+    "double",
+    "int-division",
+    "nan",
+    "infinity"
+   ]
+  },
+  {
+   "id": "java-exceptions-004",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "throw oder throws?",
+   "prompt": "**Multiple Choice.** Kreuzen Sie genau eine richtige Antwort an.\n\nGegeben ist folgende Methode einer Klasse `Konto` (`KontoException` ist definiert als `class KontoException extends Exception`).\n\nWelche Aussage über `throw` und `throws` ist richtig?",
+   "code": "public void abheben(double betrag) throws KontoException {\n  if (betrag > stand) {\n    throw new KontoException(\"Deckung reicht nicht\");\n  }\n  stand = stand - betrag;\n}",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`throws KontoException` erzeugt das Exception-Objekt, `throw` deklariert es nur.",
+     "correct": false,
+     "why": "Genau umgekehrt. `throws` ist eine reine Deklaration in der Signatur, `throw` erzeugt bzw. wirft zur Laufzeit ein konkretes Objekt."
+    },
+    {
+     "id": "b",
+     "text": "`throw` löst zur Laufzeit ein konkretes Exception-Objekt aus; `throws` in der Signatur deklariert, dass die Methode diese Exception an ihren Aufrufer weitergeben kann.",
+     "correct": true,
+     "why": "Richtig. `throw new KontoException(...)` erzeugt das Objekt und bricht die Methode ab; `throws KontoException` ist die Zusicherung an den Compiler und an alle Aufrufer, dass diese checked Exception herauskommen kann."
+    },
+    {
+     "id": "c",
+     "text": "Das `throws KontoException` darf weggelassen werden, weil `KontoException` von `Exception` erbt.",
+     "correct": false,
+     "why": "Falsch - gerade weil sie direkt von `Exception` (und nicht von `RuntimeException`) erbt, ist sie *checked* und MUSS deklariert oder gefangen werden. Ohne `throws` meldet javac: *unreported exception KontoException; must be caught or declared to be thrown*."
+    },
+    {
+     "id": "d",
+     "text": "`throw` darf nur innerhalb eines `catch`-Blocks stehen.",
+     "correct": false,
+     "why": "Falsch. `throw` darf an jeder Stelle stehen. Im `catch`-Block ist es lediglich eine häufige Anwendung, um eine Exception nach lokaler Behandlung an den Aufrufer weiterzugeben."
+    }
+   ],
+   "solution": "b)",
+   "explanation": "`throw` und `throws` unterscheiden sich in **Zeitpunkt und Zweck**:\n\n- `throw` ist eine **Anweisung** im Methodenrumpf. Sie erzeugt (meist mit `new`) ein Throwable-Objekt, bricht die Methode sofort ab und übergibt das Objekt an die Laufzeitumgebung.\n- `throws` ist ein Teil der **Methodensignatur**. Es sagt nur: *diese Methode kann so eine Exception nach außen geben*. Mehrere Typen werden mit Komma getrennt (`... throws AnmeldungsException, OtherException`).\n\nDas Skript formuliert die Pflicht so: *'Jede Methode muss deklarieren, welche Exceptions sie werfen kann (ausgenommen Error und RuntimeException)'*. Merkregel: **throw = Aktion (Einzahl, ein Objekt), throws = Ankündigung (Plural möglich)**.",
+   "hints": [
+    "Eines der beiden Schlüsselwörter steht in der Signatur, das andere im Rumpf.",
+    "Fragen Sie sich: Welches Wort steht direkt vor einem `new`?",
+    "Überlegen Sie, was der Compiler meldet, wenn `throws` fehlt und die Exception checked ist."
+   ],
+   "pitfalls": [
+    "`throw`/`throws` beim Schreiben verwechseln (fehlendes 's' in der Signatur ist ein sehr häufiger Klausurfehler).",
+    "Glauben, `throws` fange die Exception ab - es reicht sie nur weiter."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 256,
+     "label": "Werfen (throw) von Exceptions"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 257,
+     "label": "Behandlung von Exceptions - throws in der Signatur"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 374,
+     "label": "Überblick: 8. Ausnahmebehandlung"
+    }
+   ],
+   "tags": [
+    "throw",
+    "throws",
+    "checked",
+    "theorie",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-exceptions-005",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ausgabereihenfolge bei try/catch/finally",
+   "prompt": "Was gibt dieses Programm aus? Achten Sie auf die Reihenfolge der acht Zeilen.",
+   "code": "class Ex004 {\n  public static void test(int n) {\n    try {\n      System.out.println(\"try \" + n);\n      int r = 10 / n;\n      System.out.println(\"ok \" + r);\n    }\n    catch (ArithmeticException e) {\n      System.out.println(\"catch \" + n);\n    }\n    finally {\n      System.out.println(\"finally \" + n);\n    }\n    System.out.println(\"danach \" + n);\n  }\n  public static void main(String[] args) {\n    test(2);\n    test(0);\n  }\n}",
+   "expectedOutput": "try 2\nok 5\nfinally 2\ndanach 2\ntry 0\ncatch 0\nfinally 0\ndanach 0",
+   "solution": "try 2\nok 5\nfinally 2\ndanach 2\ntry 0\ncatch 0\nfinally 0\ndanach 0",
+   "explanation": "Der Aufruf `test(2)` läuft **fehlerfrei**: `try 2`, dann `10/2 = 5` also `ok 5`. Der `catch`-Block wird übersprungen, `finally` läuft **trotzdem**, danach die Zeile hinter dem gesamten Konstrukt.\n\nDer Aufruf `test(0)` wirft bei `10 / 0` eine `ArithmeticException`: `ok 0` wird nie gedruckt, stattdessen läuft der passende `catch`-Block (`catch 0`), danach `finally 0`, und weil die Exception behandelt wurde, geht die Methode ganz normal weiter mit `danach 0`.\n\nKernaussage des Skripts (S. 260): Der `finally`-Block wird **immer** nach Verlassen des try-Blocks ausgeführt - egal ob normal beendet, per `return` verlassen, per `catch` behandelt oder als Exception weitergegeben. Merkregel: **try -> (catch) -> finally -> weiter** - `finally` steht nie am Anfang und nie zwischen try und catch.",
+   "hints": [
+    "Rechnen Sie zuerst `10/2` und `10/0` getrennt aus und markieren Sie, wo der try-Block jeweils endet.",
+    "Fragen Sie sich für jeden der beiden Aufrufe: Läuft der catch-Block? Läuft der finally-Block?",
+    "Nach einem *behandelten* Fehler geht die Methode ganz normal weiter - die Zeile hinter finally wird also zweimal erreicht."
+   ],
+   "pitfalls": [
+    "`finally` nur beim Fehlerfall erwarten - es läuft auch im Erfolgsfall.",
+    "`danach 0` weglassen, weil man glaubt, nach einer Exception werde die Methode abgebrochen. Sie wurde aber gefangen.",
+    "Die beiden Durchläufe vermischen: erst alle vier Zeilen von `test(2)`, dann alle vier von `test(0)`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 260,
+     "label": "finally-Block"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 259,
+     "label": "Behandlung von Exceptions"
+    }
+   ],
+   "tags": [
+    "finally",
+    "try-catch",
+    "kontrollfluss",
+    "reihenfolge"
+   ]
+  },
+  {
+   "id": "java-exceptions-006",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Checked oder unchecked?",
+   "prompt": "**Mehrfachauswahl.** Kreuzen Sie **alle** Exception-Klassen an, die *unchecked* sind, die also weder mit `try/catch` behandelt noch mit `throws` deklariert werden müssen.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`ArithmeticException`",
+     "correct": true,
+     "why": "Unterklasse von `RuntimeException` -> unchecked."
+    },
+    {
+     "id": "b",
+     "text": "`java.io.IOException`",
+     "correct": false,
+     "why": "Direkte Unterklasse von `Exception`, aber NICHT von `RuntimeException` -> checked. Muss gefangen oder deklariert werden."
+    },
+    {
+     "id": "c",
+     "text": "`NullPointerException`",
+     "correct": true,
+     "why": "Unterklasse von `RuntimeException` -> unchecked."
+    },
+    {
+     "id": "d",
+     "text": "`NumberFormatException`",
+     "correct": true,
+     "why": "`NumberFormatException` -> `IllegalArgumentException` -> `RuntimeException` -> unchecked. Deshalb zwingt `Integer.parseInt` niemanden zu einem try/catch."
+    },
+    {
+     "id": "e",
+     "text": "`java.io.FileNotFoundException`",
+     "correct": false,
+     "why": "Unterklasse von `IOException` -> checked. Genau deshalb muss `new Scanner(new File(...))` in ein try/catch."
+    },
+    {
+     "id": "f",
+     "text": "`ArrayIndexOutOfBoundsException`",
+     "correct": true,
+     "why": "`ArrayIndexOutOfBoundsException` -> `IndexOutOfBoundsException` -> `RuntimeException` -> unchecked."
+    },
+    {
+     "id": "g",
+     "text": "`InterruptedException`",
+     "correct": false,
+     "why": "Direkte Unterklasse von `Exception` -> checked. Deshalb steht bei `Thread.sleep(...)` immer ein try/catch oder ein `throws`."
+    }
+   ],
+   "solution": "a) `ArithmeticException`, c) `NullPointerException`, d) `NumberFormatException`, f) `ArrayIndexOutOfBoundsException`",
+   "explanation": "Die Regel ist rein an der Vererbung ablesbar:\n\n- **unchecked** = alles unterhalb von `RuntimeException` (plus alles unterhalb von `Error`). Diese Fehler entstehen laut Skript *'meist durch Fehler im Programmcode'* und müssen daher nicht behandelt werden.\n- **checked** = alles andere unterhalb von `Exception`, z. B. `IOException`, `FileNotFoundException`, `InterruptedException` und **jede selbst geschriebene Klasse, die direkt von `Exception` erbt**.\n\nPraktischer Test in der Klausur: *Zwingt mich der Compiler zu try/catch oder throws?* Wenn ja -> checked. `Integer.parseInt(\"abc\")` compiliert ohne try/catch, obwohl es zur Laufzeit knallt -> unchecked. `new Scanner(new File(\"x.txt\"))` compiliert **nicht** ohne Behandlung -> checked.\n\nMerkregel: **Runtime = unchecked.** Wer eine eigene Exception unchecked haben will, muss `extends RuntimeException` schreiben; `extends Exception` ergibt immer eine checked Exception.",
+   "hints": [
+    "Zeichnen Sie für jede Klasse die Kette bis `Throwable` auf.",
+    "Nur ein einziger Knoten in der Kette entscheidet: Kommt `RuntimeException` darin vor?",
+    "Alles aus dem Paket `java.io` in dieser Liste ist checked."
+   ],
+   "pitfalls": [
+    "`NumberFormatException` für checked halten, weil sie beim Einlesen auftritt - sie ist über `IllegalArgumentException` eine RuntimeException.",
+    "Vergessen, dass eigene Exceptions mit `extends Exception` checked sind und deshalb überall `throws` brauchen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 253,
+     "label": "Unterklasse RuntimeException - 'Unchecked' vom Java Compiler"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 252,
+     "label": "Exceptions: Objekthierarchie"
+    }
+   ],
+   "tags": [
+    "checked",
+    "unchecked",
+    "runtimeexception",
+    "hierarchie",
+    "multi-mc"
+   ]
+  },
+  {
+   "id": "java-exceptions-007",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Mehrere catch-Blöcke in einer Schleife",
+   "prompt": "Was gibt dieses Programm aus? Beachten Sie die Schleifenbedingung genau.",
+   "code": "class Ex007 {\n  public static void main(String[] args) {\n    int[] werte  = {4, 8, 15};\n    int[] teiler = {2, 0, 5};\n    for (int i = 0; i <= 3; i++) {\n      try {\n        System.out.println(werte[i] / teiler[i]);\n      }\n      catch (ArithmeticException e) {\n        System.out.println(\"A: \" + e.getMessage());\n      }\n      catch (ArrayIndexOutOfBoundsException e) {\n        System.out.println(\"B: \" + e.getMessage());\n      }\n    }\n    System.out.println(\"Ende\");\n  }\n}",
+   "expectedOutput": "2\nA: / by zero\n3\nB: Index 3 out of bounds for length 3\nEnde",
+   "solution": "2\nA: / by zero\n3\nB: Index 3 out of bounds for length 3\nEnde",
+   "explanation": "Die Schleife läuft wegen `i <= 3` **viermal** (i = 0,1,2,3), obwohl die Arrays nur die Länge 3 haben - das ist die eingebaute Falle.\n\n| i | Ausdruck | Ergebnis |\n|---|---|---|\n| 0 | `4 / 2` | `2` |\n| 1 | `8 / 0` | `ArithmeticException` -> `A: / by zero` |\n| 2 | `15 / 5` | `3` |\n| 3 | `werte[3]` | `ArrayIndexOutOfBoundsException` -> `B: Index 3 out of bounds for length 3` |\n\nZwei Punkte sind entscheidend:\n1. Weil `try/catch` **innerhalb** der Schleife steht, wird jede Exception einzeln behandelt und die Schleife läuft danach weiter. Stünde das try/catch außen herum, wäre nach dem ersten Fehler Schluss.\n2. Es wird immer nur **ein** catch-Block ausgeführt, nämlich der erste passende. Die beiden Typen sind Geschwister (beide direkt unter `RuntimeException` bzw. über `IndexOutOfBoundsException`), daher ist ihre Reihenfolge hier frei wählbar.\n\nMerkregel: Der genaue Wortlaut der JVM-Meldung lautet seit Java 9 `Index <i> out of bounds for length <n>`.",
+   "hints": [
+    "Wie oft läuft die Schleife bei `i <= 3` wirklich?",
+    "Legen Sie eine Tabelle mit i, `werte[i]`, `teiler[i]` und Ergebnis an.",
+    "Überlegen Sie für i = 3, welcher der beiden Zugriffe zuerst schiefgeht: die Array-Indizierung oder die Division."
+   ],
+   "pitfalls": [
+    "`i < 3` lesen und die vierte Runde übersehen.",
+    "Annehmen, nach der ersten Exception sei die Schleife beendet - das try/catch liegt im Schleifenrumpf.",
+    "Beide catch-Blöcke für denselben Fehler ausführen; es läuft immer nur der erste passende."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 258,
+     "label": "Behandlung von Exceptions - mehrere catch-Blöcke"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 259,
+     "label": "Erster 'passender' catch-Block wird ausgeführt"
+    }
+   ],
+   "tags": [
+    "multi-catch",
+    "arrayindexoutofbounds",
+    "schleife",
+    "kontrollfluss"
+   ]
+  },
+  {
+   "id": "java-exceptions-008",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Eigene Exception-Klasse: Lagerverwaltung",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass eine lauffähige Klasse entsteht (je 2 P.). Das Programm soll folgende Ausgabe erzeugen:\n\n```\nentnommen aus Fach 0\nFach ist leer (Nr. 1)\nLagerlauf beendet\n```",
+   "code": "class LagerException ____(1)____ Exception {\n  private int fachNr = -1;\n\n  public LagerException() {}\n  public LagerException(String s) { ____(2)____(s); }\n  public LagerException(String s, int fachNr) { super(s); this.fachNr = fachNr; }\n\n  public int getFachNr() { return fachNr; }\n}\n\nclass Lager {\n  private int[] bestand = {5, 0, 7};\n\n  public void entnehmen(int fach) ____(3)____ LagerException {\n    if (bestand[fach] == 0) {\n      ____(4)____ new LagerException(\"Fach ist leer\", fach);\n    }\n    bestand[fach]--;\n    System.out.println(\"entnommen aus Fach \" + fach);\n  }\n\n  public static void main(String[] args) {\n    Lager l = new Lager();\n    try {\n      l.entnehmen(0);\n      l.entnehmen(1);\n      l.entnehmen(2);\n    }\n    ____(5)____ (LagerException e) {\n      System.out.println(e.____(6)____() + \" (Nr. \" + e.getFachNr() + \")\");\n    }\n    finally {\n      System.out.println(\"Lagerlauf beendet\");\n    }\n  }\n}",
+   "expectedOutput": "entnommen aus Fach 0\nFach ist leer (Nr. 1)\nLagerlauf beendet",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "extends"
+     ],
+     "explanation": "Eine eigene Exception ist eine **Klasse**, die von `Exception` erbt: `class LagerException extends Exception`. Mit `implements` geht es nicht, `Exception` ist kein Interface. Weil hier direkt von `Exception` (und nicht von `RuntimeException`) geerbt wird, ist `LagerException` *checked*."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "super"
+     ],
+     "explanation": "`super(s)` reicht den Meldungstext an den Konstruktor von `Throwable` weiter. Nur so liefert `getMessage()` später diesen Text. Genau dieses Muster steht im Skript S. 254: `public MyExcept(String s) { super(s); }`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "throws"
+     ],
+     "explanation": "`LagerException` ist checked, also muss die Methode in ihrer Signatur ankündigen, dass sie diese Exception weitergeben kann: `public void entnehmen(int fach) throws LagerException`. Ohne das meldet javac *unreported exception*."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "throw"
+     ],
+     "explanation": "Die Anweisung `throw new LagerException(\"Fach ist leer\", fach);` erzeugt das Objekt und bricht die Methode sofort ab. Merke: `throw` ohne 's' im Rumpf, `throws` mit 's' in der Signatur."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "catch"
+     ],
+     "explanation": "Nach dem try-Block folgt `catch (LagerException e) { ... }`. Der Block ist 'passend', weil das geworfene Objekt genau vom Typ `LagerException` ist."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "getMessage"
+     ],
+     "explanation": "`getMessage()` ist eine geerbte Methode aus `Throwable` und liefert den String zurück, der dem Konstruktor übergeben wurde - hier `\"Fach ist leer\"`. Die Zusatzinformation kommt aus der eigenen Methode `getFachNr()`."
+    }
+   ],
+   "solution": "class LagerException extends Exception {\n  private int fachNr = -1;\n\n  public LagerException() {}\n  public LagerException(String s) { super(s); }\n  public LagerException(String s, int fachNr) { super(s); this.fachNr = fachNr; }\n\n  public int getFachNr() { return fachNr; }\n}\n\nclass Lager {\n  private int[] bestand = {5, 0, 7};\n\n  public void entnehmen(int fach) throws LagerException {\n    if (bestand[fach] == 0) {\n      throw new LagerException(\"Fach ist leer\", fach);\n    }\n    bestand[fach]--;\n    System.out.println(\"entnommen aus Fach \" + fach);\n  }\n\n  public static void main(String[] args) {\n    Lager l = new Lager();\n    try {\n      l.entnehmen(0);\n      l.entnehmen(1);\n      l.entnehmen(2);\n    }\n    catch (LagerException e) {\n      System.out.println(e.getMessage() + \" (Nr. \" + e.getFachNr() + \")\");\n    }\n    finally {\n      System.out.println(\"Lagerlauf beendet\");\n    }\n  }\n}",
+   "explanation": "Die Aufgabe bildet exakt das Muster aus dem Skript (S. 254/255) nach:\n\n1. **Eigene Exception** = Klasse mit `extends Exception`, mit einem parameterlosen und einem String-Konstruktor (`super(s)`), optional mit Zusatzinformation als Attribut.\n2. **Werfen** mit `throw new ...` an der Fehlerstelle; die Methode wird sofort verlassen. Deshalb erscheint `entnommen aus Fach 1` nie - und `entnehmen(2)` wird gar nicht mehr aufgerufen, weil der try-Block schon verlassen ist.\n3. **Deklarieren** mit `throws` in der Signatur, weil die Exception checked ist.\n4. **Fangen** mit `catch (LagerException e)`, Meldung über `e.getMessage()`.\n5. `finally` läuft in jedem Fall und gibt die letzte Zeile aus.\n\nMerkregel für die Klausur: **extends - super - throws - throw - catch - getMessage** ist die vollständige Kette einer eigenen Exception.",
+   "hints": [
+    "Vier der sechs Lücken sind einzelne Java-Schlüsselwörter, eine ist ein Konstruktoraufruf, eine ist ein Methodenname aus `Throwable`.",
+    "Überlegen Sie für Lücke 3 und 4: Welches Wort steht in der Signatur, welches im Rumpf?",
+    "Lücke 6 sucht die geerbte Methode, die den Konstruktor-String zurückliefert - sie steht wortwörtlich im Skript S. 254."
+   ],
+   "pitfalls": [
+    "`implements` statt `extends` schreiben.",
+    "In Lücke 2 `this(s)` statt `super(s)` einsetzen - dann kommt der Text nie bei `Throwable` an und `getMessage()` liefert `null`.",
+    "`throw` und `throws` vertauschen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 254,
+     "label": "Definition eigener Exceptions - MyExcept"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 255,
+     "label": "Definition eigener Exceptions - Vektor.kehrwert"
+    },
+    {
+     "file": "08_Ausnahmebehandlung/MyException.java",
+     "page": 0,
+     "label": "Beispielcode des Dozenten"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3 - Code-Lücken ausfüllen (Format)"
+    }
+   ],
+   "tags": [
+    "eigene-exception",
+    "extends",
+    "throw",
+    "throws",
+    "getmessage",
+    "fill-gaps"
+   ]
+  },
+  {
+   "id": "java-exceptions-009",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: throws, catch-Reihenfolge und return",
+   "prompt": "Der folgende Code enthält **genau 3 Compiler-Fehler**. Benennen Sie sie (mit Zeilennummer) und geben Sie jeweils die Korrektur an.\n\nGeben Sie außerdem an, was das korrigierte Programm ausgibt.",
+   "code": "class Fehlersuche01 {\n  public static int teile(int a, int b) {\n    try {\n      return a / b;\n    }\n    catch (ArithmeticException e) {\n      System.out.println(\"Fehler: \" + e.getMessage());\n    }\n  }\n  public static void pruefe(int wert) {\n    if (wert < 0) {\n      throw new PruefException(\"Wert ist negativ: \" + wert);\n    }\n  }\n  public static void main(String[] args) {\n    System.out.println(teile(10, 0));\n    try {\n      pruefe(-1);\n    }\n    catch (Exception e) {\n      System.out.println(\"allgemeiner Fehler\");\n    }\n    catch (PruefException e) {\n      System.out.println(e.getMessage());\n    }\n    finally {\n      System.out.println(\"fertig\");\n    }\n  }\n}\nclass PruefException extends Exception {\n  public PruefException(String s) { super(s); }\n}",
+   "expectedOutput": "Fehler: / by zero\n0\nWert ist negativ: -1\nfertig",
+   "errors": [
+    {
+     "line": 9,
+     "wrong": "  }        (schliessende Klammer der Methode teile)",
+     "fix": "Vor dieser Klammer, also hinter dem catch-Block, einen Rueckgabewert ergaenzen: `return 0;` (oder `return -1;`).",
+     "why": "javac meldet hier *missing return statement*. `return a / b;` steht nur im try-Block. Wenn der catch-Block läuft, fällt die Ausführung hinten aus der Methode heraus - ohne Rückgabewert. Eine `int`-Methode muss auf **jedem** Pfad etwas zurückgeben."
+    },
+    {
+     "line": 12,
+     "wrong": "throw new PruefException(\"Wert ist negativ: \" + wert);",
+     "fix": "Die Signatur in Zeile 10 ergaenzen: `public static void pruefe(int wert) throws PruefException {`",
+     "why": "javac meldet hier *unreported exception PruefException; must be caught or declared to be thrown*. `PruefException` erbt direkt von `Exception` und ist damit **checked**: Sie muss in der Signatur deklariert oder lokal gefangen werden."
+    },
+    {
+     "line": 23,
+     "wrong": "catch (PruefException e) {   (steht hinter catch (Exception e))",
+     "fix": "Die beiden catch-Bloecke tauschen: erst `catch (PruefException e)`, danach `catch (Exception e)`.",
+     "why": "javac meldet *exception PruefException has already been caught*. `catch (Exception e)` fängt bereits alle Unterklassen ab, deshalb ist der zweite Block unerreichbar. Regel: **spezifisch vor allgemein**."
+    }
+   ],
+   "solution": "class Fehlersuche01 {\n  public static int teile(int a, int b) {\n    try {\n      return a / b;\n    }\n    catch (ArithmeticException e) {\n      System.out.println(\"Fehler: \" + e.getMessage());\n    }\n    return 0;\n  }\n  public static void pruefe(int wert) throws PruefException {\n    if (wert < 0) {\n      throw new PruefException(\"Wert ist negativ: \" + wert);\n    }\n  }\n  public static void main(String[] args) {\n    System.out.println(teile(10, 0));\n    try {\n      pruefe(-1);\n    }\n    catch (PruefException e) {\n      System.out.println(e.getMessage());\n    }\n    catch (Exception e) {\n      System.out.println(\"allgemeiner Fehler\");\n    }\n    finally {\n      System.out.println(\"fertig\");\n    }\n  }\n}\nclass PruefException extends Exception {\n  public PruefException(String s) { super(s); }\n}",
+   "explanation": "Alle drei Fehler sind typische Exception-Fehler:\n\n1. **`missing return statement`** - der einzige `return` steckt im try-Block. Bei einer gefangenen Exception läuft die Methode am Ende ins Leere. Faustregel: In einer Methode mit Rückgabetyp braucht *jeder* Pfad - auch der catch-Pfad - ein `return`.\n2. **checked Exception ohne `throws`** - `class PruefException extends Exception` ist checked. Das Skript (S. 257): *'Jede Methode muss deklarieren, welche Exceptions sie werfen kann (ausgenommen Error und RuntimeException)'*.\n3. **falsche catch-Reihenfolge** - `catch (Exception e)` ist der Allesfänger und muss immer **zuletzt** stehen. Sonst ist jeder folgende, speziellere Block toter Code, und das ist in Java ein Compilerfehler (nicht nur eine Warnung).\n\nAusgabe des korrigierten Programms: `teile(10, 0)` fängt die `ArithmeticException`, druckt `Fehler: / by zero` und liefert `0`. Danach wirft `pruefe(-1)` die eigene Exception, die nun vom passenden ersten catch-Block gefangen wird (`Wert ist negativ: -1`), und `finally` gibt `fertig` aus.",
+   "hints": [
+    "Zwei Fehler haben mit checked Exceptions und der catch-Reihenfolge zu tun, einer mit dem Rückgabewert einer Methode.",
+    "Fragen Sie sich bei `teile`: Was passiert, wenn der catch-Block läuft - welchen Wert liefert die Methode dann?",
+    "Zeichnen Sie die Vererbung: Ist `PruefException` eine Unterklasse von `Exception`? Was bedeutet das für die Reihenfolge der catch-Blöcke?"
+   ],
+   "pitfalls": [
+    "Den fehlenden `return` übersehen, weil im try-Block ja ein `return` steht.",
+    "Die catch-Reihenfolge für reinen Stil halten - sie ist in Java ein harter Compilerfehler.",
+    "`throws` an `main` statt an `pruefe` hängen; das behebt zwar den Aufruf, aber nicht das `throw` in `pruefe` selbst."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 257,
+     "label": "Behandlung von Exceptions - throws deklarieren"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 259,
+     "label": "Erster 'passender' catch-Block"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 1b - Fehlersuche (Format)"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "throws",
+    "catch-reihenfolge",
+    "checked",
+    "return"
+   ]
+  },
+  {
+   "id": "java-exceptions-010",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "NumberFormatException beim Parsen",
+   "prompt": "Was gibt dieses Programm aus? Geben Sie die Meldungen von `getMessage()` wortwörtlich an (inklusive Anführungszeichen).",
+   "code": "class Ex010 {\n  public static void main(String[] args) {\n    String[] eingaben = {\"42\", \"7x\", \" 8\", \"-5\"};\n    int summe = 0;\n    for (int i = 0; i < eingaben.length; i++) {\n      try {\n        summe = summe + Integer.parseInt(eingaben[i]);\n        System.out.println(\"ok: \" + eingaben[i]);\n      }\n      catch (NumberFormatException e) {\n        System.out.println(\"Fehler: \" + e.getMessage());\n      }\n    }\n    System.out.println(\"Summe = \" + summe);\n  }\n}",
+   "expectedOutput": "ok: 42\nFehler: For input string: \"7x\"\nFehler: For input string: \" 8\"\nok: -5\nSumme = 37",
+   "solution": "ok: 42\nFehler: For input string: \"7x\"\nFehler: For input string: \" 8\"\nok: -5\nSumme = 37",
+   "explanation": "`Integer.parseInt(String)` wirft eine `NumberFormatException`, sobald der String keine gültige Ganzzahl ist. Die Meldung hat immer die Form `For input string: \"<eingabe>\"` - der Originaltext steht in Anführungszeichen.\n\n| Eingabe | Ergebnis |\n|---|---|\n| `\"42\"` | ok, Summe = 42 |\n| `\"7x\"` | `NumberFormatException`, Summe unverändert |\n| `\" 8\"` | **ebenfalls Fehler** - ein führendes Leerzeichen ist kein gültiges Zeichen! |\n| `\"-5\"` | ok, ein Minuszeichen ist erlaubt, Summe = 37 |\n\nZwei wichtige Feinheiten: Die Zuweisung `summe = summe + parseInt(...)` wird bei einem Fehler gar nicht ausgeführt, weil die rechte Seite abbricht - `summe` bleibt also unverändert und `\"ok: ...\"` wird nicht gedruckt. Und `NumberFormatException` ist *unchecked* (über `IllegalArgumentException` eine `RuntimeException`), das try/catch ist also freiwillig, aber praktisch unverzichtbar.\n\nMerkregel: `parseInt` akzeptiert **kein** Leerzeichen und kein Komma - mit `trim()` wäre `\" 8\"` gerettet worden.",
+   "hints": [
+    "Prüfen Sie jede der vier Zeichenketten einzeln: Ist sie eine syntaktisch gültige Ganzzahl?",
+    "Denken Sie an unsichtbare Zeichen - `\" 8\"` beginnt mit einem Leerzeichen.",
+    "Bei einem Fehler wird die Zuweisung an `summe` gar nicht mehr ausgeführt. Welche Summe bleibt am Ende übrig?"
+   ],
+   "pitfalls": [
+    "`\" 8\"` für gültig halten - `parseInt` trimmt nicht.",
+    "`\"-5\"` für ungueltig halten - Vorzeichen sind erlaubt.",
+    "Die Anführungszeichen in `For input string: \"7x\"` weglassen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 253,
+     "label": "Unterklasse RuntimeException"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 258,
+     "label": "Behandlung von Exceptions - try/catch"
+    }
+   ],
+   "tags": [
+    "numberformatexception",
+    "parseint",
+    "getmessage",
+    "unchecked"
+   ]
+  },
+  {
+   "id": "java-exceptions-011",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Klasse Auswerter mit robusten Methoden",
+   "prompt": "Schreiben Sie die Klasse `Auswerter` mit den beiden folgenden **Instanzmethoden** (also ohne `static`). Die vorgegebene `main`-Methode darf nicht verändert werden.\n\na) (6 P.) `sicherTeilen(int a, int b)` liefert `a / b` zurück. Tritt dabei eine `ArithmeticException` auf, wird `Division durch 0!` ausgegeben und `0` zurückgeliefert.\n\nb) (6 P.) `summeAusTexten(String[] texte)` addiert alle Elemente, die sich mit `Integer.parseInt` in eine Zahl umwandeln lassen, und gibt die Summe zurück. Ein ungültiges Element wird mit `ungueltig: <text>` gemeldet und übersprungen - das Programm darf **nicht** abstürzen.\n\nErwartete Konsolenausgabe:\n\n```\n5\nDivision durch 0!\n0\nungueltig: vier\n8\n```",
+   "starterCode": "class Auswerter {\n\n  // a) Instanzmethode sicherTeilen(int a, int b):\n  //    liefert a / b zurück. Fängt die ArithmeticException ab, gibt in diesem\n  //    Fall \"Division durch 0!\" aus und liefert 0 zurück.\n\n\n  // b) Instanzmethode summeAusTexten(String[] texte):\n  //    addiert alle Elemente, die sich mit Integer.parseInt lesen lassen.\n  //    Ein ungültiges Element wird mit \"ungueltig: <text>\" gemeldet und übersprungen.\n  //    Rückgabe: die Summe der gültigen Werte.\n\n\n  public static void main(String[] args) {\n    Auswerter a = new Auswerter();\n    System.out.println(a.sicherTeilen(20, 4));\n    System.out.println(a.sicherTeilen(20, 0));\n    String[] texte = {\"3\", \"vier\", \"5\"};\n    System.out.println(a.summeAusTexten(texte));\n  }\n}",
+   "expectedOutput": "5\nDivision durch 0!\n0\nungueltig: vier\n8",
+   "required": [
+    "try",
+    "catch",
+    "ArithmeticException",
+    "NumberFormatException"
+   ],
+   "solution": "class Auswerter {\n\n  public int sicherTeilen(int a, int b) {\n    try {\n      return a / b;\n    }\n    catch (ArithmeticException e) {\n      System.out.println(\"Division durch 0!\");\n      return 0;\n    }\n  }\n\n  public int summeAusTexten(String[] texte) {\n    int summe = 0;\n    for (int i = 0; i < texte.length; i++) {\n      try {\n        summe = summe + Integer.parseInt(texte[i]);\n      }\n      catch (NumberFormatException e) {\n        System.out.println(\"ungueltig: \" + texte[i]);\n      }\n    }\n    return summe;\n  }\n\n  public static void main(String[] args) {\n    Auswerter a = new Auswerter();\n    System.out.println(a.sicherTeilen(20, 4));\n    System.out.println(a.sicherTeilen(20, 0));\n    String[] texte = {\"3\", \"vier\", \"5\"};\n    System.out.println(a.summeAusTexten(texte));\n  }\n}",
+   "explanation": "Beide Methoden zeigen das Grundmuster *'Fehler lokal behandeln und sinnvoll weitermachen'*.\n\n**a)** Der `return a / b;` steht im try-Block. Weil eine `int`-Methode auf jedem Pfad einen Wert liefern muss, gehört in den catch-Block ebenfalls ein `return 0;` (alternativ ein `return` hinter dem gesamten try/catch). Ohne das meldet javac *missing return statement*.\n\n**b)** Entscheidend ist, dass das `try/catch` **innerhalb** der Schleife liegt. Nur dann wird ein einzelnes ungültiges Element übersprungen und die Schleife läuft weiter. Steht das try/catch um die ganze Schleife herum, bricht die Verarbeitung beim ersten ungültigen Element ab und `\"5\"` würde nie addiert.\n\nDie Ausgabe `5` kommt aus `20 / 4`; bei `20 / 0` erscheint zuerst die Meldung aus dem catch-Block und danach der Rückgabewert `0`. Die Summe ist `3 + 5 = 8`.\n\nMerkregel: **try/catch so eng wie möglich um die fehleranfällige Anweisung legen** - das bestimmt, wie viel Programm nach einem Fehler noch läuft.",
+   "hints": [
+    "Überlegen Sie zuerst, welche Exception jede der beiden Aufgaben auslösen kann: `ArithmeticException` bzw. `NumberFormatException`.",
+    "Bei a): Eine Methode mit Rückgabetyp `int` braucht auch im catch-Block ein `return`.",
+    "Bei b): Legen Sie das try/catch **in** die Schleife, damit nach einem ungültigen Element weitergemacht wird. Bei einem Fehler darf `summe` nicht verändert werden."
+   ],
+   "pitfalls": [
+    "Das try/catch um die ganze Schleife legen - dann wird nach dem ersten Fehler abgebrochen und die Summe ist falsch.",
+    "Den `return` im catch-Block von `sicherTeilen` vergessen (*missing return statement*).",
+    "Die Methoden versehentlich `static` machen, obwohl Instanzmethoden verlangt sind."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 258,
+     "label": "Behandlung von Exceptions - try/catch"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 4 - Klasse mit Methoden schreiben (Format)"
+    }
+   ],
+   "tags": [
+    "code",
+    "try-catch",
+    "arithmeticexception",
+    "numberformatexception",
+    "robustheit"
+   ]
+  },
+  {
+   "id": "java-exceptions-012",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Wann läuft der finally-Block?",
+   "prompt": "a) Geben Sie die Ausgabe des Programms an.\n\nb) Nennen Sie die vier Situationen, in denen der `finally`-Block laut Vorlesung ausgeführt wird, sowie den einen praktisch relevanten Fall, in dem er **nicht** ausgeführt wird.\n\nc) Wozu wird `finally` typischerweise eingesetzt?",
+   "code": "class Aufraeumen {\n  public static int wert(int n) {\n    try {\n      if (n == 0) {\n        throw new ArithmeticException(\"Teilung durch 0.\");\n      }\n      return 100 / n;\n    }\n    catch (ArithmeticException e) {\n      return -1;\n    }\n    finally {\n      System.out.println(\"finally \" + n);\n    }\n  }\n  public static void main(String[] args) {\n    System.out.println(wert(4));\n    System.out.println(wert(0));\n  }\n}",
+   "expectedOutput": "finally 4\n25\nfinally 0\n-1",
+   "solution": "**a) Ausgabe**\n\n```\nfinally 4\n25\nfinally 0\n-1\n```\n\nBegründung: `wert(4)` berechnet `100/4 = 25` und erreicht `return 25`. Der Rueckgabewert wird gemerkt, **danach** läuft `finally` (Ausgabe `finally 4`), erst dann verlässt die Methode. Deshalb steht `finally 4` **vor** `25`. Bei `wert(0)` wird die Exception geworfen und gefangen, der catch-Block bereitet `return -1` vor, `finally` läuft (`finally 0`), dann erscheint `-1`.\n\n**b) finally läuft, wenn ...** (Skript S. 260)\n1. der try-Block normal beendet wird,\n2. der try-Block (und die Methode) durch `return` verlassen wird,\n3. eine Exception auftritt und durch `catch` gefangen wird (finally läuft **nach** catch),\n4. eine Exception auftritt und an den Aufrufer weitergegeben wird (auch ohne passenden catch).\nEbenso bei `break` oder `continue`, die aus dem try-Block herausführen.\n\n**finally läuft nicht**, wenn die JVM gar nicht mehr weiterläuft - praktisch relevant: `System.exit(0)` im try-Block (auch bei einem Absturz der JVM oder einem Endlos-Blockieren).\n\n**c) Verwendung:** 'Aufräumarbeiten', die in jedem Fall passieren müssen - Dateien und Streams schliessen, temporäre Dateien löschen, Fenster/Verbindungen schliessen, Sperren freigeben. Beispiel aus dem Überblick S. 374: `finally { if (pw != null) pw.close(); }`.\n\n**Bewertungsrubrik (5 P.)**: a) korrekte Ausgabe inkl. Reihenfolge 2 P. (1 P. Abzug, wenn `finally n` hinter dem Wert steht) - b) vier Fälle 2 P. (je 0,5), Ausnahme `System.exit` 0,5 P. - c) Aufräumarbeiten mit einem Beispiel 0,5 P.",
+   "explanation": "Die Kernaussage lautet: **`finally` läuft immer** - der Block ist die einzige Stelle in Java, die auch dann noch zum Zug kommt, wenn die Methode gerade per `return` oder per Exception verlassen wird.\n\nDer beliebteste Denkfehler ist die Reihenfolge bei `return`: Der Rückgabewert wird **berechnet und zwischengespeichert**, dann läuft `finally`, und erst danach kehrt die Methode zurück. Alles, was `finally` ausgibt, erscheint daher *vor* dem Ergebnis in der aufrufenden `println`.\n\nDie einzige praktisch relevante Ausnahme ist `System.exit(...)`: Damit wird die JVM beendet, bevor irgendein finally-Block eine Chance bekommt. Merkregel: **finally schlägt return - aber System.exit schlägt finally.**",
+   "hints": [
+    "Überlegen Sie für Teil a) genau, wann der Rückgabewert die Methode verlässt - vor oder nach dem finally-Block?",
+    "Die vier Fälle stehen als Aufzählung auf der Skriptfolie 'finally-Block' (S. 260).",
+    "Für die Ausnahme: Welche Anweisung beendet nicht nur die Methode, sondern das ganze Programm?"
+   ],
+   "pitfalls": [
+    "`25` vor `finally 4` schreiben - der finally-Block läuft vor der Rückgabe.",
+    "Glauben, `finally` werde bei einer *nicht* gefangenen Exception übersprungen.",
+    "Vergessen, dass auch `break`/`continue` aus einem try-Block den finally-Block auslösen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 260,
+     "label": "finally-Block"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 374,
+     "label": "Überblick: 8. Ausnahmebehandlung"
+    }
+   ],
+   "tags": [
+    "finally",
+    "return",
+    "theorie",
+    "short-answer"
+   ]
+  },
+  {
+   "id": "java-exceptions-013",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Mehrere catch-Blöcke richtig anordnen",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____` (je 2 P.), sodass eine lauffähige Klasse entsteht, die folgende Ausgabe erzeugt:\n\n```\nausgewertet\n3\nRechenfehler: / by zero\nausgewertet\n-2\nkeine Zahl: For input string: \"zwoelf\"\nausgewertet\n-1\n```\n\n*Hinweis:* Die Lücken 2, 3 und 4 sind Exception-**Typen**; achten Sie auf eine Reihenfolge, die sich übersetzen lässt.",
+   "code": "class Rechner {\n  public static int auswerten(String a, String b) {\n    int r = 0;\n    ____(1)____ {\n      int x = Integer.parseInt(a);\n      int y = Integer.parseInt(b);\n      r = x / y;\n    }\n    catch (____(2)____ e) {\n      System.out.println(\"keine Zahl: \" + e.getMessage());\n      r = -1;\n    }\n    catch (____(3)____ e) {\n      System.out.println(\"Rechenfehler: \" + e.getMessage());\n      r = -2;\n    }\n    catch (____(4)____ e) {\n      System.out.println(\"sonstiger Fehler\");\n      r = -3;\n    }\n    ____(5)____ {\n      System.out.println(\"ausgewertet\");\n    }\n    ____(6)____ r;\n  }\n\n  public static void main(String[] args) {\n    System.out.println(auswerten(\"12\", \"4\"));\n    System.out.println(auswerten(\"12\", \"0\"));\n    System.out.println(auswerten(\"zwoelf\", \"4\"));\n  }\n}",
+   "expectedOutput": "ausgewertet\n3\nRechenfehler: / by zero\nausgewertet\n-2\nkeine Zahl: For input string: \"zwoelf\"\nausgewertet\n-1",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "try"
+     ],
+     "explanation": "Der überwachte Bereich beginnt mit `try {`. Alle Anweisungen, die eine Exception auslösen können (`parseInt`, `x / y`), stehen darin."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "NumberFormatException"
+     ],
+     "explanation": "`Integer.parseInt(\"zwoelf\")` wirft eine `NumberFormatException`. Sie ist der speziellste der drei Typen (`NumberFormatException` -> `IllegalArgumentException` -> `RuntimeException` -> `Exception`) und muss deshalb **vor** `Exception` stehen. Die Ausgabe `keine Zahl: ...` belegt, dass genau dieser Block gemeint ist."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "ArithmeticException"
+     ],
+     "explanation": "`x / y` mit `y == 0` wirft eine `ArithmeticException` mit der Meldung `/ by zero` - passend zur Ausgabezeile `Rechenfehler: / by zero`."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "Exception"
+     ],
+     "explanation": "Der Auffangblock für alles Übrige. `Exception` MUSS ganz zuletzt stehen; stünde er vorne, meldet javac für die folgenden Blöcke *exception ... has already been caught*."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "finally"
+     ],
+     "explanation": "`finally { System.out.println(\"ausgewertet\"); }` läuft in allen drei Aufrufen - deshalb erscheint `ausgewertet` genau dreimal, und zwar jeweils vor dem von `main` gedruckten Rückgabewert."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "return"
+     ],
+     "explanation": "Am Ende der Methode wird das Ergebnis mit `return r;` zurückgegeben. Es steht bewusst **hinter** dem finally-Block, damit jeder Pfad denselben Rückgabeweg nimmt."
+    }
+   ],
+   "solution": "class Rechner {\n  public static int auswerten(String a, String b) {\n    int r = 0;\n    try {\n      int x = Integer.parseInt(a);\n      int y = Integer.parseInt(b);\n      r = x / y;\n    }\n    catch (NumberFormatException e) {\n      System.out.println(\"keine Zahl: \" + e.getMessage());\n      r = -1;\n    }\n    catch (ArithmeticException e) {\n      System.out.println(\"Rechenfehler: \" + e.getMessage());\n      r = -2;\n    }\n    catch (Exception e) {\n      System.out.println(\"sonstiger Fehler\");\n      r = -3;\n    }\n    finally {\n      System.out.println(\"ausgewertet\");\n    }\n    return r;\n  }\n\n  public static void main(String[] args) {\n    System.out.println(auswerten(\"12\", \"4\"));\n    System.out.println(auswerten(\"12\", \"0\"));\n    System.out.println(auswerten(\"zwoelf\", \"4\"));\n  }\n}",
+   "explanation": "Diese Aufgabe drillt die **Reihenfolge der catch-Blöcke**. Der Compiler prüft: Ein catch-Block ist unerreichbar, wenn eine seiner Oberklassen schon vorher gefangen wurde. Da `NumberFormatException` und `ArithmeticException` beide Unterklassen von `Exception` sind, muss `catch (Exception e)` zwingend als letzter stehen. Untereinander sind `NumberFormatException` und `ArithmeticException` Geschwister - ihre Reihenfolge wäre frei, hier legen die geforderten Ausgabetexte sie fest.\n\nZur Ausgabereihenfolge: `finally` läuft **vor** der Rückgabe an `main`. Deshalb steht `ausgewertet` jeweils vor dem Zahlwert, den `main` druckt. Beim ersten Aufruf gibt es gar keinen Fehler: `12/4 = 3`, also nur `ausgewertet` und `3`.\n\nMerkregel: **Von speziell nach allgemein, `Exception` immer zuletzt.**",
+   "hints": [
+    "Die geforderte Ausgabe verrät Ihnen, welcher Text zu welchem Fehlertyp gehört.",
+    "Zwei der Aufrufe erzeugen einen Fehler, einer nicht - aber `ausgewertet` erscheint dreimal. Welches Schlüsselwort leistet das?",
+    "Für die drei Typen gilt: Der allgemeinste darf nicht als erster stehen, sonst übersetzt der Code nicht."
+   ],
+   "pitfalls": [
+    "`Exception` in Lücke 2 einsetzen - dann meldet javac *exception ... has already been caught*.",
+    "In Lücke 5 `catch` statt `finally` schreiben - dann fehlte die Ausgabe `ausgewertet` im fehlerfreien Fall.",
+    "Die Reihenfolge `ausgewertet` / Zahlwert vertauschen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 258,
+     "label": "try - catch - Block mit mehreren catch-Blöcken"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 259,
+     "label": "Erster 'passender' catch-Block"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3 - Code-Lücken ausfüllen (Format)"
+    }
+   ],
+   "tags": [
+    "multi-catch",
+    "catch-reihenfolge",
+    "finally",
+    "fill-gaps"
+   ]
+  },
+  {
+   "id": "java-exceptions-014",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Exception im catch-Block weiterwerfen",
+   "prompt": "Was gibt dieses Programm aus? Geben Sie alle Zeilen in der richtigen Reihenfolge an.",
+   "code": "class Ex013 {\n  public static void innen() {\n    try {\n      System.out.println(\"1\");\n      throw new ArithmeticException(\"Teilung durch 0.\");\n    }\n    catch (RuntimeException e) {\n      System.out.println(\"2 \" + e.getMessage());\n      throw e;\n    }\n    finally {\n      System.out.println(\"3\");\n    }\n  }\n\n  public static void main(String[] args) {\n    try {\n      innen();\n      System.out.println(\"4\");\n    }\n    catch (Exception e) {\n      System.out.println(\"5 \" + e.getMessage());\n    }\n    finally {\n      System.out.println(\"6\");\n    }\n    System.out.println(\"7\");\n  }\n}",
+   "expectedOutput": "1\n2 Teilung durch 0.\n3\n5 Teilung durch 0.\n6\n7",
+   "solution": "1\n2 Teilung durch 0.\n3\n5 Teilung durch 0.\n6\n7",
+   "explanation": "Der Ablauf Schritt für Schritt:\n\n1. `innen()` druckt `1` und wirft **explizit** eine `ArithmeticException`.\n2. `catch (RuntimeException e)` ist passend, denn `ArithmeticException` ist eine Unterklasse von `RuntimeException` - laut Skript ist ein catch-Block passend, wenn das Objekt *identisch mit der spezifizierten Klasse oder eine Unterklasse davon* ist. Ausgabe `2 Teilung durch 0.`; `getMessage()` liefert den selbst gesetzten Text.\n3. `throw e;` gibt **dasselbe** Objekt an den Aufrufer weiter (Skript S. 256). Bevor die Methode verlassen wird, läuft aber noch der finally-Block: `3`.\n4. In `main` ist der Aufruf `innen()` damit abgebrochen - `4` wird nie gedruckt. `catch (Exception e)` fängt die weitergereichte Exception: `5 Teilung durch 0.`.\n5. Danach `finally`: `6`. Weil die Exception jetzt behandelt ist, läuft `main` normal weiter: `7`.\n\nMerkregel: **Ein `throw` im catch-Block beendet die Methode, aber niemals ohne finally.** Der finally-Block der *inneren* Methode läuft vor dem catch-Block der *äußeren*.",
+   "hints": [
+    "Markieren Sie, an welcher Stelle `innen()` verlassen wird - und prüfen Sie, was davor noch laufen muss.",
+    "Ist `ArithmeticException` eine Unterklasse von `RuntimeException`? Und von `Exception`?",
+    "Zwei der sieben Zeilennummern werden nie gedruckt - finden Sie heraus, welche."
+   ],
+   "pitfalls": [
+    "`4` mit ausgeben - der Aufruf `innen()` endet mit einer Exception, die Folgezeile wird nicht erreicht.",
+    "Den inneren finally-Block (`3`) nach dem äußeren catch (`5`) einordnen. Er läuft schon beim Verlassen von `innen()`.",
+    "Glauben, ein bereits gefangener Fehler könne nicht erneut geworfen werden."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 256,
+     "label": "throw kann auch in einem catch-Block verwendet werden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 259,
+     "label": "Der catch-Block ist 'passend' wenn ..."
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 260,
+     "label": "finally-Block"
+    }
+   ],
+   "tags": [
+    "rethrow",
+    "finally",
+    "verschachtelt",
+    "kontrollfluss",
+    "vererbung"
+   ]
+  },
+  {
+   "id": "java-exceptions-015",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: Ressourcen schliessen im finally-Block",
+   "prompt": "Der folgende Code enthält **genau 3 Compiler-Fehler**. Benennen Sie sie (mit Zeilennummer) und geben Sie jeweils die Korrektur an.\n\nGeben Sie außerdem an, was das korrigierte Programm ausgibt.",
+   "code": "import java.io.IOException;\n\nclass Ressource {\n  private String name;\n  private int[] daten = {10, 20, 30};\n  public Ressource(String name) { this.name = name; }\n  public int lies(int i) { return daten[i]; }\n  public void schliessen() { System.out.println(name + \" geschlossen\"); }\n}\n\nclass Fehlersuche02 {\n  public static void pruefeName(String name) {\n    if (name.length() == 0) {\n      throw new IOException(\"kein Dateiname\");\n    }\n  }\n\n  public static void main(String[] args) {\n    Ressource r;\n    try {\n      r = new Ressource(\"daten\");\n      System.out.println(r.lies(0));\n      System.out.println(r.lies(5));\n    }\n    catch (ArrayIndexOutOfBoundsException e) {\n      System.out.println(\"Index-Problem: \" + e.getMessage());\n    }\n    catch (IOException e) {\n      System.out.println(\"IO-Problem\");\n    }\n    finally {\n      if (r != null) {\n        r.schliessen();\n      }\n    }\n  }\n}",
+   "expectedOutput": "10\nIndex-Problem: Index 5 out of bounds for length 3\ndaten geschlossen",
+   "errors": [
+    {
+     "line": 14,
+     "wrong": "throw new IOException(\"kein Dateiname\");",
+     "fix": "Die Signatur in Zeile 12 ergaenzen: `public static void pruefeName(String name) throws IOException {`",
+     "why": "javac meldet hier *unreported exception IOException; must be caught or declared to be thrown*. `IOException` ist eine **checked** Exception (direkte Unterklasse von `Exception`, nicht von `RuntimeException`) und muss deklariert oder lokal gefangen werden."
+    },
+    {
+     "line": 32,
+     "wrong": "if (r != null) {   (im finally-Block)",
+     "fix": "Die Deklaration in Zeile 19 zu `Ressource r = null;` aendern.",
+     "why": "javac meldet hier *variable r might not have been initialized*. Die Zuweisung `r = new Ressource(...)` steht im try-Block; für den Compiler könnte dieser Block schon vor der Zuweisung abbrechen, dann hätte `r` im finally-Block keinen Wert. Genau deshalb steht im Skript-Beispiel `PrintWriter pw = null;` vor dem try."
+    },
+    {
+     "line": 28,
+     "wrong": "catch (IOException e) {",
+     "fix": "Diesen catch-Block streichen (oder im try-Block tatsaechlich etwas aufrufen, das eine `IOException` werfen kann, z. B. `pruefeName(\"\")`).",
+     "why": "javac meldet *exception IOException is never thrown in body of corresponding try statement*. Für **checked** Exceptions prüft der Compiler, ob der try-Block sie überhaupt auslösen kann. Bei unchecked Exceptions (z. B. `ArithmeticException`) wäre so ein catch dagegen erlaubt."
+    }
+   ],
+   "solution": "import java.io.IOException;\n\nclass Ressource {\n  private String name;\n  private int[] daten = {10, 20, 30};\n  public Ressource(String name) { this.name = name; }\n  public int lies(int i) { return daten[i]; }\n  public void schliessen() { System.out.println(name + \" geschlossen\"); }\n}\n\nclass Fehlersuche02 {\n  public static void pruefeName(String name) throws IOException {\n    if (name.length() == 0) {\n      throw new IOException(\"kein Dateiname\");\n    }\n  }\n\n  public static void main(String[] args) {\n    Ressource r = null;\n    try {\n      r = new Ressource(\"daten\");\n      System.out.println(r.lies(0));\n      System.out.println(r.lies(5));\n    }\n    catch (ArrayIndexOutOfBoundsException e) {\n      System.out.println(\"Index-Problem: \" + e.getMessage());\n    }\n    finally {\n      if (r != null) {\n        r.schliessen();\n      }\n    }\n  }\n}",
+   "explanation": "Alle drei Fehler drehen sich um **checked Exceptions und den finally-Block**:\n\n1. `throw new IOException(...)` ohne `throws IOException` in der Signatur - checked Exceptions müssen deklariert werden.\n2. `Ressource r;` ohne Initialisierung. Die *definite assignment*-Analyse des Compilers kann nicht garantieren, dass der try-Block bis zur Zuweisung kommt, also gilt `r` im finally-Block als möglicherweise nicht initialisiert. Standardmuster (Skript S. 374): Variable **vor** dem try mit `null` initialisieren und im finally auf `null` prüfen.\n3. Ein `catch` für eine checked Exception, die der try-Block gar nicht werfen kann, ist ein Fehler. Nur `Exception`, `Throwable` und alle unchecked Typen darf man 'auf Verdacht' fangen.\n\nAusgabe des korrigierten Programms: `r.lies(0)` liefert `10`; `r.lies(5)` wirft eine `ArrayIndexOutOfBoundsException` mit `Index 5 out of bounds for length 3`; danach läuft der finally-Block und schließt die Ressource.\n\nMerkregel: **Variable vor dem try anlegen, im try zuweisen, im finally mit null-Prüfung aufräumen.**",
+   "hints": [
+    "Ein Fehler steckt in der Methode `pruefeName`, zwei hängen mit der Variablen `r` und dem catch-Block in `main` zusammen.",
+    "Fragen Sie sich beim finally-Block: Woher weiß der Compiler, dass `r` zu diesem Zeitpunkt schon einen Wert hat?",
+    "Kann im try-Block überhaupt eine `IOException` entstehen? Welche Methoden werden dort aufgerufen?"
+   ],
+   "pitfalls": [
+    "Den `catch (IOException e)`-Block für harmlos halten - bei checked Exceptions ist er ein Compilerfehler.",
+    "`Ressource r;` für korrekt halten, weil im try ja zugewiesen wird.",
+    "Nur zwei Fehler nennen und den fehlenden `throws` in `pruefeName` übersehen, weil die Methode gar nicht aufgerufen wird."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 374,
+     "label": "Überblick: 8. Ausnahmebehandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 257,
+     "label": "Behandlung von Exceptions - throws deklarieren"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 260,
+     "label": "finally-Block - Aufräumarbeiten"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 1b - Fehlersuche (Format)"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "ioexception",
+    "checked",
+    "finally",
+    "initialisierung"
+   ]
+  },
+  {
+   "id": "java-exceptions-016",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "code",
+   "difficulty": 4,
+   "points": 14,
+   "examStyle": true,
+   "title": "Eigene Exception-Klasse KontoException",
+   "prompt": "Schreiben Sie zwei Klassen. Die vorgegebene `main`-Methode darf nicht verändert werden.\n\na) (7 P.) `KontoException` - eine **checked** Exception nach dem Muster aus der Vorlesung: privates `double`-Attribut `fehlbetrag` (Vorgabe `0.0`), die beiden üblichen Konstruktoren (parameterlos und mit `String`), zusätzlich ein Konstruktor `KontoException(String s, double fehlbetrag)`, die Methode `getFehlbetrag()` sowie eine überschriebene Methode `toString()`, die `KontoException: <meldung> (es fehlen <fehlbetrag>)` liefert.\n\nb) (7 P.) `Konto` mit privatem `double`-Attribut `stand`, einem Konstruktor `Konto(double stand)`, der Methode `getStand()` und der Methode `abheben(double betrag)`. Ist `betrag` größer als `stand`, wirft `abheben` eine `KontoException` mit der Meldung `Deckung reicht nicht` und dem Fehlbetrag `betrag - stand`; sonst wird der Betrag abgezogen.\n\nErwartete Konsolenausgabe:\n\n```\nStand: 70.0\nKontoException: Deckung reicht nicht (es fehlen 130.0)\nFehlbetrag: 130.0\nEndstand: 70.0\n```",
+   "starterCode": "// 1. Eigene Exception-Klasse KontoException:\n//    - Attribut fehlbetrag (double), Konstruktoren wie im Skript,\n//    - Methode getFehlbetrag(), überschriebene Methode toString().\n\n// 2. Klasse Konto mit Attribut stand, Konstruktor, getStand()\n//    und der Methode abheben(double betrag).\n\nclass Konto {\n\n  public static void main(String[] args) {\n    Konto k = new Konto(100.0);\n    try {\n      k.abheben(30.0);\n      System.out.println(\"Stand: \" + k.getStand());\n      k.abheben(200.0);\n      System.out.println(\"nicht erreicht\");\n    }\n    catch (KontoException e) {\n      System.out.println(e);\n      System.out.println(\"Fehlbetrag: \" + e.getFehlbetrag());\n    }\n    finally {\n      System.out.println(\"Endstand: \" + k.getStand());\n    }\n  }\n}",
+   "expectedOutput": "Stand: 70.0\nKontoException: Deckung reicht nicht (es fehlen 130.0)\nFehlbetrag: 130.0\nEndstand: 70.0",
+   "required": [
+    "extends Exception",
+    "throw new",
+    "throws",
+    "toString"
+   ],
+   "solution": "class KontoException extends Exception {\n  private double fehlbetrag = 0.0;\n\n  public KontoException() {}\n  public KontoException(String s) { super(s); }\n  public KontoException(String s, double fehlbetrag) {\n    super(s);\n    this.fehlbetrag = fehlbetrag;\n  }\n\n  public double getFehlbetrag() { return fehlbetrag; }\n\n  public String toString() {\n    return \"KontoException: \" + getMessage() + \" (es fehlen \" + fehlbetrag + \")\";\n  }\n}\n\nclass Konto {\n  private double stand;\n\n  public Konto(double stand) { this.stand = stand; }\n\n  public double getStand() { return stand; }\n\n  public void abheben(double betrag) throws KontoException {\n    if (betrag > stand) {\n      throw new KontoException(\"Deckung reicht nicht\", betrag - stand);\n    }\n    stand = stand - betrag;\n  }\n\n  public static void main(String[] args) {\n    Konto k = new Konto(100.0);\n    try {\n      k.abheben(30.0);\n      System.out.println(\"Stand: \" + k.getStand());\n      k.abheben(200.0);\n      System.out.println(\"nicht erreicht\");\n    }\n    catch (KontoException e) {\n      System.out.println(e);\n      System.out.println(\"Fehlbetrag: \" + e.getFehlbetrag());\n    }\n    finally {\n      System.out.println(\"Endstand: \" + k.getStand());\n    }\n  }\n}",
+   "explanation": "Die Aufgabe ist die Klausurversion des Skript-Beispiels `MyExcept` (S. 254/255), nur mit einem Konto statt einem Vektor.\n\n**Wichtige Punkte:**\n- `extends Exception` macht die Klasse *checked*. Deshalb braucht `abheben` zwingend `throws KontoException`, sonst meldet javac *unreported exception*.\n- `super(s)` im Konstruktor ist Pflicht, sonst liefert `getMessage()` später `null`.\n- `System.out.println(e)` ruft automatisch `e.toString()` auf - deshalb erscheint der selbst formatierte Text und nicht `KontoException: Deckung reicht nicht` in der Standardform von `Throwable`.\n- Der Stand bleibt bei `70.0`: Das `throw` steht **vor** `stand = stand - betrag`, die misslungene Abhebung verändert das Konto also nicht. Das ist der eigentliche Sinn einer Exception - der fehlerhafte Zustand wird gar nicht erst hergestellt.\n- Ausgabe `130.0` statt `130`, weil `fehlbetrag` ein `double` ist (`200.0 - 70.0 = 130.0`).\n\nMerkregel: **Prüfen, werfen, erst dann ändern.**",
+   "hints": [
+    "Beginnen Sie mit dem Gerüst aus dem Skript S. 254: Attribut, drei Konstruktoren, getter, `toString()`.",
+    "`toString()` darf `getMessage()` aufrufen - das ist die geerbte Methode aus `Throwable`, die den Konstruktor-String liefert.",
+    "Achten Sie in `abheben` auf die Reihenfolge: erst prüfen und ggf. werfen, danach erst `stand` verändern. Und vergessen Sie `throws` in der Signatur nicht."
+   ],
+   "pitfalls": [
+    "`throws KontoException` in der Signatur von `abheben` vergessen.",
+    "Im Konstruktor `this.message = s;` statt `super(s);` schreiben - dann liefert `getMessage()` `null`.",
+    "`stand` schon vor der Prüfung verändern, sodass der Endstand nicht mehr `70.0` ist.",
+    "Bei `toString()` `100` statt `130.0` ausgeben - der Fehlbetrag ist `betrag - stand`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 254,
+     "label": "Definition eigener Exceptions - MyExcept"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 255,
+     "label": "Definition eigener Exceptions - throws/throw"
+    },
+    {
+     "file": "08_Ausnahmebehandlung/MyException.java",
+     "page": 0,
+     "label": "Beispielcode des Dozenten"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 5 - Klasse schreiben (Format)"
+    }
+   ],
+   "tags": [
+    "code",
+    "eigene-exception",
+    "tostring",
+    "getmessage",
+    "throws"
+   ]
+  },
+  {
+   "id": "java-exceptions-017",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "NullPointerException und try-finally ohne catch",
+   "prompt": "Was gibt dieses Programm aus?",
+   "code": "class Ex017 {\n  static String leer = null;\n\n  public static int laenge(String t) {\n    try {\n      System.out.println(\"A\");\n      return t.length();\n    }\n    finally {\n      System.out.println(\"B\");\n    }\n  }\n\n  public static void main(String[] args) {\n    try {\n      System.out.println(laenge(\"Hallo\"));\n      System.out.println(laenge(leer));\n      System.out.println(\"C\");\n    }\n    catch (NullPointerException e) {\n      System.out.println(\"D\");\n    }\n    finally {\n      System.out.println(\"E\");\n    }\n  }\n}",
+   "expectedOutput": "A\nB\n5\nA\nB\nD\nE",
+   "solution": "A\nB\n5\nA\nB\nD\nE",
+   "explanation": "Die Methode `laenge` hat ein `try - finally` **ohne** catch - das ist laut Skript ausdrücklich erlaubt.\n\n**Erster Aufruf** `laenge(\"Hallo\")`: `A` wird gedruckt, `return t.length()` berechnet `5`, der Wert wird gemerkt, dann läuft `finally` (`B`), erst danach kehrt die Methode zurück und `main` druckt `5`. Deshalb steht `B` **vor** `5`.\n\n**Zweiter Aufruf** `laenge(null)`: `A` wird gedruckt, dann wirft `t.length()` eine `NullPointerException` - man kann auf einer `null`-Referenz keine Methode aufrufen. Es gibt keinen catch-Block in `laenge`, also wird die Methode abgebrochen und die Exception an den Aufrufer weitergegeben - aber **vorher läuft noch `finally`** (`B`). Das ist der vierte Fall der Skriptfolie S. 260.\n\nIn `main` wird das `println` gar nicht mehr ausgeführt (der Argumentwert existiert ja nicht), `C` entfällt ebenfalls. `catch (NullPointerException e)` fängt die Exception (`D`), `finally` gibt `E` aus.\n\nMerkregel: **Ein finally-Block läuft auch dann, wenn die Exception nur durchgereicht wird - und der Rückgabewert wird erst nach dem finally-Block ausgeliefert.**",
+   "hints": [
+    "Fragen Sie sich beim ersten Aufruf: Was wird zuerst gedruckt - der Text aus dem finally-Block oder das Ergebnis?",
+    "Im zweiten Aufruf gibt es in `laenge` keinen catch-Block. Wird der finally-Block trotzdem ausgeführt?",
+    "Zwei Buchstaben des Alphabets kommen in der Ausgabe nicht vor - welche und warum?"
+   ],
+   "pitfalls": [
+    "`5` vor `B` schreiben - der finally-Block läuft vor der Rückgabe.",
+    "Glauben, ohne catch-Block werde `finally` übersprungen.",
+    "`C` mit ausgeben, obwohl der try-Block in `main` bereits verlassen wurde."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 260,
+     "label": "finally-Block - auch try-finally ohne catch ist erlaubt"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 253,
+     "label": "NullPointerException"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 257,
+     "label": "Exception wird an Aufrufer der Methode weitergegeben"
+    }
+   ],
+   "tags": [
+    "nullpointerexception",
+    "finally",
+    "try-finally",
+    "weitergabe",
+    "kontrollfluss"
+   ]
+  },
+  {
+   "id": "java-exceptions-018",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "Wörterliste laden - Backup-Strategie im catch-Block",
+   "prompt": "Diese Klasse folgt dem Wordle-Beispiel aus der Vorlesung: Sie versucht, Wörter aus einer Datei zu laden, und benutzt eine eingebaute Ersatzliste, falls die Datei nicht existiert. Ergänzen Sie die 6 Lücken `____(n)____` (je 2 P.).\n\nDie Datei `gibtesnicht.txt` existiert nicht. Erwartete Ausgabe:\n\n```\nDatei fehlt - benutze Backup\ngeladen: 3\nworth\nFehler: kein Wort an Position 7\n```",
+   "code": "import java.io.File;\nimport java.util.Scanner;\n\nclass WoerterLader {\n  private static final int MAX_WORDS = 10;\n  private String[] words = null;\n  private int anzahl = 0;\n\n  public void laden(String dateiname) {\n    int len = 0;\n    ____(1)____ {\n      words = new String[MAX_WORDS];\n      Scanner scanner = new Scanner(new File(dateiname));\n      while (scanner.hasNextLine() && len < MAX_WORDS) {\n        words[len] = scanner.nextLine();\n        len++;\n      }\n      scanner.close();\n    }\n    ____(2)____ (java.io.IOException e) {\n      len = 3;\n      words = new String[len];\n      words[0] = \"worse\";\n      words[1] = \"worth\";\n      words[2] = \"words\";\n      System.out.println(\"Datei fehlt - benutze Backup\");\n    }\n    ____(3)____ {\n      anzahl = len;\n      System.out.println(\"geladen: \" + len);\n    }\n  }\n\n  public String wort(int i) ____(4)____ WortException {\n    if (i < 0 || i >= anzahl) {\n      ____(5)____ new WortException(\"kein Wort an Position \" + i);\n    }\n    return words[i];\n  }\n\n  public static void main(String[] args) {\n    WoerterLader w = new WoerterLader();\n    w.laden(\"gibtesnicht.txt\");\n    try {\n      System.out.println(w.wort(1));\n      System.out.println(w.wort(7));\n    }\n    catch (WortException e) {\n      System.out.println(\"Fehler: \" + e.getMessage());\n    }\n  }\n}\n\nclass WortException ____(6)____ Exception {\n  public WortException(String s) { super(s); }\n}",
+   "expectedOutput": "Datei fehlt - benutze Backup\ngeladen: 3\nworth\nFehler: kein Wort an Position 7",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "try"
+     ],
+     "explanation": "Der Ladeversuch steht im `try`-Block. `new Scanner(new File(dateiname))` kann eine `FileNotFoundException` werfen - eine **checked** Exception, die behandelt werden muss, sonst übersetzt der Code nicht."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "catch"
+     ],
+     "explanation": "`catch (java.io.IOException e)` fängt den Fehler ab. Das funktioniert, obwohl konkret eine `FileNotFoundException` fliegt: Sie ist eine **Unterklasse** von `IOException`, und ein catch-Block ist passend, wenn das Objekt vom angegebenen Typ oder einem Untertyp ist. Genau so steht es im Wordle-Beispiel des Skripts (S. 261/264)."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "finally"
+     ],
+     "explanation": "`finally` übernimmt die Nachbereitung, die in beiden Fällen nötig ist: `anzahl` setzen und die Anzahl melden. Deshalb erscheint `geladen: 3` sowohl im Erfolgs- als auch im Backup-Fall."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "throws"
+     ],
+     "explanation": "`WortException` erbt von `Exception` und ist damit checked. Die Methode muss sie in der Signatur deklarieren: `public String wort(int i) throws WortException`."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "throw"
+     ],
+     "explanation": "`throw new WortException(...)` erzeugt und wirft das Objekt. Die Methode wird sofort verlassen, `return words[i];` wird bei ungültigem Index nie erreicht."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "extends"
+     ],
+     "explanation": "`class WortException extends Exception` - eine eigene Exception ist eine gewöhnliche Klasse, die von `Exception` (oder einer Unterklasse davon) erbt."
+    }
+   ],
+   "solution": "import java.io.File;\nimport java.util.Scanner;\n\nclass WoerterLader {\n  private static final int MAX_WORDS = 10;\n  private String[] words = null;\n  private int anzahl = 0;\n\n  public void laden(String dateiname) {\n    int len = 0;\n    try {\n      words = new String[MAX_WORDS];\n      Scanner scanner = new Scanner(new File(dateiname));\n      while (scanner.hasNextLine() && len < MAX_WORDS) {\n        words[len] = scanner.nextLine();\n        len++;\n      }\n      scanner.close();\n    }\n    catch (java.io.IOException e) {\n      len = 3;\n      words = new String[len];\n      words[0] = \"worse\";\n      words[1] = \"worth\";\n      words[2] = \"words\";\n      System.out.println(\"Datei fehlt - benutze Backup\");\n    }\n    finally {\n      anzahl = len;\n      System.out.println(\"geladen: \" + len);\n    }\n  }\n\n  public String wort(int i) throws WortException {\n    if (i < 0 || i >= anzahl) {\n      throw new WortException(\"kein Wort an Position \" + i);\n    }\n    return words[i];\n  }\n\n  public static void main(String[] args) {\n    WoerterLader w = new WoerterLader();\n    w.laden(\"gibtesnicht.txt\");\n    try {\n      System.out.println(w.wort(1));\n      System.out.println(w.wort(7));\n    }\n    catch (WortException e) {\n      System.out.println(\"Fehler: \" + e.getMessage());\n    }\n  }\n}\n\nclass WortException extends Exception {\n  public WortException(String s) { super(s); }\n}",
+   "explanation": "Die Klasse zeigt die zwei typischen Anwendungen von Exceptions im Zusammenspiel:\n\n**1. Fehler abfangen und sinnvoll weitermachen.** Die Datei fehlt, also wirft `new Scanner(new File(...))` eine `FileNotFoundException`. Der catch-Block baut eine Ersatzliste mit drei Wörtern auf - das Programm läuft weiter, statt abzustürzen. Wichtig: `catch (java.io.IOException e)` passt, weil `FileNotFoundException` eine Unterklasse von `IOException` ist.\n\n**2. Fehler nach oben melden.** `wort(7)` kann sinnvoll gar nichts zurückgeben, also wirft die Methode eine eigene, checked `WortException`, die der Aufrufer behandeln muss.\n\nZur Ausgabe: `w.wort(1)` liefert `\"worth\"` (Index 1 der Backup-Liste). `w.wort(7)` ist außerhalb von `anzahl == 3` und wirft; die zweite `println` wird deshalb nie ausgeführt, stattdessen erscheint die Meldung aus dem catch-Block von `main`.\n\nMerkregel: **Fangen, wenn man den Fehler beheben kann - werfen, wenn nur der Aufrufer entscheiden kann, was zu tun ist.**",
+   "hints": [
+    "Drei Lücken sind die drei Blöcke der Ausnahmebehandlung, drei gehören zur eigenen Exception-Klasse.",
+    "Warum muss der Ladevorgang überhaupt abgesichert werden? Welchen Typ hat der Konstruktor `Scanner(File)` in seinem `throws`?",
+    "Lücke 3 muss auch dann laufen, wenn kein Fehler auftritt - sonst wäre `anzahl` im Erfolgsfall nicht gesetzt."
+   ],
+   "pitfalls": [
+    "In Lücke 3 einen zweiten `catch`-Block vermuten - dann wäre `anzahl` im Erfolgsfall nie gesetzt.",
+    "Glauben, `catch (IOException e)` fange die `FileNotFoundException` nicht - Unterklassen werden mitgefangen.",
+    "`throws`/`throw` in Lücke 4 und 5 vertauschen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 261,
+     "label": "Beispiel Wordle: Laden von Wörterdatei"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 264,
+     "label": "WordleClass Lösung (2/4) - loadWords"
+    },
+    {
+     "file": "08_Ausnahmebehandlung/WordleClass.java",
+     "page": 0,
+     "label": "Beispielcode des Dozenten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 254,
+     "label": "Definition eigener Exceptions"
+    }
+   ],
+   "tags": [
+    "ioexception",
+    "filenotfound",
+    "eigene-exception",
+    "finally",
+    "fill-gaps",
+    "wordle"
+   ],
+   "stdin": "abc\n"
+  },
+  {
+   "id": "java-exceptions-019",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": false,
+   "title": "Härtetest: return, break und continue gegen finally",
+   "prompt": "Was gibt dieses Programm aus? Begründen Sie insbesondere die Rückgabewerte von `f()` und `h()`.",
+   "code": "class Ex019b {\n  public static int f() {\n    int x = 1;\n    try {\n      System.out.println(\"A\");\n      return x;\n    }\n    finally {\n      x = 99;\n      System.out.println(\"B\");\n    }\n  }\n\n  public static int g() {\n    int summe = 0;\n    for (int i = 0; i < 3; i++) {\n      try {\n        if (i == 1) continue;\n        if (i == 2) break;\n        summe = summe + 10;\n      }\n      finally {\n        System.out.println(\"F\" + i);\n      }\n    }\n    return summe;\n  }\n\n  public static int h() {\n    try {\n      System.out.println(\"C\");\n      return 1;\n    }\n    finally {\n      System.out.println(\"D\");\n      return 2;\n    }\n  }\n\n  public static void main(String[] args) {\n    System.out.println(f());\n    System.out.println(g());\n    System.out.println(h());\n  }\n}",
+   "expectedOutput": "A\nB\n1\nF0\nF1\nF2\n10\nC\nD\n2",
+   "solution": "A\nB\n1\nF0\nF1\nF2\n10\nC\nD\n2",
+   "explanation": "Drei Fälle, drei Regeln:\n\n**`f()` -> `A B 1`.** Bei `return x;` wird der **Wert** von `x` (also `1`) sofort ausgewertet und zwischengespeichert. Danach läuft `finally` und setzt `x = 99` - aber das ändert die bereits gesicherte Kopie nicht mehr. Rückgabe: `1`.\n\n**`g()` -> `F0 F1 F2 10`.** Auch `continue` und `break` verlassen den try-Block, also läuft der finally-Block in jeder Runde:\n- i = 0: kein Sprung, `summe = 10`, dann `F0`.\n- i = 1: `continue` -> zuerst `F1`, dann nächste Runde.\n- i = 2: `break` -> zuerst `F2`, dann Schleife verlassen.\nRückgabe: `10`.\n\n**`h()` -> `C D 2`.** Hier steht ein `return` **im finally-Block**. Es überschreibt den vorbereiteten Rückgabewert `1` komplett - die Methode liefert `2`. Genau das gilt auch für Exceptions: Ein `return` im finally-Block verschluckt eine noch fliegende Exception. Deshalb gilt `return` im finally-Block als schlechter Stil - `javac -Xlint:finally` warnt hier mit *finally clause cannot complete normally*.\n\nMerkregel: **Der Rückgabewert wird vor dem finally-Block eingefroren - außer der finally-Block hat selbst ein return.**",
+   "hints": [
+    "Schreiben Sie für `f()` auf, wann genau der Wert von `x` gelesen wird und wann `finally` läuft.",
+    "Bei `g()`: Zählen Sie die Schleifendurchläufe. Lösen `continue` und `break` den finally-Block aus?",
+    "Bei `h()` gibt es zwei `return`. Welches gewinnt, wenn beide erreicht werden?"
+   ],
+   "pitfalls": [
+    "Bei `f()` `99` als Ergebnis angeben - der Rückgabewert wurde vor dem finally-Block gesichert.",
+    "`F1` oder `F2` weglassen, weil man `continue`/`break` für 'kein Verlassen des try-Blocks' hält.",
+    "Bei `h()` `1` angeben - das `return` im finally-Block überschreibt es."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 260,
+     "label": "finally-Block - der Block wird durch return verlassen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 259,
+     "label": "Behandlung von Exceptions"
+    }
+   ],
+   "tags": [
+    "finally",
+    "return",
+    "break",
+    "continue",
+    "haertetest",
+    "kontrollfluss"
+   ]
+  },
+  {
+   "id": "java-exceptions-020",
+   "lang": "java",
+   "topicId": "java-exceptions",
+   "type": "short-answer",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": true,
+   "title": "catch-Reihenfolge, Passung und die Grenzen von catch (Exception e)",
+   "prompt": "a) Warum lässt sich dieses Programm nicht übersetzen? Nennen Sie die Fehlermeldung sinngemäß und die Korrektur.\n\nb) Formulieren Sie die Regel aus der Vorlesung, wann ein `catch`-Block zu einer geworfenen Exception 'passend' ist.\n\nc) Welche **eine** Zeile gibt das korrigierte Programm aus? Begründen Sie.\n\nd) Warum sollte man `Error` bzw. `Throwable` nicht fangen, obwohl es syntaktisch möglich wäre?",
+   "code": "class Reihenfolge {\n  public static void main(String[] args) {\n    int[] a = {1, 2, 3};\n    try {\n      System.out.println(a[5] / 0);\n    }\n    catch (Exception e) {\n      System.out.println(\"allgemein\");\n    }\n    catch (ArithmeticException e) {\n      System.out.println(\"arithmetisch\");\n    }\n  }\n}",
+   "solution": "**a)** javac meldet *exception ArithmeticException has already been caught*. `catch (Exception e)` fängt bereits jede Unterklasse von `Exception` ab, damit ist der zweite Block unerreichbar - in Java ist das kein Stilproblem, sondern ein **Compilerfehler**. Korrektur: die beiden Bloecke tauschen, also erst `catch (ArithmeticException e)`, dann `catch (Exception e)`. Regel: **spezifisch vor allgemein, `Exception` immer zuletzt.**\n\n**b)** Skript S. 259: *Der catch-Block ist 'passend', wenn das erzeugte Exception-Objekt an den Parameter des catch-Blocks zugewiesen werden kann. Die erzeugte Exception ist identisch mit der spezifizierten Exception-Klasse oder ist eine Unterklasse davon.* Es wird immer nur **der erste** passende Block ausgeführt, danach geht es hinter dem letzten catch-Block weiter.\n\n**c)** Ausgabe: `allgemein`.\nBegründung: In `a[5] / 0` wird **zuerst** der Array-Zugriff `a[5]` ausgewertet (Operanden von links nach rechts), und der wirft bereits eine `ArrayIndexOutOfBoundsException`. Zur Division kommt es nie, es gibt also **keine** `ArithmeticException`. `ArrayIndexOutOfBoundsException` ist keine Unterklasse von `ArithmeticException`, passt also nur auf `catch (Exception e)`.\n\n**d)** `Error` steht laut Skript (S. 252) für *Probleme in der JVM* - z. B. `OutOfMemoryError` oder `StackOverflowError`. Diese Fehler kann das Programm nicht sinnvoll beheben; sie zu fangen verschleiert nur den Absturz und lässt das Programm in einem undefinierten Zustand weiterlaufen. Deshalb: *'sollten nicht gefangen werden'*. `catch (Exception e)` ist hier die richtige Obergrenze, denn es fängt Errors gerade **nicht** mit.\n\n**Bewertungsrubrik (6 P.)**: a) Fehlerursache + Korrektur 2 P. - b) Passungsregel (Unterklasse zählt, nur der erste passende Block läuft) 1,5 P. - c) `allgemein` mit Begründung über die Auswertungsreihenfolge 1,5 P. (ohne Begründung 0,5 P.) - d) Errors sind JVM-Probleme, nicht behebbar 1 P.",
+   "explanation": "Die Aufgabe verbindet drei Details, die einzeln harmlos sind und zusammen eine typische Klausurfalle ergeben.\n\n1. **Unerreichbarer catch-Block = Compilerfehler.** Sobald ein catch-Block eine Oberklasse fängt, sind alle späteren Blöcke für Unterklassen tot.\n2. **Passung über die Vererbung.** Ein catch passt genau dann, wenn der geworfene Typ dem Parametertyp zuweisbar ist - also gleich oder Unterklasse.\n3. **Auswertungsreihenfolge.** In `a[5] / 0` steht der Array-Zugriff links und wird zuerst ausgewertet. Wer nur die Division sieht, tippt fälschlich auf `arithmetisch`. Genau diese Art von Reihenfolge-Falle benutzt der Dozent auch in `Klausur05.java` (Argumentauswertung vor dem Methodenaufruf).\n\nMerkregel: **Erst schauen, welche Exception überhaupt entsteht - dann, welcher Block sie fängt.**",
+   "hints": [
+    "Schauen Sie zuerst auf die Typen der beiden catch-Blöcke: Steht einer von beiden in der Vererbungslinie des anderen?",
+    "Welcher Teilausdruck von `a[5] / 0` wird zuerst ausgewertet - der Array-Zugriff oder die Division?",
+    "Für d): In welchem Ast der Hierarchie stehen `OutOfMemoryError` und `StackOverflowError`, und was sagt das Skript über diesen Ast?"
+   ],
+   "pitfalls": [
+    "`arithmetisch` als Ausgabe angeben - die Division wird nie erreicht.",
+    "Die falsche catch-Reihenfolge nur als Stilfrage abtun statt als Compilerfehler.",
+    "Annehmen, `catch (Exception e)` fange wirklich jeden Fehler - `Error`-Objekte gehen daran vorbei."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 259,
+     "label": "Der catch-Block ist 'passend' wenn ..."
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 252,
+     "label": "Exceptions: Objekthierarchie - Errors sollten nicht gefangen werden"
+    },
+    {
+     "file": "11_Ueberblick/Klausur05.java",
+     "page": 0,
+     "label": "Reihenfolge der Auswertung als Falle"
+    }
+   ],
+   "tags": [
+    "catch-reihenfolge",
+    "passung",
+    "error",
+    "auswertungsreihenfolge",
+    "short-answer",
+    "nicht-uebersetzbar"
+   ]
+  }
+ ]
+}

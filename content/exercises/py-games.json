@@ -1,0 +1,1621 @@
+{
+ "topicId": "py-games",
+ "exercises": [
+  {
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "Stein-Schere-Papier-Echse-Spock: Wer gewinnt die Runde?",
+   "prompt": "Im Spiel **Stein-Schere-Papier-Echse-Spock** schlagen sich die fünf Symbole nach den folgenden zehn Regeln:\n\n```\nSchere schneidet Papier      Papier bedeckt Stein\nStein zerquetscht Echse      Echse vergiftet Spock\nSpock zertrümmert Schere     Schere köpft Echse\nEchse frisst Papier          Papier widerlegt Spock\nSpock verdampft Stein        Stein zerquetscht Schere\n```\n\nDiese Regeln stehen bereits als Tupel von Paaren `schlaegt` bereit (ein Paar `(a, b)` bedeutet: *a schlägt b*).\n\nSchreiben Sie eine Funktion `wer_gewinnt(s1, s2)`, die zurückgibt:\n\n- `0`, wenn beide dasselbe Symbol gelegt haben (Unentschieden),\n- `1`, wenn Spieler 1 gewinnt,\n- `2`, wenn Spieler 2 gewinnt.\n\nSie dürfen davon ausgehen, dass `s1` und `s2` immer gültige Symbole sind.",
+   "starterCode": "schlaegt = ((\"Schere\", \"Papier\"), (\"Papier\", \"Stein\"), (\"Stein\", \"Echse\"),\n            (\"Echse\", \"Spock\"), (\"Spock\", \"Schere\"), (\"Schere\", \"Echse\"),\n            (\"Echse\", \"Papier\"), (\"Papier\", \"Spock\"), (\"Spock\", \"Stein\"),\n            (\"Stein\", \"Schere\"))\n\n\ndef wer_gewinnt(s1, s2):\n    # Ihr Code hier\n    pass\n",
+   "tests": [
+    {
+     "name": "Stein schlaegt Schere",
+     "call": "wer_gewinnt('Stein', 'Schere')",
+     "expected": "1"
+    },
+    {
+     "name": "umgekehrte Reihenfolge",
+     "call": "wer_gewinnt('Schere', 'Stein')",
+     "expected": "2"
+    },
+    {
+     "name": "Unentschieden",
+     "call": "wer_gewinnt('Spock', 'Spock')",
+     "expected": "0"
+    },
+    {
+     "name": "Papier widerlegt Spock",
+     "call": "wer_gewinnt('Papier', 'Spock')",
+     "expected": "1"
+    },
+    {
+     "name": "Echse verliert gegen Stein",
+     "call": "wer_gewinnt('Echse', 'Stein')",
+     "expected": "2"
+    },
+    {
+     "name": "Echse frisst Papier",
+     "call": "wer_gewinnt('Echse', 'Papier')",
+     "expected": "1"
+    }
+   ],
+   "required": [
+    "def wer_gewinnt"
+   ],
+   "solution": "schlaegt = ((\"Schere\", \"Papier\"), (\"Papier\", \"Stein\"), (\"Stein\", \"Echse\"),\n            (\"Echse\", \"Spock\"), (\"Spock\", \"Schere\"), (\"Schere\", \"Echse\"),\n            (\"Echse\", \"Papier\"), (\"Papier\", \"Spock\"), (\"Spock\", \"Stein\"),\n            (\"Stein\", \"Schere\"))\n\n\ndef wer_gewinnt(s1, s2):\n    if s1 == s2:\n        return 0\n    elif (s1, s2) in schlaegt:\n        return 1\n    else:\n        return 2\n",
+   "explanation": "Der ganze Trick besteht darin, die zehn Spielregeln **als Daten** zu speichern statt als zehn `if`-Zweige. `schlaegt` ist ein Tupel von Paaren; der `in`-Operator prüft dann in einer einzigen Zeile, ob das Paar `(s1, s2)` in dieser Sammlung vorkommt.\n\nWichtig ist die Reihenfolge der Abfragen: Das Unentschieden muss **zuerst** geprüft werden. Ein Paar wie `(\"Spock\", \"Spock\")` steht in `schlaegt` nicht drin, würde also ohne die erste Abfrage im `else`-Zweig landen und fälschlich `2` liefern.\n\nDer zweite wichtige Punkt: Weil die Relation vollständig ist (jedes Paar verschiedener Symbole kommt genau einmal vor, entweder als `(a, b)` oder als `(b, a)`), darf man aus \"`(s1, s2)` steht nicht drin und die Symbole sind verschieden\" schließen, dass Spieler 2 gewonnen hat. Bei einer unvollständigen Regeltabelle wäre dieser Schluss falsch - dann müsste man zusätzlich `(s2, s1) in schlaegt` prüfen.\n\nTypischer Denkfehler: `if s1 in schlaegt` statt `if (s1, s2) in schlaegt` - das prüft, ob der String `s1` selbst ein Element des Tupels ist, und ist immer `False`, weil die Elemente Paare sind.\n\n**Merkregel:** Regeln, die sich aufzählen lassen, gehören in eine Datenstruktur - nicht in eine Kaskade von `elif`.",
+   "hints": [
+    "Klären Sie zuerst den Sonderfall: Wann kann überhaupt niemand gewinnen?",
+    "`schlaegt` enthält **Paare**. Wie prüft man mit einem einzigen Operator, ob ein bestimmtes Paar darin vorkommt?",
+    "Wenn die Symbole verschieden sind und `(s1, s2)` nicht in `schlaegt` steht, kann nur noch ein Ergebnis übrig bleiben."
+   ],
+   "pitfalls": [
+    "Das Unentschieden erst am Ende prüfen - dann liefert `wer_gewinnt('Stein', 'Stein')` fälschlich 2.",
+    "`(s1, s2) in schlaegt` mit `s1 in schlaegt` verwechseln.",
+    "Zehn einzelne `elif`-Zweige schreiben - funktioniert, ist aber fehleranfällig und war nicht gefragt."
+   ],
+   "sources": [
+    {
+     "file": "1_installation_variablen_anweisungen_26.pdf",
+     "page": 22,
+     "label": "Stein-Schere-Papier-Aufgabe"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Klausur-Übungstipps: kleine Spiele programmieren"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "stein-schere-papier",
+    "tupel",
+    "in-operator",
+    "if-elif-else"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-001"
+  },
+  {
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "Kniffel-Light: Dreierpasch-Punkte berechnen",
+   "prompt": "Bei **Kniffel-Light** wird mit fünf Würfeln geworfen. Gewertet wird nur der *Dreierpasch*:\n\n- Ein Dreierpasch liegt vor, wenn **mindestens drei** Würfel dieselbe Augenzahl zeigen.\n- Liegt ein Dreierpasch vor, zählt die **Summe aller fünf Würfel** als Punktzahl.\n- Liegt keiner vor, gibt es `0` Punkte.\n\nSchreiben Sie die Funktion `dreierpasch_punkte(wuerfel)`. Der Parameter `wuerfel` ist eine Liste (oder ein Tupel) mit fünf Augenzahlen.\n\nBeispiel: `dreierpasch_punkte([3, 3, 3, 1, 6])` → `16`, `dreierpasch_punkte([4, 4, 5, 5, 1])` → `0`.",
+   "starterCode": "def dreierpasch_punkte(wuerfel):\n    # Ihr Code hier\n    pass\n",
+   "tests": [
+    {
+     "name": "Dreierpasch aus Dreien",
+     "call": "dreierpasch_punkte([3, 3, 3, 1, 6])",
+     "expected": "16"
+    },
+    {
+     "name": "Dreierpasch verstreut",
+     "call": "dreierpasch_punkte([2, 4, 2, 5, 2])",
+     "expected": "15"
+    },
+    {
+     "name": "kein Dreierpasch",
+     "call": "dreierpasch_punkte([1, 2, 3, 4, 5])",
+     "expected": "0"
+    },
+    {
+     "name": "zwei Paare sind kein Dreierpasch",
+     "call": "dreierpasch_punkte([4, 4, 5, 5, 1])",
+     "expected": "0"
+    },
+    {
+     "name": "Kniffel zählt auch als Dreierpasch",
+     "call": "dreierpasch_punkte([6, 6, 6, 6, 6])",
+     "expected": "30"
+    },
+    {
+     "name": "funktioniert auch mit Tupel",
+     "call": "dreierpasch_punkte((1, 1, 1, 1, 2))",
+     "expected": "6"
+    }
+   ],
+   "required": [
+    "def dreierpasch_punkte"
+   ],
+   "solution": "def dreierpasch_punkte(wuerfel):\n    for augen in wuerfel:\n        if wuerfel.count(augen) >= 3:\n            return sum(wuerfel)\n    return 0\n",
+   "explanation": "Die Aufgabe zerfällt in zwei unabhängige Fragen: *Gibt es einen Dreierpasch?* und *Wie viele Punkte gibt das?* Die zweite ist trivial (`sum(wuerfel)`), die erste ist der eigentliche Kern.\n\nDer eleganteste Weg nutzt die Listenmethode `count`: `wuerfel.count(augen)` sagt, wie oft die Augenzahl `augen` in der Liste vorkommt. Man muss also nur über die geworfenen Augenzahlen laufen und fragen, ob eine davon mindestens dreimal auftritt. `count` gibt es sowohl für Listen als auch für Tupel und Strings - deshalb funktioniert die Lösung mit beiden Datentypen.\n\nEin `return` innerhalb der Schleife beendet die Funktion sofort; das abschließende `return 0` wird also nur erreicht, wenn die Schleife komplett durchgelaufen ist, ohne fündig zu werden. Genau dieses Muster (\"Suchen und beim ersten Treffer verlassen\") kommt in Spielen ständig vor.\n\nTypischer Denkfehler: Es werden nur die Punkte der *passenden* Würfel summiert (also 3+3+3 = 9 statt 16). Bei Kniffel zählt beim Dreierpasch aber die Summe **aller** Würfel - das steht in der Aufgabe und muss gelesen werden.\n\nZweiter Denkfehler: `wuerfel.count(augen) == 3`. Bei fünf gleichen Würfeln ist der Zähler 5, die Bedingung wäre falsch und der beste Wurf des Spiels bekäme 0 Punkte. Deshalb `>= 3`.\n\n**Merkregel:** `count` beantwortet \"wie oft\", `in` beantwortet nur \"überhaupt\".",
+   "hints": [
+    "Sie brauchen keine sechs Zähler für die sechs Augenzahlen - es genügt, für jede *geworfene* Zahl zu fragen, wie oft sie vorkommt.",
+    "Listen und Tupel kennen die Methode `count(wert)`.",
+    "Achten Sie auf die Vergleichsoperation: Bei vier oder fünf gleichen Würfeln liegt ebenfalls ein Dreierpasch vor."
+   ],
+   "pitfalls": [
+    "Nur die drei gleichen Würfel summieren statt aller fünf.",
+    "`== 3` statt `>= 3` - dann liefert ein Viererpasch fälschlich 0 Punkte.",
+    "Das abschließende `return 0` vergessen: Ohne Dreierpasch liefert die Funktion dann `None`."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Klausur-Übungstipps: Kniffel-Light (Yahtzee Mini)"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 3,
+     "label": "Listenmethoden append, pop, count"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "kniffel",
+    "count",
+    "listen",
+    "schleife"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-002"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Kniffel-Light: drei Versuche mit Festhalten",
+   "prompt": "Der folgende Code spielt eine komplette Kniffel-Light-Runde: Es wird mit fünf Würfeln geworfen, der Spieler hat **drei Versuche** und hält nach jedem Wurf alle Würfel mit der häufigsten Augenzahl fest. Damit das Programm reproduzierbar bleibt, kommen die \"Zufallszahlen\" aus einem vorbereiteten `vorrat` (der Zufall ist also als Parameter injiziert).\n\n**Füllen Sie die drei Lücken so aus**, dass genau die folgende Ausgabe entsteht:\n\n```\nWurf 2 -> [5, 5, 5, 4, 6]\nWurf 3 -> [5, 5, 5, 5, 2]\nPunkte: 22\n```\n\n*(je 1-2 P)*",
+   "code": "def dreierpasch_punkte(wuerfel):\n    for augen in wuerfel:\n        if wuerfel.count(augen) >= 3:\n            return sum(wuerfel)\n    return 0\n\n\ndef haeufigste_augenzahl(wuerfel):\n    beste = wuerfel[0]\n    for augen in wuerfel:\n        if wuerfel.count(augen) > wuerfel.count(beste):\n            beste = augen\n    return beste\n\n\ndef festhalten(wuerfel, augenzahl):\n    behalten = []\n    for w in wuerfel:\n        if ## Lücke 1 ##:\n            behalten.append(w)\n    return behalten\n\n\nvorrat = [2, 5, 5, 1, 3, 5, 4, 6, 5, 2, 1, 6]\nwuerfel = vorrat[:5]\nvorrat = vorrat[5:]\nversuch = 1\n\nwhile ## Lücke 2 ##:\n    zahl = haeufigste_augenzahl(wuerfel)\n    behalten = festhalten(wuerfel, zahl)\n    nachgeworfen = 5 - len(behalten)\n    wuerfel = behalten + vorrat[:nachgeworfen]\n    vorrat = ## Lücke 3 ##\n    versuch = versuch + 1\n    print(\"Wurf\", versuch, \"->\", wuerfel)\n\nprint(\"Punkte:\", dreierpasch_punkte(wuerfel))",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "w == augenzahl",
+      "augenzahl == w"
+     ],
+     "explanation": "Festgehalten wird genau der Würfel, dessen Augenzahl gleich der übergebenen `augenzahl` ist."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "versuch < 3",
+      "3 > versuch",
+      "versuch <= 2",
+      "versuch != 3"
+     ],
+     "explanation": "Nach dem ersten Wurf sind noch zwei Nachwürfe erlaubt: Die Schleife läuft also, solange `versuch` kleiner als 3 ist."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "vorrat[nachgeworfen:]",
+      "vorrat[len(wuerfel) - len(behalten):]",
+      "vorrat[5 - len(behalten):]"
+     ],
+     "explanation": "Die eben verbrauchten `nachgeworfen` Werte müssen aus dem Vorrat verschwinden - übrig bleibt alles ab Index `nachgeworfen`."
+    }
+   ],
+   "solution": "def festhalten(wuerfel, augenzahl):\n    behalten = []\n    for w in wuerfel:\n        if w == augenzahl:           # Lücke 1\n            behalten.append(w)\n    return behalten\n\n\nwhile versuch < 3:                   # Lücke 2\n    zahl = haeufigste_augenzahl(wuerfel)\n    behalten = festhalten(wuerfel, zahl)\n    nachgeworfen = 5 - len(behalten)\n    wuerfel = behalten + vorrat[:nachgeworfen]\n    vorrat = vorrat[nachgeworfen:]   # Lücke 3\n    versuch = versuch + 1\n    print(\"Wurf\", versuch, \"->\", wuerfel)\n",
+   "explanation": "Die drei Lücken decken die drei Bausteine ab, aus denen fast jedes Würfelspiel besteht.\n\n**Lücke 1 - Auswahl:** `festhalten` sammelt genau die Würfel ein, die die gewünschte Augenzahl zeigen. Das ist inhaltlich ein `filter` - hier von Hand mit Schleife und `append` geschrieben.\n\n**Lücke 2 - Abbruch:** \"Drei Versuche\" heißt: ein Anfangswurf plus zwei Nachwürfe. `versuch` startet bei 1 und wird im Schleifenrumpf erhöht; die Schleife darf also genau zweimal laufen, das ergibt `versuch < 3`. Der klassische Fehler ist hier ein *off-by-one*: mit `versuch <= 3` würde dreimal nachgeworfen, also insgesamt viermal gewürfelt.\n\n**Lücke 3 - Zufall verbrauchen:** Der `vorrat` ersetzt `random`. Damit derselbe Wert nicht zweimal verwendet wird, muss der verbrauchte Anfang abgeschnitten werden - `vorrat[nachgeworfen:]` ist das Gegenstück zu `vorrat[:nachgeworfen]`, das gerade verwendet wurde. Genau dieses Muster (Zufall als Parameter statt als globaler Nebeneffekt) macht das Spiel testbar und die Funktionen *pure* - in der Vorlesung geschieht dasselbe mit dem `seed`.\n\nDurchgang 1: `[2, 5, 5, 1, 3]` → häufigste Zahl 5 → behalten `[5, 5]` → drei Nachwürfe `5, 4, 6` → `[5, 5, 5, 4, 6]`. Durchgang 2: behalten `[5, 5, 5]` → zwei Nachwürfe `5, 2` → `[5, 5, 5, 5, 2]` → Dreierpasch vorhanden → Summe aller Würfel = 22.\n\n**Merkregel:** Was man vorne mit `[:n]` nimmt, muss man hinten mit `[n:]` stehen lassen.",
+   "hints": [
+    "Lücke 1: `festhalten` bekommt die Augenzahl übergeben, die behalten werden soll - vergleichen Sie den einzelnen Würfel damit.",
+    "Lücke 2: Zählen Sie mit: Der erste Wurf ist bereits vor der Schleife passiert. Wie oft darf die Schleife also laufen?",
+    "Lücke 3: Oben im Rumpf werden `vorrat[:nachgeworfen]` verbraucht. Welcher Teil des Vorrats ist danach noch übrig?"
+   ],
+   "pitfalls": [
+    "Off-by-one bei Lücke 2: `versuch <= 3` würde vier Würfe ergeben.",
+    "In Lücke 3 den Vorrat gar nicht kürzen - dann wiederholen sich die Nachwürfe endlos gleich.",
+    "In Lücke 1 `wuerfel.count(w) >= 3` schreiben - das hält die falschen Würfel fest, nämlich alle Pasch-Würfel unabhängig von `augenzahl`."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Kniffel-Light: 3 Versuche, Würfel festhalten"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "Zufall über einen seed injizieren (ziehe_karte)"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "kniffel",
+    "slicing",
+    "while",
+    "lücken"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-003"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Kniffel-Light: Was gibt das Festhalten aus?",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Begründen Sie Ihre Antwort in einem Satz. *(3 P)*",
+   "code": "def festhalten(wuerfel, augenzahl):\n    behalten = []\n    for w in wuerfel:\n        if w == augenzahl:\n            behalten.append(w)\n    return behalten\n\n\ndef nachwuerfeln(behalten, vorrat):\n    fehlend = 5 - len(behalten)\n    return behalten + vorrat[:fehlend], vorrat[fehlend:]\n\n\nwuerfel = [6, 1, 6, 2, 4]\nvorrat = [3, 6, 5, 1, 2, 6]\n\nwuerfel = festhalten(wuerfel, 6)\nwuerfel, vorrat = nachwuerfeln(wuerfel, vorrat)\nprint(wuerfel)\n\nwuerfel = festhalten(wuerfel, 6)\nwuerfel, vorrat = nachwuerfeln(wuerfel, vorrat)\nprint(wuerfel)\n\nprint(vorrat)",
+   "expectedOutput": "[6, 6, 3, 6, 5]\n[6, 6, 6, 1, 2]\n[6]",
+   "solution": "[6, 6, 3, 6, 5]\n[6, 6, 6, 1, 2]\n[6]",
+   "explanation": "Der Code simuliert zwei Nachwürfe bei Kniffel-Light, ohne `random` zu benutzen: Die \"gewürfelten\" Zahlen kommen der Reihe nach aus `vorrat`.\n\n**Erster Durchgang:** `festhalten([6, 1, 6, 2, 4], 6)` liefert `[6, 6]` - die Reihenfolge der Treffer bleibt erhalten, weil die Schleife die Liste von links nach rechts durchläuft. In `nachwuerfeln` ist `fehlend = 5 - 2 = 3`, es werden also die ersten drei Vorratswerte `[3, 6, 5]` angehängt: `[6, 6, 3, 6, 5]`. Der Rest `[1, 2, 6]` wird als zweiter Rückgabewert zurückgegeben.\n\nEntscheidend ist die Zeile `return behalten + vorrat[:fehlend], vorrat[fehlend:]` - sie gibt ein **Tupel aus zwei Werten** zurück, das mit `wuerfel, vorrat = ...` direkt in zwei Variablen entpackt wird. Wer das übersieht, denkt, `wuerfel` sei danach ein Tupel.\n\n**Zweiter Durchgang:** In `[6, 6, 3, 6, 5]` stehen drei Sechsen → `behalten = [6, 6, 6]`, `fehlend = 2`, angehängt werden `[1, 2]` → `[6, 6, 6, 1, 2]`, Rest `[6]`.\n\nBeachten Sie: `print` einer Liste zeigt die Kommata **mit** Leerzeichen dahinter, also `[6, 6, 3, 6, 5]` und nicht `[6,6,3,6,5]`.\n\n**Merkregel:** `liste[:n]` und `liste[n:]` zerlegen eine Liste überschneidungsfrei und lückenlos - zusammen ergeben sie wieder das Original.",
+   "hints": [
+    "Schreiben Sie nach jeder Zeile den aktuellen Inhalt von `wuerfel` und `vorrat` auf.",
+    "`nachwuerfeln` gibt zwei Werte zurück - beachten Sie, was dabei mit `vorrat` passiert.",
+    "`fehlend` ist immer 5 minus der Anzahl der festgehaltenen Würfel."
+   ],
+   "pitfalls": [
+    "Vergessen, dass `vorrat` bei jedem Aufruf kürzer wird - dann werden im zweiten Durchgang wieder `[3, 6, 5]` angehängt.",
+    "Die festgehaltenen Würfel ans Ende statt an den Anfang setzen - die Reihenfolge in der Ausgabe wäre dann falsch.",
+    "Bei der Listenausgabe die Leerzeichen nach den Kommata vergessen."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Kniffel-Light: Nach jedem Wurf einzelne Würfel festhalten"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Was wird ausgegeben?"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "kniffel",
+    "slicing",
+    "tupel-entpacken",
+    "predict-output"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-004"
+  },
+  {
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "Hohe Hausnummer: die beste Zahl automatisch bauen",
+   "prompt": "Beim Spiel **Hohe Hausnummer** wird drei Mal mit einem Würfel geworfen. Aus den drei Augenzahlen soll eine möglichst große **dreistellige** Zahl zusammengesetzt werden (Variante 1: die beste Zahl wird automatisch gebaut).\n\nSchreiben Sie die Funktion `beste_hausnummer(wuerfe)`. `wuerfe` ist eine Liste oder ein Tupel mit genau drei Augenzahlen; zurückgegeben wird die größte daraus baubare dreistellige Zahl **als `int`**.\n\nBeispiel: `beste_hausnummer([3, 6, 1])` → `631`.\n\nDie übergebene Liste darf dabei **nicht verändert** werden.",
+   "starterCode": "def beste_hausnummer(wuerfe):\n    # Ihr Code hier\n    pass\n",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "beste_hausnummer([3, 6, 1])",
+     "expected": "631"
+    },
+    {
+     "name": "alle gleich",
+     "call": "beste_hausnummer([2, 2, 2])",
+     "expected": "222"
+    },
+    {
+     "name": "aufsteigend geworfen",
+     "call": "beste_hausnummer([1, 4, 5])",
+     "expected": "541"
+    },
+    {
+     "name": "funktioniert auch mit Tupel",
+     "call": "beste_hausnummer((6, 6, 5))",
+     "expected": "665"
+    },
+    {
+     "name": "zwei Einsen",
+     "call": "beste_hausnummer([1, 1, 2])",
+     "expected": "211"
+    },
+    {
+     "name": "Eingabe bleibt unverändert",
+     "call": "(lambda w: (beste_hausnummer(w), w))([2, 5, 3])",
+     "expected": "(532, [2, 5, 3])"
+    }
+   ],
+   "required": [
+    "def beste_hausnummer"
+   ],
+   "solution": "def beste_hausnummer(wuerfe):\n    sortiert = sorted(wuerfe, reverse=True)\n    return 100 * sortiert[0] + 10 * sortiert[1] + sortiert[2]\n",
+   "explanation": "Die beste dreistellige Zahl entsteht, wenn der größte Wurf auf die Hunderterstelle kommt, der zweitgrößte auf die Zehner- und der kleinste auf die Einerstelle. Man muss also nur **absteigend sortieren** und danach den Stellenwert draufmultiplizieren.\n\nEntscheidend ist die Wahl zwischen `sorted(...)` und `.sort()`:\n\n- `sorted(wuerfe, reverse=True)` liefert eine **neue** Liste und lässt das Original in Ruhe - die Funktion bleibt damit *pure*.\n- `wuerfe.sort(reverse=True)` sortiert **an Ort und Stelle** (in-place), verändert also das übergebene Objekt und gibt `None` zurück. Das ist genau der Nebeneffekt, den die Aufgabe verbietet - und bei Tupeln gäbe es zusätzlich einen `AttributeError`, weil Tupel gar keine `sort`-Methode haben.\n\nDer zweite Baustein ist der Stellenwert: Eine dreistellige Zahl ist `100 * h + 10 * z + e`. Wer stattdessen die Ziffern als Strings verkettet (`int(str(a) + str(b) + str(c))`), bekommt dasselbe Ergebnis - das ist erlaubt, aber der Rechenweg zeigt besser, dass man das Dezimalsystem verstanden hat.\n\nTypischer Denkfehler: `sorted(wuerfe)` ohne `reverse=True` und dann von hinten indizieren. Das geht auch, aber die Indizes `[-1]`, `[-2]`, `[-3]` werden dabei gern verwechselt.\n\n**Merkregel:** `sorted` gibt zurück, `sort` verändert.",
+   "hints": [
+    "Welche der drei Augenzahlen muss auf die Hunderterstelle, damit die Zahl möglichst groß wird?",
+    "Es gibt eine eingebaute Funktion, die eine sortierte **Kopie** liefert - und eine Methode, die die Liste selbst umsortiert. Nur eine davon ist hier erlaubt.",
+    "Aus drei Ziffern h, z, e wird die Zahl mit 100·h + 10·z + e."
+   ],
+   "pitfalls": [
+    "`wuerfe.sort(reverse=True)` benutzen: verändert die Eingabe und liefert `None`, außerdem Fehler bei Tupeln.",
+    "Das `reverse=True` vergessen und dadurch die kleinste statt der größten Zahl bauen.",
+    "Die drei Ziffern einfach addieren statt mit Stellenwerten zu multiplizieren."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Hohe Hausnummer, Variante 1"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 1,
+     "label": "mutable vs. immutable, keine Nebeneffekte"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "hausnummer",
+    "sorted",
+    "pure-function",
+    "stellenwert"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-005"
+  },
+  {
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Hausnummer aus Würfen falten: Was liefert reduce?",
+   "prompt": "Bei **Hoher Hausnummer** werden die drei Würfe der Reihe nach an die Zahl \"angehängt\". Ein Kommilitone schreibt das mit `reduce`.\n\nWelchen Wert hat `hausnummer` nach der Ausführung?",
+   "code": "from functools import reduce\n\nwuerfe = [3, 1, 5]\nhausnummer = reduce(lambda zahl, wurf: zahl * 10 + wurf, wuerfe)\nprint(hausnummer)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "315",
+     "correct": true,
+     "why": "Richtig. Ohne Startwert ist das erste Element der Startwert: 3 → 3·10+1 = 31 → 31·10+5 = 315."
+    },
+    {
+     "id": "b",
+     "text": "9",
+     "correct": false,
+     "why": "9 wäre 3+1+5, also die Summe. Die Faltungsfunktion multipliziert den Zwischenstand aber zuerst mit 10."
+    },
+    {
+     "id": "c",
+     "text": "513",
+     "correct": false,
+     "why": "`reduce` arbeitet von links nach rechts. Für 513 müsste die Liste vorher umgedreht werden."
+    },
+    {
+     "id": "d",
+     "text": "3150",
+     "correct": false,
+     "why": "Das wäre das Ergebnis mit Startwert 0 und einem zusätzlichen vierten Element. Mit drei Würfen bleibt es dreistellig."
+    },
+    {
+     "id": "e",
+     "text": "TypeError, weil reduce zwingend einen Startwert braucht",
+     "correct": false,
+     "why": "Der Startwert ist optional. Fehlt er, nimmt `reduce` das erste Element der Sequenz - nur bei einer *leeren* Sequenz ohne Startwert gibt es einen TypeError."
+    }
+   ],
+   "solution": "315",
+   "explanation": "`reduce(f, liste)` faltet die Liste von links nach rechts: `reduce(f, [x1, x2, x3]) = f(f(x1, x2), x3)`. Hier ist `f = lambda zahl, wurf: zahl * 10 + wurf`.\n\nSchritt für Schritt: Startwert ist mangels drittem Argument das erste Element, also `3`. Dann `f(3, 1) = 3*10 + 1 = 31`. Dann `f(31, 5) = 31*10 + 5 = 315`.\n\nDas ist das **Horner-Schema**, mit dem man aus einer Ziffernfolge eine Zahl baut - und genau das braucht man bei \"Hohe Hausnummer\", wenn die Würfe in der geworfenen Reihenfolge auf Hunderter, Zehner und Einer verteilt werden.\n\nZwei Feinheiten, die in der Klausur gern geprüft werden:\n\n1. Der **Startwert ist optional**. `reduce(f, liste, start)` beginnt mit `start`, `reduce(f, liste)` mit `liste[0]`. Ein `TypeError` entsteht nur, wenn die Sequenz leer ist *und* kein Startwert angegeben wurde.\n2. Der **erste Parameter** der Faltungsfunktion ist immer der Zwischenstand (der \"Akkumulator\"), der zweite das nächste Element. Wer die beiden vertauscht (`wurf * 10 + zahl`), bekommt Unsinn.\n\n**Merkregel:** `reduce` frisst von links und schleppt das Zwischenergebnis mit.",
+   "hints": [
+    "Schreiben Sie die Faltung explizit auf: f(f(3, 1), 5).",
+    "Was ist der Startwert, wenn `reduce` nur zwei Argumente bekommt?",
+    "Der erste Parameter des `lambda` ist der bisherige Zwischenstand, nicht das Listenelement."
+   ],
+   "pitfalls": [
+    "Die beiden lambda-Parameter vertauschen.",
+    "Glauben, `reduce` brauche immer einen Startwert.",
+    "`reduce` von rechts nach links auswerten."
+   ],
+   "sources": [
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 1,
+     "label": "reduce"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "reduce(f, [x1,x2,x3]) = f(f(x1,x2),x3)"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Hohe Hausnummer"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "hausnummer",
+    "reduce",
+    "lambda",
+    "horner"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-006"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Hohe Hausnummer, Variante 2 - ohne Schleife",
+   "prompt": "Bei **Variante 2** von *Hohe Hausnummer* muss der Spieler nach **jedem** Wurf sofort sagen, ob die Augenzahl auf die Hunderter-, Zehner- oder Einerstelle geschrieben wird.\n\nSchreiben Sie die Funktion `hausnummer_bauen(wuerfe, stellen)`:\n\n- `wuerfe` ist eine Liste der geworfenen Augenzahlen (in der Wurfreihenfolge),\n- `stellen` ist eine gleich lange Liste mit den Buchstaben `\"H\"` (Hunderter), `\"Z\"` (Zehner) und `\"E\"` (Einer) - jede Stelle kommt genau einmal vor,\n- zurückgegeben wird die entstandene Zahl als `int`.\n\nBeispiel: `hausnummer_bauen([3, 1, 5], [\"Z\", \"H\", \"E\"])` → `135` (die 3 kommt auf die Zehner, die 1 auf die Hunderter, die 5 auf die Einer).\n\n**Verwenden Sie keine `for`- und keine `while`-Schleife**, sondern `reduce` (und `lambda`). *(5 P)*",
+   "starterCode": "from functools import reduce\n\n\ndef hausnummer_bauen(wuerfe, stellen):\n    # Ihr Code hier - ohne Schleifen!\n    pass\n",
+   "constraints": [
+    "keine for-Schleife",
+    "keine while-Schleife",
+    "reduce und lambda verwenden"
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "reduce("
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "hausnummer_bauen([3, 1, 5], ['Z', 'H', 'E'])",
+     "expected": "135"
+    },
+    {
+     "name": "H, E, Z",
+     "call": "hausnummer_bauen([6, 2, 4], ['H', 'E', 'Z'])",
+     "expected": "642"
+    },
+    {
+     "name": "rückwärts zugewiesen",
+     "call": "hausnummer_bauen([1, 1, 1], ['E', 'Z', 'H'])",
+     "expected": "111"
+    },
+    {
+     "name": "der Reihe nach",
+     "call": "hausnummer_bauen([5, 5, 2], ['H', 'Z', 'E'])",
+     "expected": "552"
+    },
+    {
+     "name": "schlechte Entscheidung",
+     "call": "hausnummer_bauen([6, 1, 3], ['E', 'H', 'Z'])",
+     "expected": "136"
+    }
+   ],
+   "solution": "from functools import reduce\n\n\ndef hausnummer_bauen(wuerfe, stellen):\n    wert = {\"H\": 100, \"Z\": 10, \"E\": 1}\n    return reduce(lambda summe, i: summe + wert[stellen[i]] * wuerfe[i],\n                  range(len(wuerfe)),\n                  0)\n",
+   "explanation": "Der Kern der Aufgabe: Zwei Listen müssen **parallel** verarbeitet werden - die Würfe und die zugehörigen Stellen. Ohne Schleife gibt es dafür zwei saubere Wege.\n\n**Weg 1 (Musterlösung): über die Indizes falten.** `range(len(wuerfe))` liefert die Indizes 0, 1, 2. `reduce` faltet diese Indexfolge zu einer Summe; bei jedem Index wird der passende Stellenwert aus dem Dictionary `wert` geholt und mit der Augenzahl multipliziert. Der Startwert `0` ist hier **wichtig**: Ohne ihn wäre der erste Index `0` selbst der Startwert und würde als Zahl mitgezählt.\n\n**Weg 2: `map` mit zwei Listen.** `map` darf mehrere iterierbare Objekte bekommen, dann bekommt die Funktion je ein Element aus jedem: `sum(map(lambda w, s: wert[s] * w, wuerfe, stellen))`. Genau diese Form kennen Sie aus der Probeklausur von der Vektoraddition `map(lambda a, b: a + b, v, w)`.\n\nDas Dictionary `wert` übersetzt den Buchstaben in den Stellenwert. Alternativ ginge auch `10 ** \"EZH\".index(stelle)` - hübsch, aber schwerer zu lesen.\n\nBeachten Sie, dass hier **kein Sortieren** stattfinden darf: Anders als in Variante 1 entscheidet der Spieler selbst (und manchmal schlecht), wohin der Wurf kommt. Die Funktion baut nur nach, was entschieden wurde.\n\n**Merkregel:** Zwei Listen parallel ohne Schleife - entweder über `range(len(...))` falten oder `map` mit zwei Argumenten füttern.",
+   "hints": [
+    "Sie brauchen zu jedem Wurf die zugehörige Stelle. Was ist das gemeinsame Bindeglied zwischen beiden Listen?",
+    "Ein Dictionary kann `\"H\"` auf 100, `\"Z\"` auf 10 und `\"E\"` auf 1 abbilden.",
+    "Falten Sie mit `reduce` über `range(len(wuerfe))` und geben Sie unbedingt den Startwert 0 an - oder nutzen Sie `map` mit zwei Listen wie bei der Vektoraddition."
+   ],
+   "pitfalls": [
+    "Den Startwert 0 bei `reduce` vergessen: Dann wird der Index 0 selbst zum Startwert addiert.",
+    "Die Würfe sortieren - das ist Variante 1 und liefert hier falsche Ergebnisse.",
+    "Eine List Comprehension benutzen: Sie enthält ebenfalls das Schlüsselwort `for` und ist damit nicht erlaubt."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Hohe Hausnummer, Variante 2"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3b: vektoraddition mit map über zwei Listen"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 1,
+     "label": "reduce mit Startwert"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "hausnummer",
+    "reduce",
+    "map",
+    "keine-schleifen",
+    "dictionary"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-007"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Mäxchen: eine Runde auswerten",
+   "prompt": "Beim **Mäxchen (Meiern)** würfelt ein Spieler verdeckt und nennt dem nächsten Spieler eine Zahl. Der nächste Spieler kann\n\n- die Zahl **glauben** - dann bekommt niemand einen Punkt und es wird weitergespielt, oder\n- die Zahl **anzweifeln** - dann wird die wahre Zahl aufgedeckt. War die genannte Zahl eine Lüge (wurde also zu Recht angezweifelt), bekommt der Zweifler einen Punkt; war sie keine Lüge, bekommt der Sager einen Punkt.\n\n**Füllen Sie die drei Lücken** so aus, dass `maexchen_runde` die neuen Punktestände `(punkte_sager, punkte_zweifler)` korrekt zurückgibt. *(je 1-2 P)*\n\nEs muss gelten:\n\n```\nmaexchen_runde(5, 5, False, 0, 0)  ->  (0, 0)\nmaexchen_runde(6, 3, True,  2, 1)  ->  (2, 2)\nmaexchen_runde(4, 4, True,  2, 1)  ->  (3, 1)\n```",
+   "code": "def maexchen_runde(genannte_zahl, echte_zahl, zweifelt_an, punkte_sager, punkte_zweifler):\n    \"\"\"\n    Wertet eine Maexchen-Runde aus.\n    Rueckgabe: (neue_punkte_sager, neue_punkte_zweifler)\n    \"\"\"\n    if ## Lücke 1 ##:\n        # Es wurde geglaubt: niemand bekommt einen Punkt\n        return punkte_sager, punkte_zweifler\n    elif ## Lücke 2 ##:\n        # Es war eine Lüge - zu Recht angezweifelt\n        return punkte_sager, ## Lücke 3 ##\n    else:\n        # Die genannte Zahl stimmte - der Sager bekommt den Punkt\n        return punkte_sager + 1, punkte_zweifler",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "not zweifelt_an",
+      "zweifelt_an == False",
+      "zweifelt_an is False",
+      "zweifelt_an != True",
+      "not zweifelt_an == True"
+     ],
+     "explanation": "Der erste Zweig behandelt den Fall \"geglaubt\", also **kein** Anzweifeln."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "genannte_zahl != echte_zahl",
+      "echte_zahl != genannte_zahl",
+      "not genannte_zahl == echte_zahl",
+      "genannte_zahl > echte_zahl",
+      "echte_zahl < genannte_zahl"
+     ],
+     "explanation": "Eine Lüge liegt vor, wenn die genannte Zahl nicht mit der gewürfelten übereinstimmt (in der Praxis: wenn zu hoch angesagt wurde)."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "punkte_zweifler + 1",
+      "1 + punkte_zweifler"
+     ],
+     "explanation": "Der Zweifler hat zu Recht angezweifelt und bekommt genau einen Punkt dazu."
+    }
+   ],
+   "solution": "def maexchen_runde(genannte_zahl, echte_zahl, zweifelt_an, punkte_sager, punkte_zweifler):\n    if not zweifelt_an:                        # Lücke 1\n        return punkte_sager, punkte_zweifler\n    elif genannte_zahl != echte_zahl:          # Lücke 2\n        return punkte_sager, punkte_zweifler + 1   # Lücke 3\n    else:\n        return punkte_sager + 1, punkte_zweifler\n",
+   "explanation": "Die Funktion ist ein Musterbeispiel für eine **pure function**: Sie bekommt den kompletten Spielzustand als Argumente, verändert nichts davon und gibt einen **neuen** Punktestand als Tupel zurück. Genau so ist `runde_auswerten` im Goofspiel der Vorlesung gebaut.\n\n**Lücke 1** trennt die beiden Grundfälle des Spiels. Achtung auf die Logik: Der Kommentar sagt \"Es wurde geglaubt\", die Variable heißt aber `zweifelt_an` - also muss negiert werden. `not zweifelt_an` ist die idiomatische Schreibweise; `zweifelt_an == False` ist erlaubt, gilt aber als umständlich.\n\n**Lücke 2** definiert, was eine Lüge ist: Die angesagte Zahl stimmt nicht mit der gewürfelten überein. Weil beim Mäxchen immer höher angesagt werden muss als der Vorgänger, ist eine Lüge praktisch immer ein *zu hohes* Ansagen - `genannte_zahl > echte_zahl` ist deshalb ebenfalls eine akzeptable Formulierung.\n\n**Lücke 3** vergibt den Punkt an den Zweifler. Beachten Sie: Es wird `punkte_zweifler + 1` **zurückgegeben** und nicht `punkte_zweifler` mutiert. Bei einer `int`-Variablen wäre eine Mutation ohnehin unmöglich - `int` ist immutable, `punkte_zweifler = punkte_zweifler + 1` würde nur den lokalen Namen umbiegen und den Wert des Aufrufers nicht ändern.\n\n**Merkregel:** Der Zweifler gewinnt genau dann, wenn er recht hatte - und der Sager genau dann, wenn er zu Unrecht verdächtigt wurde.",
+   "hints": [
+    "Lücke 1: Der Kommentar beschreibt den *Gegenteil*-Fall der Variablen `zweifelt_an`.",
+    "Lücke 2: Wann ist eine Ansage eine Lüge? Vergleichen Sie die genannte mit der echten Zahl.",
+    "Lücke 3: Der Rückgabewert ist ein Tupel `(sager, zweifler)` - nur einer der beiden Werte ändert sich."
+   ],
+   "pitfalls": [
+    "Die Negation in Lücke 1 vergessen und damit alle drei Fälle vertauschen.",
+    "In Lücke 3 `punkte_zweifler += 1` als *Ausdruck* schreiben - das ist in Python eine Anweisung und darf nicht hinter `return` stehen.",
+    "Den Punkt bei erfolgreicher Ansage dem Zweifler geben: Wer zu Unrecht anzweifelt, verliert."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Mäxchen/Meiern mit einem Würfel und zwei Spielern"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "runde_auswerten als pure function"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "maexchen",
+    "pure-function",
+    "tupel-rueckgabe",
+    "lücken"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-008"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Spielregeln eines funktional implementierten Würfelspiels erklären",
+   "prompt": "**Erklären Sie die Spielregeln des folgenden funktional implementierten Spiels.** Beantworten Sie zusätzlich:\n\n1. Wann endet eine Partie, und warum endet sie garantiert?\n2. Wer bekommt in welcher Situation den Punkt?\n3. Ist `runde` eine *pure function*, obwohl das Modul `random` benutzt wird? Begründen Sie.\n4. Welche Rolle spielt der `seed` im `state`?\n\n*(5 P)*",
+   "code": "import random\n\n\ndef wuerfeln(seed):\n    return random.Random(seed).randint(1, 6), seed + 1\n\n\ndef ansage(echte, mindestens):\n    if echte > mindestens:\n        return echte\n    else:\n        return min(mindestens + 1, 6)\n\n\ndef runde(state):\n    echte, seed = wuerfeln(state[\"seed\"])\n    genannt = ansage(echte, state[\"mindestens\"])\n    if genannt < 6:\n        return {\"seed\": seed, \"mindestens\": genannt, \"punkte\": state[\"punkte\"],\n                \"am_zug\": 1 - state[\"am_zug\"], \"vorbei\": False}\n    p = state[\"punkte\"]\n    if genannt == echte:\n        neue_punkte = (p[0] + 1, p[1]) if state[\"am_zug\"] == 0 else (p[0], p[1] + 1)\n    else:\n        neue_punkte = (p[0] + 1, p[1]) if state[\"am_zug\"] == 1 else (p[0], p[1] + 1)\n    return {\"seed\": seed, \"mindestens\": 0, \"punkte\": neue_punkte,\n            \"am_zug\": 1 - state[\"am_zug\"], \"vorbei\": True}\n\n\nstates = ({\"seed\": 8, \"mindestens\": 0, \"punkte\": (0, 0),\n           \"am_zug\": 0, \"vorbei\": False}, )\n\nwhile not states[-1][\"vorbei\"]:\n    states += (runde(states[-1]), )\n\nprint(states[-1][\"punkte\"])",
+   "solution": "**Musterlösung**\n\n**Die Spielregeln (Mäxchen / Meiern, vereinfacht):**\n\nZwei Spieler (`am_zug` ist 0 oder 1) würfeln abwechselnd **verdeckt** mit einem Würfel und sagen dem Gegner eine Zahl an. Die Ansage muss immer **echt größer** sein als die zuletzt angesagte Zahl (`mindestens`). Wer tatsächlich höher würfelt als nötig, sagt seine echte Zahl an (`ansage` gibt `echte` zurück) - wer zu niedrig würfelt, muss **lügen** und sagt die kleinstmögliche zulässige Zahl `mindestens + 1` an, höchstens jedoch 6.\n\nSolange eine Zahl kleiner als 6 angesagt wird, glaubt der Gegner sie: Es gibt keine Punkte, `mindestens` wird auf die angesagte Zahl hochgesetzt und der andere Spieler ist am Zug. Wird eine **6** angesagt, wird immer angezweifelt und aufgedeckt:\n\n- War die 6 ehrlich (`genannt == echte`), bekommt der **Ansagende** den Punkt.\n- War sie gelogen (`genannt != echte`), bekommt der **Zweifler**, also der Gegner, den Punkt.\n\nDanach ist die Partie vorbei (`vorbei = True`).\n\n**1) Ende und Terminierung:** Die `while`-Schleife läuft, bis `vorbei` den Wert `True` hat - also bis eine 6 angesagt wurde. Das passiert garantiert, weil `mindestens` in jeder Runde **echt wächst** (`ansage` liefert stets einen Wert größer als `mindestens`, gedeckelt bei 6). Nach höchstens sechs Runden ist `mindestens` bei 5 oder darüber, und die nächste Ansage ist zwangsläufig eine 6.\n\n**2) Punktvergabe:** siehe oben - ehrliche 6 → Punkt für den Ansagenden (`am_zug`), gelogene 6 → Punkt für den Gegner (`1 - am_zug`).\n\n**3) Ist `runde` pure?** **Ja.** Der Zufall wird nicht aus dem globalen Zustand des `random`-Moduls gezogen, sondern über `random.Random(seed)` aus einem **eigenen Generator, der allein vom übergebenen `seed` abhängt**. Bei gleichem `state` liefert `runde` also immer denselben Rückgabewert. Außerdem hat `runde` keine Nebeneffekte: kein `print`, kein `input`, und das übergebene `state`-Dictionary wird nicht verändert - es wird ein **neues** Dictionary zurückgegeben. (Dass `runde` die global definierten Funktionen `wuerfeln` und `ansage` benutzt, ist unschädlich: Diese sind selbst pure und gehören zum Programm, nicht zum veränderlichen Zustand.) Nicht pure ist dagegen das Hauptprogramm mit seinem `print`.\n\n**4) Rolle des `seed`:** Der `seed` ist der Zufallszustand als **explizites Datum** im `state`. `wuerfeln` gibt neben der Augenzahl immer `seed + 1` zurück, damit der nächste Wurf einen anderen Generator und damit eine andere Zahl liefert. Ohne dieses \"Weiterreichen\" würde jede Runde exakt denselben Würfelwurf liefern und das Spiel nie enden. Gleichzeitig ist die ganze Partie durch den Anfangs-Seed 8 **reproduzierbar** - genau wie im Goofspiel der Vorlesung.\n\n**Zur Kontrolle - der Verlauf mit Seed 8:**\n\n| Runde | am Zug | mindestens | gewürfelt | angesagt | Folge |\n|---|---|---|---|---|---|\n| 1 | Spieler 0 | 0 | 2 | 2 | geglaubt |\n| 2 | Spieler 1 | 2 | 4 | 4 | geglaubt |\n| 3 | Spieler 0 | 4 | 5 | 5 | geglaubt |\n| 4 | Spieler 1 | 5 | 4 | **6** | gelogen, aufgedeckt |\n\nSpieler 1 muss in Runde 4 mehr als 5 ansagen, würfelt aber nur eine 4 - er lügt und wird überführt. Der Punkt geht an Spieler 0, die Ausgabe lautet `(1, 0)`.\n\n**Bewertungsrubrik (5 P)**\n\n- 2 P: Spielregeln sinngemäß richtig (verdecktes Würfeln, Ansage muss steigen, Lüge wenn zu niedrig gewürfelt, Aufdecken bei 6).\n- 1 P: Punktvergabe korrekt (ehrlich → Ansager, Lüge → Gegner).\n- 1 P: Terminierung über das echt wachsende `mindestens` bis zur 6.\n- 1 P: `runde` ist pure, mit Begründung über `random.Random(seed)` **und** \"kein Verändern des übergebenen state\".\n- Abzug, wenn behauptet wird, jede Nutzung von `random` mache eine Funktion automatisch unpure.\n",
+   "explanation": "Diese Aufgabe ist exakt der Fragetyp, den der Professor auf seiner Überblicksfolie ankündigt: *\"(Funktionaler Code) Erklären Sie die Spielregeln\"*. Man muss Code lesen können, ohne ihn auszuführen.\n\nDrei Lesetechniken helfen:\n\n1. **Am `state` entlanglesen.** Die Schlüssel des Dictionary sind die Spielbegriffe: `mindestens` ist die zuletzt angesagte Zahl, `am_zug` der aktuelle Spieler, `punkte` ein Tupel mit beiden Punktständen, `vorbei` das Abbruchsignal. Wer die Schlüssel versteht, versteht das Spiel.\n2. **Verzweigungen als Regeln lesen.** `if genannt < 6` ist die Regel \"wird geglaubt\", der Rest ist \"wird aufgedeckt\".\n3. **Auf die Rückgabe achten.** `runde` gibt ein **neues** Dictionary zurück; das alte bleibt im Tupel `states` erhalten. Dadurch entsteht die vollständige Spielhistorie - dasselbe Muster wie `states += (helper.spielrunde(states[-1]),)` im Goofspiel.\n\nDer häufigste inhaltliche Fehler ist die Aussage \"nicht pure, weil `random` benutzt wird\". Entscheidend ist nicht das Modul, sondern ob das Ergebnis **allein von den Argumenten abhängt**. `random.randint(1,6)` benutzt den verborgenen globalen Generator-Zustand und wäre unpure; `random.Random(seed).randint(1,6)` erzeugt einen frischen Generator aus dem Argument und ist deterministisch.\n\n**Merkregel:** Zustand ins Argument, neuen Zustand ins `return` - dann ist auch Würfeln pure.",
+   "hints": [
+    "Übersetzen Sie zuerst jeden Schlüssel des `state`-Dictionary in einen Spielbegriff.",
+    "Was passiert genau dann, wenn `genannt` gleich 6 ist? Und was in allen anderen Fällen?",
+    "Für die Purity-Frage: Vergleichen Sie `random.randint(1,6)` mit `random.Random(seed).randint(1,6)` - wovon hängt das Ergebnis jeweils ab?"
+   ],
+   "pitfalls": [
+    "Behaupten, die Funktion sei nicht pure, nur weil `import random` im Code steht.",
+    "`1 - state['am_zug']` übersehen - das ist der Spielerwechsel zwischen 0 und 1.",
+    "Die Terminierung nicht begründen können: `mindestens` wächst in jeder Runde echt an."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 13,
+     "label": "Beispielfrage: (Funktionaler Code) Spielregeln erklären / Ist diese Funktion pure?"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 16,
+     "label": "Mäxchen/Meiern"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "state-Dictionary, seed weiterreichen, spielrunde"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "maexchen",
+    "code-lesen",
+    "pure-function",
+    "state-dictionary",
+    "seed"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-009"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Galgenmännchen: das Wort anzeigen - ohne Schleife",
+   "prompt": "Beim **Galgenmännchen** sieht der Spieler das gesuchte Wort nur teilweise: Bereits geratene Buchstaben stehen an ihrer Stelle, alle übrigen Stellen sind durch einen Unterstrich `_` ersetzt.\n\nSchreiben Sie die Funktion `zeige_wort(wort, geratene)`:\n\n- `wort` ist das gesuchte Wort (String),\n- `geratene` enthält alle bisher geratenen Buchstaben (String oder Liste),\n- zurückgegeben wird der Anzeigestring.\n\nBeispiel: `zeige_wort(\"banane\", \"an\")` → `\"_anan_\"`.\n\n**Verwenden Sie keine `for`- und keine `while`-Schleife** (und damit auch keine List Comprehension). *(4 P)*",
+   "starterCode": "def zeige_wort(wort, geratene):\n    # Ihr Code hier - ohne Schleifen!\n    pass\n",
+   "constraints": [
+    "keine for-Schleife",
+    "keine while-Schleife",
+    "keine List Comprehension"
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "def zeige_wort"
+   ],
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "zeige_wort('banane', 'an')",
+     "expected": "'_anan_'"
+    },
+    {
+     "name": "nichts geraten",
+     "call": "zeige_wort('test', '')",
+     "expected": "'____'"
+    },
+    {
+     "name": "alles geraten",
+     "call": "zeige_wort('abc', 'abc')",
+     "expected": "'abc'"
+    },
+    {
+     "name": "geratene als Liste",
+     "call": "zeige_wort('kater', ['a', 'e'])",
+     "expected": "'_a_e_'"
+    },
+    {
+     "name": "Buchstabe kommt mehrfach vor",
+     "call": "zeige_wort('python', 'po')",
+     "expected": "'p___o_'"
+    },
+    {
+     "name": "leeres Wort",
+     "call": "zeige_wort('', 'abc')",
+     "expected": "''"
+    }
+   ],
+   "solution": "def zeige_wort(wort, geratene):\n    return \"\".join(map(lambda b: b if b in geratene else \"_\", wort))\n",
+   "explanation": "Die Aufgabe ist eine klassische **Abbildung**: Jedes Zeichen des Wortes wird auf ein anderes Zeichen abgebildet - entweder auf sich selbst oder auf `\"_\"`. Genau dafür ist `map` da.\n\nDrei Bausteine stecken in der Lösung:\n\n1. **Ein String ist iterierbar.** `map(f, wort)` wendet `f` auf jedes einzelne Zeichen an. Man braucht also kein `list(wort)` und keine Indizes.\n2. **Der bedingte Ausdruck** `b if b in geratene else \"_\"`. Ein `lambda` darf nur *einen Ausdruck* enthalten - ein `if`-Statement wäre dort verboten. Der bedingte Ausdruck ist die Ausdrucks-Variante davon; der Professor benutzt ihn zum Beispiel beim Maximum: `lambda a, b: a if a > b else b`.\n3. **`\"\".join(...)`** setzt die einzelnen Zeichen wieder zu einem String zusammen. Ohne `join` bekäme man ein `map`-Objekt bzw. eine Liste einzelner Zeichen zurück - und `map` gibt bekanntlich **keine Liste**, sondern einen Iterator zurück.\n\nDass `b in geratene` sowohl für einen String als auch für eine Liste funktioniert, ist ein angenehmer Nebeneffekt des `in`-Operators: Er prüft bei Strings auf Teilstrings und bei Listen auf Elemente.\n\nAlternative mit `reduce`: `reduce(lambda s, b: s + (b if b in geratene else \"_\"), wort, \"\")` - funktioniert ebenfalls, ist aber langsamer, weil bei jedem Schritt ein neuer String entsteht.\n\n**Merkregel:** Gleich viele Ausgaben wie Eingaben → `map`. Weniger → `filter`. Ein einziger Wert → `reduce`.",
+   "hints": [
+    "Die Länge der Ausgabe ist immer gleich der Länge des Wortes - welche der drei Funktionen `map`, `filter`, `reduce` passt dazu?",
+    "In einem `lambda` darf kein `if`-Block stehen, wohl aber der bedingte Ausdruck `a if bedingung else b`.",
+    "`map` liefert einen Iterator einzelner Zeichen. Womit setzt man Zeichen wieder zu einem String zusammen?"
+   ],
+   "pitfalls": [
+    "`filter` statt `map` benutzen - dann verschwinden die nicht geratenen Buchstaben, statt zu `_` zu werden, und das Wort wird kürzer.",
+    "Das `\"\".join(...)` vergessen und ein `map`-Objekt zurückgeben.",
+    "Eine List Comprehension schreiben: Sie enthält das Schlüsselwort `for` und ist damit ebenfalls eine Schleife."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Galgenmännchen"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 1,
+     "label": "map, filter, reduce; map liefert einen Iterator"
+    },
+    {
+     "file": "blatt4u5.pdf",
+     "page": 2,
+     "label": "lambda a, b: a if a > b else b"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "galgenmaennchen",
+    "map",
+    "join",
+    "lambda",
+    "keine-schleifen"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-010"
+  },
+  {
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Galgenmännchen: der Spielablauf",
+   "prompt": "Der folgende Code spielt eine Partie **Galgenmännchen** ab. Statt `input` kommen die Rateversuche der Reihe nach aus der Liste `versuche` (damit der Ablauf reproduzierbar ist). Das Spiel endet, wenn das Wort vollständig aufgedeckt ist oder 6 Fehler gemacht wurden.\n\n**Füllen Sie die drei Lücken** so aus, dass genau diese Ausgabe entsteht:\n\n```\ne ist im Wort!\n_____e\nx ist nicht im Wort. Fehler: 1\n_____e\na ist im Wort!\n_a_a_e\nq ist nicht im Wort. Fehler: 2\n_a_a_e\nn ist im Wort!\n_anane\nb ist im Wort!\nbanane\nGewonnen!\n```\n\n*(je 1-2 P)*",
+   "code": "def zeige_wort(wort, geratene):\n    return \"\".join(map(lambda b: b if b in geratene else \"_\", wort))\n\n\nwort = \"banane\"\nversuche = [\"e\", \"x\", \"a\", \"q\", \"n\", \"b\"]\ngeratene = \"\"\nfehler = 0\ni = 0\n\nwhile fehler < 6 and ## Lücke 1 ##:\n    buchstabe = versuche[i]\n    i = i + 1\n    geratene = geratene + buchstabe\n    if ## Lücke 2 ##:\n        print(buchstabe, \"ist im Wort!\")\n    else:\n        fehler = ## Lücke 3 ##\n        print(buchstabe, \"ist nicht im Wort. Fehler:\", fehler)\n    print(zeige_wort(wort, geratene))\n\nif fehler < 6:\n    print(\"Gewonnen!\")\nelse:\n    print(\"Verloren! Das Wort war\", wort)",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "\"_\" in zeige_wort(wort, geratene)",
+      "'_' in zeige_wort(wort, geratene)",
+      "zeige_wort(wort, geratene) != wort",
+      "wort != zeige_wort(wort, geratene)"
+     ],
+     "explanation": "Weitergeraten wird, solange die Anzeige noch mindestens einen Unterstrich enthält - also solange das Wort nicht vollständig aufgedeckt ist."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "buchstabe in wort",
+      "wort.count(buchstabe) > 0",
+      "wort.find(buchstabe) != -1",
+      "wort.count(buchstabe) >= 1"
+     ],
+     "explanation": "Ein Treffer liegt vor, wenn der geratene Buchstabe im gesuchten Wort vorkommt."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "fehler + 1",
+      "1 + fehler"
+     ],
+     "explanation": "Nur bei einem Fehlversuch wird der Fehlerzähler um eins erhöht."
+    }
+   ],
+   "solution": "while fehler < 6 and \"_\" in zeige_wort(wort, geratene):   # Lücke 1\n    buchstabe = versuche[i]\n    i = i + 1\n    geratene = geratene + buchstabe\n    if buchstabe in wort:                                  # Lücke 2\n        print(buchstabe, \"ist im Wort!\")\n    else:\n        fehler = fehler + 1                                # Lücke 3\n        print(buchstabe, \"ist nicht im Wort. Fehler:\", fehler)\n    print(zeige_wort(wort, geratene))\n",
+   "explanation": "Der Kern des Galgenmännchens sind **zwei Abbruchbedingungen**, die mit `and` verknüpft sind: zu viele Fehler *oder* Wort vollständig. Weil `while` weiterläuft, solange die Bedingung wahr ist, muss sie die *Fortsetzungs*-Bedingung ausdrücken - beide Teilbedingungen also positiv formuliert: `fehler < 6` **und** \"es fehlt noch etwas\".\n\n**Lücke 1** ist der interessante Teil. Statt einen eigenen Zähler für die noch fehlenden Buchstaben zu führen, fragt man einfach die Anzeige: Enthält `zeige_wort(wort, geratene)` noch einen `\"_\"`, ist das Wort noch nicht vollständig. Das ist typische Wiederverwendung einer bereits geschriebenen Funktion. Gleichwertig ist der direkte Vergleich `zeige_wort(wort, geratene) != wort`.\n\n**Lücke 2** nutzt den `in`-Operator auf Strings: `\"a\" in \"banane\"` ist `True`. Wichtig ist die Richtung - `wort in buchstabe` wäre falsch herum.\n\n**Lücke 3** erhöht den Fehlerzähler ausschließlich im `else`-Zweig. Ein häufiger Fehler ist, das Hochzählen aus dem `else` herauszunehmen: Dann verliert man auch bei lauter richtigen Buchstaben.\n\nBeachten Sie noch die Reihenfolge im Rumpf: `geratene` wird **vor** der Ausgabe erweitert, sonst zeigt `zeige_wort` den gerade geratenen Buchstaben noch nicht an. Und die Anzeige wird in **jedem** Durchgang gedruckt, auch nach einem Fehlversuch - deshalb erscheint `_____e` in der erwarteten Ausgabe zweimal hintereinander.\n\n**Merkregel:** In einer `while`-Bedingung steht, wann es *weitergeht* - nicht, wann Schluss ist.",
+   "hints": [
+    "Lücke 1: Sie haben mit `zeige_wort` schon ein Werkzeug, das verrät, ob noch etwas fehlt. Woran erkennt man das an der Ausgabe?",
+    "Lücke 2: Es gibt einen Operator, mit dem man prüft, ob ein Zeichen in einem String vorkommt.",
+    "Lücke 3: Der Fehlerzähler darf nur in diesem einen Zweig wachsen."
+   ],
+   "pitfalls": [
+    "Lücke 1 als Abbruch- statt als Fortsetzungsbedingung formulieren (`\"_\" not in ...`) - dann läuft die Schleife kein einziges Mal.",
+    "In Lücke 2 `buchstabe in geratene` schreiben: Das ist nach der Zeile darüber immer `True`.",
+    "`fehler + 1` ohne Zuweisung hinschreiben - der Zähler bliebe bei 0, weil `int` immutable ist."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Galgenmännchen: 6 Fehlversuche, Buchstaben eintragen"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 1,
+     "label": "while, if/else, zusammengesetzte Bedingungen"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "galgenmaennchen",
+    "while",
+    "in-operator",
+    "lücken"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-011"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler im Galgenmännchen",
+   "prompt": "Ein Kommilitone hat ein kleines **Galgenmännchen** geschrieben. Das Programm soll für jeden Rateversuch melden, ob der Buchstabe im Wort steckt, die Fehlversuche zählen und nach jedem Versuch den aktuellen Stand anzeigen. Es tut nichts davon richtig.\n\n**In welchen 3 Zeilen befinden sich Fehler?** Benennen Sie jeden Fehler und geben Sie die Korrektur an. *(je 1-2 P)*\n\nDie korrigierte Fassung muss folgende Ausgabe erzeugen:\n\n```\nTreffer!\nk____\nk____\nTreffer!\nka___\nFehler insgesamt: 1\n```",
+   "code": " 1  def zeige_wort(wort, geratene):\n 2      anzeige = \"\"\n 3      for buchstabe in wort:\n 4          if buchstabe in wort:\n 5              anzeige = anzeige + buchstabe\n 6          else:\n 7              anzeige = anzeige + \"_\"\n 8      return anzeige\n 9\n10  wort = \"kater\"\n11  geratene = \"\"\n12  fehler = 0\n13  versuche = [\"k\", \"z\", \"a\"]\n14\n15  for buchstabe in versuche:\n16      geratene + buchstabe\n17      if buchstabe in wort:\n18          print(\"Treffer!\")\n19      else:\n20          fehler = fehler - 1\n21      print(zeige_wort(wort, geratene))\n22\n23  print(\"Fehler insgesamt:\", fehler)",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "if buchstabe in wort:",
+     "fix": "if buchstabe in geratene:",
+     "why": "In der Schleife läuft `buchstabe` über die Zeichen von `wort` - die Bedingung ist damit **immer** `True`, und das Wort wird sofort komplett aufgedeckt. Angezeigt werden dürfen aber nur Buchstaben, die bereits **geraten** wurden."
+    },
+    {
+     "line": 16,
+     "wrong": "geratene + buchstabe",
+     "fix": "geratene = geratene + buchstabe",
+     "why": "Strings sind **immutable**: `geratene + buchstabe` erzeugt einen neuen String, verändert `geratene` aber nicht. Ohne Zuweisung wird das Ergebnis verworfen und `geratene` bleibt für immer der leere String."
+    },
+    {
+     "line": 20,
+     "wrong": "fehler = fehler - 1",
+     "fix": "fehler = fehler + 1",
+     "why": "Der Fehlerzähler muss bei einem Fehlversuch **hoch**gezählt werden. So wird er negativ, und die Abbruchbedingung `fehler == 6` (bzw. `fehler < 6`) könnte nie greifen - das Spiel wäre unverlierbar."
+    }
+   ],
+   "solution": "def zeige_wort(wort, geratene):\n    anzeige = \"\"\n    for buchstabe in wort:\n        if buchstabe in geratene:        # Zeile 4 korrigiert\n            anzeige = anzeige + buchstabe\n        else:\n            anzeige = anzeige + \"_\"\n    return anzeige\n\n\nwort = \"kater\"\ngeratene = \"\"\nfehler = 0\nversuche = [\"k\", \"z\", \"a\"]\n\nfor buchstabe in versuche:\n    geratene = geratene + buchstabe      # Zeile 16 korrigiert\n    if buchstabe in wort:\n        print(\"Treffer!\")\n    else:\n        fehler = fehler + 1              # Zeile 20 korrigiert\n    print(zeige_wort(wort, geratene))\n\nprint(\"Fehler insgesamt:\", fehler)\n",
+   "explanation": "Die drei Fehler sind drei verschiedene Fehlerklassen - genau so mischt der Professor sie auch in der Klausur.\n\n**Zeile 4 - der Logikfehler.** `for buchstabe in wort` und dann `if buchstabe in wort` zu fragen ist eine Tautologie: Die Bedingung ist per Konstruktion immer wahr. Solche Fehler findet man, indem man sich fragt: *Woher kommt die Variable, und was will ich eigentlich wissen?* Gefragt ist, ob der Buchstabe schon **geraten** wurde - also `in geratene`.\n\n**Zeile 16 - der Immutability-Fehler.** Das ist der Klassiker aus Vorlesung 3: `str` ist **immutable**. `geratene + buchstabe` ist ein *Ausdruck*, dessen Wert schlicht weggeworfen wird, wenn er nicht zugewiesen wird. Python meldet dabei keinen Fehler - die Zeile ist syntaktisch völlig korrekt. Vergleichbar wäre bei einer Liste `liste + [x]` (ebenfalls wirkungslos ohne Zuweisung) im Unterschied zu `liste.append(x)` (mutiert die Liste direkt).\n\n**Zeile 20 - der Vorzeichenfehler.** Ein Zähler, der in die falsche Richtung läuft. Solche Fehler fallen erst auf, wenn man den Code mit konkreten Werten durchspielt: Nach dem `z` steht `fehler` auf `-1` statt auf `1`.\n\nWas **nicht** falsch ist: Zeile 21 gehört bewusst in die Schleife (deshalb erscheint `k____` zweimal), und `versuche` als Liste statt `input` ist Absicht, damit das Programm reproduzierbar bleibt.\n\n**Merkregel:** Bei unveränderlichen Typen gibt es kein \"nebenbei ändern\" - ohne `=` passiert nichts.",
+   "hints": [
+    "Spielen Sie das Programm mit `wort = \"kater\"` und dem ersten Versuch `\"k\"` von Hand durch: Was steht danach in `geratene`?",
+    "Schauen Sie sich Zeile 3 und Zeile 4 gemeinsam an. Kann die Bedingung in Zeile 4 überhaupt jemals falsch sein?",
+    "Prüfen Sie jeden Zähler und jede Zuweisung: Verändert sich der Wert wirklich - und in die richtige Richtung?"
+   ],
+   "pitfalls": [
+    "Zeile 16 für richtig halten, weil sie keinen Fehler wirft - sie ist wirkungslos, nicht falsch geschrieben.",
+    "Statt Zeile 4 die Zeilen 5/7 als vertauscht melden: Die Zweige sind korrekt, nur die Bedingung ist falsch.",
+    "Die fehlende Abbruchbedingung bei 6 Fehlern als vierten Fehler zählen - gefragt sind genau drei."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Galgenmännchen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 1,
+     "label": "mutable vs. immutable (str ist immutable)"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 7,
+     "label": "Beispielfrage: Was ist hier falsch implementiert?"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "galgenmaennchen",
+    "fehlersuche",
+    "immutable",
+    "strings"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-012"
+  },
+  {
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Runterzählen von 101: eine Runde als pure function",
+   "prompt": "Beim Spiel **Runterzählen von 101** startet man mit 101 Punkten und versucht, auf (oder unter) 0 zu kommen. Eine **Runde** läuft so:\n\n- Man beginnt mit 0 Rundenpunkten und würfelt.\n- Wirft man eine **1**, endet die Runde sofort und die Rundenpunkte verfallen (0 Punkte).\n- Sonst wird die Augenzahl zu den Rundenpunkten addiert.\n- Nach jedem Wurf darf man freiwillig aufhören. Unser Spieler hört auf, sobald die Rundenpunkte **mindestens** `aufhoerzahl` erreicht haben.\n\nSchreiben Sie `runde_spielen(wuerfe, aufhoerzahl)`. Damit die Funktion *pure* und testbar ist, wird der Zufall injiziert: `wuerfe` ist die Liste der Augenzahlen in der Reihenfolge, in der sie fallen. Zurückgegeben werden die **gesicherten Rundenpunkte**. Gehen die Würfe aus, bevor aufgehört wurde, zählt der aktuelle Stand.\n\nBeispiel: `runde_spielen([3, 4, 5, 6], 10)` → `12` (3+4+5 = 12 ≥ 10, der Rest wird nicht mehr geworfen).",
+   "starterCode": "def runde_spielen(wuerfe, aufhoerzahl):\n    # Ihr Code hier\n    pass\n",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "runde_spielen([3, 4, 5, 6], 10)",
+     "expected": "12"
+    },
+    {
+     "name": "Pech: eine 1 lässt alles verfallen",
+     "call": "runde_spielen([2, 1, 6], 20)",
+     "expected": "0"
+    },
+    {
+     "name": "Würfe gehen aus",
+     "call": "runde_spielen([6, 6], 20)",
+     "expected": "12"
+    },
+    {
+     "name": "gar keine Würfe",
+     "call": "runde_spielen([], 15)",
+     "expected": "0"
+    },
+    {
+     "name": "sofort eine 1",
+     "call": "runde_spielen([1], 5)",
+     "expected": "0"
+    },
+    {
+     "name": "genau die Aufhörzahl",
+     "call": "runde_spielen([5, 5], 10)",
+     "expected": "10"
+    },
+    {
+     "name": "funktioniert auch mit Tupel",
+     "call": "runde_spielen((4, 4, 4), 12)",
+     "expected": "12"
+    }
+   ],
+   "required": [
+    "def runde_spielen"
+   ],
+   "solution": "def runde_spielen(wuerfe, aufhoerzahl):\n    rundenpunkte = 0\n    for wurf in wuerfe:\n        if wurf == 1:\n            return 0\n        rundenpunkte = rundenpunkte + wurf\n        if rundenpunkte >= aufhoerzahl:\n            return rundenpunkte\n    return rundenpunkte\n",
+   "explanation": "Die Aufgabe prüft vor allem eines: die **Reihenfolge** der drei Abfragen innerhalb einer Runde. Sie ist exakt die Reihenfolge der Spielregel: erst würfeln, dann auf die Pech-Zahl prüfen, dann addieren, dann fragen, ob aufgehört wird.\n\nWer zuerst addiert und danach auf die 1 prüft, gibt bei `[2, 1]` eine 3 zurück statt 0. Wer die Aufhör-Prüfung vor die Addition zieht, hört eine Augenzahl zu früh auf.\n\nDrei Rückgabestellen wirken auf den ersten Blick unsauber, sind hier aber die klarste Lösung: Jedes `return` steht für ein Ende der Runde (Pech, freiwillig, Würfe alle). Die Alternative wäre eine `while`-Schleife mit einer Boolean-Variablen `runde_laeuft`, die an zwei Stellen auf `False` gesetzt wird - genau so beschreibt es das Übungsblatt zu Pig.\n\nEntscheidend für die Klausur ist der Umgang mit dem Zufall: Statt `random.randint(1, 6)` **im** Spiel aufzurufen, wird die Wurffolge als Parameter hereingereicht. Dadurch ist `runde_spielen` eine **pure function** - sie hängt nur von ihren Argumenten ab und hat keine Nebeneffekte - und lässt sich mit festen Testfällen prüfen. Das ist dasselbe Prinzip wie der `seed` im Goofspiel der Vorlesung.\n\n**Merkregel:** Erst prüfen, ob die Runde platzt - dann erst rechnen.",
+   "hints": [
+    "Übersetzen Sie die Spielregeln Zeile für Zeile: Was passiert direkt nach einem Wurf, was danach?",
+    "Denken Sie an den Sonderfall: Was, wenn die Liste `wuerfe` leer ist oder alle Würfe verbraucht sind, ohne dass aufgehört wurde?",
+    "`return` mitten in der Schleife beendet die Funktion sofort - das ist hier genau das gewünschte Verhalten."
+   ],
+   "pitfalls": [
+    "Die Augenzahl addieren, bevor auf die 1 geprüft wurde.",
+    "Bei einer 1 die bisherigen Rundenpunkte zurückgeben statt 0.",
+    "Das abschließende `return rundenpunkte` nach der Schleife vergessen - dann liefert die Funktion `None`, wenn die Würfe ausgehen."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Runterzählen von 101"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 4,
+     "label": "Stufe 2 - Eine einzelne Runde würfeln"
+    },
+    {
+     "file": "neues_spiel.py",
+     "page": 1,
+     "label": "Push Your Luck mit Aufhör-Strategie"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "101",
+    "push-your-luck",
+    "pure-function",
+    "schleife",
+    "return"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-013"
+  },
+  {
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Runterzählen von 101: die ganze Partie rekursiv",
+   "prompt": "Wir bauen *Runterzählen von 101* zu einer kompletten Partie aus. Die Funktion `runde` ist **gegeben**; sie spielt eine Runde und liefert ein Tupel aus den gesicherten Rundenpunkten und den **noch nicht verbrauchten** Würfen:\n\n```python\ndef runde(wuerfe, aufhoerzahl, rundenpunkte=0):\n    if len(wuerfe) == 0:\n        return rundenpunkte, wuerfe\n    if wuerfe[0] == 1:\n        return 0, wuerfe[1:]\n    if rundenpunkte + wuerfe[0] >= aufhoerzahl:\n        return rundenpunkte + wuerfe[0], wuerfe[1:]\n    return runde(wuerfe[1:], aufhoerzahl, rundenpunkte + wuerfe[0])\n```\n\nSchreiben Sie darauf aufbauend `spiel_101(wuerfe, aufhoerzahl, punkte=101, runden=0)`:\n\n- Es werden so lange Runden gespielt, bis `punkte` auf **0 oder darunter** gesunken ist oder die Würfe ausgehen.\n- Die gesicherten Rundenpunkte werden von `punkte` **abgezogen**.\n- Rückgabe ist das Tupel `(restpunkte, anzahl_gespielter_runden)`.\n\n**Verwenden Sie keine Schleifen, sondern ausschließlich Rekursion.** *(5 P)*",
+   "starterCode": "def runde(wuerfe, aufhoerzahl, rundenpunkte=0):\n    if len(wuerfe) == 0:\n        return rundenpunkte, wuerfe\n    if wuerfe[0] == 1:\n        return 0, wuerfe[1:]\n    if rundenpunkte + wuerfe[0] >= aufhoerzahl:\n        return rundenpunkte + wuerfe[0], wuerfe[1:]\n    return runde(wuerfe[1:], aufhoerzahl, rundenpunkte + wuerfe[0])\n\n\ndef spiel_101(wuerfe, aufhoerzahl, punkte=101, runden=0):\n    # Ihr Code hier - ohne Schleifen!\n    pass\n",
+   "constraints": [
+    "keine for-Schleife",
+    "keine while-Schleife",
+    "nur Rekursion"
+   ],
+   "forbidden": [
+    "for ",
+    "while "
+   ],
+   "required": [
+    "spiel_101("
+   ],
+   "tests": [
+    {
+     "name": "zwei saubere Runden",
+     "call": "spiel_101((6, 6, 6, 6), 12)",
+     "expected": "(77, 2)"
+    },
+    {
+     "name": "drei Pech-Runden",
+     "call": "spiel_101((1, 1, 1), 10)",
+     "expected": "(101, 3)"
+    },
+    {
+     "name": "keine Würfe",
+     "call": "spiel_101((), 10)",
+     "expected": "(101, 0)"
+    },
+    {
+     "name": "Partie wird gewonnen",
+     "call": "spiel_101((6,) * 20, 12)",
+     "expected": "(-7, 9)"
+    },
+    {
+     "name": "gemischter Verlauf",
+     "call": "spiel_101((5, 5, 2, 6, 6, 1, 4, 4, 4), 10)",
+     "expected": "(65, 4)"
+    },
+    {
+     "name": "andere Aufhörzahl",
+     "call": "spiel_101((6, 6, 6, 6), 20)",
+     "expected": "(77, 1)"
+    }
+   ],
+   "solution": "def runde(wuerfe, aufhoerzahl, rundenpunkte=0):\n    if len(wuerfe) == 0:\n        return rundenpunkte, wuerfe\n    if wuerfe[0] == 1:\n        return 0, wuerfe[1:]\n    if rundenpunkte + wuerfe[0] >= aufhoerzahl:\n        return rundenpunkte + wuerfe[0], wuerfe[1:]\n    return runde(wuerfe[1:], aufhoerzahl, rundenpunkte + wuerfe[0])\n\n\ndef spiel_101(wuerfe, aufhoerzahl, punkte=101, runden=0):\n    if punkte <= 0 or len(wuerfe) == 0:\n        return punkte, runden\n    gesichert, rest = runde(wuerfe, aufhoerzahl)\n    return spiel_101(rest, aufhoerzahl, punkte - gesichert, runden + 1)\n",
+   "explanation": "Das ist das Standardmuster \"Schleife durch Rekursion ersetzen\", das der Professor im Goofspiel mit `spiel_rekursiv` vorführt:\n\n- **Abbruchbedingung zuerst:** `punkte <= 0` (gewonnen) oder `len(wuerfe) == 0` (keine Würfe mehr). Beides muss geprüft werden, sonst läuft die Rekursion bei ausgehenden Würfen unendlich weiter, weil `runde` dann immer `(0, ())` liefert und sich nichts mehr ändert.\n- **Fortschritt im rekursiven Aufruf:** Weitergereicht wird der **Rest** der Würfe, die **verringerten** Punkte und der **erhöhte** Rundenzähler. Alle drei Werte wandern als Argumente weiter - nichts wird mutiert, es gibt keine globale Variable.\n- **Akkumulator-Parameter:** `punkte` und `runden` haben Default-Werte, damit der Aufruf von außen einfach `spiel_101(wuerfe, 20)` lautet. Genau so ist auch `runde` mit `rundenpunkte=0` gebaut - und die Fibonacci-Funktion aus der Vorlesung.\n\nDer wichtigste Denkschritt ist, dass `runde` **zwei** Werte zurückgibt. Ohne den zurückgegebenen Rest wüsste `spiel_101` nicht, wo die nächste Runde ansetzen soll; man müsste dann den Verbrauch außerhalb nachrechnen. Ein Tupel als Rückgabe ist der saubere funktionale Weg, mehrere Informationen aus einer pure function herauszubekommen.\n\nRechenbeispiel `spiel_101((6, 6, 6, 6), 12)`: Runde 1 verbraucht 6+6 = 12 ≥ 12, also 12 Punkte gesichert → 101-12 = 89. Runde 2 ebenso → 77. Danach sind die Würfe leer → Rückgabe `(77, 2)`.\n\n**Merkregel:** Rekursion braucht zwei Dinge - eine Abbruchbedingung und einen Aufruf, der dem Abbruch *näher kommt*.",
+   "hints": [
+    "Beginnen Sie mit der Abbruchbedingung: Es gibt zwei Gründe, warum keine weitere Runde gespielt wird.",
+    "`runde(...)` liefert zwei Werte - fangen Sie beide mit `gesichert, rest = runde(...)` auf.",
+    "Im rekursiven Aufruf müssen sich **drei** Argumente ändern: die restlichen Würfe, die verbleibenden Punkte und der Rundenzähler."
+   ],
+   "pitfalls": [
+    "Nur `punkte <= 0` als Abbruch prüfen: Bei aufgebrauchten Würfen entsteht eine Endlosrekursion (RecursionError).",
+    "Die restlichen Würfe nicht weiterreichen und dadurch immer wieder dieselbe erste Runde spielen.",
+    "Den Rundenzähler erst nach dem rekursiven Aufruf erhöhen wollen - in einer pure function wird er als Argument mitgegeben."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Runterzählen von 101"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "spiel_rekursiv: Schleife durch Rekursion ersetzen"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 4,
+     "label": "Aufgabe 4: Programmieren mit Rekursion"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "101",
+    "rekursion",
+    "keine-schleifen",
+    "tupel-rueckgabe",
+    "akkumulator"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-014"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Push Your Luck: Was gibt der rekursive Spielzug aus?",
+   "prompt": "Damit das Spiel reproduzierbar bleibt, ist der \"Würfel\" hier eine reine Rechenvorschrift auf dem `seed`.\n\nWas gibt der folgende Code auf der Kommandozeile aus? Begründen Sie Ihre Antwort. *(4 P)*\n\n*Hinweis:* `wurf` liefert ein Tupel aus Augenzahl und neuem seed. Für die seeds 1, 2, 3, 4, 5, 6 ergeben sich der Reihe nach die Augenzahlen 2, 5, 4, 5, 2, 1.",
+   "code": "def wurf(seed):\n    return (seed * seed) % 6 + 1, seed + 1\n\n\ndef spieler_zug(strategie, seed, punkte=0):\n    if strategie(punkte):\n        augen, seed = wurf(seed)\n        if augen == 1:\n            return 0, seed\n        else:\n            return spieler_zug(strategie, seed, punkte + augen)\n    else:\n        return punkte, seed\n\n\nhold_at = lambda schwelle: lambda p: p < schwelle\n\nprint(spieler_zug(hold_at(10), 1))\nprint(spieler_zug(hold_at(20), 1))",
+   "expectedOutput": "(11, 4)\n(0, 7)",
+   "solution": "(11, 4)\n(0, 7)",
+   "explanation": "Der Code vereint drei Klausurthemen: **Rekursion**, **Currying** und das **Weiterreichen des Zufallszustands**.\n\n`hold_at` ist eine gecurryte Funktion: `hold_at(10)` gibt selbst wieder eine Funktion `lambda p: p < 10` zurück. Diese Strategie sagt \"weiterwürfeln, solange die Rundenpunkte unter 10 liegen\".\n\n**Erster Aufruf, `hold_at(10)`, seed 1:**\n\n| Punkte | Strategie | Wurf (seed) | neue Punkte | neuer seed |\n|---|---|---|---|---|\n| 0 | 0 < 10 → weiter | 2 (seed 1) | 2 | 2 |\n| 2 | 2 < 10 → weiter | 5 (seed 2) | 7 | 3 |\n| 7 | 7 < 10 → weiter | 4 (seed 3) | 11 | 4 |\n| 11 | 11 < 10 → **falsch** | - | - | - |\n\nDie Rekursion endet im `else`-Zweig und liefert `(11, 4)`. Beachten Sie: Es wird **über** die Schwelle hinausgeschossen - geprüft wird ja *vor* dem Wurf.\n\n**Zweiter Aufruf, `hold_at(20)`, seed 1:** Die ersten drei Würfe sind identisch (2, 5, 4 → 11 Punkte, seed 4). Weiter: 11 < 20 → Wurf 5 (seed 4) → 16 Punkte, seed 5. 16 < 20 → Wurf 2 (seed 5) → 18 Punkte, seed 6. 18 < 20 → Wurf **1** (seed 6) → Pech! Die Runde endet mit `return 0, seed`, also `(0, 7)`.\n\nDer entscheidende Punkt für die Ausgabe: Auch im Pech-Fall wird der **fortgeschrittene seed** zurückgegeben (7, nicht 1). Der Zufallszustand wird immer weitergereicht, egal wie die Runde ausgeht - sonst würde die nächste Runde denselben Wurf wiederholen.\n\n**Merkregel:** Bei \"Push your luck\" wird *vor* dem Wurf entschieden - deshalb kann das Ergebnis die Schwelle überschreiten.",
+   "hints": [
+    "Legen Sie eine Tabelle mit den Spalten Punkte, seed und Augenzahl an und füllen Sie sie Zeile für Zeile.",
+    "`hold_at(10)` ist selbst noch keine Entscheidung, sondern liefert erst die Strategie-Funktion - was prüft diese?",
+    "Achten Sie darauf, was im Pech-Fall (`augen == 1`) mit dem seed passiert."
+   ],
+   "pitfalls": [
+    "Denken, die Rekursion stoppe **genau** bei 10 Punkten - geprüft wird vor dem Wurf, nicht danach.",
+    "Den zweiten Rückgabewert (den seed) vergessen und nur eine Zahl statt eines Tupels angeben.",
+    "Im Pech-Fall `(0, 1)` erwarten - der seed ist zu diesem Zeitpunkt längst weitergewandert."
+   ],
+   "sources": [
+    {
+     "file": "neues_spiel.py",
+     "page": 1,
+     "label": "spieler_wurf rekursiv mit Aufhör-Strategie"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Runterzählen von 101 / Push Your Luck"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Currying: hold_at(20) als Funktions-Fabrik"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "push-your-luck",
+    "rekursion",
+    "currying",
+    "seed",
+    "predict-output"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-015"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Stein-Schere-Papier-Echse-Spock: eine Serie auswerten",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Achten Sie genau auf die **Datentypen** der drei Ausgaben. *(4 P)*",
+   "code": "from functools import reduce\n\nschlaegt = {\"Stein\":  (\"Schere\", \"Echse\"),\n            \"Papier\": (\"Stein\", \"Spock\"),\n            \"Schere\": (\"Papier\", \"Echse\"),\n            \"Echse\":  (\"Papier\", \"Spock\"),\n            \"Spock\":  (\"Schere\", \"Stein\")}\n\n\ndef punkte(runde):\n    a, b = runde\n    if a == b:\n        return (0, 0)\n    elif b in schlaegt[a]:\n        return (1, 0)\n    else:\n        return (0, 1)\n\n\nrunden = ((\"Stein\", \"Schere\"), (\"Spock\", \"Spock\"),\n          (\"Papier\", \"Schere\"), (\"Echse\", \"Spock\"))\n\nprint(list(map(punkte, runden)))\nprint(reduce(lambda s, p: (s[0] + p[0], s[1] + p[1]), map(punkte, runden), (0, 0)))\nprint(tuple(filter(lambda r: r[0] == r[1], runden)))",
+   "expectedOutput": "[(1, 0), (0, 0), (0, 1), (1, 0)]\n(2, 1)\n(('Spock', 'Spock'),)",
+   "solution": "[(1, 0), (0, 0), (0, 1), (1, 0)]\n(2, 1)\n(('Spock', 'Spock'),)",
+   "explanation": "Der Code wertet vier Runden Stein-Schere-Papier-Echse-Spock mit `map`, `reduce` und `filter` aus - also mit genau den drei Werkzeugen aus Vorlesung 5.\n\n**Zeile 1 - `map`:** `punkte` wird auf jede Runde angewendet.\n\n- `(\"Stein\", \"Schere\")`: `\"Schere\"` steht in `schlaegt[\"Stein\"]` → `(1, 0)`\n- `(\"Spock\", \"Spock\")`: gleich → `(0, 0)`\n- `(\"Papier\", \"Schere\")`: `schlaegt[\"Papier\"]` ist `(\"Stein\", \"Spock\")`, `\"Schere\"` steht nicht drin → `(0, 1)`\n- `(\"Echse\", \"Spock\")`: `\"Spock\"` steht in `schlaegt[\"Echse\"]` → `(1, 0)`\n\nDas `list(...)` ist unverzichtbar: `map` liefert einen **Iterator**, kein `print`-freundliches Ergebnis. Ohne `list` erschiene `<map object at 0x...>`.\n\n**Zeile 2 - `reduce`:** Die Punktetupel werden komponentenweise aufaddiert, Startwert `(0, 0)`: `(1,0) → (1,0)`, `+(0,0) → (1,0)`, `+(0,1) → (1,1)`, `+(1,0) → (2,1)`. Ausgegeben wird ein **Tupel** `(2, 1)`, nicht `[2, 1]`.\n\n**Zeile 3 - `filter`:** Behalten werden nur die Unentschieden-Runden. Übrig bleibt eine einzige. Die Ausgabe `(('Spock', 'Spock'),)` zeigt das berühmte **Komma am Ende**, an dem Python ein einelementiges Tupel von einer geklammerten Zahl unterscheidet.\n\nBeachten Sie noch, dass `map(punkte, runden)` in Zeile 2 **neu** aufgerufen wird. Hätte man das Ergebnis aus Zeile 1 in einer Variablen gespeichert und dort `list(...)` angewendet, wäre der Iterator schon erschöpft und `reduce` bekäme nur noch den Startwert.\n\n**Merkregel:** Ein Tupel mit einem Element schreibt Python immer mit Komma: `(x,)`.",
+   "hints": [
+    "Werten Sie `punkte` für jede der vier Runden einzeln aus und schreiben Sie das Tupel dazu.",
+    "`reduce` addiert hier zwei Tupel komponentenweise - Startwert ist `(0, 0)`.",
+    "Wie druckt Python ein Tupel mit genau einem Element? Und wie unterscheidet sich das von einer Liste?"
+   ],
+   "pitfalls": [
+    "Bei der dritten Zeile das abschließende Komma vergessen: `(('Spock', 'Spock'))` wäre kein Tupel, sondern nur ein geklammertes Tupel-Element.",
+    "Eckige statt runde Klammern in Zeile 2 schreiben - `reduce` liefert hier ein Tupel.",
+    "`schlaegt[a]` falsch herum lesen: Der Wert im Dictionary enthält die Symbole, die `a` **besiegt**."
+   ],
+   "sources": [
+    {
+     "file": "1_installation_variablen_anweisungen_26.pdf",
+     "page": 22,
+     "label": "Stein-Schere-Papier-Echse-Spock"
+    },
+    {
+     "file": "5_map_filter_reduce_wrapup_26.pdf",
+     "page": 1,
+     "label": "map, filter, reduce; Iteratoren"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Was wird ausgegeben?"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "stein-schere-papier",
+    "map",
+    "filter",
+    "reduce",
+    "tupel",
+    "predict-output"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-016"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": true,
+   "title": "Kooperationsspiel: Turnier mit Tit-for-Tat, ohne Schleife",
+   "prompt": "Im **Kooperationsspiel** (Gefangenendilemma) entscheidet jeder Spieler in jeder Runde verdeckt, ob er **kooperiert** (`\"k\"`) oder den anderen **ausnutzt** (`\"a\"`). Danach wird gemeinsam aufgedeckt:\n\n| Spieler 1 | Spieler 2 | Punkte |\n|---|---|---|\n| k | k | 3 / 3 |\n| k | a | 0 / 5 |\n| a | k | 5 / 0 |\n| a | a | 0 / 0 |\n\nEine **Strategie** ist eine Funktion, die das Tupel **aller bisherigen Züge des Gegners** bekommt und `\"k\"` oder `\"a\"` zurückgibt. Drei Strategien sind vorgegeben - unter anderem `tit_for_tat`, das in der ersten Runde kooperiert und danach den letzten Zug des Gegners kopiert.\n\nSchreiben Sie `spiele(strategie_a, strategie_b, runden, historie=())`, das die angegebene Anzahl Runden durchspielt und den **Endstand als Tupel** `(punkte_a, punkte_b)` zurückgibt.\n\n**Keine Schleifen und keine Mutation!** Nutzen Sie Rekursion für den Spielverlauf und `reduce` für die Punkteauswertung. *(6 P)*",
+   "starterCode": "from functools import reduce\n\nauszahlung = {(\"k\", \"k\"): (3, 3), (\"k\", \"a\"): (0, 5),\n              (\"a\", \"k\"): (5, 0), (\"a\", \"a\"): (0, 0)}\n\nimmer_k = lambda gegner: \"k\"\nimmer_a = lambda gegner: \"a\"\ntit_for_tat = lambda gegner: \"k\" if len(gegner) == 0 else gegner[-1]\n\n\ndef spiele(strategie_a, strategie_b, runden, historie=()):\n    # Ihr Code hier - ohne Schleifen, ohne Mutation!\n    pass\n",
+   "constraints": [
+    "keine for-Schleife",
+    "keine while-Schleife",
+    "keine Mutation (kein append)",
+    "reduce für die Auswertung"
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    ".append("
+   ],
+   "required": [
+    "reduce("
+   ],
+   "tests": [
+    {
+     "name": "beide kooperieren immer",
+     "call": "spiele(immer_k, immer_k, 5)",
+     "expected": "(15, 15)"
+    },
+    {
+     "name": "Kooperateur wird ausgenutzt",
+     "call": "spiele(immer_k, immer_a, 4)",
+     "expected": "(0, 20)"
+    },
+    {
+     "name": "tit_for_tat gegen Ausbeuter",
+     "call": "spiele(tit_for_tat, immer_a, 3)",
+     "expected": "(0, 5)"
+    },
+    {
+     "name": "tit_for_tat gegen sich selbst",
+     "call": "spiele(tit_for_tat, tit_for_tat, 6)",
+     "expected": "(18, 18)"
+    },
+    {
+     "name": "Ausbeuter gegen tit_for_tat",
+     "call": "spiele(immer_a, tit_for_tat, 3)",
+     "expected": "(5, 0)"
+    },
+    {
+     "name": "null Runden",
+     "call": "spiele(immer_k, immer_k, 0)",
+     "expected": "(0, 0)"
+    }
+   ],
+   "solution": "from functools import reduce\n\nauszahlung = {(\"k\", \"k\"): (3, 3), (\"k\", \"a\"): (0, 5),\n              (\"a\", \"k\"): (5, 0), (\"a\", \"a\"): (0, 0)}\n\nimmer_k = lambda gegner: \"k\"\nimmer_a = lambda gegner: \"a\"\ntit_for_tat = lambda gegner: \"k\" if len(gegner) == 0 else gegner[-1]\n\n\ndef spiele(strategie_a, strategie_b, runden, historie=()):\n    if runden == 0:\n        return reduce(lambda stand, zug: (stand[0] + auszahlung[zug][0],\n                                          stand[1] + auszahlung[zug][1]),\n                      historie,\n                      (0, 0))\n    a = strategie_a(tuple(map(lambda zug: zug[1], historie)))\n    b = strategie_b(tuple(map(lambda zug: zug[0], historie)))\n    return spiele(strategie_a, strategie_b, runden - 1, historie + ((a, b), ))\n",
+   "explanation": "Die Aufgabe verbindet alle Bausteine der funktionalen Hälfte der Vorlesung an einem neuen Spiel.\n\n**1) Rekursion statt Schleife.** `runden` ist der Zähler, der bei jedem Aufruf um eins sinkt - `runden == 0` ist die Abbruchbedingung. Die `historie` wächst als **Akkumulator-Parameter** mit; sie ist ein Tupel von Zugpaaren wie `((\"k\",\"a\"), (\"a\",\"a\"))`.\n\n**2) Keine Mutation.** `historie + ((a, b), )` erzeugt ein **neues** Tupel. Das Komma in `((a, b), )` ist Pflicht: Ohne es wäre `((a, b))` nur ein geklammertes Paar, und `+` würde die beiden Strings einzeln anhängen statt das Paar als ein Element.\n\n**3) Die Perspektive der Strategien.** Jede Strategie sieht nur die Züge **des Gegners**. Für Spieler A ist das die zweite Komponente jedes Paares, für Spieler B die erste - deshalb die beiden `map`-Aufrufe mit `zug[1]` bzw. `zug[0]`. Wer hier die Indizes verwechselt, baut versehentlich eine Strategie, die auf die eigenen Züge reagiert; `tit_for_tat` gegen `immer_a` liefert dann falsche Werte.\n\n**4) `reduce` für die Auswertung.** Erst am Ende wird die Historie zu einem Punktestand gefaltet: Startwert `(0, 0)`, und jedes Zugpaar liefert über das Dictionary `auszahlung` das Punktepaar, das komponentenweise addiert wird. Das trennt sauber **Spielverlauf** (Rekursion) von **Auswertung** (Faltung).\n\n**Spielerisch interessant:** `tit_for_tat` gegen `immer_a` verliert nur die erste Runde (0:5) und danach nichts mehr - während `immer_k` gegen `immer_a` in jeder Runde ausgebeutet wird. Genau das ist die Pointe des wiederholten Gefangenendilemmas.\n\n**Merkregel:** Verlauf rekursiv aufbauen, Ergebnis mit `reduce` einsammeln.",
+   "hints": [
+    "Was ist die Abbruchbedingung der Rekursion, und was soll dann zurückgegeben werden?",
+    "Die Strategien brauchen die Züge des **Gegners** - aus der Historie von Paaren holen Sie diese mit `map` und dem passenden Index heraus.",
+    "Bauen Sie die Historie mit `historie + ((a, b), )` weiter und achten Sie auf das Komma im inneren Tupel."
+   ],
+   "pitfalls": [
+    "`historie + ((a, b))` ohne Komma schreiben - dann landen zwei einzelne Strings in der Historie.",
+    "Beiden Strategien dieselbe Historie geben und dadurch `tit_for_tat` auf die eigenen Züge reagieren lassen.",
+    "Die Punkte während der Rekursion mitzählen und `reduce` gar nicht verwenden - erlaubt wäre es logisch, gefordert ist aber die Faltung."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Kooperationsspiel: k/a, Auszahlungen 3/3, 0/5, 5/0, 0/0"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "Spielverlauf rekursiv, states als Tupel"
+    },
+    {
+     "file": "goofspiel26-4.py",
+     "page": 1,
+     "label": "reduce über alle states zur Gesamtauswertung"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "gefangenendilemma",
+    "kooperationsspiel",
+    "rekursion",
+    "reduce",
+    "strategie",
+    "keine-schleifen"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-017"
+  },
+  {
+   "type": "short-answer",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": true,
+   "title": "Spielregeln und Strategie eines funktional implementierten Spiels erklären",
+   "prompt": "**Erklären Sie die Spielregeln des folgenden funktional implementierten Spiels.** Beantworten Sie zusätzlich:\n\n1. Wie viele Runden werden gespielt, und woran erkennt man das?\n2. Welche Strategie verfolgt `nachtragend`, und wie verhält sie sich gegen `ausbeuter`?\n3. Welche Ausgabe erzeugt der Code?\n4. Warum ist `runde` eine pure function, obwohl sie das gesamte Tupel `states` als Argument bekommt?\n\n*(5 P)*",
+   "code": "from functools import reduce\n\n\ndef spiel_rekursiv(abbruchbedingung, spielrunde, states):\n    if abbruchbedingung(states):\n        return states\n    else:\n        states += (spielrunde(states), )\n        return spiel_rekursiv(abbruchbedingung, spielrunde, states)\n\n\nauszahlung = {(\"k\", \"k\"): (3, 3), (\"k\", \"a\"): (0, 5),\n              (\"a\", \"k\"): (5, 0), (\"a\", \"a\"): (0, 0)}\n\nimmer_kooperativ = lambda gegner: \"k\"\nausbeuter = lambda gegner: \"a\"\nnachtragend = lambda gegner: \"a\" if \"a\" in gegner else \"k\"\n\n\ndef runde(states):\n    state = states[-1]\n    zug1 = state[\"strategie1\"](state[\"zuege2\"])\n    zug2 = state[\"strategie2\"](state[\"zuege1\"])\n    gewinn = auszahlung[(zug1, zug2)]\n    return {\"punkte\": (state[\"punkte\"][0] + gewinn[0], state[\"punkte\"][1] + gewinn[1]),\n            \"zuege1\": state[\"zuege1\"] + (zug1, ),\n            \"zuege2\": state[\"zuege2\"] + (zug2, ),\n            \"strategie1\": state[\"strategie1\"],\n            \"strategie2\": state[\"strategie2\"]}\n\n\nanfang = ({\"punkte\": (0, 0), \"zuege1\": (), \"zuege2\": (),\n           \"strategie1\": nachtragend, \"strategie2\": ausbeuter}, )\n\nstates = spiel_rekursiv(lambda s: len(s) > 5, runde, anfang)\n\nprint(states[-1][\"zuege1\"], states[-1][\"zuege2\"])\nprint(states[-1][\"punkte\"])",
+   "solution": "**Musterlösung**\n\n**Die Spielregeln (Kooperationsspiel / wiederholtes Gefangenendilemma):**\n\nZwei Spieler entscheiden in jeder Runde **gleichzeitig und verdeckt**, ob sie kooperieren (`\"k\"`) oder den anderen ausnutzen (`\"a\"`). Anschließend wird aufgedeckt und nach der Tabelle `auszahlung` gewertet: Kooperieren beide, bekommt jeder 3 Punkte. Kooperiert nur einer, bekommt der Ausnutzende 5 und der Kooperierende 0 Punkte. Nutzen beide aus, bekommt keiner Punkte. Die Punkte werden über alle Runden **aufsummiert**; jede Strategie sieht dabei nur die bisherigen Züge des **Gegners** (`strategie1` bekommt `zuege2` und umgekehrt).\n\n**1) Anzahl der Runden:** Die Abbruchbedingung ist `lambda s: len(s) > 5`. `states` enthält den Anfangszustand plus je einen Zustand pro gespielter Runde. Abgebrochen wird, sobald `states` **6** Einträge hat - es werden also genau **5 Runden** gespielt.\n\n**2) Die Strategie `nachtragend`:** Sie kooperiert, solange der Gegner **noch nie** ausgenutzt hat, und nutzt ab dem ersten Verrat für den Rest der Partie immer aus (in der Spieltheorie \"grim trigger\"). Gegen `ausbeuter` heißt das: In Runde 1 kooperiert sie noch (die Historie ist leer) und wird mit 0:5 bestraft. Ab Runde 2 sieht sie das `\"a\"` in der Historie und spielt selbst `\"a\"` - beide bekommen von da an 0 Punkte. `nachtragend` verliert also **nur die erste Runde**.\n\n**3) Ausgabe:**\n\n```\n('k', 'a', 'a', 'a', 'a') ('a', 'a', 'a', 'a', 'a')\n(0, 5)\n```\n\n**4) Warum ist `runde` pure?** Weil sie ausschließlich **liest**: Sie greift mit `states[-1]` auf den letzten Zustand zu, berechnet daraus Werte und gibt ein **neues** Dictionary zurück. Weder das Tupel `states` noch das Dictionary `state` werden verändert - alle neuen Werte entstehen durch `+` auf Tupeln, was immer ein neues Tupel erzeugt. Es gibt keine Nebeneffekte (kein `print`, kein `input`, keine globale Zuweisung), und das Ergebnis hängt nur von den Argumenten ab. Dass `auszahlung` global gelesen wird, ist unkritisch, weil es eine unveränderliche Konstante des Spiels ist - streng genommen ist das aber die einzige Stelle, an der man diskutieren kann. Die Nebeneffekte des Programms sind sauber an einer Stelle gesammelt: in den beiden `print`-Aufrufen ganz am Ende.\n\n**Bewertungsrubrik (5 P)**\n\n- 2 P: Spielregeln und Auszahlungstabelle sinngemäß korrekt beschrieben (verdeckte, gleichzeitige Entscheidung; 3/3, 0/5, 5/0, 0/0; Punkte werden über die Runden summiert).\n- 1 P: 5 Runden mit Begründung über `len(s) > 5` und den Anfangszustand.\n- 1 P: `nachtragend` korrekt als \"kooperiert bis zum ersten Verrat, danach nie wieder\" beschrieben, inklusive Verlauf gegen `ausbeuter`.\n- 1 P: Purity korrekt begründet (nur lesen, neues Dictionary zurückgeben, Tupel sind immutable, Nebeneffekte nur im `print`).\n- Kein Punktabzug, wenn die Ausgabe formal leicht abweicht, solange Züge und Punktestand stimmen.\n",
+   "explanation": "Dies ist der Aufgabentyp *\"(Funktionaler Code) Erklären Sie die Spielregeln\"* von der Überblicksfolie - hier mit dem generischen Rekursions-Baustein `spiel_rekursiv`, den der Professor im Goofspiel einführt und der auf **jedes** rundenbasierte Spiel passt.\n\nLesestrategie: `spiel_rekursiv` ist eine **higher order function** mit drei Argumenten - einer Abbruchbedingung, einer Rundenfunktion und dem Anfangszustand. Wer sie einmal verstanden hat, muss beim Lesen eines neuen Spiels nur noch drei Fragen beantworten: *Wann ist Schluss? Was passiert pro Runde? Womit fängt es an?*\n\nDie Rundenzahl ist die klassische Stolperfalle: `len(s) > 5` klingt nach 5, aber `states` enthält von Anfang an einen Eintrag. Am sichersten zählt man die ersten Schritte durch: `len` = 1 → Runde, `len` = 2 → Runde, ... `len` = 6 → Abbruch. Das sind fünf Runden.\n\nZur Purity: Der scheinbar bedenkliche Punkt ist, dass `runde` das *ganze* Tupel bekommt. Das ändert nichts - entscheidend ist nicht, wie viel eine Funktion sieht, sondern ob sie etwas davon **verändert** und ob ihr Ergebnis allein von den Argumenten abhängt. Beides ist hier erfüllt. Auch das `states += (...)` in `spiel_rekursiv` ist keine Mutation: Tupel sind immutable, `+=` bindet den lokalen Namen `states` an ein **neues** Tupel; das Tupel des Aufrufers bleibt unberührt.\n\n**Merkregel:** Ein Spiel funktional lesen heißt: Abbruch, Runde, Anfangszustand - der Rest ist Buchhaltung.",
+   "hints": [
+    "Lesen Sie zuerst `spiel_rekursiv`: Welche drei Dinge muss man dieser Funktion geben, damit sie irgendein Spiel spielt?",
+    "Zählen Sie für die Rundenzahl die Länge von `states` Schritt für Schritt mit - der Anfangszustand zählt schon mit.",
+    "Für `nachtragend`: Was liefert `\"a\" in gegner`, wenn der Gegner noch gar nichts gespielt hat?"
+   ],
+   "pitfalls": [
+    "Sechs statt fünf Runden zählen, weil der Anfangszustand mitgezählt wird.",
+    "`states += (...)` für eine Mutation halten - Tupel sind immutable, es entsteht ein neues Tupel.",
+    "`nachtragend` mit `tit_for_tat` verwechseln: Tit-for-Tat verzeiht wieder, `nachtragend` nie."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 13,
+     "label": "Beispielfrage: (Funktionaler Code) Spielregeln erklären"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 17,
+     "label": "Kooperationsspiel"
+    },
+    {
+     "file": "helper-3.py",
+     "page": 1,
+     "label": "spiel_rekursiv als higher order function"
+    },
+    {
+     "file": "goofspiel26-4.py",
+     "page": 1,
+     "label": "Aufruf von spiel_rekursiv mit lambda-Abbruchbedingung"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "gefangenendilemma",
+    "code-lesen",
+    "spiel-rekursiv",
+    "higher-order-function",
+    "pure-function"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-018"
+  },
+  {
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler in der funktionalen Goofspiel-Runde",
+   "prompt": "Der folgende Code soll die *pure*, funktionale Fassung einer **Goofspiel**-Runde sein (Spieler 1 spielt immer den Wert der Preiskarte, Spieler 2 zieht eine zufällige Karte). Python meldet beim Ausführen keinen Fehler - trotzdem sind drei Dinge falsch: Die Karten werden nicht wirklich abgeworfen, es wird immer wieder dieselbe Karte gezogen, und `spielrunde` ist gar nicht pure.\n\n**In welchen 3 Zeilen befinden sich Fehler?** Benennen Sie jeden Fehler und geben Sie die Korrektur an. *(je 1-2 P)*",
+   "code": " 1  import random\n 2\n 3\n 4  def entferne_karte(kartenspiel, karte):\n 5      i = kartenspiel.index(karte)\n 6      return kartenspiel[:i] + kartenspiel[i:]\n 7\n 8\n 9  def ziehe_karte(kartenspiel, seed):\n10      generator = random.Random(seed)\n11      return generator.choice(kartenspiel), seed\n12\n13\n14  def spielrunde(state):\n15      preiskarte, seed = ziehe_karte(state[\"preiskarten\"], state[\"seed\"])\n16      karte1 = preiskarte\n17      karte2, seed = ziehe_karte(state[\"karten2\"], seed)\n18      punkte1 = state[\"punkte1\"]\n19      punkte2 = state[\"punkte2\"]\n20      if karte1 > karte2:\n21          state[\"punkte1\"] = punkte1 + preiskarte\n22      elif karte2 > karte1:\n23          punkte2 = punkte2 + preiskarte\n24      return {\"seed\": seed,\n25              \"punkte1\": punkte1,\n26              \"punkte2\": punkte2,\n27              \"karten1\": entferne_karte(state[\"karten1\"], karte1),\n28              \"karten2\": entferne_karte(state[\"karten2\"], karte2),\n29              \"preiskarten\": entferne_karte(state[\"preiskarten\"], preiskarte)}",
+   "errors": [
+    {
+     "line": 6,
+     "wrong": "return kartenspiel[:i] + kartenspiel[i:]",
+     "fix": "return kartenspiel[:i] + kartenspiel[i+1:]",
+     "why": "`kartenspiel[i:]` beginnt **bei** der zu entfernenden Karte, sie bleibt also drin - das Ergebnis ist eine unveränderte Kopie. Nur `[i+1:]` überspringt das Element an Position `i`."
+    },
+    {
+     "line": 11,
+     "wrong": "return generator.choice(kartenspiel), seed",
+     "fix": "return generator.choice(kartenspiel), seed + 1",
+     "why": "Der seed muss weitergereicht **und dabei verändert** werden. So bekommt der nächste Aufruf denselben seed, `random.Random(seed)` erzeugt denselben Generator und liefert (bei gleichem Kartenspiel) immer dieselbe Karte."
+    },
+    {
+     "line": 21,
+     "wrong": "state[\"punkte1\"] = punkte1 + preiskarte",
+     "fix": "punkte1 = punkte1 + preiskarte",
+     "why": "Hier wird das **übergebene Dictionary mutiert** - ein Nebeneffekt, der `spielrunde` unpure macht und den alten Zustand in `states` nachträglich verfälscht. Außerdem wird in Zeile 25 die unveränderte lokale Variable `punkte1` zurückgegeben, sodass die Punkte im neuen state gar nicht ankommen."
+    }
+   ],
+   "solution": "import random\n\n\ndef entferne_karte(kartenspiel, karte):\n    i = kartenspiel.index(karte)\n    return kartenspiel[:i] + kartenspiel[i+1:]        # Zeile 6 korrigiert\n\n\ndef ziehe_karte(kartenspiel, seed):\n    generator = random.Random(seed)\n    return generator.choice(kartenspiel), seed + 1    # Zeile 11 korrigiert\n\n\ndef spielrunde(state):\n    preiskarte, seed = ziehe_karte(state[\"preiskarten\"], state[\"seed\"])\n    karte1 = preiskarte\n    karte2, seed = ziehe_karte(state[\"karten2\"], seed)\n    punkte1 = state[\"punkte1\"]\n    punkte2 = state[\"punkte2\"]\n    if karte1 > karte2:\n        punkte1 = punkte1 + preiskarte                # Zeile 21 korrigiert\n    elif karte2 > karte1:\n        punkte2 = punkte2 + preiskarte\n    return {\"seed\": seed,\n            \"punkte1\": punkte1,\n            \"punkte2\": punkte2,\n            \"karten1\": entferne_karte(state[\"karten1\"], karte1),\n            \"karten2\": entferne_karte(state[\"karten2\"], karte2),\n            \"preiskarten\": entferne_karte(state[\"preiskarten\"], preiskarte)}\n",
+   "explanation": "Alle drei Fehler sind \"stille\" Fehler: Das Programm stürzt nicht ab, es rechnet nur falsch. Genau solche Fehler prüft der Professor.\n\n**Zeile 6 - der Slicing-Fehler.** Aus der Vorlesung: `kartenspiel[:i] + kartenspiel[i+1:]` ist die *pure* Variante von `liste.remove(karte)` für Tupel. Der Teil vor dem Element und der Teil **nach** dem Element werden zusammengeklebt. Mit `[i:]` bleibt das Element erhalten - schlimmer noch, ein `while len(preiskarten) > 0` würde damit nie enden.\n\n**Zeile 11 - der seed-Fehler.** `random.Random(seed)` ist genau deshalb so praktisch, weil es **deterministisch** ist: gleicher seed → gleiche Zahl. Das macht die Funktion pure, verlangt aber, dass der seed bei jeder Ziehung weitergedreht wird. Ohne `seed + 1` zieht `ziehe_karte` bei jedem Aufruf mit demselben Kartenspiel wieder dieselbe Karte - der Zufall ist eingefroren.\n\n**Zeile 21 - der Purity-Fehler.** `state[\"punkte1\"] = ...` verändert das übergebene Dictionary. Dictionaries sind **mutable**, die Zuweisung wirkt also über die Funktionsgrenze hinaus: Der Zustand, der bereits in `states` gespeichert war, wird nachträglich verändert und die Spielhistorie ist nicht mehr verlässlich. Das Muster der Vorlesung lautet: **nur lesen, lokal rechnen, neues Dictionary zurückgeben**. Zeile 23 macht es im `elif`-Zweig richtig vor.\n\nNicht falsch sind dagegen Zeile 16 (Spieler 1 spielt bewusst immer den Wert der Preiskarte - das ist die Strategie `spiele_den_wert_der_preiskarte`) und die Rückgabe eines Dictionary statt eines Tupels.\n\n**Merkregel:** Slice hinter dem Element weiterschneiden, seed weiterdrehen, state niemals anfassen.",
+   "hints": [
+    "Spielen Sie `entferne_karte((1,2,3), 2)` von Hand durch: Welche Teilstücke werden zusammengesetzt?",
+    "Was passiert, wenn `ziehe_karte` zweimal hintereinander mit demselben `seed` aufgerufen wird?",
+    "Suchen Sie nach der einen Zeile, in der etwas **außerhalb** der Funktion verändert wird - vergleichen Sie den `if`- mit dem `elif`-Zweig."
+   ],
+   "pitfalls": [
+    "Zeile 16 für einen Fehler halten - Spieler 1 spielt absichtlich den Wert der Preiskarte.",
+    "Nur den fehlenden `+1` beim seed sehen und die stille Mutation in Zeile 21 übersehen.",
+    "In Zeile 6 `kartenspiel.remove(karte)` als Korrektur vorschlagen: Das mutiert die Liste und funktioniert bei Tupeln gar nicht."
+   ],
+   "sources": [
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "entferne_karte, ziehe_karte, spielrunde als pure functions"
+    },
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "entferne_karte mit Slicing, ziehe_karte mit seed"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Mutability und Geltungsbereiche"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "goofspiel",
+    "fehlersuche",
+    "slicing",
+    "seed",
+    "pure-function",
+    "mutable"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-019"
+  },
+  {
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Goofspiel mit states: Was gibt der Code aus?",
+   "prompt": "Der folgende Code spielt ein verkürztes **Goofspiel** mit vier Karten. Spieler 1 spielt immer seine **höchste** Karte, Spieler 2 immer den **Wert der Preiskarte**. Die Preiskarten liegen in fester Reihenfolge, es wird also nicht gemischt.\n\nWas gibt der Code auf der Kommandozeile aus? *(4 P)*",
+   "code": "def entferne_karte(kartenspiel, karte):\n    i = kartenspiel.index(karte)\n    return kartenspiel[:i] + kartenspiel[i+1:]\n\n\ndef spielrunde(state):\n    preiskarte = state[\"preiskarten\"][0]\n    karte1 = state[\"karten1\"][-1]\n    karte2 = preiskarte\n    if karte1 > karte2:\n        punkte = (state[\"punkte\"][0] + preiskarte, state[\"punkte\"][1])\n    elif karte2 > karte1:\n        punkte = (state[\"punkte\"][0], state[\"punkte\"][1] + preiskarte)\n    else:\n        punkte = state[\"punkte\"]\n    return {\"punkte\": punkte,\n            \"karten1\": entferne_karte(state[\"karten1\"], karte1),\n            \"karten2\": entferne_karte(state[\"karten2\"], karte2),\n            \"preiskarten\": state[\"preiskarten\"][1:]}\n\n\nanfang = {\"punkte\": (0, 0), \"karten1\": (1, 2, 3, 4),\n          \"karten2\": (1, 2, 3, 4), \"preiskarten\": (3, 1, 4, 2)}\n\nstates = (anfang, )\nwhile len(states[-1][\"preiskarten\"]) > 0:\n    states += (spielrunde(states[-1]), )\n\nprint(len(states))\nprint(states[2][\"karten1\"])\nprint(states[-1][\"punkte\"])",
+   "expectedOutput": "5\n(1, 2)\n(4, 6)",
+   "solution": "5\n(1, 2)\n(4, 6)",
+   "explanation": "Das ist die state-Dictionary-Architektur aus der Vorlesung: Jeder Zustand ist ein Dictionary, `spielrunde` erzeugt daraus einen **neuen** Zustand, und `states += (spielrunde(states[-1]), )` sammelt die komplette Spielhistorie in einem Tupel.\n\nDer Spielverlauf Schritt für Schritt (P1 = höchste eigene Karte, P2 = Wert der Preiskarte):\n\n| Runde | Preiskarte | P1 | P2 | Punkte danach | karten1 danach |\n|---|---|---|---|---|---|\n| 1 | 3 | 4 | 3 | (3, 0) | (1, 2, 3) |\n| 2 | 1 | 3 | 1 | (4, 0) | (1, 2) |\n| 3 | 4 | 2 | 4 | (4, 4) | (1,) |\n| 4 | 2 | 1 | 2 | (4, 6) | () |\n\n**Erste Ausgabe:** `states` enthält den Anfangszustand **plus** vier Rundenzustände → `5`. Der klassische Fehler ist hier `4` - der Anfangszustand wird gern vergessen.\n\n**Zweite Ausgabe:** `states[2]` ist der Zustand **nach der zweiten Runde** (Index 0 = Anfang, Index 1 = nach Runde 1). Dort sind die Karten 4 und 3 bereits abgeworfen: `(1, 2)`.\n\n**Dritte Ausgabe:** Der Endstand `(4, 6)`. Spieler 1 gewinnt die kleinen Preiskarten 3 und 1 mit seinen hohen Karten und hat dann nichts mehr übrig - eine denkbar schlechte Strategie beim Goofspiel.\n\nBeachten Sie: `entferne_karte` bekommt ein **Tupel** und gibt ein Tupel zurück; nichts wird mutiert. Deshalb bleiben die alten Zustände in `states` unverändert erhalten und man kann am Ende jeden Zwischenstand nachschlagen - genau das ist der Sinn der Konstruktion.\n\n**Merkregel:** `states[i]` ist der Zustand **nach** der i-ten Runde, `states[0]` der Anfang.",
+   "hints": [
+    "Legen Sie eine Tabelle mit den Spalten Preiskarte, Karte 1, Karte 2 und Punkte an und füllen Sie sie Runde für Runde.",
+    "`karten1[-1]` ist die letzte - und da die Karten aufsteigend sortiert bleiben - die höchste Karte.",
+    "Zählen Sie beim ersten `print` mit: Wie viele Einträge hat `states` vor der ersten Runde?"
+   ],
+   "pitfalls": [
+    "Beim ersten `print` den Anfangszustand vergessen und 4 statt 5 angeben.",
+    "`states[2]` für den Zustand nach der dritten Runde halten.",
+    "Punkte auch bei Gleichstand vergeben - bei gleichen Karten bekommt niemand die Preiskarte."
+   ],
+   "sources": [
+    {
+     "file": "goofspiel26-3.py",
+     "page": 1,
+     "label": "states als Tupel, while über die Preiskarten"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "spielrunde: neues state-Dictionary zurückgeben"
+    },
+    {
+     "file": "pythonvorlesung_06.ipynb",
+     "page": 1,
+     "label": "state-Dictionary für das Goofspiel"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "goofspiel",
+    "state-dictionary",
+    "tupel",
+    "predict-output",
+    "indizierung"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-020"
+  },
+  {
+   "type": "code",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": true,
+   "title": "Goofspiel: imperativen Code funktional umschreiben",
+   "prompt": "Gegeben ist folgender **imperativer** Code, der eine ganze Goofspiel-Partie auswertet (die gespielten Karten stehen bereits fest):\n\n```python\ndef spiel_auswerten(preiskarten, karten1, karten2):\n    punkte1 = 0\n    punkte2 = 0\n    doku = \"\"\n    i = 0\n    while i < len(preiskarten):\n        pk = preiskarten[i]\n        k1 = karten1[i]\n        k2 = karten2[i]\n        if k1 > k2:\n            punkte1 = punkte1 + pk\n        elif k2 > k1:\n            punkte2 = punkte2 + pk\n        doku = doku + \"Preiskarte \" + str(pk) + \": \" + str(k1) + \" gegen \" + str(k2) + \"\\n\"\n        i = i + 1\n    return punkte1, punkte2, doku\n```\n\n**Schreiben Sie diesen Code funktional um.** Ihre Funktion `spiel_auswerten_funktional(preiskarten, karten1, karten2)` muss exakt dasselbe Tupel `(punkte1, punkte2, doku)` liefern - aber **ohne Schleife und ohne Mutation**, in einem einzigen `reduce`-Ausdruck. *(6 P)*",
+   "starterCode": "from functools import reduce\n\n\ndef spiel_auswerten_funktional(preiskarten, karten1, karten2):\n    # Ihr Code hier - ohne Schleifen, ohne Mutation!\n    pass\n",
+   "constraints": [
+    "keine for-Schleife",
+    "keine while-Schleife",
+    "keine Mutation",
+    "genau ein reduce-Ausdruck"
+   ],
+   "forbidden": [
+    "for ",
+    "while ",
+    ".append("
+   ],
+   "required": [
+    "reduce("
+   ],
+   "tests": [
+    {
+     "name": "drei Runden gemischt",
+     "call": "spiel_auswerten_funktional([5, 3, 9], [6, 3, 2], [4, 7, 8])",
+     "expected": "(5, 12, 'Preiskarte 5: 6 gegen 4\\nPreiskarte 3: 3 gegen 7\\nPreiskarte 9: 2 gegen 8\\n')"
+    },
+    {
+     "name": "leeres Spiel",
+     "call": "spiel_auswerten_funktional([], [], [])",
+     "expected": "(0, 0, '')"
+    },
+    {
+     "name": "Gleichstand gibt keine Punkte",
+     "call": "spiel_auswerten_funktional([4], [2], [2])",
+     "expected": "(0, 0, 'Preiskarte 4: 2 gegen 2\\n')"
+    },
+    {
+     "name": "identisch zur imperativen Fassung",
+     "call": "spiel_auswerten_funktional([2, 7, 1], [1, 2, 3], [3, 2, 1])",
+     "expected": "(1, 2, 'Preiskarte 2: 1 gegen 3\\nPreiskarte 7: 2 gegen 2\\nPreiskarte 1: 3 gegen 1\\n')"
+    },
+    {
+     "name": "eine einzige Runde",
+     "call": "spiel_auswerten_funktional([13], [13], [1])",
+     "expected": "(13, 0, 'Preiskarte 13: 13 gegen 1\\n')"
+    }
+   ],
+   "solution": "from functools import reduce\n\n\ndef spiel_auswerten_funktional(preiskarten, karten1, karten2):\n    return reduce(lambda stand, i: (stand[0] + (preiskarten[i] if karten1[i] > karten2[i] else 0),\n                                    stand[1] + (preiskarten[i] if karten2[i] > karten1[i] else 0),\n                                    stand[2] + \"Preiskarte \" + str(preiskarten[i]) + \": \"\n                                    + str(karten1[i]) + \" gegen \" + str(karten2[i]) + \"\\n\"),\n                  range(len(preiskarten)),\n                  (0, 0, \"\"))\n",
+   "explanation": "Das ist die Aufgabe *\"(Imperativer Code) Schreiben Sie diesen Code funktional\"* von der Überblicksfolie - und zugleich Aufgabe 5a der Probeklausur, nur am Goofspiel statt an einer Namensliste.\n\nDas Rezept in drei Schritten:\n\n**1) Alle mutierten Variablen identifizieren.** Hier sind es `punkte1`, `punkte2` und `doku` - drei Werte, die sich in jedem Durchlauf ändern. Genau diese drei bilden zusammen den **Akkumulator** der Faltung: ein Tupel `(punkte1, punkte2, doku)` mit dem Startwert `(0, 0, \"\")`.\n\n**2) Den Schleifenrumpf zur Faltungsfunktion machen.** Aus \"nimm den Zwischenstand und das nächste Element, mach einen neuen Zwischenstand\" wird das `lambda stand, i: ...`. Gefaltet wird über `range(len(preiskarten))`, weil drei Listen parallel gebraucht werden - der Index ist das Bindeglied.\n\n**3) `if`-Statements durch bedingte Ausdrücke ersetzen.** In einem `lambda` sind Anweisungen verboten. `punkte1 + (pk if k1 > k2 else 0)` erledigt genau das, was der `if`-Zweig getan hat - und das `else 0` deckt sowohl den `elif`- als auch den impliziten Gleichstands-Fall ab.\n\nDrei Details entscheiden über die Korrektheit:\n\n- Der **Startwert** `(0, 0, \"\")` ist zwingend; ohne ihn wäre der erste Index das Startelement und die leere Eingabe würde einen `TypeError` werfen statt `(0, 0, \"\")` zu liefern.\n- Die **Reihenfolge** in der Dokumentation bleibt erhalten, weil `reduce` von links nach rechts faltet.\n- Der **Gleichstand** darf keine Punkte geben - deshalb zwei getrennte, strikte Vergleiche `>` und nicht `>=`.\n\nWer sauberer strukturieren will, lagert die Faltungsfunktion in eine benannte pure function `runde_falten(stand, i)` aus; gefordert ist hier bewusst der eine Ausdruck, weil das in der Klausur so verlangt wird.\n\n**Merkregel:** Jede mutierte Variable wird zu einer Komponente des Akkumulators - der Rest ist `reduce`.",
+   "hints": [
+    "Welche Variablen ändern sich im Schleifenrumpf? Genau diese müssen zusammen den Akkumulator bilden.",
+    "Drei Listen parallel ohne Schleife: Falten Sie über `range(len(preiskarten))` und greifen Sie mit dem Index zu.",
+    "Ein `lambda` darf kein `if`-Statement enthalten - aber `wert if bedingung else 0` ist ein Ausdruck und damit erlaubt."
+   ],
+   "pitfalls": [
+    "Den Startwert `(0, 0, \"\")` vergessen: Bei leerer Eingabe gibt es dann einen TypeError.",
+    "`>=` statt `>` verwenden und dadurch bei Gleichstand fälschlich Punkte vergeben.",
+    "Die Dokumentation mit `str()` vergessen: `\"Preiskarte \" + 5` ist ein TypeError."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 13,
+     "label": "Beispielfrage: (Imperativer Code) Schreiben Sie diesen Code funktional"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 5,
+     "label": "Aufgabe 5a: ohne Schleife und ohne Mutation mit map/filter/reduce"
+    },
+    {
+     "file": "goofspiel26_imperativ.py",
+     "page": 1,
+     "label": "imperative Fassung des Goofspiels"
+    },
+    {
+     "file": "goofspiel26-4.py",
+     "page": 1,
+     "label": "gesamte_doku mit reduce zusammensetzen"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "goofspiel",
+    "reduce",
+    "funktional-umschreiben",
+    "keine-schleifen",
+    "akkumulator"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-021"
+  },
+  {
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was gilt für die funktionale Implementierung eines Spiels?",
+   "prompt": "In der Vorlesung wurde das Goofspiel schrittweise von einer imperativen zu einer funktionalen Implementierung umgebaut.\n\n**Welche der folgenden Aussagen sind richtig?** (Mehrfachauswahl)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`random.Random(seed).choice(karten)` liefert bei gleichem `seed` und gleichem `karten` immer dieselbe Karte. Eine Funktion, die so \"würfelt\", kann deshalb eine pure function sein.",
+     "correct": true,
+     "why": "Richtig. `random.Random(seed)` erzeugt einen eigenen Generator, dessen Ergebnis ausschließlich vom übergebenen seed abhängt - genau das macht `ziehe_karte` in `helper.py` deterministisch und damit pure."
+    },
+    {
+     "id": "b",
+     "text": "`kartenspiel.remove(karte)` ist in einer pure function unbedenklich, weil `remove` eine neue Liste zurückgibt.",
+     "correct": false,
+     "why": "Falsch, gleich doppelt: `remove` verändert die Liste **in-place** (ein Nebeneffekt auf dem übergebenen Objekt) und gibt `None` zurück. Die pure Variante ist `kartenspiel[:i] + kartenspiel[i+1:]`."
+    },
+    {
+     "id": "c",
+     "text": "Ist `preiskarten` ein Tupel, so kann `entferne_karte` es gar nicht verändern, sondern nur ein neues Tupel zurückgeben.",
+     "correct": true,
+     "why": "Richtig. Tupel sind immutable - genau deshalb wurde in der Vorlesung `neues_kartenspiel` von `list(range(...))` auf `tuple(range(...))` umgestellt."
+    },
+    {
+     "id": "d",
+     "text": "`states += (spielrunde(states[-1]), )` verändert das bisherige Tupel `states` an Ort und Stelle; Tupel sind also doch veränderbar.",
+     "correct": false,
+     "why": "Falsch. `+=` erzeugt bei Tupeln ein **neues** Tupel und bindet den Namen `states` daran neu. Das alte Tupel bleibt unverändert - deshalb sind alle früheren Zustände weiterhin gültig."
+    },
+    {
+     "id": "e",
+     "text": "Eine Funktion, die den Spielstand mit `print` auf der Konsole ausgibt, ist keine pure function.",
+     "correct": true,
+     "why": "Richtig. `print` ist ein Nebeneffekt. Deshalb liefert `helper-2.py` Strings **zurück**, statt sie zu drucken, und das Programm druckt erst ganz am Ende an einer einzigen Stelle."
+    },
+    {
+     "id": "f",
+     "text": "Die gesamte Rundendokumentation lässt sich mit `reduce` ohne jede Schleife zu einem einzigen String zusammensetzen.",
+     "correct": true,
+     "why": "Richtig, genau so steht es in `goofspiel26-4.py`: `reduce(lambda doku, state: doku + state[\"runden_doku\"], states, \"\")`."
+    }
+   ],
+   "solution": "Richtig sind **a, c, e und f**. Falsch sind b (`remove` mutiert und liefert `None`) und d (`+=` auf einem Tupel erzeugt ein neues Tupel).",
+   "explanation": "Die sechs Aussagen decken die vier Umbauschritte ab, mit denen aus einem imperativen Spiel ein funktionales wird.\n\n**Zufall beherrschbar machen (a).** Nicht `random` ist das Problem, sondern der *verborgene globale Zustand* des Standardgenerators. `random.randint(1, 6)` liefert bei jedem Aufruf etwas anderes und ist damit nicht referentially transparent. `random.Random(seed)` baut dagegen einen frischen Generator aus einem Argument - gleiches Argument, gleiches Ergebnis. Der Preis: Der seed muss als Teil des `state` mitgeführt und bei jeder Ziehung weitergedreht werden.\n\n**Datenstrukturen unveränderlich wählen (b, c).** Die Umstellung von Liste auf Tupel ist kein Selbstzweck: Sie macht Fehler wie das versehentliche `remove` **unmöglich**, weil Tupel die Methode gar nicht besitzen. Was man nicht mutieren kann, mutiert man auch nicht aus Versehen.\n\n**Historie statt Überschreiben (d).** `states += (...)` sieht nach Mutation aus, ist aber Neubindung. Bei einer Liste (`states.append(...)`) wäre es eine echte Mutation. Der Unterschied ist klausurrelevant: Bei Tupeln bleibt der Zustand, den eine andere Variable schon festhält, garantiert erhalten.\n\n**Nebeneffekte an einer Stelle sammeln (e, f).** Alle Hilfsfunktionen geben Strings zurück, `reduce` klebt sie zusammen, und erst das Hauptprogramm druckt. So bleibt der gesamte Spielkern testbar und pure.\n\n**Merkregel:** Zufall in den seed, Zustand ins Argument, Ausgabe ans Ende.",
+   "hints": [
+    "Prüfen Sie bei jeder Aussage: Wovon hängt das Ergebnis ab, und was verändert die Operation?",
+    "Bei b und d hilft es, sich zu fragen, was die Operation **zurückgibt** und was sie am Objekt tut.",
+    "Erinnern Sie sich, warum `neues_kartenspiel` in der zweiten Fassung ein Tupel statt einer Liste liefert."
+   ],
+   "pitfalls": [
+    "Jede Nutzung von `random` pauschal als unpure einstufen.",
+    "`+=` bei Tupeln und Listen gleichsetzen - bei Listen ist es eine Mutation, bei Tupeln eine Neubindung.",
+    "Glauben, `liste.remove(x)` gebe die gekürzte Liste zurück; es liefert `None`."
+   ],
+   "sources": [
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "neues_kartenspiel als Tupel, entferne_karte per Slicing"
+    },
+    {
+     "file": "goofspiel26-4.py",
+     "page": 1,
+     "label": "reduce über states, print als einziger Nebeneffekt"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 1,
+     "label": "mutable vs. immutable, pure functions"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 14,
+     "label": "Vorlesung 4+5: states im Dictionary, alle states als Tupel"
+    }
+   ],
+   "tags": [
+    "spiele",
+    "goofspiel",
+    "pure-function",
+    "immutable",
+    "seed",
+    "reduce",
+    "theorie"
+   ],
+   "lang": "python",
+   "topicId": "py-games",
+   "id": "py-games-022"
+  }
+ ]
+}

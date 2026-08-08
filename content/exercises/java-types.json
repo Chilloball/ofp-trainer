@@ -1,0 +1,1971 @@
+{
+ "topicId": "java-types",
+ "exercises": [
+  {
+   "id": "java-types-001",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 1,
+   "examStyle": true,
+   "title": "Ganzzahl-Typen nach Speicherbedarf ordnen",
+   "prompt": "Bringen Sie die Ganzzahl-Datentypen nach ihrer Größe (Speicherbedarf) in die richtige Reihenfolge – vom kleinsten zum größten. Kreuzen Sie genau eine Antwort an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`byte < short < int < long`",
+     "correct": true,
+     "why": "Richtig: 1 Byte < 2 Byte < 4 Byte < 8 Byte."
+    },
+    {
+     "id": "b",
+     "text": "`byte < int < short < long`",
+     "correct": false,
+     "why": "Falsch: `short` (2 Byte) ist kleiner als `int` (4 Byte), nicht größer."
+    },
+    {
+     "id": "c",
+     "text": "`short < byte < int < long`",
+     "correct": false,
+     "why": "Falsch: `byte` ist mit 1 Byte der kleinste Typ überhaupt, `short` belegt 2 Byte."
+    },
+    {
+     "id": "d",
+     "text": "`int < long < short < byte`",
+     "correct": false,
+     "why": "Falsch: das ist die Reihenfolge fast genau umgedreht."
+    }
+   ],
+   "solution": "a) `byte < short < int < long`  (1 Byte < 2 Byte < 4 Byte < 8 Byte)",
+   "explanation": "Java kennt genau vier Ganzzahl-Typen, und ihr Speicherbedarf verdoppelt sich jedes Mal: **`byte` = 1 Byte, `short` = 2 Byte, `int` = 4 Byte, `long` = 8 Byte**. Aus dem Speicherbedarf folgt direkt der Wertebereich, denn n Byte = 8n Bit, und ein Bit geht für das Vorzeichen drauf: `byte` reicht von -128 bis 127, `short` von -32768 bis 32767, `int` von -2147483648 bis 2147483647 und `long` von rund -9.2e18 bis 9.2e18. Der typische Denkfehler ist, `short` mit `int` zu verwechseln, weil beide 'mittelgroß' klingen. Merkregel: **1 – 2 – 4 – 8** in derselben Reihenfolge, in der die Namen in der Vorlesung immer genannt werden (byte, short, int, long). Dieselbe Reihenfolge bestimmt auch, in welche Richtung Java **implizit** (automatisch) konvertiert: immer nur von klein nach groß.",
+   "hints": [
+    "Die vier Typen werden im Skript immer in genau der Reihenfolge aufgezählt, in der sie auch wachsen.",
+    "Der Speicherbedarf verdoppelt sich von Typ zu Typ. Fang bei 1 Byte an.",
+    "`int` ist der Standardtyp für ganze Zahlen und belegt 4 Byte – welcher Typ ist halb so groß, welcher doppelt so groß?"
+   ],
+   "pitfalls": [
+    "`short` und `int` vertauschen, weil beide nach 'mittlerer Größe' klingen.",
+    "Glauben, `byte` sei 8 Byte groß – der Name bezeichnet die Größe (1 Byte), nicht die Bitzahl 8."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1a) MC-Frage 1: Ganzzahl-Typen nach Größe ordnen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: vier Typen mit unterschiedlichen Wertebereichen; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen (Klausur-Zusammenfassung)"
+    }
+   ],
+   "tags": [
+    "datentypen",
+    "ganzzahl",
+    "wertebereich",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-types-002",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": true,
+   "title": "Ganzzahl-Division und Modulo",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class IntDivision {\n  public static void main(String[] s) {\n    int a = 7, b = 2;\n    System.out.println(a / b);\n    System.out.println(a % b);\n    System.out.println(a / (double) b);\n  }\n}",
+   "expectedOutput": "3\n1\n3.5",
+   "solution": "class IntDivision {\n  public static void main(String[] s) {\n    int a = 7, b = 2;\n    System.out.println(a / b);\n    System.out.println(a % b);\n    System.out.println(a / (double) b);\n  }\n}",
+   "explanation": "Der Operator `/` verhält sich in Java **typabhängig**: Sind beide Operanden ganzzahlig, rechnet Java eine **Ganzzahl-Division** und schneidet den Rest einfach ab – `7 / 2` ist also `3` und nicht `3.5`. Den weggeworfenen Rest liefert `%`: `7 % 2` ist `1`. Sobald **einer** der beiden Operanden ein Gleitkommatyp ist, wird der andere implizit nach `double` erweitert und es wird echt geteilt: `7 / (double) 2` ergibt `3.5`. Der typische Denkfehler ist, den Cast zu spät zu setzen – `(double) (a / b)` würde erst `3` berechnen und dann `3.0` ausgeben, der Rest ist da schon verloren. Merkregel: **Der Typ des Ergebnisses entsteht vor der Rechnung, nicht nach ihr.** Achte auch auf die Ausgabe: ein `double` wird immer mit Nachkommastelle gedruckt (`3.5`), ein `int` nie.",
+   "hints": [
+    "Welche Typen haben `a` und `b`? Und welchen Typ hat damit der Ausdruck `a / b`?",
+    "Java wirft bei der Division zweier ganzer Zahlen den Rest weg. Wo taucht dieser Rest wieder auf?",
+    "In der dritten Zeile steht der Cast **vor** `b`, nicht um die ganze Division herum."
+   ],
+   "pitfalls": [
+    "`7 / 2` als `3.5` oder `4` (gerundet) angeben – Java schneidet ab, es rundet nicht.",
+    "Bei der dritten Zeile `3` statt `3.5` angeben oder die Nachkommastelle bei der Ausgabe vergessen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: vier Typen mit unterschiedlichen Wertebereichen; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 39,
+     "label": "Beispiel Typkonversionen: x = 3/4; i = j + x; c = c + 1; c += 1;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen (Klausur-Zusammenfassung)"
+    }
+   ],
+   "tags": [
+    "int-division",
+    "modulo",
+    "typkonversion",
+    "ausgabe"
+   ]
+  },
+  {
+   "id": "java-types-003",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 1,
+   "examStyle": false,
+   "title": "Passenden Ganzzahl-Typ wählen",
+   "prompt": "Sie sollen die Weltbevölkerung (ca. 8 000 000 000) **exakt** in einer Variablen speichern. Welcher ist der kleinste ganzzahlige Datentyp, der dafür ausreicht?",
+   "code": "// Schreibe ein Java-Programm, das folgende Informationen speichert:\n// ...\n// 4. Die Weltbevölkerung z.B. 8.000.000.000\n???  weltbevoelkerung = 8000000000;",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`int`",
+     "correct": false,
+     "why": "`int` reicht nur bis 2 147 483 647 – 8 Milliarden passen nicht hinein. Java meldet hier sogar 'integer number too large'."
+    },
+    {
+     "id": "b",
+     "text": "`long`",
+     "correct": true,
+     "why": "Richtig: `long` (8 Byte) reicht bis ca. 9,2 Trillionen. Achtung: das Literal braucht das Suffix `L`, also `8000000000L`."
+    },
+    {
+     "id": "c",
+     "text": "`short`",
+     "correct": false,
+     "why": "`short` reicht nur bis 32 767 – bei weitem zu klein."
+    },
+    {
+     "id": "d",
+     "text": "`double`",
+     "correct": false,
+     "why": "`double` könnte den Wert zwar aufnehmen, ist aber kein ganzzahliger Typ und speichert nur näherungsweise; außerdem würde die Ausgabe `8.0E9` lauten."
+    }
+   ],
+   "solution": "b) `long` – und zwar mit L-Suffix am Literal:\n\n```java\nlong weltbevoelkerung = 8000000000L;\n```",
+   "explanation": "Die Wahl des Typs richtet sich nach dem **Wertebereich**, nicht nach dem Gefühl. `int` deckt nur -2 147 483 648 bis 2 147 483 647 ab, also gut 2 Milliarden – 8 Milliarden passen nicht hinein. Erst `long` mit 8 Byte reicht bis rund 9,2 * 10^18. Wichtig ist die zweite Hälfte der Antwort: Ein ganzzahliges **Literal ohne Suffix ist in Java immer vom Typ `int`**, ganz egal, welchem Typ es zugewiesen wird. `long x = 8000000000;` ist deshalb ein Compiler-Fehler ('integer number too large'), obwohl `long` den Wert speichern könnte. Das Suffix `L` (oder klein `l`, aber `L` ist lesbarer) macht das Literal selbst zu einem `long`. Merkregel: **Große Zahl -> großer Typ *und* großes L.**",
+   "hints": [
+    "Vergleiche den Wert 8 000 000 000 mit der Obergrenze von `int` (etwa 2,1 Milliarden).",
+    "Es geht um einen *ganzzahligen* Typ, `double` fällt also weg.",
+    "Denke auch daran, welchen Typ das Literal `8000000000` selbst hat, bevor es zugewiesen wird."
+   ],
+   "pitfalls": [
+    "`int` wählen, weil 'das ist doch der normale Zahlentyp'.",
+    "`long x = 8000000000;` ohne `L` schreiben – der Compiler meckert schon am Literal, nicht an der Zuweisung."
+   ],
+   "sources": [
+    {
+     "file": "03_Datentypen/GanzeZahlen.java",
+     "page": 1,
+     "label": "Weltbevölkerung z.B. 8.000.000.000 speichern"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: vier Typen mit unterschiedlichen Wertebereichen; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 33,
+     "label": "3.3 Konstanten: Literale besitzen einen Typ, ersichtlich an ihrer Syntax"
+    }
+   ],
+   "tags": [
+    "long",
+    "wertebereich",
+    "literale",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-types-004",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "ASCII-Code eines Zeichens",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? (Hinweis: `'@'` hat den ASCII-Code 64, `'0'` den Code 48.)",
+   "code": "class ZeichenCode {\n  public static void main(String[] s) {\n    char symbol = '@';\n    System.out.print(\"Die ASCII-Kodierung fuer [\" + symbol + \"] ist \");\n    System.out.println( (int) symbol );\n    char ziffer = '7';\n    System.out.println( (int) ziffer );\n    System.out.println( ziffer - '0' );\n  }\n}",
+   "expectedOutput": "Die ASCII-Kodierung fuer [@] ist 64\n55\n7",
+   "solution": "class ZeichenCode {\n  public static void main(String[] s) {\n    char symbol = '@';\n    System.out.print(\"Die ASCII-Kodierung fuer [\" + symbol + \"] ist \");\n    System.out.println( (int) symbol );\n    char ziffer = '7';\n    System.out.println( (int) ziffer );\n    System.out.println( ziffer - '0' );\n  }\n}",
+   "explanation": "Ein `char` ist in Java intern eine **2 Byte große Zahl** – der Unicode-/ASCII-Code des Zeichens. Ob man die Zahl oder das Zeichen sieht, entscheidet allein der Typ im Ausgabe-Ausdruck: `\"...\" + symbol` hängt das *Zeichen* an den String, `(int) symbol` erzwingt dagegen die Zahl. Deshalb steht in Zeile 1 `@` und in Zeile 2 `64`. Das Zeichen `'7'` hat den Code 55, nicht 7 – ein klassischer Stolperstein. Die dritte Ausgabe zeigt den Standard-Trick, um aus einem Ziffernzeichen die Zahl zu machen: `ziffer - '0'` rechnet 55 - 48 = **7**. Beachte, dass `char - char` automatisch nach `int` erweitert wird, weshalb hier `7` und nicht ein Zeichen gedruckt wird. Merkregel: **`char` ist eine Zahl mit Verkleidung – der Cast zieht ihr die Verkleidung aus.** Auch `System.out.print` ohne `ln` ist wichtig: die erste Ausgabe bleibt in derselben Zeile.",
+   "hints": [
+    "`print` (ohne `ln`) macht keinen Zeilenumbruch – wie viele Zeilen entstehen insgesamt?",
+    "Bei `\"Text\" + symbol` wird das Zeichen angehängt; bei `(int) symbol` die Zahl dahinter.",
+    "`'7'` ist nicht die Zahl 7. Was ergibt 55 - 48?"
+   ],
+   "pitfalls": [
+    "`(int) '7'` als 7 statt 55 angeben.",
+    "Die erste Ausgabe fälschlich als eigene Zeile zählen, obwohl `print` verwendet wird.",
+    "`ziffer - '0'` als Zeichen erwarten – das Ergebnis von char-Arithmetik ist `int`."
+   ],
+   "sources": [
+    {
+     "file": "03_Datentypen/CharASCII.java",
+     "page": 1,
+     "label": "ASCII-Kodierung eines Zeichens ausgeben"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 30,
+     "label": "Beispiel CharASCII: System.out.println( (int) symbol )"
+    }
+   ],
+   "tags": [
+    "char",
+    "ascii",
+    "cast",
+    "ausgabe"
+   ]
+  },
+  {
+   "id": "java-types-005",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 1,
+   "examStyle": false,
+   "title": "Speicherbedarf der primitiven Typen",
+   "prompt": "Welche Aussage über den Speicherbedarf der primitiven Datentypen in Java ist **korrekt**?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`char` belegt 1 Byte, weil ein ASCII-Zeichen in 1 Byte passt.",
+     "correct": false,
+     "why": "Falsch: Java speichert `char` als **2 Byte** (Unicode/UTF-16), nicht als 1 Byte wie in C."
+    },
+    {
+     "id": "b",
+     "text": "`char` belegt 2 Byte, `float` 4 Byte und `double` 8 Byte.",
+     "correct": true,
+     "why": "Richtig: das sind genau die Größen aus dem Skript. `double` ist 'doppelt genau' gegenüber `float`."
+    },
+    {
+     "id": "c",
+     "text": "`int` belegt 2 Byte und `long` 4 Byte.",
+     "correct": false,
+     "why": "Falsch: `int` belegt 4 Byte und `long` 8 Byte. 2 Byte gehören zu `short` und `char`."
+    },
+    {
+     "id": "d",
+     "text": "`short` belegt 4 Byte, genau wie `int`.",
+     "correct": false,
+     "why": "Falsch: `short` belegt 2 Byte, nur `int` belegt 4 Byte."
+    }
+   ],
+   "solution": "b) `char` belegt 2 Byte, `float` 4 Byte und `double` 8 Byte.",
+   "explanation": "Die Größen sind in Java **plattformunabhängig festgelegt** (anders als in C): `byte` 1, `short` 2, `char` 2, `int` 4, `float` 4, `long` 8, `double` 8. `boolean` hat keine im Sprachstandard festgelegte Größe, logisch braucht es 1 Bit. Wichtig ist die Merk-Struktur: es gibt genau **zwei 2-Byte-Typen** (`short` und `char`), **zwei 4-Byte-Typen** (`int` und `float`) und **zwei 8-Byte-Typen** (`long` und `double`). `char` hat 2 Byte, weil Java von Anfang an Unicode verwendet und nicht nur die 128 ASCII-Zeichen – deshalb funktioniert `char c1 = 0x7117;` im Beispiel *Smiley* aus der Vorlesung. Der typische Denkfehler kommt aus C, wo `char` genau 1 Byte groß ist. Merkregel: **1 – 2 – 4 – 8 für ganze Zahlen, 4 – 8 für Gleitkomma, und `char` sitzt bei den 2 Byte.**",
+   "hints": [
+    "Java legt die Größen fest, sie hängen nicht vom Betriebssystem ab.",
+    "Wie viele verschiedene Zeichen muss ein `char` darstellen können – nur ASCII oder ganz Unicode?",
+    "`double` heißt 'double precision': doppelt so viele Bytes wie `float`."
+   ],
+   "pitfalls": [
+    "`char` mit 1 Byte annehmen (Verwechslung mit C).",
+    "`float` und `double` gleich groß annehmen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 21,
+     "label": "3.2 Datentypen: byte, short, int, long, float, double, char, boolean"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 26,
+     "label": "Gleitkomma-Zahlen: Überlauf/Division durch 0 -> Infinity, 0.0/0.0 -> NaN"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 31,
+     "label": "Beispiel Smiley: Unicode-Literale 0x..., char c4 = 7"
+    }
+   ],
+   "tags": [
+    "datentypen",
+    "speicher",
+    "char",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-types-006",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finde die 2 Compiler-Fehler (char und Scope)",
+   "prompt": "Finde die **2 Compiler-Fehler** im folgenden Programm. Gib jeweils die Zeilennummer, den Grund und eine Korrektur an.",
+   "code": "class TypFehler {\n  public static void main(String[] arg) {\n    boolean aktiv = ! false;\n    if (aktiv) {\n      char zeichen1 = '#', zeichen2 = '9';\n      String ausgabe;\n      if (zeichen1 > 0) {\n        int arg = zeichen1 + zeichen2;\n      }\n      short code = (short) zeichen2;\n      aktiv = (boolean) zeichen2;\n    }\n  }\n}",
+   "errors": [
+    {
+     "line": 8,
+     "wrong": "int arg = zeichen1 + zeichen2;",
+     "fix": "int summe = zeichen1 + zeichen2;   // anderer Name",
+     "why": "`arg` ist bereits als formaler Parameter von `main(String[] arg)` deklariert. Der Gültigkeitsbereich des Parameters umfasst die ganze Methode, also auch diesen inneren Block – gleichnamige lokale Variablen dürfen sich nicht überlappen. javac: 'variable arg is already defined in method main(String[])'."
+    },
+    {
+     "line": 11,
+     "wrong": "aktiv = (boolean) zeichen2;",
+     "fix": "aktiv = (zeichen2 > 0);   // Vergleich liefert boolean",
+     "why": "Es gibt in Java **keine** Typkonversion von oder nach `boolean` – auch nicht mit explizitem Cast. javac: 'incompatible types: char cannot be converted to boolean'."
+    }
+   ],
+   "solution": "class TypFehler {\n  public static void main(String[] arg) {\n    boolean aktiv = ! false;\n    if (aktiv) {\n      char zeichen1 = '#', zeichen2 = '9';\n      String ausgabe;\n      if (zeichen1 > 0) {\n        int summe = zeichen1 + zeichen2;\n      }\n      short code = (short) zeichen2;\n      aktiv = (zeichen2 > 0);\n    }\n  }\n}",
+   "explanation": "Zwei sehr unterschiedliche Fehlerarten stecken hier nebeneinander.\n\n**Zeile 8 – Gültigkeitsbereich:** Der formale Parameter `arg` gilt in der *gesamten* Methode `main`, auch in jedem verschachtelten Block. Eine erneute Deklaration desselben Namens überlappt damit und ist verboten (Skript S. 36: 'Die Gültigkeitsbereiche von lokalen Variablen mit demselben Namen dürfen nicht überlappen'). Anders als in Python gibt es in Java **kein Shadowing lokaler Variablen**.\n\n**Zeile 11 – boolean:** `boolean` steht völlig außerhalb der Zahlen-Hierarchie. Weder `(boolean) x` noch `(int) b` sind erlaubt; `boolean` kennt nur `==`, `!=` und die logischen Operatoren.\n\nBewusst **keine** Fehler sind: `char zeichen1 = '#', zeichen2 = '9';` (zwei Variablen in einer Zeile, beide initialisiert), `String ausgabe;` (nur deklariert, aber nie benutzt – das ist völlig legal), `if (zeichen1 > 0)` (`char` darf mit `int` verglichen werden, weil `char` implizit nach `int` erweitert wird) und `short code = (short) zeichen2;` (explizite einschränkende Konversion, ausdrücklich erlaubt und im Überblick S. 350 genau so als Beispiel genannt).\n\nMerkregel: **Zahlen ineinander ja, boolean nie.**",
+   "hints": [
+    "Schau dir die Signatur von `main` genau an – wie heißt der Parameter?",
+    "Welcher der acht primitiven Typen steht komplett außerhalb der Konversionskette byte-short-int-long-float-double(-char)?",
+    "Ein Cast kann viel, aber er kann keine Typen verbinden, zwischen denen es gar keine Konversion gibt."
+   ],
+   "pitfalls": [
+    "`short code = (short) zeichen2;` fälschlich als Fehler markieren – explizite einschränkende Konversion ist erlaubt.",
+    "`String ausgabe;` als Fehler zählen, weil die Variable nie verwendet wird – das ist höchstens eine Warnung.",
+    "Übersehen, dass der *Parameter* `arg` denselben Namen belegt wie die neue lokale Variable."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur03.java",
+     "page": 1,
+     "label": "Finde die 2 Compiler-Fehler"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 36,
+     "label": "Gültigkeitsbereiche gleichnamiger lokaler Variablen dürfen nicht überlappen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 32,
+     "label": "boolean: nur == und !=, keine Typkonversion"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    }
+   ],
+   "tags": [
+    "compiler-fehler",
+    "scope",
+    "boolean",
+    "cast"
+   ]
+  },
+  {
+   "id": "java-types-007",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "In welchen 3 Zeilen befinden sich Compiler-Fehler?",
+   "prompt": "1. In welchen **3 Zeilen** befinden sich Compiler-Fehler? Begründe jeweils kurz und gib eine Korrektur an.",
+   "code": "class TypCheck {\n  public static void main(String[] s) {\n    double x, y = 2.5;\n    char z = 'k';\n    System.out.println(\"Buchstabe: \" + z);\n    int m = 4, n = 9;\n    final boolean fertig = false;\n    x = (m > 2) ? 1.5 : 3.5;\n    y = z + x * m;\n    m = m + x;\n    fertig = (n >= 9);\n    m = (int) x + (int) z;\n    n = (int) (x == y);\n  }\n}",
+   "errors": [
+    {
+     "line": 10,
+     "wrong": "m = m + x;",
+     "fix": "m = m + (int) x;   // oder: double ergebnis = m + x;",
+     "why": "`m + x` hat den Typ `double` (implizite Erweiterung von `int` nach `double`). Die Zuweisung an `int m` wäre eine einschränkende Konversion und braucht einen expliziten Cast. javac: 'incompatible types: possible lossy conversion from double to int'."
+    },
+    {
+     "line": 11,
+     "wrong": "fertig = (n >= 9);",
+     "fix": "boolean fertig = (n >= 9);   // final streichen, oder direkt final boolean fertig = (n >= 9);",
+     "why": "`fertig` wurde in Zeile 7 als `final` **und** bereits initialisiert deklariert. Eine `final`-Variable darf nach ihrer Initialisierung nicht mehr zugewiesen werden. javac: 'cannot assign a value to final variable fertig'."
+    },
+    {
+     "line": 13,
+     "wrong": "n = (int) (x == y);",
+     "fix": "n = (x == y) ? 1 : 0;",
+     "why": "`x == y` liefert ein `boolean`, und es gibt keine Typkonversion von `boolean` nach `int` – auch nicht mit Cast. javac: 'incompatible types: boolean cannot be converted to int'."
+    }
+   ],
+   "solution": "class TypCheck {\n  public static void main(String[] s) {\n    double x, y = 2.5;\n    char z = 'k';\n    System.out.println(\"Buchstabe: \" + z);\n    int m = 4, n = 9;\n    boolean fertig = false;\n    x = (m > 2) ? 1.5 : 3.5;\n    y = z + x * m;\n    m = m + (int) x;\n    fertig = (n >= 9);\n    m = (int) x + (int) z;\n    n = (x == y) ? 1 : 0;\n    System.out.println(y + \" \" + m + \" \" + n + \" \" + fertig);\n  }\n}",
+   "explanation": "Die drei Fehler decken die drei wichtigsten Typ-Fallen der Vorlesung ab:\n\n1. **Zeile 10 – einschränkende Konversion ohne Cast.** In einem gemischten Ausdruck wird immer zum *größeren* Typ hin erweitert: `int + double` ergibt `double`. Zurück in ein `int` geht es nur mit `(int)`. Java verweigert jede automatische Konversion, bei der Information verloren gehen könnte.\n2. **Zeile 11 – `final`.** `final` macht eine Variable zur 'benannten Konstante'. Wurde sie schon bei der Deklaration initialisiert (`final boolean fertig = false;`), ist jede weitere Zuweisung ein Fehler. Legal wäre nur eine *blank final*: `final boolean fertig;` und danach **genau eine** Zuweisung.\n3. **Zeile 13 – boolean.** Vergleichsoperatoren liefern `boolean`, und `boolean` lässt sich in keine Zahl umwandeln. Wer eine 0/1 braucht, nimmt den Bedingungsoperator `? :`.\n\nKeine Fehler sind dagegen: Zeile 3 (`double x, y = 2.5;` – `x` ist nur deklariert, das ist erlaubt, solange man `x` vor dem ersten Lesen zuweist, und genau das passiert in Zeile 8), Zeile 9 (`char + double` -> `double`, Zuweisung an `double y` in Ordnung) und Zeile 12 (zwei explizite Casts, Ergebnis `int + int` = `int`).\n\nMerkregel: **Klein nach groß geht von selbst, groß nach klein nur mit Klammern-Typ, boolean gar nicht.**",
+   "hints": [
+    "Bestimme für jede Zeile zuerst den Typ der **rechten** Seite und vergleiche ihn mit dem Typ links.",
+    "Eine der drei Zeilen ist gar kein Typproblem, sondern ein Problem mit einem Modifier aus Zeile 7.",
+    "Ein Cast hilft nur zwischen Typen, zwischen denen es überhaupt eine Konversion gibt."
+   ],
+   "pitfalls": [
+    "Zeile 3 als Fehler markieren, weil `x` nicht initialisiert ist – das wird erst zum Fehler, wenn `x` *gelesen* wird, bevor es zugewiesen wurde.",
+    "Zeile 12 als Fehler markieren, obwohl beide Casts korrekt sind.",
+    "Glauben, `(int)` könne ein `boolean` retten."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur04.java",
+     "page": 1,
+     "label": "In welchen 3 Zeilen befinden sich Compiler-Fehler? / Was gibt das Programm aus?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 34,
+     "label": "3.4 Variablen: Deklaration, final als 'benannte Konstante'"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 32,
+     "label": "boolean: nur == und !=, keine Typkonversion"
+    }
+   ],
+   "tags": [
+    "compiler-fehler",
+    "cast",
+    "final",
+    "boolean"
+   ]
+  },
+  {
+   "id": "java-types-008",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was gibt das Programm aus, wenn die Fehler entfernt sind?",
+   "prompt": "Aus dem fehlerhaften Programm der vorigen Aufgabe wurden die drei fehlerhaften Zeilen entfernt und ein paar Ausgaben ergänzt. Was gibt das Programm nun aus? (`'k'` hat den ASCII-Code 107.)",
+   "code": "class TypCheckOk {\n  public static void main(String[] s) {\n    double x, y = 2.5;\n    char z = 'k';\n    System.out.println(\"Buchstabe: \" + z);\n    int m = 4, n = 9;\n    final boolean fertig = false;\n    x = (m > 2) ? 1.5 : 3.5;\n    y = z + x * m;\n    System.out.println(y);\n    m = (int) x + (int) z;\n    System.out.println(m);\n    System.out.println(fertig);\n    System.out.println(n);\n  }\n}",
+   "expectedOutput": "Buchstabe: k\n113.0\n108\nfalse\n9",
+   "solution": "class TypCheckOk {\n  public static void main(String[] s) {\n    double x, y = 2.5;\n    char z = 'k';\n    System.out.println(\"Buchstabe: \" + z);\n    int m = 4, n = 9;\n    final boolean fertig = false;\n    x = (m > 2) ? 1.5 : 3.5;\n    y = z + x * m;\n    System.out.println(y);\n    m = (int) x + (int) z;\n    System.out.println(m);\n    System.out.println(fertig);\n    System.out.println(n);\n  }\n}",
+   "explanation": "Schritt für Schritt:\n\n- `\"Buchstabe: \" + z` -> bei String-Konkatenation wird `char` als **Zeichen** angehängt: `Buchstabe: k`.\n- `x = (m > 2) ? 1.5 : 3.5;` – der Bedingungsoperator: `m` ist 4, also `4 > 2` wahr, `x = 1.5`.\n- `y = z + x * m;` – Punkt vor Strich: `x * m` = `1.5 * 4` = `6.0` (`int` wird nach `double` erweitert). Dann `z + 6.0`: `z` ist `char` und wird zu seinem Code **107** erweitert. Ergebnis `113.0`. Weil `y` ein `double` ist, druckt Java `113.0`, nicht `113`.\n- `m = (int) x + (int) z;` = `(int) 1.5` + `(int) 'k'` = `1 + 107` = **108**. Der Cast auf `x` schneidet die Nachkommastellen ab (er rundet nicht!).\n- `fertig` bleibt `false`, `n` bleibt `9` – beide wurden nie verändert.\n\nMerkregel: **Steht links ein `double`, hat die Ausgabe eine Nachkommastelle – auch bei glatten Werten.** Und: ein `char` in einer *Rechnung* ist eine Zahl, in einer *String-Konkatenation* ein Zeichen.",
+   "hints": [
+    "Werte `x` zuerst aus – der Bedingungsoperator `? :` bestimmt, ob 1.5 oder 3.5 genommen wird.",
+    "Ersetze `z` in der Rechnung durch seinen ASCII-Code 107, in der String-Konkatenation dagegen durch das Zeichen.",
+    "`(int) 1.5` ist 1, nicht 2 – Java schneidet ab."
+   ],
+   "pitfalls": [
+    "`113` statt `113.0` schreiben – der Typ von `y` ist `double`.",
+    "`(int) x` runden statt abschneiden (109 statt 108 herausbekommen).",
+    "`Buchstabe: 107` schreiben – bei `\"\" + char` erscheint das Zeichen."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur04.java",
+     "page": 1,
+     "label": "In welchen 3 Zeilen befinden sich Compiler-Fehler? / Was gibt das Programm aus?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 38,
+     "label": "Implizite Typkonversion immer nur von 'kleineren' zu 'größeren' Typen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    }
+   ],
+   "tags": [
+    "ausgabe",
+    "cast",
+    "char",
+    "double"
+   ]
+  },
+  {
+   "id": "java-types-009",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Überlauf bei int",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? (`Integer.MAX_VALUE` ist 2147483647.)",
+   "code": "class Ueberlauf {\n  public static void main(String[] s) {\n    int gross = 2147483647;\n    System.out.println(gross);\n    gross = gross + 1;\n    System.out.println(gross);\n    long sicher = 2147483647L + 1L;\n    System.out.println(sicher);\n    long falsch = 2147483647 + 1;\n    System.out.println(falsch);\n  }\n}",
+   "expectedOutput": "2147483647\n-2147483648\n2147483648\n-2147483648",
+   "solution": "class Ueberlauf {\n  public static void main(String[] s) {\n    int gross = 2147483647;\n    System.out.println(gross);\n    gross = gross + 1;\n    System.out.println(gross);\n    long sicher = 2147483647L + 1L;\n    System.out.println(sicher);\n    long falsch = 2147483647 + 1;\n    System.out.println(falsch);\n  }\n}",
+   "explanation": "Bei ganzen Zahlen gibt es in Java **keine Überlaufbehandlung** – das Skript sagt es wörtlich: 'Bei Überlauf: keine Behandlung (-> falsches Ergebnis)'. Es fliegt also keine Exception, es wird nur still weitergerechnet und die oberen Bits fallen weg. Aus `2147483647 + 1` wird deshalb `-2147483648`, der kleinste `int`: der Zahlenkreis 'springt' vom größten zum kleinsten Wert.\n\nDie eigentliche Falle sind die letzten beiden Zeilen. Sie sehen fast gleich aus, verhalten sich aber völlig verschieden:\n\n- `2147483647L + 1L` – beide Operanden sind `long`, also wird in `long` gerechnet: `2147483648`. Korrekt.\n- `2147483647 + 1` – beide Operanden sind `int`-Literale (kein Suffix!). Java rechnet **in `int`**, läuft über und weist das falsche Ergebnis danach dem `long` zu. Die Erweiterung nach `long` passiert also *zu spät*.\n\nMerkregel: **Der Typ des Ergebnisses entscheidet sich an den Operanden, nicht an der Zielvariablen.** Wer `long` rechnen will, muss schon *einen* Operanden zu `long` machen (`2147483647L + 1`).",
+   "hints": [
+    "Was passiert bei `int`, wenn man über den größten Wert hinausrechnet? Wirft Java eine Exception?",
+    "Vergleiche die letzten beiden Anweisungen genau Zeichen für Zeichen. Was unterscheidet sie?",
+    "Welchen Typ hat das Literal `2147483647` ohne Suffix – und in welchem Typ wird die Summe berechnet?"
+   ],
+   "pitfalls": [
+    "Eine `ArithmeticException` oder einen Compiler-Fehler beim Überlauf erwarten.",
+    "Denken, die Zuweisung an eine `long`-Variable 'repariert' die `int`-Rechnung.",
+    "`gross + 1` als 2147483648 angeben, obwohl `gross` ein `int` ist."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: vier Typen mit unterschiedlichen Wertebereichen; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 33,
+     "label": "3.3 Konstanten: Literale besitzen einen Typ, ersichtlich an ihrer Syntax"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 38,
+     "label": "Implizite Typkonversion immer nur von 'kleineren' zu 'größeren' Typen"
+    }
+   ],
+   "tags": [
+    "ueberlauf",
+    "int",
+    "long",
+    "literale"
+   ]
+  },
+  {
+   "id": "java-types-010",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Überlauf bei byte, short und char",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class ByteGrenzen {\n  public static void main(String[] s) {\n    int wert = 200;\n    byte b = (byte) wert;\n    System.out.println(b);\n    byte max = 127;\n    max++;\n    System.out.println(max);\n    short kurz = (short) 70000;\n    System.out.println(kurz);\n    System.out.println( (int) (char) -1 );\n  }\n}",
+   "expectedOutput": "-56\n-128\n4464\n65535",
+   "solution": "class ByteGrenzen {\n  public static void main(String[] s) {\n    int wert = 200;\n    byte b = (byte) wert;\n    System.out.println(b);\n    byte max = 127;\n    max++;\n    System.out.println(max);\n    short kurz = (short) 70000;\n    System.out.println(kurz);\n    System.out.println( (int) (char) -1 );\n  }\n}",
+   "explanation": "Eine einschränkende Konversion **schneidet einfach die oberen Bits ab** (Skript S. 29: 'Bei Überlauf: Abschneiden der oberen Bits') – sie prüft nichts und wirft nichts.\n\n- `(byte) 200`: 200 ist binär `1100 1000`. Als `byte` (8 Bit, Zweierkomplement) ist das oberste Bit das Vorzeichen -> **-56** (denn 200 - 256 = -56).\n- `max++` bei `max == 127`: der `byte`-Bereich endet bei 127, es geht rundherum weiter beim kleinsten Wert **-128**. Beachte: `max++` kompiliert, obwohl `max + 1` ein `int` wäre – Inkrement und Zuweisungsoperatoren enthalten einen **impliziten** Cast zurück auf den Zieltyp.\n- `(short) 70000`: 70000 - 65536 = 4464, und 4464 liegt im `short`-Bereich (bis 32767) -> **4464**.\n- `(char) -1`: `char` ist der einzige **vorzeichenlose** primitive Typ (0 bis 65535). Alle 16 Bit von -1 sind 1, das ergibt als `char` den Wert 65535; der anschließende `(int)`-Cast macht daraus die Zahl **65535**.\n\nMerkregel: **Cast nach unten = Bits abschneiden, nicht runden und nicht begrenzen.** Wer den Bereich prüfen will, muss das selbst tun.",
+   "hints": [
+    "Ein `byte` hat 8 Bit. Rechne 200 - 256 und überlege, wieso das die richtige Rechnung ist.",
+    "Was folgt bei `byte` auf 127? Der Zahlenkreis schließt sich.",
+    "`char` ist der einzige primitive Typ ohne Vorzeichen – sein Bereich geht von 0 bis 65535."
+   ],
+   "pitfalls": [
+    "Erwarten, dass der Wert 'gekappt' wird (also 127 statt -56).",
+    "`max++` für einen Compiler-Fehler halten – Inkrement und `+=` casten implizit zurück.",
+    "`(char) -1` als -1 angeben, obwohl `char` keine negativen Werte kennt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: vier Typen mit unterschiedlichen Wertebereichen; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    }
+   ],
+   "tags": [
+    "ueberlauf",
+    "byte",
+    "short",
+    "char",
+    "cast"
+   ]
+  },
+  {
+   "id": "java-types-011",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Rundungsfehler bei double",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? Überlege dir vor allem, ob `x` und `y` denselben Wert haben.",
+   "code": "class DoubleDemo2 {\n  public static void main(String[] s) {\n    double a = 5.0e-12;\n    double b = 1.0e+5;\n    double x = a + a + b;\n    double y = b + a + a;\n    System.out.println(x);\n    System.out.println(y);\n    System.out.println(x == y);\n    System.out.println(0.1 + 0.2);\n  }\n}",
+   "expectedOutput": "100000.00000000001\n100000.0\nfalse\n0.30000000000000004",
+   "solution": "class DoubleDemo2 {\n  public static void main(String[] s) {\n    double a = 5.0e-12;\n    double b = 1.0e+5;\n    double x = a + a + b;\n    double y = b + a + a;\n    System.out.println(x);\n    System.out.println(y);\n    System.out.println(x == y);\n    System.out.println(0.1 + 0.2);\n  }\n}",
+   "explanation": "Reelle Zahlen lassen sich im Rechner nicht exakt darstellen; Java nutzt IEEE 754 mit rund 17 signifikanten Stellen. Deshalb gilt in der Gleitkomma-Arithmetik das **Assoziativgesetz nicht mehr** – genau das zeigt dieses Beispiel aus der Vorlesung.\n\n- `x = a + a + b` rechnet von links: erst `a + a = 1.0e-11`, das ist ein winziger, aber *darstellbarer* Wert; dann `1.0e-11 + 100000.0`. Die 11. Nachkommastelle passt gerade noch in die 17 Stellen -> `100000.00000000001`.\n- `y = b + a + a` rechnet erst `100000.0 + 5.0e-12`. Dieser Summand ist zu klein, um die 17 Stellen zu erreichen, und wird **weggerundet**; dasselbe passiert beim zweiten Mal -> `100000.0`.\n\nDaher ist `x == y` **false**, obwohl mathematisch dieselbe Summe dasteht. `0.1 + 0.2` liefert aus demselben Grund `0.30000000000000004`, weil weder 0.1 noch 0.2 im Binärsystem exakt darstellbar sind.\n\nMerkregel: **Gleitkommazahlen nie mit `==` vergleichen**, sondern immer über eine Toleranz: `Math.abs(x - y) < 1e-9`. Und: erst die kleinen Summanden addieren, dann die großen.",
+   "hints": [
+    "Rechne von links nach rechts, so wie `+` in Java auswertet.",
+    "Was passiert, wenn man zu 100000.0 eine Zahl der Größenordnung 10^-12 addiert und nur ~17 Stellen zur Verfügung hat?",
+    "Die Vorlesungsfolie fragt: 'Welche Variable, x oder y, hat keinen Rundungsfehler?'"
+   ],
+   "pitfalls": [
+    "`x == y` als `true` angeben, weil die Summen mathematisch gleich sind.",
+    "`0.1 + 0.2` als `0.3` angeben.",
+    "Die Ausgabe von `100000.0` als `100000` schreiben – ein `double` wird immer mit Nachkommastelle gedruckt."
+   ],
+   "sources": [
+    {
+     "file": "03_Datentypen/DoubleDemo.java",
+     "page": 1,
+     "label": "Welche Variable, x oder y, hat keinen Rundungsfehler?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 27,
+     "label": "Rundungsfehler: Assoziativität und Kommutativität gelten nicht mehr"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 26,
+     "label": "Gleitkomma-Zahlen: Überlauf/Division durch 0 -> Infinity, 0.0/0.0 -> NaN"
+    }
+   ],
+   "tags": [
+    "double",
+    "rundungsfehler",
+    "gleitkomma",
+    "ausgabe"
+   ]
+  },
+  {
+   "id": "java-types-012",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Finde die Fehler bei final-Konstanten",
+   "prompt": "Der folgende Code enthält genau **2 Compiler-Fehler**. Benenne sie mit Zeilennummer und gib die Korrektur an. Achtung: eine der Zeilen, die verdächtig aussieht, ist völlig in Ordnung – begründe auch, welche das ist und warum.",
+   "code": "class Konstanten {\n  public static void main(String[] s) {\n    final double MWST = 0.19;\n    final int MAX;\n    MAX = 100;\n    System.out.println(MWST * MAX);\n    MWST = 0.07;\n    final char TRENNER = ';';\n    TRENNER = ':';\n  }\n}",
+   "errors": [
+    {
+     "line": 7,
+     "wrong": "MWST = 0.07;",
+     "fix": "double mwstNeu = 0.07;   // neue Variable statt Zuweisung an die Konstante",
+     "why": "`MWST` wurde in Zeile 3 als `final` deklariert **und** sofort initialisiert. Eine `final`-Variable darf nur genau einmal einen Wert bekommen. javac: 'cannot assign a value to final variable MWST'."
+    },
+    {
+     "line": 9,
+     "wrong": "TRENNER = ':';",
+     "fix": "char trennerNeu = ':';",
+     "why": "Dasselbe Problem: `TRENNER` ist seit Zeile 8 `final` und bereits initialisiert. javac: 'cannot assign a value to final variable TRENNER'."
+    }
+   ],
+   "solution": "class Konstanten {\n  public static void main(String[] s) {\n    final double MWST = 0.19;\n    final int MAX;\n    MAX = 100;\n    System.out.println(MWST * MAX);\n    System.out.println(MAX);\n  }\n}\n\n// Die Zeilen 4 und 5 sind KORREKT: eine 'blank final' darf getrennt von der\n// Deklaration initialisiert werden - aber nur genau ein Mal.",
+   "explanation": "Der Modifier `final` macht aus einer Variablen eine **benannte Konstante**: sie darf genau **einmal** einen Wert bekommen. Entscheidend ist das Wort *einmal*, nicht *sofort*:\n\n- `final double MWST = 0.19;` – Deklaration und Initialisierung in einem Schritt. Jede weitere Zuweisung (Zeile 7) ist ein Fehler.\n- `final int MAX;` gefolgt von `MAX = 100;` – das ist eine sogenannte *blank final*. Sie ist **erlaubt**, solange sie vor der ersten Verwendung genau ein Mal zugewiesen wird. Genau darum ist Zeile 5 kein Fehler, obwohl sie wie eine Zuweisung an eine Konstante aussieht.\n- `final char TRENNER = ';'; TRENNER = ':';` – wieder eine zweite Zuweisung, wieder ein Fehler.\n\nDer typische Denkfehler ist zu glauben, `final` verbiete jede Zuweisung außerhalb der Deklarationszeile. Merkregel: **`final` heißt 'genau einmal', nicht 'sofort'.** In der Klausur tauchen `final`-Fehler oft versteckt auf (`final boolean f = false; ... f = (e <= 8);` in Klausur04). Konvention: Konstanten schreibt man in GROSSBUCHSTABEN.",
+   "hints": [
+    "`final` erlaubt eine bestimmte Anzahl von Zuweisungen. Wie viele genau?",
+    "Zähle für jede der drei Konstanten, wie oft ihr ein Wert zugewiesen wird.",
+    "Eine Deklaration ohne Initialisierung ist noch keine Zuweisung."
+   ],
+   "pitfalls": [
+    "`MAX = 100;` (Zeile 5) fälschlich als Fehler markieren – eine blank final darf einmal nachträglich gesetzt werden.",
+    "Denken, `final` verhindere schon die Deklaration ohne Wert.",
+    "`System.out.println(MWST * MAX);` für problematisch halten – `double * int` ergibt sauber `double`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 34,
+     "label": "3.4 Variablen: Deklaration, final als 'benannte Konstante'"
+    },
+    {
+     "file": "11_Ueberblick/Klausur04.java",
+     "page": 1,
+     "label": "In welchen 3 Zeilen befinden sich Compiler-Fehler? / Was gibt das Programm aus?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen (Klausur-Zusammenfassung)"
+    }
+   ],
+   "tags": [
+    "final",
+    "konstanten",
+    "compiler-fehler"
+   ]
+  },
+  {
+   "id": "java-types-013",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "In welchen 3 Zeilen befinden sich Scope-Fehler?",
+   "prompt": "In welchen **3 Zeilen** befinden sich Compiler-Fehler? Begründe jeweils mit dem Gültigkeitsbereich der beteiligten Variablen.",
+   "code": "class Bereiche {\n  public static void main(String[] s) {\n    int a = 3, b = 1;\n    if (a > 0) {\n      int b = 5;\n      int c = a + b;\n      System.out.println(c);\n    }\n    {\n      char c = 'x';\n      System.out.println(c);\n    }\n    System.out.println(c);\n    double a = 2.0;\n  }\n}",
+   "errors": [
+    {
+     "line": 5,
+     "wrong": "int b = 5;",
+     "fix": "int d = 5;   // anderer Name, oder einfach das äußere b benutzen",
+     "why": "`b` ist seit Zeile 3 im umgebenden Block gültig; der if-Block liegt innerhalb dieses Bereichs. Die Gültigkeitsbereiche gleichnamiger lokaler Variablen dürfen sich nicht überlappen. javac: 'variable b is already defined in method main(String[])'."
+    },
+    {
+     "line": 13,
+     "wrong": "System.out.println(c);",
+     "fix": "System.out.println(b);   // c existiert hier nicht mehr",
+     "why": "Beide `c` gelten nur bis zur schließenden Klammer ihres Blocks (Zeile 8 bzw. Zeile 12). Außerhalb ist der Name unbekannt. javac: 'cannot find symbol: variable c'."
+    },
+    {
+     "line": 14,
+     "wrong": "double a = 2.0;",
+     "fix": "double e = 2.0;",
+     "why": "`a` ist seit Zeile 3 im selben Block gültig; eine erneute Deklaration – auch mit anderem Typ – ist verboten. javac: 'variable a is already defined in method main(String[])'."
+    }
+   ],
+   "solution": "class Bereiche {\n  public static void main(String[] s) {\n    int a = 3, b = 1;\n    if (a > 0) {\n      int d = 5;\n      int c = a + d;\n      System.out.println(c);\n    }\n    {\n      char c = 'x';\n      System.out.println(c);\n    }\n    System.out.println(b);\n    double e = 2.0;\n    System.out.println(e);\n  }\n}",
+   "explanation": "Zwei Regeln reichen aus, um alle drei Fehler zu erklären (Skript S. 35/36):\n\n1. **Eine lokale Variable ist ab ihrer Deklaration bis zum Ende des umgebenden Blocks gültig.** Deshalb ist `c` aus Zeile 6 in Zeile 13 längst 'weg' – der Compiler kennt den Namen dort gar nicht mehr ('cannot find symbol').\n2. **Gültigkeitsbereiche gleichnamiger lokaler Variablen dürfen sich nicht überlappen.** Der if-Block liegt *innerhalb* des Bereichs von `b`, also ist `int b = 5;` verboten. Genauso ist `double a = 2.0;` verboten, obwohl der Typ ein anderer ist – der **Name** zählt, nicht der Typ.\n\nBewusst **kein** Fehler ist `char c = 'x';` in Zeile 10: der erste `c`-Block war in Zeile 8 zu Ende, die beiden Bereiche überlappen sich also nicht (genau dieses Muster steht im Skript als 'OK').\n\nWichtiger Unterschied zu Python: In Java gibt es für *lokale* Variablen **kein Shadowing** – man kann einen lokalen Namen nicht in einem inneren Block neu belegen. (Ein Attribut der Klasse darf dagegen sehr wohl von einer lokalen Variablen verdeckt werden, dafür gibt es `this`.) Merkregel: **Ein Block ist ein Käfig: was drin geboren wird, stirbt an der schließenden Klammer – und Zwillinge sind verboten.**",
+   "hints": [
+    "Zeichne für jede Variable einen senkrechten Strich von ihrer Deklaration bis zur schließenden Klammer ihres Blocks.",
+    "Zwei der Fehler sind vom selben Typ ('bereits deklariert'), einer ist ein 'Name unbekannt'.",
+    "Zählt für die Neudeklaration der Name oder der Typ?"
+   ],
+   "pitfalls": [
+    "`char c = 'x';` in Zeile 10 als Fehler zählen – der vorige `c`-Block ist bereits geschlossen.",
+    "Glauben, `double a = 2.0;` sei erlaubt, weil der Typ ein anderer ist.",
+    "Vergessen, dass eine im if-Block deklarierte Variable danach nicht mehr existiert."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 35,
+     "label": "Gültigkeitsbereich: gültig ab Deklaration bis Ende des umgebenden Blocks"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 36,
+     "label": "Gültigkeitsbereiche gleichnamiger lokaler Variablen dürfen nicht überlappen"
+    },
+    {
+     "file": "03_Datentypen/ScopeDemo.java",
+     "page": 1,
+     "label": "Gültigkeitsbereich / Scope"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen (Klausur-Zusammenfassung)"
+    }
+   ],
+   "tags": [
+    "scope",
+    "gueltigkeitsbereich",
+    "compiler-fehler",
+    "block"
+   ]
+  },
+  {
+   "id": "java-types-014",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Code-Lücken: Typkonversionen und Literale",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass eine lauffähige Klasse mit der unten angegebenen Ausgabe entsteht (je 2 P.). Die Kommentare sagen, was jede Zeile leisten soll.\n\nErwartete Ausgabe:\n```\n7\nN\n0.19\n3000000000\n1.5\n3.5\n```",
+   "code": "class Umrechnung {\n  public static void main(String[] s) {\n    double preis = 7.99;\n    int euro = ____(1)____ preis;                  // nur der ganzzahlige Anteil\n    char zeichen = 'M';\n    char naechstes = ____(2)____ (zeichen + 1);    // das im Alphabet folgende Zeichen\n    ____(3)____ double MWST = 0.19;                // darf später nicht mehr geändert werden\n    long einwohner = 3000000000____(4)____;        // Literal muss vom Typ long sein\n    float genauigkeit = 1.5____(5)____;            // Literal muss vom Typ float sein\n    double haelfte = 7 / ____(6)____;              // soll 3.5 ergeben, nicht 3.0\n    System.out.println(euro);\n    System.out.println(naechstes);\n    System.out.println(MWST);\n    System.out.println(einwohner);\n    System.out.println(genauigkeit);\n    System.out.println(haelfte);\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "(int)",
+      "(int )",
+      "( int )"
+     ],
+     "explanation": "Explizite (einschränkende) Typkonversion von `double` nach `int`. Sie schneidet die Nachkommastellen ab: aus 7.99 wird 7, nicht 8. Ohne Cast: 'possible lossy conversion from double to int'."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "(char)",
+      "(char )",
+      "( char )"
+     ],
+     "explanation": "`zeichen + 1` hat den Typ `int` (char wird implizit erweitert). Für die Zuweisung an ein `char` braucht es den expliziten Cast `(char)`. Aus 'M' (77) wird 78 = 'N'."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "final",
+      "final static",
+      "static final"
+     ],
+     "explanation": "`final` macht die Variable zur benannten Konstante; sie darf nach der Initialisierung nicht mehr zugewiesen werden. (`static` ist bei einer lokalen Variablen in `main` nicht erlaubt, wäre aber bei einem Klassenattribut korrekt.)"
+    },
+    {
+     "id": 4,
+     "accept": [
+      "L",
+      "l"
+     ],
+     "explanation": "Ohne Suffix ist `3000000000` ein `int`-Literal – und 3 Milliarden passen nicht in `int` ('integer number too large'). Das Suffix `L` macht es zum `long`-Literal. Groß geschrieben, weil `l` leicht mit `1` verwechselt wird."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "f",
+      "F"
+     ],
+     "explanation": "Ein Gleitkomma-Literal ohne Suffix ist `double`. Die Zuweisung `float genauigkeit = 1.5;` wäre eine einschränkende Konversion und damit ein Fehler. `1.5f` ist bereits ein `float`-Literal. (Alternativ ginge `(float) 1.5`.)"
+    },
+    {
+     "id": 6,
+     "accept": [
+      "2.0",
+      "2.0d",
+      "2.0D",
+      "2d",
+      "(double) 2",
+      "(double)2",
+      "2.",
+      "2f"
+     ],
+     "explanation": "`7 / 2` wäre eine Ganzzahl-Division und ergäbe 3 (als `double` gedruckt: 3.0). Sobald ein Operand ein Gleitkommatyp ist, wird der andere implizit erweitert und es wird echt geteilt: 3.5."
+    }
+   ],
+   "solution": "class Umrechnung {\n  public static void main(String[] s) {\n    double preis = 7.99;\n    int euro = (int) preis;\n    char zeichen = 'M';\n    char naechstes = (char) (zeichen + 1);\n    final double MWST = 0.19;\n    long einwohner = 3000000000L;\n    float genauigkeit = 1.5f;\n    double haelfte = 7 / 2.0;\n    System.out.println(euro);\n    System.out.println(naechstes);\n    System.out.println(MWST);\n    System.out.println(einwohner);\n    System.out.println(genauigkeit);\n    System.out.println(haelfte);\n  }\n}",
+   "expectedOutput": "7\nN\n0.19\n3000000000\n1.5\n3.5",
+   "explanation": "Diese Aufgabe bündelt die vier Bausteine, die in der Klausur immer wieder gebraucht werden.\n\n**(1) und (2): explizite Typkonversion.** Überall dort, wo Java von einem größeren zu einem kleineren Typ zurück muss, verlangt es ein `( <Typ> )` davor. `(int) 7.99` -> 7 (abschneiden, nicht runden), `(char) (77 + 1)` -> `'N'`. Beachte in (2) die Klammern um `zeichen + 1`: `(char) zeichen + 1` würde erst casten und dann addieren – das Ergebnis wäre wieder `int`.\n\n**(3): `final`.** Der Modifier zeigt an, dass die initialisierte Variable nicht mehr veränderbar ist.\n\n**(4) und (5): Literal-Suffixe.** Konstanten besitzen einen Typ, der an ihrer *Syntax* ablesbar ist: `123` ist `int`, `123L` ist `long`, `1.5` ist `double`, `1.5f` ist `float`, `1.5d` ist ausdrücklich `double`. Außerdem: `0x1F` ist hexadezimal, `0b1011` binär.\n\n**(6): int-Division.** Der Klassiker `7 / 2 == 3`. Ein einziger Punkt im Literal ändert das Ergebnis.\n\nMerkregel: **Was links steht, bestimmt gar nichts – der Typ entsteht rechts.**",
+   "hints": [
+    "Für (1) und (2): Java erlaubt 'klein nach groß' automatisch, aber 'groß nach klein' nur mit einer Angabe in runden Klammern.",
+    "Für (4) und (5): Zahlen-Literale tragen ihren Typ in der Schreibweise. Welche Buchstaben hängt man an?",
+    "Für (6): Der Unterschied zwischen `3.0` und `3.5` als Ergebnis liegt nur an einem einzigen Zeichen im Nenner."
+   ],
+   "pitfalls": [
+    "In (2) die Klammern vergessen: `(char) zeichen + 1` ist wieder ein `int`.",
+    "In (4) das Suffix weglassen – der Fehler tritt schon am Literal auf, nicht erst bei der Zuweisung.",
+    "In (6) `2` statt `2.0` schreiben und dann `3.0` als Ausgabe erwarten."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 33,
+     "label": "3.3 Konstanten: Literale besitzen einen Typ, ersichtlich an ihrer Syntax"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 34,
+     "label": "3.4 Variablen: Deklaration, final als 'benannte Konstante'"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 39,
+     "label": "Beispiel Typkonversionen: x = 3/4; i = j + x; c = c + 1; c += 1;"
+    },
+    {
+     "file": "03_Datentypen/Bits.java",
+     "page": 1,
+     "label": "y = 0b01010101 – Binärliteral"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "cast",
+    "literale",
+    "final",
+    "int-division"
+   ]
+  },
+  {
+   "id": "java-types-015",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Welche Zuweisungen kompilieren ohne Cast?",
+   "prompt": "Welche der folgenden Zuweisungen sind **ohne** expliziten Cast gültiges Java? Kreuzen Sie **alle** korrekten an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`int anzahl = 'A';`",
+     "correct": true,
+     "why": "Korrekt. `char` wird implizit nach `int` erweitert (`char` ist kleiner als `int`); `anzahl` bekommt den Wert 65."
+    },
+    {
+     "id": "b",
+     "text": "`float f = 3.14;`",
+     "correct": false,
+     "why": "Fehler: `3.14` ist ein `double`-Literal, die Zuweisung an `float` wäre einschränkend. Richtig wäre `3.14f`."
+    },
+    {
+     "id": "c",
+     "text": "`long gross = 100;`",
+     "correct": true,
+     "why": "Korrekt. Das `int`-Literal 100 wird implizit nach `long` erweitert (klein nach groß)."
+    },
+    {
+     "id": "d",
+     "text": "`int i = 3.99;`",
+     "correct": false,
+     "why": "Fehler: 'possible lossy conversion from double to int'. Ohne `(int)` geht das nicht."
+    },
+    {
+     "id": "e",
+     "text": "`char c = 65;`",
+     "correct": true,
+     "why": "Korrekt – und überraschend. Bei einem **konstanten** int-Ausdruck, dessen Wert in den Zielbereich passt, erlaubt Java die Zuweisung ohne Cast. Genau so steht `char c4 = 7;` im Beispiel *Smiley* der Vorlesung. Mit einer Variablen (`int x = 65; char c = x;`) wäre es dagegen ein Fehler."
+    },
+    {
+     "id": "f",
+     "text": "`boolean b = 1;`",
+     "correct": false,
+     "why": "Fehler: 'int cannot be converted to boolean'. Es gibt keine Konversion von oder nach `boolean` – auch nicht mit Cast."
+    }
+   ],
+   "solution": "Gültig ohne Cast sind **a**, **c** und **e**.\n\n```java\nint anzahl = 'A';   // 65,  char -> int  (implizite Erweiterung)\nlong gross  = 100;  // int -> long      (implizite Erweiterung)\nchar c      = 65;   // konstanter int-Ausdruck im char-Bereich -> erlaubt\n```\n\nFehler sind **b** (`3.14` ist `double`), **d** (`double` -> `int`) und **f** (keine Konversion nach `boolean`).",
+   "explanation": "Die Grundregel lautet: **implizite Typkonversion nur von 'kleineren' zu 'größeren' Typen**, also entlang der Kette `byte -> short -> int -> long -> float -> double`, wobei `char -> int` ebenfalls erlaubt ist. In diese Richtung kann keine Information verloren gehen, deshalb macht Java es automatisch.\n\nIn die Gegenrichtung braucht es immer einen expliziten Cast – mit einer wichtigen Ausnahme, die auch in der Vorlesung vorkommt: Bei einem **konstanten Ausdruck** (Literal oder `final`-Konstante mit Compilezeit-Wert), dessen Wert in den Zielbereich passt, erlaubt Java die Zuweisung an `byte`, `short` oder `char` direkt. Deshalb funktionieren `byte b = 100;`, `short s = 5;` und `char c4 = 7;`. Sobald aber eine *Variable* im Spiel ist, prüft der Compiler nur noch die Typen, nicht die Werte – dann ist ein Cast Pflicht.\n\n`boolean` steht komplett außerhalb: keine Konversion, in keine Richtung, mit oder ohne Cast. Merkregel: **Bergab immer, bergauf nur mit Cast – außer bei kleinen Konstanten. Und boolean fährt gar nicht mit.**",
+   "hints": [
+    "Ordne die Typen nach Größe und schau, in welche Richtung die Zuweisung geht.",
+    "Welchen Typ hat ein Gleitkomma-Literal ohne Suffix?",
+    "Eine der 'bergauf'-Zuweisungen ist trotzdem erlaubt. Was ist an ihr besonders – Variable oder Konstante?"
+   ],
+   "pitfalls": [
+    "`char c = 65;` als Fehler markieren – bei konstanten Ausdrücken im Wertebereich ist das erlaubt.",
+    "`float f = 3.14;` für korrekt halten, weil 3.14 'ja klein ist' – entscheidend ist der Typ des Literals, nicht die Größe.",
+    "Denken, ein Cast könne `boolean` und Zahlen verbinden."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 38,
+     "label": "Implizite Typkonversion immer nur von 'kleineren' zu 'größeren' Typen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 31,
+     "label": "Beispiel Smiley: Unicode-Literale 0x..., char c4 = 7"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 32,
+     "label": "boolean: nur == und !=, keine Typkonversion"
+    }
+   ],
+   "tags": [
+    "implizite-konversion",
+    "cast",
+    "boolean",
+    "multi-mc"
+   ]
+  },
+  {
+   "id": "java-types-016",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "char, int und String im selben Ausdruck",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? (`'a'` hat den ASCII-Code 97, `'b'` den Code 98.)",
+   "code": "class ZeichenMix {\n  public static void main(String[] s) {\n    char a = 'a', b = 'b';\n    System.out.println(a + b);\n    System.out.println(\"\" + a + b);\n    System.out.println(a + 1 + \"!\");\n    System.out.println(\"!\" + a + 1);\n    System.out.println( (char) (a + 2) );\n  }\n}",
+   "expectedOutput": "195\nab\n98!\n!a1\nc",
+   "solution": "class ZeichenMix {\n  public static void main(String[] s) {\n    char a = 'a', b = 'b';\n    System.out.println(a + b);\n    System.out.println(\"\" + a + b);\n    System.out.println(a + 1 + \"!\");\n    System.out.println(\"!\" + a + 1);\n    System.out.println( (char) (a + 2) );\n  }\n}",
+   "explanation": "Der Operator `+` bedeutet in Java zweierlei: **Addition**, wenn beide Operanden Zahlen sind, und **String-Konkatenation**, sobald einer der beiden ein `String` ist. Ausgewertet wird strikt **von links nach rechts**.\n\n- `a + b`: zwei `char` – beide werden nach `int` erweitert, also 97 + 98 = **195**.\n- `\"\" + a + b`: erst `\"\" + a` -> String `\"a\"`, dann `\"a\" + b` -> **`ab`**. Der leere String zu Beginn 'kippt' den ganzen Ausdruck in den Konkatenations-Modus – genau der Trick aus dem Vorlesungsbeispiel *Smiley* (`c2 + \"\" + c3`).\n- `a + 1 + \"!\"`: erst `97 + 1 = 98` (Zahl!), dann `98 + \"!\"` -> **`98!`**.\n- `\"!\" + a + 1`: erst `\"!\" + a` -> `\"!a\"`, dann `\"!a\" + 1` -> **`!a1`**. Dieselben Operanden, andere Reihenfolge, völlig anderes Ergebnis.\n- `(char) (a + 2)`: 97 + 2 = 99, zurückgecastet zum Zeichen -> **`c`**.\n\nMerkregel: **Sobald links ein String steht, wird alles Weitere angehängt statt addiert.** Deshalb ist die Reihenfolge entscheidend.",
+   "hints": [
+    "`+` wertet von links nach rechts aus. Klammere den Ausdruck gedanklich: `((a + 1) + \"!\")`.",
+    "Ab dem Moment, in dem ein Teilausdruck ein `String` ist, kann daraus nie wieder eine Zahl werden.",
+    "Zwei `char` addiert ergeben nie einen `char` – das Ergebnis von char-Arithmetik ist `int`."
+   ],
+   "pitfalls": [
+    "`a + b` als `ab` angeben – ohne String im Spiel wird gerechnet, nicht verkettet.",
+    "Zeile 3 und 4 für gleichwertig halten, obwohl nur die Reihenfolge getauscht wurde.",
+    "Den Cast in der letzten Zeile vergessen und `99` statt `c` angeben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 30,
+     "label": "Beispiel CharASCII"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 38,
+     "label": "Implizite Typkonversion immer nur von 'kleineren' zu 'größeren' Typen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen (Klausur-Zusammenfassung)"
+    }
+   ],
+   "tags": [
+    "char",
+    "string-konkatenation",
+    "auswertungsreihenfolge",
+    "ausgabe"
+   ]
+  },
+  {
+   "id": "java-types-017",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "double a, b = 1.2; – warum kompiliert das nicht?",
+   "prompt": "Der folgende Code lässt sich **nicht** übersetzen. Erklären Sie präzise, welche Zeile der Compiler bemängelt und warum. Geben Sie außerdem zwei verschiedene Korrekturen an.",
+   "code": "class NichtInit {\n  public static void main(String[] s) {\n    double a, b = 1.2;\n    System.out.println(a + b);\n  }\n}",
+   "solution": "**Fehlerhafte Zeile:** Zeile 4, `System.out.println(a + b);`\n**Compiler-Meldung:** `variable a might not have been initialized`\n\n**Grund:** In `double a, b = 1.2;` werden *zwei* Variablen deklariert, aber die Initialisierung `= 1.2` gehört **nur zu `b`**. `a` ist damit lediglich deklariert. Lokale Variablen bekommen in Java – anders als Attribute von Objekten – **keinen Default-Wert**; sie müssen vor dem ersten *lesenden* Zugriff zugewiesen werden. Zeile 3 selbst ist völlig legal, erst das Lesen von `a` in Zeile 4 ist der Fehler.\n\n**Korrektur 1 – beide initialisieren:**\n```java\ndouble a = 0.0, b = 1.2;\nSystem.out.println(a + b);   // 1.2\n```\n\n**Korrektur 2 – `a` vor der Verwendung zuweisen:**\n```java\ndouble a, b = 1.2;\na = 2.5;\nSystem.out.println(a + b);   // 3.7\n```\n\n**Bewertungsrubrik (4 P.):**\n- 1 P.: richtige Zeile (Zeile 4, nicht Zeile 3) benannt\n- 1 P.: erkannt, dass `= 1.2` nur für `b` gilt\n- 1 P.: erkannt, dass lokale Variablen keinen Default-Wert haben und vor dem Lesen zugewiesen sein müssen\n- 1 P.: zwei lauffähige Korrekturen angegeben",
+   "explanation": "Das ist genau die Konstruktion, die in *Klausur04* in der ersten Zeile steht: `double a, b = 1.2;`. Viele lesen das als 'beide sind 1.2' – falsch. Bei einer Mehrfachdeklaration gehört jeder Initialisierer nur zu **der** Variablen, hinter der er steht. Wer alle initialisieren will, muss `double a = 0.0, b = 1.2;` schreiben.\n\nDer zweite Punkt ist der Unterschied zwischen **lokalen Variablen** und **Datenfeldern**: Attribute eines Objekts werden automatisch mit 0 / 0.0 / '\\u0000' / false / null vorbelegt, lokale Variablen nicht. Java erzwingt hier stattdessen *definite assignment*: der Compiler prüft statisch, ob auf jedem möglichen Pfad eine Zuweisung stattgefunden hat, bevor gelesen wird.\n\nSubtil und prüfungsrelevant: Die **Deklaration allein ist kein Fehler**. In Klausur04 ist Zeile `double a, b = 1.2;` deshalb *nicht* unter den drei Fehlerzeilen – dort wird `a` nämlich vorher noch zugewiesen (`a = (d > 1) ? 4.5 : 6.7;`). Merkregel: **Der Compiler meckert nicht über die Deklaration, sondern über das erste Lesen.**",
+   "hints": [
+    "Zähle, wie viele Variablen in Zeile 3 deklariert werden – und wie viele davon einen Wert bekommen.",
+    "Welchen Wert hat eine lokale Variable in Java, bevor man ihr etwas zuweist? Gibt es überhaupt einen?",
+    "Überlege, ob der Compiler die *Deklaration* oder erst die *Verwendung* bemängelt."
+   ],
+   "pitfalls": [
+    "Annehmen, `a` sei automatisch `0.0` (das gilt nur für Attribute, nicht für lokale Variablen).",
+    "Zeile 3 als fehlerhafte Zeile angeben – die Deklaration ist völlig in Ordnung.",
+    "Glauben, `= 1.2` initialisiere beide Variablen."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur04.java",
+     "page": 1,
+     "label": "double a, b = 1.2; ... In welchen 3 Zeilen befinden sich Compiler-Fehler?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 34,
+     "label": "3.4 Variablen: Deklaration, final als 'benannte Konstante', int x, y;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen (Klausur-Zusammenfassung)"
+    }
+   ],
+   "tags": [
+    "deklaration",
+    "initialisierung",
+    "mehrfachdeklaration",
+    "compiler-fehler"
+   ]
+  },
+  {
+   "id": "java-types-018",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "code",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": false,
+   "title": "Passende Datentypen wählen und ausgeben",
+   "prompt": "Schreiben Sie eine Klasse `Landesdaten` mit einer `main`-Methode, die die folgenden Werte in Variablen **mit passendem Datentyp** speichert und danach **in dieser Reihenfolge, jeweils in einer eigenen Zeile** ausgibt:\n\n1. die Weltbevölkerung `8000000000` (ganzzahlig, exakt)\n2. die Einwohnerzahl eines Landes in Millionen: `84` (ganzzahlig, soll in 2 Byte passen)\n3. den prozentualen Anteil dieses Landes an der Weltbevölkerung: `1.05` (Gleitkomma, doppelte Genauigkeit)\n4. einen Wahrheitswert, der angibt, ob dieser Anteil größer als `1.0` ist – **berechnen** Sie ihn aus Variable 3, schreiben Sie nicht einfach `true` hin\n5. das Zeichen `@`\n6. eine **Konstante** namens `LAND` mit dem Wert `Belgien`\n\nErwartete Ausgabe:\n```\n8000000000\n84\n1.05\ntrue\n@\nBelgien\n```",
+   "starterCode": "class Landesdaten {\n  public static void main(String[] s) {\n    // 1. Weltbevölkerung (ganzzahlig, exakt):\n\n    // 2. Einwohner in Millionen (ganzzahlig, 2 Byte):\n\n    // 3. prozentualer Anteil (Gleitkomma, doppelte Genauigkeit):\n\n    // 4. Anteil größer als 1.0? (aus 3. berechnen):\n\n    // 5. das Zeichen @ :\n\n    // 6. Konstante LAND mit dem Wert Belgien:\n\n    // Ausgabe (je eine Zeile):\n\n  }\n}",
+   "required": [
+    "long",
+    "short",
+    "double",
+    "boolean",
+    "char",
+    "final"
+   ],
+   "constraints": [
+    "Jeder Wert muss in einer eigenen Variablen mit passendem Typ stehen.",
+    "Variable 4 muss aus Variable 3 berechnet werden (Vergleichsoperator), nicht als Literal `true` geschrieben werden.",
+    "Variable 6 muss mit `final` als Konstante deklariert sein."
+   ],
+   "solution": "class Landesdaten {\n  public static void main(String[] s) {\n    long weltbevoelkerung = 8000000000L;\n    short einwohnerMio = 84;\n    double anteilProzent = 1.05;\n    boolean ueberEinProzent = anteilProzent > 1.0;\n    char symbol = '@';\n    final String LAND = \"Belgien\";\n\n    System.out.println(weltbevoelkerung);\n    System.out.println(einwohnerMio);\n    System.out.println(anteilProzent);\n    System.out.println(ueberEinProzent);\n    System.out.println(symbol);\n    System.out.println(LAND);\n  }\n}",
+   "expectedOutput": "8000000000\n84\n1.05\ntrue\n@\nBelgien",
+   "explanation": "Die Aufgabe ist eine direkte Variante der Vorlesungsübung *TypÜbung*. Sie prüft, ob man den Typ aus der **Bedeutung** des Wertes ableiten kann:\n\n- 8 Milliarden sprengen `int` (max. ca. 2,1 Mrd.) -> `long`. Und das Literal braucht das Suffix: `8000000000L`. Ohne `L` meldet der Compiler 'integer number too large' **am Literal**, unabhängig vom Zieltyp.\n- 84 passt bequem in `short` (bis 32767). Dass `short einwohnerMio = 84;` ohne Cast geht, liegt an der Sonderregel für konstante Ausdrücke im Zielbereich.\n- 'Doppelte Genauigkeit' ist wörtlich `double` (8 Byte). `1.05` ist ohnehin schon ein `double`-Literal.\n- Ein Vergleichsoperator liefert direkt `boolean`, ganz wie im Skript: `ende = (zahl >= 100) || (eingabe == 0);`.\n- Für ein einzelnes Zeichen `char` mit **einfachen** Anführungszeichen: `'@'`. Doppelte Anführungszeichen `\"@\"` wären ein `String`.\n- `String` ist kein primitiver Typ, sondern eine **Klasse als benutzerdefinierter Typ**. `final` macht die Referenz zur Konstante; per Konvention schreibt man den Namen groß.\n\nBeachte die Ausgabeformate: `1.05` behält die Nachkommastellen, `true` wird ausgeschrieben, `@` erscheint als Zeichen.",
+   "hints": [
+    "Geh die Liste von oben nach unten durch und frage bei jedem Wert: Wie groß kann er werden, und braucht er Nachkommastellen?",
+    "Bei 8 Milliarden reicht der Typ allein nicht – auch das Literal muss den richtigen Typ haben.",
+    "Ein Zeichen steht in einfachen Anführungszeichen, ein Text in doppelten. Und `final` markiert eine Konstante."
+   ],
+   "pitfalls": [
+    "`long weltbevoelkerung = 8000000000;` ohne `L` – Compiler-Fehler schon am Literal.",
+    "`char symbol = \"@\";` mit doppelten Anführungszeichen schreiben.",
+    "Punkt 4 als `boolean b = true;` hinschreiben statt `anteilProzent > 1.0` zu berechnen."
+   ],
+   "sources": [
+    {
+     "file": "03_Datentypen/TypUebung.java",
+     "page": 1,
+     "label": "Deklarieren und initialisieren Sie die folgenden Variablen und geben Sie sie in der Konsole aus"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 21,
+     "label": "3.2 Datentypen: byte, short, int, long, float, double, char, boolean; Klassen als benutzerdefinierte Typen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 33,
+     "label": "3.3 Konstanten: Literale besitzen einen Typ, ersichtlich an ihrer Syntax"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 34,
+     "label": "3.4 Variablen: Deklaration, final als 'benannte Konstante', int x, y;"
+    },
+    {
+     "file": "03_Datentypen/GleitkommaZahlen.java",
+     "page": 1,
+     "label": "Gleitkomma-Werte passend speichern"
+    }
+   ],
+   "tags": [
+    "deklaration",
+    "typwahl",
+    "long",
+    "final",
+    "code"
+   ]
+  },
+  {
+   "id": "java-types-019",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe? (anzahl / 2)",
+   "prompt": "Was ist die Ausgabe dieses Programms?",
+   "code": "class Punktzahl {\n  private final static short MAX = 4;\n  private static int anzahl = 0;\n\n  protected double note;\n\n  public Punktzahl() {\n    anzahl++;\n    this.note = anzahl / 2;\n  }\n\n  public double getNote() {\n    return note;\n  }\n\n  public static void main(String[] s) {\n    Punktzahl[] liste = new Punktzahl[MAX];\n    for (int k = 0; k < MAX; k++) {\n      liste[k] = new Punktzahl();\n      System.out.println( liste[k].getNote() );\n    }\n  }\n}",
+   "expectedOutput": "0.0\n1.0\n1.0\n2.0",
+   "solution": "class Punktzahl {\n  private final static short MAX = 4;\n  private static int anzahl = 0;\n\n  protected double note;\n\n  public Punktzahl() {\n    anzahl++;\n    this.note = anzahl / 2;\n  }\n\n  public double getNote() {\n    return note;\n  }\n\n  public static void main(String[] s) {\n    Punktzahl[] liste = new Punktzahl[MAX];\n    for (int k = 0; k < MAX; k++) {\n      liste[k] = new Punktzahl();\n      System.out.println( liste[k].getNote() );\n    }\n  }\n}",
+   "explanation": "Hier greifen zwei Konzepte ineinander.\n\n**1. `static` Zähler.** `anzahl` gehört der Klasse, nicht dem einzelnen Objekt. Jeder Konstruktoraufruf erhöht denselben Zähler: 1, 2, 3, 4.\n\n**2. Die Falle: `anzahl / 2` ist eine Ganzzahl-Division.** Beide Operanden sind `int`, also wird ganzzahlig geteilt und der Rest weggeworfen – **bevor** überhaupt an `note` zugewiesen wird:\n\n| anzahl | anzahl / 2 (int) | note (double) |\n|---|---|---|\n| 1 | 0 | 0.0 |\n| 2 | 1 | 1.0 |\n| 3 | 1 | 1.0 |\n| 4 | 2 | 2.0 |\n\nDass `note` ein `double` ist, hilft **nicht**: die implizite Erweiterung `int -> double` passiert erst *nach* der Division. Deshalb erscheinen `0.0, 1.0, 1.0, 2.0` und nicht `0.5, 1.0, 1.5, 2.0`. Für letzteres müsste man `anzahl / 2.0` schreiben.\n\nWeil `note` ein `double` ist, druckt Java jeden Wert mit `.0`. Nebenbei: `new Punktzahl[MAX]` funktioniert mit einem `short`, weil `short` implizit nach `int` erweitert wird; `final static short MAX = 4;` ist eine Klassenkonstante.\n\nMerkregel: **Der Zieltyp der Zuweisung rettet keine Division – der Typ entsteht rechts vom `=`.**",
+   "hints": [
+    "`anzahl` ist `static` – wird der Zähler pro Objekt oder pro Klasse geführt?",
+    "Schreib eine kleine Tabelle: anzahl = 1, 2, 3, 4. Was ergibt jeweils `anzahl / 2`, wenn beide Operanden `int` sind?",
+    "Rettet der Typ `double` von `note` die Rechnung? Überlege, in welcher Reihenfolge Division und Zuweisung passieren."
+   ],
+   "pitfalls": [
+    "`0.5, 1.0, 1.5, 2.0` angeben, weil `note` ein `double` ist.",
+    "Den Zähler pro Objekt bei 0 beginnen lassen und `anzahl` immer als 1 rechnen.",
+    "Die `.0` in der Ausgabe weglassen – `getNote()` liefert ein `double`."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur07.java",
+     "page": 1,
+     "label": "Was ist die Ausgabe? this.note = anzahl / 2;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: Wertebereiche; Division durch 0 -> Ausnahme; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 38,
+     "label": "Implizite Typkonversion immer nur von 'kleineren' zu 'größeren' Typen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen (Klausur-Zusammenfassung)"
+    }
+   ],
+   "tags": [
+    "int-division",
+    "static",
+    "double",
+    "ausgabe"
+   ]
+  },
+  {
+   "id": "java-types-020",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": false,
+   "title": "Zahlen-Literale: hexadezimal, binär, oktal",
+   "prompt": "Welche der folgenden Zeilen ist syntaktisch korrekt **und** speichert in `x` den Wert `255`?",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`int x = 0xFF;`",
+     "correct": true,
+     "why": "Richtig: `0x` leitet ein Hexadezimal-Literal ein, `FF` = 15*16 + 15 = 255."
+    },
+    {
+     "id": "b",
+     "text": "`int x = 0b255;`",
+     "correct": false,
+     "why": "Syntaxfehler: nach `0b` dürfen nur die Ziffern 0 und 1 stehen. javac meldet 'binary numbers must contain at least one binary digit'. Korrekt wäre `0b11111111`."
+    },
+    {
+     "id": "c",
+     "text": "`int x = 255L;`",
+     "correct": false,
+     "why": "Compiler-Fehler: `255L` ist ein `long`-Literal, die Zuweisung an `int` wäre eine einschränkende Konversion ('possible lossy conversion from long to int')."
+    },
+    {
+     "id": "d",
+     "text": "`int x = 0255;`",
+     "correct": false,
+     "why": "Kompiliert zwar, aber die führende `0` macht daraus ein **oktales** Literal: 2*64 + 5*8 + 5 = 173, nicht 255."
+    }
+   ],
+   "solution": "a) `int x = 0xFF;`\n\nZum Vergleich:\n```java\nint a = 0xFF;        // 255  (hexadezimal)\nint b = 0b11111111;  // 255  (binär)\nint c = 0255;        // 173  (oktal! führende Null)\nint d = 255;         // 255  (dezimal)\n```",
+   "explanation": "Konstanten (Literale) besitzen in Java einen Typ **und** eine Basis, beides an der Syntax ablesbar:\n\n- kein Präfix -> **dezimal** (`255`)\n- `0x` oder `0X` -> **hexadezimal** (`0xFF` = 255), so wie im Vorlesungsbeispiel *Smiley*: `char c1 = 0x7117;`\n- `0b` oder `0B` -> **binär** (`0b01010101` = 85), so wie im Beispiel *Bits*\n- führende `0` -> **oktal** (`0255` = 173). Das ist die gemeinste Falle: die Zeile kompiliert klaglos und liefert einen völlig anderen Wert.\n\nDazu kommen die Typ-Suffixe: `L`/`l` für `long`, `f`/`F` für `float`, `d`/`D` für `double`. Ohne Suffix ist ein ganzzahliges Literal `int` und ein Gleitkomma-Literal `double`. Seit Java 7 darf man zur Lesbarkeit Unterstriche setzen: `1_000_000`.\n\nMerkregel: **Eine führende Null ist nie Dekoration.** `int monat = 08;` wäre sogar ein Syntaxfehler, weil 8 keine Oktalziffer ist.",
+   "hints": [
+    "Welche Präfixe kennt Java für andere Zahlensysteme? Zwei davon kommen in den Vorlesungsbeispielen *Bits* und *Smiley* vor.",
+    "Eine der Zeilen kompiliert, liefert aber nicht 255. Was bedeutet eine führende Null?",
+    "Eine andere Zeile scheitert nicht an der Basis, sondern am Typ des Literals."
+   ],
+   "pitfalls": [
+    "`0255` für dezimal 255 halten – die führende Null macht es oktal (173).",
+    "`0b` für 'beliebige Zahl' halten statt für 'binär'.",
+    "`255L` für harmlos halten, weil der Wert klein ist – entscheidend ist der Typ `long`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 33,
+     "label": "3.3 Konstanten: Literale besitzen einen Typ, ersichtlich an ihrer Syntax"
+    },
+    {
+     "file": "03_Datentypen/Bits.java",
+     "page": 1,
+     "label": "y = 0b01010101"
+    },
+    {
+     "file": "03_Datentypen/Smiley.java",
+     "page": 1,
+     "label": "char c1 = 0x7117"
+    }
+   ],
+   "tags": [
+    "literale",
+    "hexadezimal",
+    "binaer",
+    "oktal",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-types-021",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Division und Modulo mit negativen Zahlen",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class Rest {\n  public static void main(String[] s) {\n    System.out.println(7 / 2);\n    System.out.println(-7 / 2);\n    System.out.println(7 % 3);\n    System.out.println(-7 % 3);\n    System.out.println(7 % -3);\n    System.out.println(-7 / -2);\n    System.out.println(5.5 % 2);\n  }\n}",
+   "expectedOutput": "3\n-3\n1\n-1\n1\n3\n1.5",
+   "solution": "class Rest {\n  public static void main(String[] s) {\n    System.out.println(7 / 2);\n    System.out.println(-7 / 2);\n    System.out.println(7 % 3);\n    System.out.println(-7 % 3);\n    System.out.println(7 % -3);\n    System.out.println(-7 / -2);\n    System.out.println(5.5 % 2);\n  }\n}",
+   "explanation": "Java rundet die Ganzzahl-Division **zur Null hin** (truncation), nicht nach unten. Deshalb ist `-7 / 2` gleich `-3` und nicht `-4` – das ist der große Unterschied zu Python, wo `-7 // 2 == -4` gilt.\n\nDaraus folgt die Regel für `%`: Java garantiert `(a / b) * b + (a % b) == a`. Setzt man das ein, ergibt sich, dass **das Vorzeichen des Restes immer dem des Dividenden (linker Operand) folgt**:\n\n- `-7 % 3`: `-7 / 3` = -2, also `-7 - (-2)*3 = -7 + 6 = ` **-1**\n- `7 % -3`: `7 / -3` = -2, also `7 - (-2)*(-3) = 7 - 6 = ` **1**\n\nDer rechte Operand beeinflusst also nur den Betrag, nie das Vorzeichen. `-7 / -2` = 3 (zwei negative Vorzeichen heben sich auf, danach abschneiden).\n\nDie letzte Zeile zeigt: `%` ist in Java auch für **Gleitkommazahlen** definiert – `5.5 % 2` ergibt `1.5`. In vielen anderen Sprachen ist `%` auf ganze Zahlen beschränkt.\n\nPraktische Konsequenz: `zahl % 2 == 1` ist **kein** korrekter Test auf 'ungerade', denn für negative ungerade Zahlen kommt `-1` heraus. Richtig ist `zahl % 2 != 0`. Merkregel: **Der Rest trägt das Vorzeichen des Zählers.**",
+   "hints": [
+    "Rundet Java bei `-7 / 2` in Richtung -unendlich oder in Richtung Null?",
+    "Nutze die Identität `(a / b) * b + (a % b) == a`, um den Rest auszurechnen.",
+    "`%` funktioniert in Java auch mit `double` – was ergibt 5.5 minus dem größten Vielfachen von 2, das hineinpasst?"
+   ],
+   "pitfalls": [
+    "`-7 / 2` als `-4` angeben (Python-Verhalten statt Java-Verhalten).",
+    "`-7 % 3` als `2` angeben – in Java ist der Rest negativ, wenn der Dividend negativ ist.",
+    "Annehmen, `%` sei für `double` nicht definiert.",
+    "`zahl % 2 == 1` als Test auf ungerade Zahlen verwenden."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: Wertebereiche; Division durch 0 -> Ausnahme; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 26,
+     "label": "Gleitkomma-Zahlen: Überlauf/Division durch 0 -> Infinity, 0.0/0.0 -> NaN"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3. Datentypen und Variablen (Klausur-Zusammenfassung)"
+    }
+   ],
+   "tags": [
+    "modulo",
+    "int-division",
+    "negative-zahlen",
+    "ausgabe"
+   ]
+  },
+  {
+   "id": "java-types-022",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 10,
+   "examStyle": true,
+   "title": "Code-Lücken: static final, this und Cast",
+   "prompt": "Ergänzen Sie die 5 Lücken `____(n)____`, sodass eine lauffähige Klasse mit der unten angegebenen Ausgabe entsteht (je 2 P.).\n\nErwartete Ausgabe:\n```\n3.14159\n12.56636\n12\nm\n```",
+   "code": "class Kreis {\n  ____(1)____ double PI = 3.14159;   // Klassenkonstante: gehört der Klasse und ist unveränderlich\n  private double radius;\n\n  public Kreis(double radius) {\n    ____(2)____.radius = radius;      // Attribut vom gleichnamigen Parameter unterscheiden\n  }\n\n  public double flaeche() {\n    return PI * radius * radius;\n  }\n\n  public static void main(String[] s) {\n    Kreis k = new Kreis(2.0);\n    System.out.println( Kreis.____(3)____ );   // 3.14159\n    double f = k.flaeche();\n    System.out.println( f );\n    int ganz = (____(4)____) f;                // nur der ganzzahlige Anteil\n    System.out.println( ganz );\n    ____(5)____ char EINHEIT = 'm';            // lokale Konstante\n    System.out.println( EINHEIT );\n  }\n}",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "private static final",
+      "public static final",
+      "static final",
+      "final static",
+      "private final static",
+      "public final static",
+      "protected static final"
+     ],
+     "explanation": "`static` sorgt dafür, dass das Attribut zur *Klasse* gehört (nur einmal vorhanden, ohne Objekt über `Kreis.PI` erreichbar und aus der statischen Methode `main` nutzbar). `final` macht es unveränderlich. Nur `final` allein reicht nicht: dann wäre `Kreis.PI` in `main` nicht ansprechbar."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "this",
+      "this "
+     ],
+     "explanation": "Im Konstruktor verdeckt der Parameter `radius` das gleichnamige Attribut. `this.radius` bezeichnet ausdrücklich das Attribut des aktuellen Objekts. Ohne `this` würde `radius = radius;` den Parameter sich selbst zuweisen und das Attribut bliebe 0.0."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "PI"
+     ],
+     "explanation": "Auf eine Klassenkonstante greift man über den Klassennamen zu: `Kreis.PI`. Genau dafür muss sie `static` sein."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "int",
+      "int ",
+      " int"
+     ],
+     "explanation": "Explizite (einschränkende) Typkonversion von `double` nach `int`. Sie schneidet die Nachkommastellen ab: aus 12.56636 wird 12."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "final"
+     ],
+     "explanation": "`final` erklärt auch eine *lokale* Variable zur benannten Konstante. `static` ist bei lokalen Variablen nicht erlaubt."
+    }
+   ],
+   "solution": "class Kreis {\n  private static final double PI = 3.14159;\n  private double radius;\n\n  public Kreis(double radius) {\n    this.radius = radius;\n  }\n\n  public double flaeche() {\n    return PI * radius * radius;\n  }\n\n  public static void main(String[] s) {\n    Kreis k = new Kreis(2.0);\n    System.out.println( Kreis.PI );\n    double f = k.flaeche();\n    System.out.println( f );\n    int ganz = (int) f;\n    System.out.println( ganz );\n    final char EINHEIT = 'm';\n    System.out.println( EINHEIT );\n  }\n}",
+   "expectedOutput": "3.14159\n12.56636\n12\nm",
+   "explanation": "Die Aufgabe ist im Format von Aufgabe 3 der Probeklausur gebaut und verbindet Konstanten mit Typkonversion.\n\n**`static` und `final` sind zwei verschiedene Dinge**, die oft zusammen auftreten:\n- `static` = 'gehört der Klasse' – existiert einmal, unabhängig von Objekten, ansprechbar als `Kreis.PI`. Ohne `static` könnte die statische Methode `main` gar nicht darauf zugreifen und `Kreis.PI` wäre ein Fehler.\n- `final` = 'nach der Initialisierung unveränderlich'.\n- Zusammen ergibt `static final` die klassische Klassenkonstante, genau wie `private final static short MAX = 4;` in Klausur07.\n\n**`this`** löst die Verdeckung auf: Ein Parameter darf denselben Namen tragen wie ein Attribut (das ist erlaubt, im Gegensatz zu zwei gleichnamigen *lokalen* Variablen!). `this.radius` meint das Attribut, das nackte `radius` den Parameter.\n\n**Der Cast** `(int) f` schneidet ab: 12.56636 -> 12. Und `final char EINHEIT = 'm';` zeigt, dass `final` auch lokal geht, `static` dagegen nicht.\n\nMerkregel: **`static` regelt das Wo, `final` das Ob-veränderbar.**",
+   "hints": [
+    "Für (1): Die Konstante wird in `main` als `Kreis.PI` angesprochen – ohne dass ein Objekt nötig wäre. Welcher Modifier erlaubt das? Und welcher macht sie unveränderlich?",
+    "Für (2): Parameter und Attribut heißen beide `radius`. Wie sagt man 'das Attribut dieses Objekts'?",
+    "Für (4): 12.56636 soll zu 12 werden – abgeschnitten, nicht gerundet."
+   ],
+   "pitfalls": [
+    "In (1) nur `final` schreiben – dann ist `Kreis.PI` in der statischen `main` nicht erreichbar.",
+    "In (2) `this` weglassen: `radius = radius;` weist den Parameter sich selbst zu, das Attribut bleibt 0.0 und die Fläche wäre 0.0.",
+    "In (5) `static final` schreiben – lokale Variablen dürfen nicht `static` sein."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3: Code-Lücken ausfüllen (this, static, new)"
+    },
+    {
+     "file": "11_Ueberblick/Klausur07.java",
+     "page": 1,
+     "label": "Was ist die Ausgabe? this.note = anzahl / 2;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 34,
+     "label": "3.4 Variablen: Deklaration, final als 'benannte Konstante', int x, y;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "static",
+    "final",
+    "this",
+    "cast"
+   ]
+  },
+  {
+   "id": "java-types-023",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Implizite, explizite oder gar keine Konversion?",
+   "prompt": "Gegeben sind die Deklarationen\n\n```java\nint i = 5;  double d = 2.5;  char c = 'x';\nboolean b = true;  long l = 7L;  float f = 1.5f;\n```\n\nOrdnen Sie **jede** der folgenden Anweisungen genau einer Kategorie zu und begründen Sie in einem Satz:\n\n- **I** = implizite (erweiternde) Typkonversion, läuft automatisch\n- **E** = explizite (einschränkende) Typkonversion, möglicher Informationsverlust\n- **F** = Compiler-Fehler",
+   "code": "1) d = i;\n2) i = d;\n3) i = (int) d;\n4) l = i;\n5) i = (int) l;\n6) b = i;\n7) f = d;\n8) c = (char) i;",
+   "solution": "| Nr. | Anweisung | Kategorie | Begründung |\n|---|---|---|---|\n| 1 | `d = i;` | **I** | `int` -> `double`, klein nach groß, kein Verlust möglich. |\n| 2 | `i = d;` | **F** | `double` -> `int` ohne Cast: 'possible lossy conversion from double to int'. |\n| 3 | `i = (int) d;` | **E** | Cast erlaubt; die Nachkommastellen werden abgeschnitten (2.5 -> 2). |\n| 4 | `l = i;` | **I** | `int` -> `long`, klein nach groß. |\n| 5 | `i = (int) l;` | **E** | Cast erlaubt; bei zu großen `long`-Werten gehen die oberen Bits verloren. |\n| 6 | `b = i;` | **F** | Es gibt keine Konversion von `int` nach `boolean` – auch ein Cast hilft nicht. |\n| 7 | `f = d;` | **F** | `double` (8 Byte) -> `float` (4 Byte) ist einschränkend, ohne `(float)` ein Fehler. |\n| 8 | `c = (char) i;` | **E** | Cast erlaubt; `int` 5 wird zum Zeichen mit Code 5 (ein Steuerzeichen). |\n\n**Bewertungsrubrik (6 P.):** je 0,75 P. pro korrekt zugeordneter Zeile mit tragfähiger Begründung; volle Punktzahl nur, wenn die Richtung (klein->groß bzw. groß->klein) und die Sonderrolle von `boolean` erkennbar begründet sind.",
+   "explanation": "Alle acht Fälle lassen sich mit einer einzigen Hierarchie beantworten:\n\n```\nbyte -> short -> int -> long -> float -> double\n         char ----^\n```\n\n- **Nach rechts** (klein nach groß) konvertiert Java **implizit**, weil kein Wert verloren gehen kann.\n- **Nach links** (groß nach klein) braucht es einen **expliziten** Cast `( <Typ> )`, weil Information verloren gehen kann: Nachkommastellen bei `double -> int`, obere Bits bei `long -> int` oder `int -> char`.\n- `boolean` steht **außerhalb** der Kette. Weder Zuweisung noch Cast verbinden es mit Zahlen.\n\nZwei überraschende Details: `float` steht *rechts* von `long`, obwohl es weniger Bytes hat – bei `long -> float` konvertiert Java implizit, obwohl dabei Genauigkeit verloren gehen kann (der Wertebereich passt, die Präzision nicht). Und `double -> float` ist einschränkend, obwohl beides Gleitkommatypen sind – deshalb ist `float f = 3.14;` ein Fehler und `float f = 3.14f;` korrekt.\n\nMerkregel: **Die Richtung entscheidet, nicht die Verwandtschaft.**",
+   "hints": [
+    "Zeichne die Kette `byte -> short -> int -> long -> float -> double` auf und trag `char` ein.",
+    "Frage bei jeder Zeile: Geht die Zuweisung entlang der Kette nach rechts oder nach links?",
+    "Ein Typ kommt in der Kette gar nicht vor. Was folgt daraus für jede Zuweisung mit ihm?"
+   ],
+   "pitfalls": [
+    "`f = d;` für erlaubt halten, weil beides Gleitkommazahlen sind.",
+    "`b = i;` als 'explizit möglich mit Cast' einstufen.",
+    "Zeile 3 und 5 als 'Fehler' werten, obwohl der Cast dasteht – ein Cast macht sie legal, der Informationsverlust bleibt aber ein Risiko."
+   ],
+   "sources": [
+    {
+     "file": "03_Datentypen/Typkonversionen.java",
+     "page": 1,
+     "label": "Explizite versus implizite Typkonversion"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 38,
+     "label": "Implizite Typkonversion immer nur von 'kleineren' zu 'größeren' Typen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 39,
+     "label": "Beispiel Typkonversionen: x = 3/4; i = j + x; c = c + 1; c += 1;"
+    }
+   ],
+   "tags": [
+    "typkonversion",
+    "implizit",
+    "explizit",
+    "boolean",
+    "short-answer"
+   ]
+  },
+  {
+   "id": "java-types-024",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": false,
+   "title": "float, double, Infinity und NaN",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class Genauigkeit {\n  public static void main(String[] s) {\n    float f = 0.1f;\n    double d = 0.1;\n    System.out.println(f);\n    System.out.println(d);\n    System.out.println( (double) f );\n    System.out.println( f == d );\n    System.out.println( 0.1 + 0.2 == 0.3 );\n    System.out.println( 1.0 / 0.0 );\n    System.out.println( 0.0 / 0.0 );\n  }\n}",
+   "expectedOutput": "0.1\n0.1\n0.10000000149011612\nfalse\nfalse\nInfinity\nNaN",
+   "solution": "class Genauigkeit {\n  public static void main(String[] s) {\n    float f = 0.1f;\n    double d = 0.1;\n    System.out.println(f);\n    System.out.println(d);\n    System.out.println( (double) f );\n    System.out.println( f == d );\n    System.out.println( 0.1 + 0.2 == 0.3 );\n    System.out.println( 1.0 / 0.0 );\n    System.out.println( 0.0 / 0.0 );\n  }\n}",
+   "explanation": "Die ersten drei Zeilen zeigen, wie täuschend die Ausgabe sein kann. `System.out.println` druckt bei `float` und `double` jeweils die **kürzeste Dezimalzahl, die den gespeicherten Wert eindeutig identifiziert** – deshalb erscheint beide Male `0.1`, obwohl die gespeicherten Bitmuster verschieden sind. Erst der Cast `(double) f` deckt es auf: der `float`-Wert ist in Wahrheit `0.10000000149011612`. Ein `float` hat nur rund 7 signifikante Dezimalstellen, ein `double` rund 17.\n\nDaraus folgt `f == d` -> **false**: für den Vergleich wird `f` nach `double` erweitert, und dann stehen sich `0.10000000149011612` und `0.1` gegenüber. Genauso ist `0.1 + 0.2 == 0.3` **false**, weil die Summe `0.30000000000000004` ergibt.\n\nDie letzten beiden Zeilen zeigen die **Fehlerbehandlung bei Gleitkomma** (Skript S. 26): Division durch 0.0 wirft *keine* Exception, sondern liefert `Infinity`, und `0.0 / 0.0` ergibt `NaN` (Not a Number). Das ist der große Unterschied zu ganzen Zahlen, wo `1 / 0` eine `ArithmeticException` auslöst. Kurios: `NaN == NaN` ist `false`; man testet mit `Double.isNaN(x)`.\n\nMerkregel: **`float` sieht genau aus, ist es aber nicht – und Gleitkomma stirbt nie, es wird nur unendlich.**",
+   "hints": [
+    "Warum druckt Java sowohl für `float` als auch für `double` `0.1`, obwohl die Werte verschieden sind? Was macht der Cast in Zeile 3 sichtbar?",
+    "Für `f == d` wird `f` erst nach `double` erweitert. Vergleiche dann die Werte aus den Zeilen 2 und 3.",
+    "Wirft Java bei `1.0 / 0.0` eine Exception? Das Skript nennt für Gleitkomma zwei Sonderwerte."
+   ],
+   "pitfalls": [
+    "`f == d` als `true` angeben, weil beide `0.1` ausgeben.",
+    "Bei `1.0 / 0.0` eine `ArithmeticException` erwarten – die gibt es nur bei ganzzahliger Division durch 0.",
+    "`(double) f` als `0.1` angeben und die Ungenauigkeit übersehen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 26,
+     "label": "Gleitkomma-Zahlen: Überlauf/Division durch 0 -> Infinity, 0.0/0.0 -> NaN"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 27,
+     "label": "IEEE 754, 17 Stellen Genauigkeit, Rundungsfehler"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: Wertebereiche; Division durch 0 -> Ausnahme; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "03_Datentypen/GleitkommaZahlen.java",
+     "page": 1,
+     "label": "Gleitkomma-Werte passend speichern"
+    }
+   ],
+   "tags": [
+    "float",
+    "double",
+    "genauigkeit",
+    "infinity",
+    "nan"
+   ]
+  },
+  {
+   "id": "java-types-025",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "code",
+   "difficulty": 4,
+   "points": 8,
+   "examStyle": false,
+   "title": "Caesar-Verschiebung mit char-Arithmetik",
+   "prompt": "Schreiben Sie eine Klasse `Caesar` mit einer **Klassenmethode**\n\n```java\npublic static String verschiebe(String text, int n)\n```\n\nSie gibt `text` zurück, wobei jeder Kleinbuchstabe `a`–`z` um `n` Stellen im Alphabet weitergeschoben wird; hinter `z` geht es bei `a` weiter. Alle anderen Zeichen (Leerzeichen, Ziffern, Großbuchstaben) bleiben unverändert. Sie dürfen annehmen, dass `0 <= n <= 25` gilt.\n\nErgänzen Sie eine `main`-Methode, die genau diese drei Aufrufe testet und jedes Ergebnis in einer eigenen Zeile ausgibt:\n\n```java\nverschiebe(\"abc xyz\", 3)\nverschiebe(\"hallo welt\", 1)\nverschiebe(\"java\", 0)\n```\n\nErwartete Ausgabe:\n```\ndef abc\nibmmp xfmu\njava\n```\n\nHinweis: `text.length()` liefert die Länge, `text.charAt(i)` das Zeichen an Position `i`.",
+   "starterCode": "class Caesar {\n\n  public static String verschiebe(String text, int n) {\n    // 1. Ergebnis-String anlegen\n    // 2. Über alle Zeichen von text laufen\n    //    - ist das Zeichen ein Kleinbuchstabe? dann um n verschieben (mit Umbruch bei 'z')\n    //    - sonst unverändert übernehmen\n    // 3. Ergebnis zurückgeben\n\n  }\n\n  public static void main(String[] s) {\n    // die drei Testaufrufe:\n\n  }\n}",
+   "required": [
+    "(char)",
+    "% 26",
+    "charAt"
+   ],
+   "constraints": [
+    "Die Verschiebung muss mit char-Arithmetik und einem expliziten Cast `(char)` umgesetzt werden.",
+    "Der Umbruch von 'z' nach 'a' muss über den Modulo-Operator `% 26` erfolgen, nicht über eine if-Kette pro Buchstabe.",
+    "Nur Kleinbuchstaben a-z werden verändert."
+   ],
+   "solution": "class Caesar {\n\n  public static String verschiebe(String text, int n) {\n    String ergebnis = \"\";\n    for (int i = 0; i < text.length(); i++) {\n      char c = text.charAt(i);\n      if (c >= 'a' && c <= 'z') {\n        c = (char) ('a' + (c - 'a' + n) % 26);\n      }\n      ergebnis = ergebnis + c;\n    }\n    return ergebnis;\n  }\n\n  public static void main(String[] s) {\n    System.out.println( verschiebe(\"abc xyz\", 3) );\n    System.out.println( verschiebe(\"hallo welt\", 1) );\n    System.out.println( verschiebe(\"java\", 0) );\n  }\n}",
+   "expectedOutput": "def abc\nibmmp xfmu\njava",
+   "explanation": "Der Kern ist die Formel `(char) ('a' + (c - 'a' + n) % 26)`. Sie besteht aus drei Schritten, die alle auf der Tatsache beruhen, dass ein `char` eine Zahl ist:\n\n1. **`c - 'a'`** – in den Bereich 0..25 verschieben. Zwei `char` voneinander abgezogen ergeben ein `int`, also z.B. `'c' - 'a' = 2`.\n2. **`+ n) % 26`** – verschieben und im Bereich 0..25 halten. `% 26` erledigt den Umbruch von `z` zurück zu `a`.\n3. **`'a' + ...`** – zurück in den ASCII-Bereich. Das Ergebnis ist ein `int` und muss mit **`(char)`** wieder zu einem Zeichen gemacht werden; ohne den Cast meldet der Compiler 'possible lossy conversion from int to char'.\n\nGenauso funktioniert der Vergleich `c >= 'a' && c <= 'z'`: Beide `char` werden nach `int` erweitert und als Zahlen verglichen. Das geht nur, weil die Buchstaben im ASCII-Code **lückenlos aufsteigend** liegen (97 bis 122).\n\nDer Zusatz `0 <= n <= 25` ist kein Zufall: Bei negativem `n` wäre `(c - 'a' + n) % 26` negativ (der Rest trägt in Java das Vorzeichen des Dividenden!) und der Cast würde ein falsches Zeichen liefern. Robust wäre `((c - 'a' + n) % 26 + 26) % 26`.\n\nMerkregel: **Erst auf 0 normieren, dann modulo, dann zurück auf den Basiscode.**",
+   "hints": [
+    "Wandle das Zeichen zuerst in eine Zahl von 0 bis 25 um. Womit rechnest du dafür?",
+    "Der Umbruch von 'z' nach 'a' ist genau das, was der Modulo-Operator kann – aber nur, wenn du vorher auf 0 normiert hast.",
+    "Nach der Rechnung ist das Ergebnis ein `int`. Die Zuweisung an ein `char` braucht deshalb noch etwas."
+   ],
+   "pitfalls": [
+    "Den Cast `(char)` vergessen: `c = 'a' + ... ;` ist ein Compiler-Fehler ('possible lossy conversion from int to char').",
+    "`c % 26` statt `(c - 'a' + n) % 26` rechnen – ohne Normierung auf 0 liefert der Modulo Unsinn.",
+    "Auch Leerzeichen und andere Zeichen verschieben, statt sie mit einer if-Bedingung auszunehmen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    },
+    {
+     "file": "03_Datentypen/CharASCII.java",
+     "page": 1,
+     "label": "ASCII-Kodierung eines Zeichens"
+    },
+    {
+     "file": "11_Ueberblick/Klausur09.java",
+     "page": 1,
+     "label": "char[]-Array verarbeiten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    }
+   ],
+   "tags": [
+    "char",
+    "char-arithmetik",
+    "cast",
+    "modulo",
+    "code"
+   ]
+  },
+  {
+   "id": "java-types-026",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "find-errors",
+   "difficulty": 5,
+   "points": 8,
+   "examStyle": true,
+   "title": "Finde alle Typkonversions-Fehler",
+   "prompt": "Der folgende Code stammt aus dem Vorlesungsbeispiel *Typkonversionen*. In wie vielen und welchen Zeilen befinden sich Compiler-Fehler? Benennen Sie jede Zeile, den Grund und eine Korrektur.",
+   "code": "class Konversion {\n  public static void main(String[] s) {\n    double x, y = 1.1;\n    int i, j = 5;\n    char c = 'a';\n    boolean b = true;\n    x = 3;\n    x = 3 / 4;\n    x = c + y * j;\n    i = j + x;\n    i = (int) x;\n    i = (int) b;\n    b = i;\n    b = (i != 0);\n    c = c + 1;\n    c += 1;\n  }\n}",
+   "errors": [
+    {
+     "line": 10,
+     "wrong": "i = j + x;",
+     "fix": "i = (int) (j + x);",
+     "why": "`j + x` hat den Typ `double`, weil `x` ein `double` ist. Die Zuweisung an `int i` wäre einschränkend. javac: 'incompatible types: possible lossy conversion from double to int'."
+    },
+    {
+     "line": 12,
+     "wrong": "i = (int) b;",
+     "fix": "i = b ? 1 : 0;",
+     "why": "Es gibt keine Konversion von `boolean` nach `int`, auch nicht mit Cast. javac: 'incompatible types: boolean cannot be converted to int'."
+    },
+    {
+     "line": 13,
+     "wrong": "b = i;",
+     "fix": "b = (i != 0);",
+     "why": "Umgekehrte Richtung, gleiches Problem: keine Konversion von `int` nach `boolean`. javac: 'incompatible types: int cannot be converted to boolean'."
+    },
+    {
+     "line": 15,
+     "wrong": "c = c + 1;",
+     "fix": "c = (char) (c + 1);   // oder kurz: c += 1;",
+     "why": "`c + 1` hat den Typ `int` (der `char` wird implizit erweitert). Die Zuweisung an `char c` braucht einen Cast. javac: 'incompatible types: possible lossy conversion from int to char'."
+    }
+   ],
+   "solution": "class Konversion {\n  public static void main(String[] s) {\n    double x, y = 1.1;\n    int i, j = 5;\n    char c = 'a';\n    boolean b = true;\n    x = 3;\n    x = 3 / 4;\n    x = c + y * j;\n    i = (int) (j + x);\n    i = (int) x;\n    i = b ? 1 : 0;\n    b = (i != 0);\n    c = (char) (c + 1);\n    c += 1;\n    System.out.println(x + \" \" + i + \" \" + b + \" \" + c);\n  }\n}\n\n// Ausgabe der korrigierten Fassung: 102.5 1 true c",
+   "explanation": "Es sind genau **4 Fehler**, in den Zeilen 10, 12, 13 und 15.\n\nDie beiden `boolean`-Zeilen (12 und 13) sind der harte Kern: `boolean` steht außerhalb jeder Konversionskette, ein Cast rettet hier nichts.\n\nZeile 10 und 15 folgen derselben Regel: Ein Ausdruck wird **immer im größeren der beteiligten Typen** ausgewertet. `int + double` ergibt `double`, `char + int` ergibt `int`. Zurück in den kleineren Typ geht es nur mit explizitem Cast.\n\nBesonders lehrreich ist der Kontrast der letzten beiden Zeilen:\n- `c = c + 1;` ist ein **Fehler** – die rechte Seite ist `int`.\n- `c += 1;` ist **korrekt** – Zuweisungsoperatoren wie `+=`, `-=`, `*=` und auch `++` enthalten laut Sprachdefinition einen **impliziten Cast** auf den Typ der linken Seite. `c += 1;` bedeutet also `c = (char) (c + 1);`.\n\nKeine Fehler sind: Zeile 7 (`x = 3;` – `int` -> `double` implizit), Zeile 8 (`x = 3 / 4;` – erst Ganzzahl-Division zu 0, dann Erweiterung zu 0.0; fachlich eine Falle, syntaktisch korrekt), Zeile 9 (`char + double * int` -> `double`), Zeile 11 (`(int) x` – korrekter Cast) und Zeile 14 (`i != 0` liefert `boolean`).\n\nMerkregel: **`x = x + 1` und `x += 1` sind bei kleinen Typen nicht dasselbe.**",
+   "hints": [
+    "Bestimme für jede Zeile den Typ der rechten Seite und vergleiche ihn mit dem Typ links.",
+    "Zwei der Fehler betreffen denselben Typ – einmal hin, einmal zurück.",
+    "Vergleiche die letzten beiden Zeilen. Eine ist ein Fehler, die andere nicht – wieso?"
+   ],
+   "pitfalls": [
+    "`c += 1;` ebenfalls als Fehler markieren, obwohl Zuweisungsoperatoren implizit casten.",
+    "`x = 3 / 4;` als Fehler zählen – es ist zwar semantisch eine Falle (Ergebnis 0.0), aber syntaktisch korrekt.",
+    "Nur 3 Fehler finden und Zeile 13 (`b = i;`) übersehen, weil man nur nach fehlenden Casts sucht."
+   ],
+   "sources": [
+    {
+     "file": "03_Datentypen/Typkonversionen.java",
+     "page": 1,
+     "label": "Explizite versus implizite Typkonversion"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 39,
+     "label": "Beispiel Typkonversionen: x = 3/4; i = j + x; c = c + 1; c += 1;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 32,
+     "label": "boolean: keine Typkonversion"
+    }
+   ],
+   "tags": [
+    "compiler-fehler",
+    "typkonversion",
+    "boolean",
+    "char",
+    "compound-assignment"
+   ]
+  },
+  {
+   "id": "java-types-027",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "Zuweisungsoperatoren und versteckte Casts",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? Achten Sie besonders darauf, welchen Typ die jeweilige Variable hat.",
+   "code": "class Kompakt {\n  public static void main(String[] s) {\n    byte b = 10;\n    b += 5;\n    System.out.println(b);\n    b += 200;\n    System.out.println(b);\n    char c = 'a';\n    c += 2;\n    System.out.println(c);\n    int i = 5;\n    i /= 2;\n    System.out.println(i);\n    short sh = 1;\n    sh *= 100000;\n    System.out.println(sh);\n    double d = 7;\n    d /= 2;\n    System.out.println(d);\n  }\n}",
+   "expectedOutput": "15\n-41\nc\n2\n-31072\n3.5",
+   "solution": "class Kompakt {\n  public static void main(String[] s) {\n    byte b = 10;\n    b += 5;\n    System.out.println(b);\n    b += 200;\n    System.out.println(b);\n    char c = 'a';\n    c += 2;\n    System.out.println(c);\n    int i = 5;\n    i /= 2;\n    System.out.println(i);\n    short sh = 1;\n    sh *= 100000;\n    System.out.println(sh);\n    double d = 7;\n    d /= 2;\n    System.out.println(d);\n  }\n}",
+   "explanation": "Der Schlüssel ist die Definition der zusammengesetzten Zuweisung: **`E1 op= E2` bedeutet `E1 = (T) (E1 op E2)`**, wobei `T` der Typ von `E1` ist. Der Cast ist also **immer** dabei, auch wenn man ihn nicht sieht. Deshalb kompiliert `b += 200;` klaglos, obwohl `b = b + 200;` ein Fehler wäre.\n\n- `b += 5` -> `(byte)(10 + 5)` = **15**.\n- `b += 200` -> `(byte)(15 + 200)` = `(byte) 215`. 215 - 256 = **-41**. Der Überlauf passiert lautlos.\n- `c += 2` -> `(char)('a' + 2)` = `(char) 99` = **`c`** (das Zeichen, nicht die Variable).\n- `i /= 2` -> `5 / 2` = **2** (Ganzzahl-Division, Rest weg).\n- `sh *= 100000` -> `(short)(1 * 100000)` = `(short) 100000`. 100000 - 65536 = 34464, das liegt oberhalb von 32767, also nochmals -65536: **-31072**.\n- `d /= 2` -> `7.0 / 2` = **3.5** (`d` ist `double`, also echte Division).\n\nDie Zeile `d = 7;` ist übrigens erlaubt: das `int`-Literal wird implizit nach `double` erweitert.\n\nMerkregel: **`+=` ist bequem und gefährlich – es castet still zurück und verschluckt jeden Überlauf.**",
+   "hints": [
+    "Schreibe jede `op=`-Zeile in die lange Form um. Was steht dabei automatisch mit davor?",
+    "Bei `byte` und `short` muss das Zwischenergebnis wieder in den kleinen Typ passen – was passiert, wenn nicht?",
+    "`i /= 2` bei einem `int`: welche Division ist das?"
+   ],
+   "pitfalls": [
+    "`b += 200;` für einen Compiler-Fehler halten – der implizite Cast macht es legal.",
+    "Bei `c += 2` die Zahl 99 statt des Zeichens `c` angeben.",
+    "`sh *= 100000` als 100000 oder als Überlauf-Exception angeben.",
+    "`i /= 2` als 2.5 angeben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 39,
+     "label": "Beispiel Typkonversionen: x = 3/4; i = j + x; c = c + 1; c += 1;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: Wertebereiche; Division durch 0 -> Ausnahme; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    }
+   ],
+   "tags": [
+    "compound-assignment",
+    "ueberlauf",
+    "impliziter-cast",
+    "int-division"
+   ]
+  },
+  {
+   "id": "java-types-028",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "multi-mc",
+   "difficulty": 4,
+   "points": 3,
+   "examStyle": false,
+   "title": "Aussagen über Wertebereiche und Fehlerverhalten",
+   "prompt": "Welche der folgenden Aussagen über Datentypen in Java sind **korrekt**? Kreuzen Sie **alle** zutreffenden an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Der Wertebereich von `int` reicht von -2147483648 bis 2147483647.",
+     "correct": true,
+     "why": "Richtig: 4 Byte = 32 Bit im Zweierkomplement, also -2^31 bis 2^31 - 1. Der negative Bereich ist um 1 größer."
+    },
+    {
+     "id": "b",
+     "text": "`char` ist vorzeichenbehaftet und kann negative Werte annehmen.",
+     "correct": false,
+     "why": "Falsch: `char` ist der einzige **vorzeichenlose** primitive Typ und reicht von 0 bis 65535. `(char) -1` ergibt 65535."
+    },
+    {
+     "id": "c",
+     "text": "`float` belegt 4 Byte und ist ungenauer als `double`.",
+     "correct": true,
+     "why": "Richtig: `float` hat ca. 7 signifikante Dezimalstellen, `double` (8 Byte) rund 17."
+    },
+    {
+     "id": "d",
+     "text": "Mit `(int)` lässt sich ein `boolean` in 0 oder 1 umwandeln.",
+     "correct": false,
+     "why": "Falsch: es gibt keinerlei Konversion von oder nach `boolean`. Man braucht `b ? 1 : 0`."
+    },
+    {
+     "id": "e",
+     "text": "Bei einem Überlauf ganzer Zahlen wirft Java eine Exception.",
+     "correct": false,
+     "why": "Falsch: das Skript sagt ausdrücklich 'Bei Überlauf: keine Behandlung (-> falsches Ergebnis)'. Es wird still weitergerechnet."
+    },
+    {
+     "id": "f",
+     "text": "`1.0 / 0.0` liefert `Infinity`, während `1 / 0` eine Exception auslöst.",
+     "correct": true,
+     "why": "Richtig: bei Gleitkomma gibt es `Infinity` und `NaN`, bei ganzen Zahlen dagegen eine `ArithmeticException` ('/ by zero')."
+    }
+   ],
+   "solution": "Korrekt sind **a**, **c** und **f**.\n\nFalsch sind:\n- **b**: `char` ist vorzeichenlos (0 bis 65535).\n- **d**: keine Konversion von/nach `boolean`; stattdessen `b ? 1 : 0`.\n- **e**: ganzzahliger Ueberlauf wird **nicht** behandelt, es entsteht still ein falsches Ergebnis.",
+   "explanation": "Diese Aufgabe fasst die 'Fehlerbehandlung'-Abschnitte des Skripts zusammen, die gern übersehen werden, aber genau die Sorte Kurzfrage sind, die in Aufgabe 1 der Klausur auftaucht.\n\n**Wertebereiche** folgen mechanisch aus der Bitzahl im Zweierkomplement: n Bit -> von -2^(n-1) bis 2^(n-1) - 1. Für `int` (32 Bit) sind das -2147483648 bis 2147483647. Die Asymmetrie (eine Zahl mehr im Negativen) ist typisch für das Zweierkomplement, weil die 0 zur positiven Seite gehört.\n\n**`char` ist die Ausnahme:** 16 Bit **ohne** Vorzeichen, also 0 bis 65535. Deshalb funktioniert `char c1 = 0x7117;` im Beispiel *Smiley*.\n\n**Fehlerverhalten** unterscheidet sich fundamental nach Typklasse:\n- Ganze Zahlen: Division bzw. Modulo durch 0 -> `ArithmeticException`. Überlauf -> **keine** Behandlung, falsches Ergebnis.\n- Gleitkomma: Überlauf und Division durch 0 -> `[-]Infinity`; `0.0 / 0.0` -> `NaN`. Nie eine Exception.\n\nMerkregel: **Ganze Zahlen knallen bei /0 und schweigen beim Überlauf; Gleitkomma schweigt immer.**",
+   "hints": [
+    "Rechne den Wertebereich aus der Bitzahl aus: 32 Bit im Zweierkomplement.",
+    "Einer der acht primitiven Typen hat kein Vorzeichen. Welcher, und warum ergibt das Sinn?",
+    "Das Skript nennt für ganze Zahlen und für Gleitkomma jeweils eigene 'Fehlerbehandlung'-Punkte – sie unterscheiden sich stark."
+   ],
+   "pitfalls": [
+    "Glauben, ganzzahliger Überlauf werfe eine Exception.",
+    "`char` für vorzeichenbehaftet halten (Verwechslung mit `byte`).",
+    "Die Obergrenze von `int` als 2147483648 angeben – es ist 2147483647."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: Wertebereiche; Division durch 0 -> Ausnahme; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 26,
+     "label": "Gleitkomma-Zahlen: Überlauf/Division durch 0 -> Infinity, 0.0/0.0 -> NaN"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 32,
+     "label": "boolean: keine Typkonversion"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1a) Multiple Choice"
+    }
+   ],
+   "tags": [
+    "wertebereich",
+    "ueberlauf",
+    "exception",
+    "char",
+    "multi-mc"
+   ]
+  },
+  {
+   "id": "java-types-029",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "code",
+   "difficulty": 4,
+   "points": 10,
+   "examStyle": true,
+   "title": "Klasse als benutzerdefinierter Typ: Temperatur",
+   "prompt": "Schreiben Sie eine Klasse `Temperatur`, die eine Temperatur in Grad Celsius speichert. Klassen sind in Java **benutzerdefinierte Datentypen** – hier bauen Sie sich einen.\n\nDie Klasse soll enthalten:\n\na) ein **privates** `double`-Attribut `celsius`\nb) eine **öffentliche Klassenkonstante** `ABSOLUTER_NULLPUNKT` vom Typ `double` mit dem Wert `-273.15` (unveränderlich, ohne Objekt ansprechbar)\nc) einen Konstruktor `Temperatur(double celsius)`, der das Attribut setzt\nd) `public double getCelsius()`\ne) `public double getFahrenheit()` – Formel: `celsius * 9 / 5 + 32`\nf) `public int getGanzzahlig()` – der **ganzzahlige Anteil** von `celsius` (abgeschnitten, per Typkonversion)\ng) `public boolean istUnterNullpunkt()` – `true`, wenn `celsius` kleiner als `ABSOLUTER_NULLPUNKT` ist\nh) eine `main`-Methode, die ein Objekt mit `21.7` erzeugt und genau folgende Ausgabe erzeugt:\n\n```\nCelsius: 21.7\nFahrenheit: 71.06\nGanzzahlig: 21\nUnter Nullpunkt: false\nNullpunkt: -273.15\n```",
+   "starterCode": "class Temperatur {\n  // b) Klassenkonstante ABSOLUTER_NULLPUNKT = -273.15\n\n  // a) privates Attribut celsius\n\n  // c) Konstruktor\n\n  // d) getCelsius\n\n  // e) getFahrenheit:  celsius * 9 / 5 + 32\n\n  // f) getGanzzahlig:  ganzzahliger Anteil von celsius\n\n  // g) istUnterNullpunkt\n\n  public static void main(String[] s) {\n    Temperatur t = new Temperatur(21.7);\n    // Ausgaben ergänzen:\n\n  }\n}",
+   "required": [
+    "static final",
+    "private double celsius",
+    "(int)",
+    "this."
+   ],
+   "constraints": [
+    "Das Attribut `celsius` muss `private` sein.",
+    "`ABSOLUTER_NULLPUNKT` muss `public static final` sein und in der letzten Ausgabezeile über den Klassennamen angesprochen werden.",
+    "`getGanzzahlig()` muss den Wert per expliziter Typkonversion `(int)` abschneiden, nicht runden."
+   ],
+   "solution": "class Temperatur {\n  public static final double ABSOLUTER_NULLPUNKT = -273.15;\n\n  private double celsius;\n\n  public Temperatur(double celsius) {\n    this.celsius = celsius;\n  }\n\n  public double getCelsius() {\n    return celsius;\n  }\n\n  public double getFahrenheit() {\n    return celsius * 9 / 5 + 32;\n  }\n\n  public int getGanzzahlig() {\n    return (int) celsius;\n  }\n\n  public boolean istUnterNullpunkt() {\n    return celsius < ABSOLUTER_NULLPUNKT;\n  }\n\n  public static void main(String[] s) {\n    Temperatur t = new Temperatur(21.7);\n    System.out.println(\"Celsius: \" + t.getCelsius());\n    System.out.println(\"Fahrenheit: \" + t.getFahrenheit());\n    System.out.println(\"Ganzzahlig: \" + t.getGanzzahlig());\n    System.out.println(\"Unter Nullpunkt: \" + t.istUnterNullpunkt());\n    System.out.println(\"Nullpunkt: \" + Temperatur.ABSOLUTER_NULLPUNKT);\n  }\n}",
+   "expectedOutput": "Celsius: 21.7\nFahrenheit: 71.06\nGanzzahlig: 21\nUnter Nullpunkt: false\nNullpunkt: -273.15",
+   "explanation": "Die Aufgabe verbindet die Kapitel 'Datentypen' und 'Objekte': **Klassen als benutzerdefinierte Typen** stehen im Skript direkt neben den primitiven Typen und Arrays. `Temperatur` ist danach ein vollwertiger Typ, den man wie `int` oder `double` in Deklarationen verwenden kann.\n\nDrei Typ-Details sind hier entscheidend:\n\n1. **`celsius * 9 / 5 + 32`** funktioniert nur, weil `celsius` ein `double` ist. Wäre `celsius` ein `int`, würde `9 / 5` nie ausgewertet (Punkt vor Strich, von links: `celsius * 9` zuerst) – aber `(int) * 9 / 5` wäre eine Ganzzahl-Division und das Ergebnis wäre falsch. Da `celsius` ein `double` ist, wird der ganze Ausdruck in `double` gerechnet und liefert `71.06`. Wer nachrechnet, sieht nebenbei die Gleitkomma-Ungenauigkeit: Java berechnet intern `21.7 * 9` als `195.29999999999998` und `/ 5` als `39.059999999999995`; erst nach `+ 32` fallen die Fehlerbits aus den 17 signifikanten Stellen heraus und `System.out.println` druckt die kürzeste eindeutige Darstellung `71.06`.\n2. **`(int) celsius`** schneidet ab, es rundet nicht: aus 21.7 wird 21, nicht 22. Für echtes Runden bräuchte man `Math.round`.\n3. **`public static final`** macht `ABSOLUTER_NULLPUNKT` zur Klassenkonstante: `static` heißt 'gehört der Klasse' (deshalb `Temperatur.ABSOLUTER_NULLPUNKT` ohne Objekt), `final` heißt 'unveränderlich'. Die statische Methode `main` könnte auf ein nicht-statisches Attribut gar nicht zugreifen.\n\n`this.celsius = celsius;` ist nötig, weil der Parameter das Attribut verdeckt – bei Attributen ist gleichnamige Verdeckung erlaubt (anders als bei zwei lokalen Variablen). Ohne `this` bliebe das Attribut auf seinem Default 0.0.",
+   "hints": [
+    "Denk daran, warum `celsius` ein `double` sein muss, damit `* 9 / 5` nicht zur Ganzzahl-Division wird.",
+    "Für den ganzzahligen Anteil brauchst du eine explizite Typkonversion – und die schneidet ab.",
+    "`ABSOLUTER_NULLPUNKT` wird in `main` ohne Objekt angesprochen. Welche zwei Modifier braucht das Attribut dafür?"
+   ],
+   "pitfalls": [
+    "Das Attribut als `int celsius` deklarieren – dann liefert die Fahrenheit-Formel wegen der Ganzzahl-Division ein falsches Ergebnis.",
+    "`this.` im Konstruktor vergessen: `celsius = celsius;` weist den Parameter sich selbst zu, das Attribut bleibt 0.0.",
+    "`ABSOLUTER_NULLPUNKT` nur `final` (ohne `static`) machen – dann ist `Temperatur.ABSOLUTER_NULLPUNKT` in `main` nicht erreichbar.",
+    "In `getGanzzahlig()` runden statt abschneiden."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 21,
+     "label": "3.2 Datentypen: byte, short, int, long, float, double, char, boolean; Klassen als benutzerdefinierte Typen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 34,
+     "label": "3.4 Variablen: Deklaration, final als 'benannte Konstante', int x, y;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 37,
+     "label": "3.4 Typkonversionen: explizit (<Typ>) vs. implizit; Informationsverlust; kein boolean"
+    },
+    {
+     "file": "11_Ueberblick/Klausur07.java",
+     "page": 1,
+     "label": "Was ist die Ausgabe? this.note = anzahl / 2;"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3: Code-Lücken ausfüllen (this, static, new)"
+    }
+   ],
+   "tags": [
+    "klasse",
+    "benutzerdefinierter-typ",
+    "static-final",
+    "cast",
+    "code"
+   ]
+  },
+  {
+   "id": "java-types-030",
+   "lang": "java",
+   "topicId": "java-types",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 5,
+   "examStyle": true,
+   "title": "Blöcke, Verdeckung und int-Division kombiniert",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? Achten Sie genau darauf, welches `zaehler` jeweils gemeint ist. (`'A'` hat den ASCII-Code 65.)",
+   "code": "class Blockwerte {\n  static int zaehler = 5;\n\n  public static void main(String[] s) {\n    int zaehler = 2;\n    {\n      double wert = zaehler / 4;\n      System.out.println(wert);\n    }\n    {\n      double wert = zaehler / 4.0;\n      System.out.println(wert);\n    }\n    System.out.println(zaehler);\n    System.out.println(Blockwerte.zaehler);\n    char c = 'A';\n    for (int i = 0; i < 3; i++) {\n      c += 1;\n    }\n    System.out.println(c);\n    System.out.println( (int) c );\n  }\n}",
+   "expectedOutput": "0.0\n0.5\n2\n5\nD\n68",
+   "solution": "class Blockwerte {\n  static int zaehler = 5;\n\n  public static void main(String[] s) {\n    int zaehler = 2;\n    {\n      double wert = zaehler / 4;\n      System.out.println(wert);\n    }\n    {\n      double wert = zaehler / 4.0;\n      System.out.println(wert);\n    }\n    System.out.println(zaehler);\n    System.out.println(Blockwerte.zaehler);\n    char c = 'A';\n    for (int i = 0; i < 3; i++) {\n      c += 1;\n    }\n    System.out.println(c);\n    System.out.println( (int) c );\n  }\n}",
+   "explanation": "Hier stecken vier Konzepte in einem kurzen Programm.\n\n**1. Verdeckung eines Klassenattributs.** Die lokale Variable `zaehler = 2` verdeckt das Klassenattribut `zaehler = 5`. Das ist **erlaubt** – im Gegensatz zu zwei gleichnamigen *lokalen* Variablen. Ab der Deklaration meint `zaehler` die lokale Variable; das Attribut erreicht man weiterhin über den Klassennamen: `Blockwerte.zaehler` -> **5**, während das nackte `zaehler` **2** liefert.\n\n**2. Ganzzahl-Division trotz double-Ziel.** `double wert = zaehler / 4;` rechnet `2 / 4` als **`int`**-Division = 0 und erweitert erst danach zu `0.0`. Erst `4.0` als Divisor macht daraus eine echte Division: `2 / 4.0` = **0.5**. Der Typ links vom `=` ändert nichts an der Rechnung rechts davon.\n\n**3. Zwei Blöcke, zweimal `wert`.** Die zweite Deklaration von `wert` ist **kein** Fehler, weil der erste Block bereits geschlossen ist – die Gültigkeitsbereiche überlappen sich nicht. Genau dieses Muster steht im Skript als 'OK'.\n\n**4. char-Arithmetik mit `+=`.** `c += 1` enthält einen impliziten Cast auf `char`. Nach drei Durchläufen ist `c` = 65 + 3 = 68 = **`D`**; `(int) c` zeigt die Zahl **68**.\n\nMerkregel: **Lokale Variablen dürfen Attribute verdecken, aber niemals einander.**",
+   "hints": [
+    "Es gibt zwei Variablen namens `zaehler`. Welche ist ab Zeile 5 gemeint, und wie kommt man an die andere heran?",
+    "Der Typ `double` links vom `=` beeinflusst nicht, wie rechts gerechnet wird. Was ist der Typ von `zaehler / 4`?",
+    "Warum ist die zweite Deklaration von `wert` kein Compiler-Fehler? Schau auf die geschweiften Klammern."
+   ],
+   "pitfalls": [
+    "`0.5` für die erste Ausgabe angeben, weil `wert` ein `double` ist.",
+    "Die zweite Deklaration von `wert` für einen Compiler-Fehler halten.",
+    "`Blockwerte.zaehler` als 2 angeben – die lokale Variable verändert das Attribut nicht.",
+    "Bei `c` die Zahl 68 statt des Zeichens `D` ausgeben (oder umgekehrt)."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 35,
+     "label": "Gültigkeitsbereich: gültig ab Deklaration bis Ende des umgebenden Blocks"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 36,
+     "label": "Gültigkeitsbereiche gleichnamiger lokaler Variablen dürfen nicht überlappen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 22,
+     "label": "Ganze Zahlen: Wertebereiche; Division durch 0 -> Ausnahme; bei Überlauf keine Behandlung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 29,
+     "label": "char: ASCII, Inkrement/Dekrement, Typkonversion, Überlauf = Abschneiden der oberen Bits"
+    },
+    {
+     "file": "03_Datentypen/ScopeDemo.java",
+     "page": 1,
+     "label": "Gültigkeitsbereich / Scope"
+    }
+   ],
+   "tags": [
+    "scope",
+    "verdeckung",
+    "int-division",
+    "char",
+    "ausgabe"
+   ]
+  }
+ ]
+}

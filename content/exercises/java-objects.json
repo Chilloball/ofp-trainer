@@ -1,0 +1,2402 @@
+{
+ "topicId": "java-objects",
+ "exercises": [
+  {
+   "id": "java-objects-001",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 1,
+   "examStyle": true,
+   "title": "Was bewirkt private bei einem Attribut?",
+   "prompt": "Kreuzen Sie genau eine richtige Antwort an.\n\nWas bewirkt das Schlüsselwort `private` bei einem Attribut?",
+   "code": "class Konto {\n  private double stand;   // <-- worum geht es hier?\n  public double getStand() { return stand; }\n}",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Zugriff von überall im Programm",
+     "correct": false,
+     "why": "Falsch. Das wäre `public`: sichtbar für **alle** Klassen."
+    },
+    {
+     "id": "b",
+     "text": "Zugriff nur innerhalb derselben Klasse",
+     "correct": true,
+     "why": "Richtig. Das Skript (S. 126): *\"private (privat): sichtbar nur innerhalb der Klasse - kein Zugriff/Aufruf durch andere Klassen möglich\"*."
+    },
+    {
+     "id": "c",
+     "text": "Zugriff nur in Unterklassen",
+     "correct": false,
+     "why": "Falsch. Das wäre `protected`: sichtbar innerhalb der Klasse **und** ihren Unterklassen."
+    },
+    {
+     "id": "d",
+     "text": "Es macht das Attribut unveränderlich",
+     "correct": false,
+     "why": "Falsch. Unveränderlich macht `final`. `private` regelt nur die **Sichtbarkeit**, innerhalb der eigenen Klasse darf man das Attribut beliebig oft ändern."
+    }
+   ],
+   "solution": "b) Zugriff nur innerhalb derselben Klasse.",
+   "explanation": "Java kennt vier Sichtbarkeitsstufen, drei davon nennt das Skript ausdrücklich (S. 126):\n\n- `public` - sichtbar für alle Klassen,\n- `protected` - sichtbar in der Klasse und ihren Unterklassen,\n- `private` - sichtbar **nur** innerhalb der Klasse,\n- ohne Schlüsselwort (*package-private*) - sichtbar innerhalb desselben Pakets.\n\n`private` ist das Werkzeug für das **Geheimnisprinzip / die Kapselung** (S. 110): der innere Aufbau eines Objekts bleibt für andere Objekte unzugänglich. Deshalb lautet die Konvention: *\"In der Implementierung einer Klasse sollten Attribute immer private sein\"* (S. 127); der Zugriff von außen läuft über Get- und Set-Methoden.\n\nTypischer Denkfehler: `private` mit `final` zu verwechseln. `private` sagt **wer** zugreifen darf, `final` sagt **ob überhaupt noch** geschrieben werden darf. Beides ist völlig unabhängig - `private final`, `public final`, `private` ohne `final`: alles ist erlaubt.\n\nMerkregel: *private = privat wie mein Tagebuch (nur ich), protected = die Familie darf mitlesen (Unterklassen), public = Aushang am schwarzen Brett.*",
+   "hints": [
+    "Das Skript unterscheidet auf S. 126 genau drei Sichtbarkeiten - ordnen Sie jeder Antwort eine davon zu.",
+    "Eine der Antworten beschreibt `protected`, eine andere `public`. Welche bleibt übrig?",
+    "Aufpassen bei der letzten Antwort: Unveränderlichkeit ist eine ganz andere Eigenschaft und hat ein eigenes Schlüsselwort."
+   ],
+   "pitfalls": [
+    "`private` mit `final` verwechseln - `private` regelt Sichtbarkeit, nicht Veränderbarkeit.",
+    "Glauben, `private` verbiete auch den Zugriff durch **andere Objekte derselben Klasse**. Das stimmt nicht: in `summe(Zahl andere)` darf man `andere.wert` lesen, weil man sich in derselben Klasse befindet."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 126,
+     "label": "6.2 Sichtbarkeit von Attributen und Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 110,
+     "label": "Objekt und Geheimnisprinzip / Kapselung"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1a) Multiple Choice, Frage 2"
+    }
+   ],
+   "tags": [
+    "kapselung",
+    "sichtbarkeit",
+    "private",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-objects-002",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "mc",
+   "difficulty": 2,
+   "points": 1,
+   "examStyle": true,
+   "title": "Wozu dient this() als erste Anweisung in einem Konstruktor?",
+   "prompt": "Kreuzen Sie genau eine richtige Antwort an.\n\nWozu dient `this(...)` als **erste** Anweisung in einem Konstruktor?",
+   "code": "class Kugel {\n  double xMitte, yMitte, zMitte, radius;\n  Kugel() { radius = 1; }\n  Kugel(double x, double y, double z) {\n    this();            // <-- worum geht es hier?\n    xMitte = x; yMitte = y; zMitte = z;\n  }\n}",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Es ruft den Konstruktor der Oberklasse auf",
+     "correct": false,
+     "why": "Falsch. Den Oberklassen-Konstruktor ruft man mit `super(...)` auf - ebenfalls als erste Anweisung."
+    },
+    {
+     "id": "b",
+     "text": "Es ruft einen anderen Konstruktor derselben Klasse auf",
+     "correct": true,
+     "why": "Richtig. Skript S. 114: *\"this([Parameterliste]) als erste Anweisung führt zum Aufruf eines anderen Konstruktors für dasselbe Objekt\"*."
+    },
+    {
+     "id": "c",
+     "text": "Es erzeugt ein neues Objekt",
+     "correct": false,
+     "why": "Falsch. Ein neues Objekt entsteht ausschließlich mit `new`. `this(...)` arbeitet auf dem **bereits angelegten** Objekt weiter."
+    },
+    {
+     "id": "d",
+     "text": "Es gibt die aktuelle Instanz zurück",
+     "correct": false,
+     "why": "Falsch. Das wäre `return this;` in einer Methode. Ein Konstruktor hat überhaupt keinen Ergebnistyp (nicht einmal `void`) und kann nichts zurückgeben."
+    }
+   ],
+   "solution": "b) Es ruft einen anderen Konstruktor derselben Klasse auf (Konstruktor-Verkettung).",
+   "explanation": "Man muss `this` in drei Rollen auseinanderhalten:\n\n1. `this` allein - Referenz auf das **eigene Objekt** (S. 125), z.B. `this.radius = radius;`\n2. `this(...)` **mit Klammern und als erste Anweisung im Konstruktor** - Aufruf eines **anderen Konstruktors derselben Klasse** (S. 114).\n3. `super(...)` - Aufruf eines Konstruktors der **Oberklasse** (Kapitel 7).\n\nDer Sinn von `this(...)` ist Vermeidung von Code-Doppelung: Der Konstruktor mit den meisten Parametern macht die eigentliche Arbeit, die kürzeren Konstruktoren reichen nur Standardwerte durch. Im Skript-Beispiel (S. 113/114) ruft `Kugel(x,y,z,r)` per `this(x,y,z)` den Konstruktor `Kugel(x,y,z)` auf, und der wiederum per `this()` den parameterlosen.\n\nWichtige Regel: `this(...)` **muss** die allererste Anweisung sein - sonst meldet javac *\"call to this must be first statement in constructor\"*. Es darf auch nur **ein** `this(...)`- oder `super(...)`-Aufruf pro Konstruktor geben.\n\nMerkregel: *`this.x` zeigt nach innen aufs Attribut, `this(...)` zeigt seitwärts auf den Nachbarkonstruktor, `super(...)` zeigt nach oben.*",
+   "hints": [
+    "Schauen Sie sich das Beispiel an: `Kugel(double,double,double)` enthält `this();` - welcher Code wird dadurch ausgeführt?",
+    "Zwei der Antworten beschreiben Dinge, die es in Java gibt - aber mit `super(...)` bzw. mit `new`.",
+    "Ein Konstruktor hat keinen Ergebnistyp. Kann er also etwas 'zurückgeben'?"
+   ],
+   "pitfalls": [
+    "`this(...)` mit `super(...)` verwechseln.",
+    "`this(...)` nicht als erste Anweisung schreiben - das ist ein Compiler-Fehler, kein Stilproblem.",
+    "Glauben, `this(...)` erzeuge ein zweites Objekt. Es wird immer nur **ein** Objekt gebaut."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 114,
+     "label": "6.1 Konstruktoren: this(...) als erste Anweisung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 113,
+     "label": "6.1 Konstruktoren: Klasse Kugel"
+    },
+    {
+     "file": "06_ObjekteMethoden/Kugel.java",
+     "page": 1,
+     "label": "Konstruktor-Verkettung mit this()"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1a) Multiple Choice, Frage 3"
+    }
+   ],
+   "tags": [
+    "konstruktor",
+    "this",
+    "konstruktor-verkettung",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-objects-003",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "mc",
+   "difficulty": 3,
+   "points": 1,
+   "examStyle": true,
+   "title": "Warum lässt sich new Ticket() nicht übersetzen?",
+   "prompt": "Der folgende Code lässt sich **nicht** übersetzen. javac meldet in der letzten Zeile:\n\n```\nerror: no suitable constructor found for Ticket(no arguments)\n```\n\nWarum? Kreuzen Sie genau eine richtige Antwort an.",
+   "code": "class Ticket {\n  private int nummer;\n  public Ticket(int nummer) {\n    this.nummer = nummer;\n  }\n}\n// ...\nTicket t = new Ticket();   // <-- Fehler",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Weil `nummer` `private` ist und darum nicht initialisiert werden kann",
+     "correct": false,
+     "why": "Falsch. Der Konstruktor steht **innerhalb** der Klasse und darf auf `private`-Attribute zugreifen. Mit `new Ticket(5)` übersetzt derselbe Code fehlerfrei."
+    },
+    {
+     "id": "b",
+     "text": "Weil der automatisch erzeugte parameterlose Konstruktor entfällt, sobald die Klasse einen eigenen Konstruktor definiert",
+     "correct": true,
+     "why": "Richtig. Skript S. 112: *\"Definiert eine Klasse keinen Konstruktor, wird automatisch ein parameterloser Konstruktor erzeugt\"* - definiert sie einen, gibt es den geschenkten nicht mehr."
+    },
+    {
+     "id": "c",
+     "text": "Weil ein Konstruktor immer `static` sein muss",
+     "correct": false,
+     "why": "Falsch. Konstruktoren sind nie `static` - sie arbeiten gerade am neu entstehenden Objekt."
+    },
+    {
+     "id": "d",
+     "text": "Weil `Ticket` keine `main`-Methode besitzt",
+     "correct": false,
+     "why": "Falsch. Eine Klasse braucht nur dann `main`, wenn sie als Programm **gestartet** werden soll. Objekte kann man von jeder Klasse erzeugen."
+    }
+   ],
+   "solution": "b) Der Default-Konstruktor wird nur dann automatisch erzeugt, wenn die Klasse **gar keinen** eigenen Konstruktor definiert. `Ticket` definiert `Ticket(int)`, also gibt es kein `Ticket()` mehr.",
+   "explanation": "Java schenkt einer Klasse einen parameterlosen Konstruktor - aber nur als **Notlösung**, wenn der Programmierer keinen einzigen Konstruktor hingeschrieben hat (S. 112). Sobald man selbst einen Konstruktor definiert - egal mit wie vielen Parametern - verschwindet das Geschenk.\n\nDas ist die häufigste Ursache für die Fehlermeldung *\"no suitable constructor found\"* bzw. *\"constructor ... cannot be applied to given types; required: int, found: no arguments\"*.\n\nZwei Reparaturen sind möglich: entweder man ruft den vorhandenen Konstruktor mit passenden Argumenten auf (`new Ticket(5)`), oder man schreibt zusätzlich einen parameterlosen Konstruktor dazu - z.B. `public Ticket() { this(0); }`. Genau so macht es das Skript bei `Kugel` (S. 113/114).\n\nBesonders relevant wird das bei Vererbung: eine Unterklasse ruft implizit `super()` auf, und wenn die Oberklasse keinen parameterlosen Konstruktor mehr hat, bricht die Übersetzung ab.\n\nMerkregel: *Wer selbst kocht, bekommt kein Fertiggericht mehr.*",
+   "hints": [
+    "Überlegen Sie: Unter welcher Bedingung erzeugt Java automatisch einen parameterlosen Konstruktor?",
+    "Der Code enthält bereits einen Konstruktor `Ticket(int)`. Ändert das etwas an dem automatisch erzeugten?",
+    "Testen Sie gedanklich `new Ticket(7)` - kompiliert das? Wenn ja, kann es nicht an `private` liegen."
+   ],
+   "pitfalls": [
+    "Annehmen, es gäbe *immer* einen parameterlosen Konstruktor.",
+    "Bei der Reparatur `public Ticket() {}` einfach leer lassen, obwohl Pflichtattribute gesetzt werden müssten - besser `this(<Standardwert>)`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 112,
+     "label": "6.1 Konstruktoren: automatisch erzeugter parameterloser Konstruktor"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 115,
+     "label": "6.1 Erzeugung von Objekten: new mit passender Parameterliste"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 113,
+     "label": "6.1 Konstruktoren: Kugel"
+    }
+   ],
+   "tags": [
+    "konstruktor",
+    "default-konstruktor",
+    "compiler-fehler",
+    "mc"
+   ]
+  },
+  {
+   "id": "java-objects-004",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": true,
+   "title": "Welche Aussagen über static treffen zu?",
+   "prompt": "Gegeben ist die Klasse unten. Welche der folgenden Aussagen über `static` sind **richtig**? (Mehrfachauswahl)",
+   "code": "class Kugel {\n  final static double PI = 3.14159265;\n  static int anzahl = 0;      // zählt erzeugte Kugeln\n  double radius;\n\n  Kugel() { radius = 1; anzahl++; }\n  double volumen() { return 4.0/3.0 * PI * radius * radius * radius; }\n  static int zaehleKugeln() { return anzahl; }\n}",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`anzahl` existiert genau einmal - unabhängig davon, wie viele Kugel-Objekte es gibt (auch wenn es null gibt).",
+     "correct": true,
+     "why": "Richtig. Klassenattribute gehören der Klasse, nicht den Objekten (S. 168): *\"sie existieren auch, wenn es (noch) kein Objekt der Klasse gibt\"*."
+    },
+    {
+     "id": "b",
+     "text": "Man kann `anzahl` sowohl über `Kugel.anzahl` als auch über `meineKugel.anzahl` ansprechen.",
+     "correct": true,
+     "why": "Richtig. Skript S. 122: Klassenattribute können über eine Objektreferenz **und** unabhängig davon über den Klassennamen angesprochen werden."
+    },
+    {
+     "id": "c",
+     "text": "In `zaehleKugeln()` darf man `radius` direkt (ohne Objektreferenz) verwenden.",
+     "correct": false,
+     "why": "Falsch. `zaehleKugeln()` ist eine Klassenmethode und hat kein eigenes Objekt. javac meldet *non-static variable radius cannot be referenced from a static context*."
+    },
+    {
+     "id": "d",
+     "text": "In einer `static`-Methode gibt es die Referenzvariable `this` nicht.",
+     "correct": true,
+     "why": "Richtig. Skript S. 125: `this` *\"existiert in jeder Methode (außer in Klassenmethoden)\"*."
+    },
+    {
+     "id": "e",
+     "text": "Wenn ein Objekt `anzahl` erhöht, sehen alle anderen Objekte den neuen Wert.",
+     "correct": true,
+     "why": "Richtig. Skript S. 131: *\"Werden statische Variablen von einem Objekt verändert, ist diese Veränderung auch in allen anderen Objekten sichtbar\"*."
+    },
+    {
+     "id": "f",
+     "text": "`volumen()` kann nur aufgerufen werden, wenn vorher `Kugel.zaehleKugeln()` aufgerufen wurde.",
+     "correct": false,
+     "why": "Falsch. Zwischen Objekt- und Klassenmethoden besteht keine Aufrufreihenfolge. `volumen()` braucht lediglich ein Objekt: `k.volumen()`."
+    }
+   ],
+   "solution": "Richtig sind a), b), d) und e).",
+   "explanation": "`static` beantwortet immer dieselbe Frage: **gehört das der Klasse oder dem einzelnen Objekt?**\n\nEin Klassenattribut (`static int anzahl`) liegt genau einmal im Speicher, wird beim Laden der Klasse angelegt und von allen Objekten geteilt - deshalb funktioniert das klassische Muster *\"Zaehler im Konstruktor hochzählen\"* (S. 113). Eine Klassenmethode (`static int zaehleKugeln()`) läuft ohne Objekt, kennt also weder `this` noch Instanzattribute (S. 125, S. 131).\n\nDie Richtung **Objekt -> Klasse** ist dagegen immer erlaubt: eine Objektmethode wie `volumen()` darf sowohl `radius` (Instanz) als auch `PI` und `anzahl` (Klasse) benutzen. Nur die Richtung **Klasse -> Objekt** ist gesperrt.\n\nAntwort b) verwirrt viele: `meineKugel.anzahl` ist erlaubt, aber irreführend geschrieben, weil es so aussieht, als hätte jedes Objekt einen eigenen Zaehler. Guter Stil ist `Kugel.anzahl`.\n\nMerkregel: *Von unten (Objekt) sieht man nach oben (Klasse) - von oben sieht man die einzelnen Objekte nicht.*",
+   "hints": [
+    "Fragen Sie sich bei jeder Aussage: Braucht die Aktion ein konkretes Objekt oder nicht?",
+    "Zwei Aussagen behaupten etwas, das javac mit *non-static ... cannot be referenced from a static context* ablehnen würde.",
+    "Denken Sie an `main`: das ist selbst eine Klassenmethode - was darf man dort direkt benutzen?"
+   ],
+   "pitfalls": [
+    "Instanzattribute in `static`-Methoden (typisch: in `main`) direkt verwenden.",
+    "Glauben, jedes Objekt hätte eine eigene Kopie eines `static`-Attributs.",
+    "`this` in einer Klassenmethode benutzen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 Klassenattribute und Klassenmethoden: static"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 122,
+     "label": "6.2 Zugriff über Objektreferenz und Klassenname"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 Die Referenzvariable this"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 168,
+     "label": "6.5 UML: Klassenattribute"
+    }
+   ],
+   "tags": [
+    "static",
+    "klassenattribut",
+    "klassenmethode",
+    "this",
+    "multi-mc"
+   ]
+  },
+  {
+   "id": "java-objects-005",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "short-answer",
+   "difficulty": 2,
+   "points": 4,
+   "examStyle": false,
+   "title": "Geheimnisprinzip: Warum private Attribute mit Get- und Set-Methoden?",
+   "prompt": "Erklären Sie in eigenen Worten:\n\na) Was besagt das **Geheimnisprinzip** (Kapselung) in der Objektorientierung?\n\nb) Nennen Sie **zwei** konkrete Vorteile davon, ein Attribut `private` zu machen und den Zugriff nur über `get`-/`set`-Methoden zu erlauben.\n\nc) Warum ist der folgende Setter *besser* als ein direkter Zugriff `st.note = 6.0;`?",
+   "code": "public void setNote(double note) {\n  if (note >= 1.0 && note <= 5.0)\n    this.note = note;\n  else\n    System.out.println(\"ungueltige Note: \" + note);\n}",
+   "solution": "**Bewertungsrubrik (4 Punkte)**\n\na) (1 P.) Der innere Aufbau eines Objekts ist für andere Objekte zum großen Teil unzugänglich; die Daten stecken in einer 'Kapsel'. Nach außen sichtbar ist nur eine bewusst gewählte Schnittstelle aus öffentlichen Methoden.\n\nb) (2 P., je 1 P. pro Vorteil - zwei der folgenden genügen)\n- **Feste Schnittstelle nach außen**: die interne Darstellung der Daten kann später geändert werden (z.B. `double note` -> `int notePunkte`), ohne dass fremder Code angepasst werden muss.\n- **Prüfungen möglich**: die Set-Methode kann ungültige Werte abweisen, das Objekt bleibt immer in einem konsistenten Zustand.\n- **Nur-Lese-Attribute** lassen sich realisieren: Getter ohne Setter.\n- **Zusatzverhalten** kann angehängt werden (mitzählen, protokollieren, abhängige Attribute nachziehen).\n\nc) (1 P.) Ein direkter Zugriff `st.note = 6.0;` würde einen unmöglichen Wert in das Objekt schreiben; der Setter filtert das ab. Außerdem läuft jede Wertänderung durch **eine einzige** Stelle - man muss die Prüfung nicht an jedem Aufrufort wiederholen.",
+   "explanation": "Das Skript bringt beide Hälften der Antwort wörtlich: S. 110 definiert das Geheimnisprinzip (*\"der innere Aufbau eines Objekts ist für andere Objekte zum großen Teil unzugänglich ... man nennt das Geheimnisprinzip auch Kapselung\"*), S. 127 nennt die Konsequenz (*\"In der Implementierung einer Klasse sollten Attribute immer private sein\"*) und die beiden Vorteile: *\"feste Schnittstelle nach außen, unabhängig von konkreter Speicherung\"* und *\"Get- und Set-Methoden können Prüfungen vornehmen\"*.\n\nWichtig ist die Denkrichtung: Kapselung ist keine Sicherheitsmaßnahme gegen Angreifer, sondern eine **Wartbarkeitsmaßnahme**. Sie trennt das *Was* (öffentliche Methoden) vom *Wie* (private Attribute), damit man das *Wie* später austauschen kann.\n\nTypischer Denkfehler in der Klausur: Studierende schreiben nur \"damit niemand die Daten ändern kann\". Das ist zu kurz - ändern darf man sie ja, nur eben **kontrolliert**, über die Set-Methode.\n\nMerkregel: *Attribute privat, Verhalten öffentlich - das Objekt entscheidet selbst, was mit seinen Daten passiert.*",
+   "hints": [
+    "Schlagen Sie die Formulierung aus dem Skript nach: 'geschützte Kapsel', 'Geheimnisprinzip'.",
+    "Für b) reicht ein Blick auf S. 127: dort stehen genau zwei Vorteile als Stichpunkte.",
+    "Für c): Was könnte ein anderer Programmteil anrichten, wenn `note` `public` wäre?"
+   ],
+   "pitfalls": [
+    "Kapselung mit 'Sicherheit gegen Hacker' begründen - es geht um Wartbarkeit und Konsistenz.",
+    "Getter/Setter mechanisch für jedes Attribut schreiben, ohne Prüfungen - dann ist der Nutzen fast null."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 110,
+     "label": "Objekt und Geheimnisprinzip"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 126,
+     "label": "6.2 Sichtbarkeit von Attributen und Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get- und Set-Methoden, Vorteil: Kapselung der Zugriffe"
+    }
+   ],
+   "tags": [
+    "kapselung",
+    "geheimnisprinzip",
+    "getter",
+    "setter",
+    "short-answer"
+   ]
+  },
+  {
+   "id": "java-objects-006",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "call by value - und warum sich Objekte trotzdem ändern lassen",
+   "prompt": "Java übergibt Parameter **ausschließlich** per *call by value*. Trotzdem sieht man nach dem Aufruf von `swap(ab)` unten geänderte Werte, nach `swap(a, b)` aber nicht.\n\na) Erklären Sie, was bei `swap(int x, int y)` genau auf dem Stapel passiert und warum `a` und `b` unverändert bleiben.\n\nb) Erklären Sie, warum `swap(Pair p)` das Objekt trotzdem verändern kann, obwohl auch hier *call by value* gilt.\n\nc) Was passiert, wenn man in `swap(Pair p)` stattdessen `p = new Pair();` schreibt? Begründen Sie.",
+   "code": "class Example1 {\n  void swap(int x, int y) {\n    int temp = x; x = y; y = temp;\n  }\n  void m1() {\n    int a = 1, b = 2;\n    swap(a, b);      // a == 1, b == 2\n  }\n}\n\nclass Pair { public int x, y; }\n\nclass Example2 {\n  void swap(Pair p) {\n    int temp = p.x; p.x = p.y; p.y = temp;\n  }\n  void m1() {\n    Pair ab = new Pair();\n    ab.x = 1; ab.y = 2;\n    swap(ab);        // ab.x == 2, ab.y == 1\n  }\n}",
+   "solution": "**Bewertungsrubrik (4 Punkte)**\n\na) (1,5 P.) Beim Aufruf werden die **Werte** 1 und 2 in die formalen Parameter `x` und `y` kopiert. `x`, `y` und `temp` sind lokale Variablen im Aktivierungsrahmen von `swap` - ein eigener Kasten auf dem Stapel. Das Vertauschen betrifft nur diese Kopien; der Aktivierungsrahmen von `m1` mit `a` und `b` bleibt unberührt. Nach dem Ende von `swap` verschwindet der Rahmen, `a == 1`, `b == 2`.\n\nb) (1,5 P.) Objekte liegen **nicht** in der Variablen, sondern auf dem Heap; die Variable `ab` enthält nur eine **Referenz** darauf. Kopiert wird also die Referenz - Kopie und Original zeigen danach auf **dasselbe** Objekt. Über `p.x` und `p.y` greift die Methode deshalb auf genau die Felder zu, die auch `ab` sieht. Das Skript nennt das: *\"Übergabe der Objektreferenz mittels call by value entspricht der Semantik von call by reference\"*.\n\nc) (1 P.) `p = new Pair();` überschreibt nur die **lokale Kopie** der Referenz. Danach zeigt `p` auf ein neues Objekt, `ab` weiterhin auf das alte. Der Aufrufer sieht davon nichts - genau wie in a). Man kann also den **Inhalt** eines übergebenen Objekts aendern, aber nicht, **welches** Objekt der Aufrufer sieht.",
+   "explanation": "Der ganze Punkt ist: *call by value* bezieht sich auf **den Wert der Variablen**, und der Wert einer Objektvariablen ist die Referenz, nicht das Objekt (S. 111: *\"Objekte werden in Java nicht direkt in Variablen gespeichert ... in Variablen werden nur Referenzen gespeichert\"*).\n\nDaraus folgt die Faustregel mit zwei Hälften:\n1. **Zuweisungen an den Parameter selbst** (`x = ...`, `p = ...`) wirken **nie** nach außen.\n2. **Zugriffe über den Parameter** (`p.x = ...`, `array[0] = ...`) wirken **immer** nach außen, weil sie das gemeinsame Objekt auf dem Heap treffen.\n\nDas Skript zeichnet das auf den Seiten 142-150 Schritt für Schritt mit Stapel und Heap nach. Genau derselbe Effekt macht die Klausuraufgabe `Klausur06.java` aus: die Methode verändert das übergebene Array, obwohl sie 'nur' eine Zahl zurückgibt.\n\nTypischer Denkfehler: Man behauptet, Java kenne 'call by reference' für Objekte. Formal falsch - Java hat nur call by value; der *Effekt* sieht bei Objekten aber wie call by reference aus.\n\nMerkregel: *Der Zettel mit der Adresse wird kopiert - das Haus nicht.*",
+   "hints": [
+    "Zeichnen Sie den Stapel: ein Kasten für `m1`, ein Kasten für `swap`. Was steht in welchem Kasten?",
+    "Zeichnen Sie für den Objekt-Fall zusätzlich den Heap. Wie viele Pfeile zeigen nach dem Aufruf auf dasselbe Pair-Objekt?",
+    "Unterscheiden Sie streng: schreibe ich **auf den Parameter** oder **durch den Parameter hindurch**?"
+   ],
+   "pitfalls": [
+    "Behaupten, Java habe call by reference. Java hat ausschließlich call by value - der Wert ist bei Objekten eben eine Referenz.",
+    "Denken, ein `new` innerhalb der Methode wirke nach außen.",
+    "Vergessen, dass Arrays sich genauso verhalten wie Objekte."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 133,
+     "label": "6.3 Ablauf eines Methodenaufrufs: call by value"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 141,
+     "label": "6.3 Referenzen als Parameter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 147,
+     "label": "6.3 Example1 / Example2: swap"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 111,
+     "label": "6.1 Objekte werden über Referenzen angesprochen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 356,
+     "label": "Überblick 6: call by value vs call by reference"
+    }
+   ],
+   "tags": [
+    "call-by-value",
+    "referenz",
+    "parameter",
+    "stack",
+    "heap",
+    "short-answer"
+   ]
+  },
+  {
+   "id": "java-objects-007",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "uml",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Java-Klasse in ein UML-Klassendiagramm übersetzen",
+   "prompt": "Übersetzen Sie die folgende Java-Klasse in ein **UML-Klassendiagramm**. Achten Sie auf:\n\n- die Sichtbarkeits-Symbole `+`, `#`, `-`,\n- die Kennzeichnung von **Klassenattributen und Klassenoperationen** (unterstrichen),\n- Typangaben in der UML-Schreibweise `name: Typ`.",
+   "code": "class Aushilfe {\n  public static final double MINDESTLOHN = 12.82;\n  private static int anzahl = 0;\n  private String name;\n  protected double stundenlohn;\n  public int stundenzahl;\n\n  public Aushilfe(String name, double stundenlohn) {\n    this.name = name;\n    this.stundenlohn = stundenlohn;\n    anzahl++;\n  }\n  public double lohn() { return stundenzahl * stundenlohn; }\n  protected void erhoeheLohn(double d) { stundenlohn += d; }\n  private boolean istGueltig() { return stundenlohn >= MINDESTLOHN; }\n  public static int getAnzahl() { return anzahl; }\n}",
+   "solution": "```mermaid\nclassDiagram\n  class Aushilfe {\n    +MINDESTLOHN : double = 12.82 $\n    -anzahl : int = 0 $\n    -name : String\n    #stundenlohn : double\n    +stundenzahl : int\n    +Aushilfe(name: String, stundenlohn: double)\n    +lohn() double\n    #erhoeheLohn(d: double)\n    -istGueltig() boolean\n    +getAnzahl() int $\n  }\n```\n\n**In der Klausur von Hand gezeichnet:**\n\n```\n+---------------------------------------+\n|              Aushilfe                 |\n+---------------------------------------+\n| + MINDESTLOHN: double = 12.82   <-- unterstrichen (static)\n| - anzahl: int = 0               <-- unterstrichen (static)\n| - name: String                        |\n| # stundenlohn: double                 |\n| + stundenzahl: int                    |\n+---------------------------------------+\n| + Aushilfe(name: String, stundenlohn: double)\n| + lohn(): double                      |\n| # erhoeheLohn(d: double)              |\n| - istGueltig(): boolean               |\n| + getAnzahl(): int              <-- unterstrichen (static)\n+---------------------------------------+\n```\n\n**Bewertungsrubrik (4 Punkte)**\n- 1 P. Drei Fächer (Name / Attribute / Operationen), Klassenname groß.\n- 1 P. Alle fünf Sichtbarkeiten korrekt: `+` = public, `#` = protected, `-` = private.\n- 1 P. `MINDESTLOHN`, `anzahl` und `getAnzahl()` als Klassenelemente **unterstrichen**.\n- 1 P. UML-Typschreibweise `name: Typ` bzw. `operation(par: Typ): Rueckgabetyp`.",
+   "explanation": "Die Abbildung Java <-> UML ist rein mechanisch, muss aber in **beide** Richtungen sitzen (Überblick S. 364):\n\n| Java | UML |\n|---|---|\n| `public` | `+` |\n| `protected` | `#` |\n| `private` | `-` |\n| `static` | Element **unterstrichen** |\n| `int zahl;` | `zahl: int` |\n| `double lohn()` | `lohn(): double` |\n\nWichtig: In UML steht der **Typ hinter dem Namen**, getrennt durch Doppelpunkt - genau umgekehrt zu Java. Initialwerte darf man mit `= wert` anhängen (S. 161: `gewicht: double = 0`).\n\nKlassenattribute und Klassenoperationen werden unterstrichen (S. 168 und S. 173) - das ist der einzige Unterschied zwischen `anzahl` und `name` im Diagramm; ein `static`-Schlüsselwort gibt es in UML nicht. Weil Mermaid kein Unterstreichen kennt, markiert man dort mit `$`.\n\nDer Konstruktor gehört ins Operationen-Fach; ein Rückgabetyp wird bei ihm **nicht** angegeben, weil ein Konstruktor keinen hat.\n\nMerkregel: *plus-raute-minus = public-protected-private; was der Klasse gehört, wird unterstrichen.*",
+   "hints": [
+    "Ein UML-Klassenkasten hat drei Fächer: Name, Attribute, Operationen.",
+    "Übersetzen Sie zuerst jede Sichtbarkeit in ihr Symbol - `public`, `protected`, `private` haben je ein eigenes Zeichen.",
+    "Zwei Attribute und eine Operation sind `static`. Wie kennzeichnet UML das?",
+    "Achten Sie auf die Reihenfolge: in UML steht der Typ **hinter** dem Namen."
+   ],
+   "pitfalls": [
+    "`static` als Wort ins Diagramm schreiben statt zu unterstreichen.",
+    "Die Java-Reihenfolge `double lohn` statt der UML-Reihenfolge `lohn: double` verwenden.",
+    "`protected` mit `-` statt `#` abkürzen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 364,
+     "label": "Überblick 6: UML Klassendiagramm mit + # -"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 168,
+     "label": "6.5 UML: Klassenattribute werden unterstrichen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 173,
+     "label": "6.5 UML: Klassenoperationen werden unterstrichen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 171,
+     "label": "6.5 UML: Operationen und Parameter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 161,
+     "label": "6.5 UML: Klassen, Design vs. Implementierung"
+    }
+   ],
+   "tags": [
+    "uml",
+    "klassendiagramm",
+    "sichtbarkeit",
+    "static",
+    "kapselung"
+   ]
+  },
+  {
+   "id": "java-objects-008",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (Getter, Setter, Referenz)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class Punkt {\n  private int x, y;\n  public Punkt(int x, int y) { this.x = x; this.y = y; }\n  public int getX() { return x; }\n  public void setX(int x) { this.x = x; }\n  public String info() { return \"(\" + x + \",\" + y + \")\"; }\n}\nclass PunktTest {\n  public static void main(String[] s) {\n    Punkt p = new Punkt(3, 4);\n    System.out.println( p.info() );\n    p.setX( p.getX() + 10 );\n    System.out.println( p.info() );\n    Punkt q = p;\n    q.setX(0);\n    System.out.println( p.info() );\n  }\n}",
+   "expectedOutput": "(3,4)\n(13,4)\n(0,4)",
+   "solution": "class Punkt {\n  private int x, y;\n  public Punkt(int x, int y) { this.x = x; this.y = y; }\n  public int getX() { return x; }\n  public void setX(int x) { this.x = x; }\n  public String info() { return \"(\" + x + \",\" + y + \")\"; }\n}\nclass PunktTest {\n  public static void main(String[] s) {\n    Punkt p = new Punkt(3, 4);\n    System.out.println( p.info() );\n    p.setX( p.getX() + 10 );\n    System.out.println( p.info() );\n    Punkt q = p;\n    q.setX(0);\n    System.out.println( p.info() );\n  }\n}",
+   "explanation": "Drei Schritte, drei Konzepte:\n\n1. `new Punkt(3, 4)` legt das Objekt an und ruft den Konstruktor auf. Dort verdecken die Parameter `x` und `y` die gleichnamigen Attribute - **deshalb** ist `this.` nötig (S. 125). Ausgabe: `(3,4)`.\n2. `p.setX( p.getX() + 10 )`: Zuerst wird das **Argument** ausgewertet - `p.getX()` liefert 3, plus 10 ergibt 13 (S. 133, Schritt 1 des Methodenaufrufs). Dieser Wert wird dem Parameter zugewiesen, `setX` schreibt ihn per `this.x` ins Attribut. Ausgabe: `(13,4)`.\n3. `Punkt q = p;` kopiert **nur die Referenz**, nicht das Objekt (S. 111, S. 118). `q` und `p` zeigen auf dasselbe Objekt, `q.setX(0)` ändert es also auch für `p`. Ausgabe: `(0,4)`.\n\nTypischer Denkfehler bei Schritt 3: Viele erwarten `(13,4)`, weil sie `q` für eine Kopie halten. Eine echte Kopie entsteht nur durch ein zweites `new`.\n\nMerkregel: *`=` bei Objekten kopiert den Zettel mit der Adresse, nicht das Haus.*",
+   "hints": [
+    "Gehen Sie Zeile für Zeile vor und notieren Sie nach jeder Zeile die Werte von `x` und `y`.",
+    "Bei `p.setX(p.getX() + 10)`: Was wird zuerst berechnet - das Argument oder der Methodenrumpf?",
+    "Wie viele Punkt-Objekte werden in `main` insgesamt erzeugt? Zählen Sie die `new`-Operatoren."
+   ],
+   "pitfalls": [
+    "`Punkt q = p;` für eine Kopie des Objekts halten.",
+    "Vergessen, dass `info()` immer den **aktuellen** Zustand liest - der String wird bei jedem Aufruf neu gebaut."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 Die Referenzvariable this"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get- und Set-Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 111,
+     "label": "6.1 Erzeugung von Objekten: Referenzen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 118,
+     "label": "6.1 Lebensdauer von Objekten: nur die Referenz wird kopiert"
+    }
+   ],
+   "tags": [
+    "objekt",
+    "getter",
+    "setter",
+    "referenz",
+    "this",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-009",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 2,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (toString)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?\n\n*Hinweis:* `Kiste` definiert **kein** `toString()`.",
+   "code": "class Ware {\n  private String name;\n  private double preis;\n  public Ware(String name, double preis) { this.name = name; this.preis = preis; }\n  public String toString() { return name + \" kostet \" + preis; }\n}\nclass Kiste {\n  private int inhalt = 5;\n}\nclass WareTest {\n  public static void main(String[] s) {\n    Ware w = new Ware(\"Kaffee\", 4.5);\n    System.out.println( w );\n    System.out.println( \"Preis: \" + w );\n    Kiste k = new Kiste();\n    System.out.println( k.toString().startsWith(\"Kiste@\") );\n  }\n}",
+   "expectedOutput": "Kaffee kostet 4.5\nPreis: Kaffee kostet 4.5\ntrue",
+   "solution": "class Ware {\n  private String name;\n  private double preis;\n  public Ware(String name, double preis) { this.name = name; this.preis = preis; }\n  public String toString() { return name + \" kostet \" + preis; }\n}\nclass Kiste {\n  private int inhalt = 5;\n}\nclass WareTest {\n  public static void main(String[] s) {\n    Ware w = new Ware(\"Kaffee\", 4.5);\n    System.out.println( w );\n    System.out.println( \"Preis: \" + w );\n    Kiste k = new Kiste();\n    System.out.println( k.toString().startsWith(\"Kiste@\") );\n  }\n}",
+   "explanation": "`System.out.println(objekt)` und die String-Verkettung `\"...\" + objekt` machen intern dasselbe: sie rufen `objekt.toString()` auf.\n\nWer `toString()` in seiner Klasse **überschreibt**, bestimmt damit, wie das Objekt gedruckt wird - deshalb erscheint zweimal `Kaffee kostet 4.5`. `4.5` wird als `double` gedruckt, also mit Nachkommastelle.\n\nWer `toString()` **nicht** definiert, erbt die Version aus `Object`. Sie liefert `Klassenname@Hashcode-in-Hex`, also z.B. `Kiste@7a81197d`. Der Hexwert ist bei jedem Programmlauf anders - darum fragt die letzte Zeile nur, ob der String mit `Kiste@` beginnt: das ergibt zuverlässig `true`.\n\nGenau darauf zielt die Klausuraufgabe `Klausur08.java` mit ihrer Warnung: *\"println() druckt nicht automatisch bei einem Objekt von Klasse Zahl den Wert der Variable wert aus\"*. Ohne `toString()` muss man den Wert über einen Getter holen.\n\nMerkregel: *Kein `toString()` = kryptischer Klassenname mit Klammeraffe.*",
+   "hints": [
+    "Was macht `println` mit einem Objekt, das es drucken soll?",
+    "Eine der beiden Klassen definiert `toString()`, die andere nicht. Was erbt die andere von `Object`?",
+    "Achten Sie beim Preis auf den Datentyp: `double` druckt anders als `int`."
+   ],
+   "pitfalls": [
+    "Erwarten, dass `println(objekt)` automatisch die Attribute anzeigt.",
+    "`4.5` als `4` oder `4,5` schreiben - Java druckt `double` immer mit Punkt und mindestens einer Nachkommastelle.",
+    "Den Hashcode für eine feste Zahl halten - er ändert sich von Lauf zu Lauf."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get- und Set-Methoden"
+    },
+    {
+     "file": "11_Ueberblick/Klausur08.java",
+     "page": 1,
+     "label": "Hinweis: println druckt kein Objektattribut"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 122,
+     "label": "6.2 Zugriff auf Attribute und Methoden"
+    }
+   ],
+   "tags": [
+    "tostring",
+    "objekt",
+    "ausgabe",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-010",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (statischer Zaehler im Konstruktor)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class Notenspiegel {\n  private final static short MAX = 9;\n  private static int anzahl = 4;\n  protected double note;\n\n  public Notenspiegel() {\n    switch (anzahl) {\n      case 6:\n        this.note = (++anzahl) / 2;\n        break;\n      default:\n        this.note = (++anzahl) / 2.0;\n        break;\n    }\n  }\n  public double getNote() { return note; }\n\n  public static void main(String[] s) {\n    Notenspiegel[] liste = new Notenspiegel[MAX];\n    for (int k = 6; k < MAX; ++k) {\n      liste[k] = new Notenspiegel();\n      System.out.println( liste[k].getNote() );\n    }\n  }\n}",
+   "expectedOutput": "2.5\n3.0\n3.0",
+   "solution": "class Notenspiegel {\n  private final static short MAX = 9;\n  private static int anzahl = 4;\n  protected double note;\n\n  public Notenspiegel() {\n    switch (anzahl) {\n      case 6:\n        this.note = (++anzahl) / 2;\n        break;\n      default:\n        this.note = (++anzahl) / 2.0;\n        break;\n    }\n  }\n  public double getNote() { return note; }\n\n  public static void main(String[] s) {\n    Notenspiegel[] liste = new Notenspiegel[MAX];\n    for (int k = 6; k < MAX; ++k) {\n      liste[k] = new Notenspiegel();\n      System.out.println( liste[k].getNote() );\n    }\n  }\n}",
+   "explanation": "Diese Aufgabe kombiniert drei Fallen aus dem Repository-Beispiel `Ausgabe17.java` / `Klausur07.java`.\n\n**1. Der Zaehler ist `static`.** `anzahl` gehört der Klasse, nicht dem Objekt (S. 131). Er startet bei 4 und überlebt jeden Konstruktoraufruf.\n\n**2. Die Schleife läuft nur dreimal.** `for (int k = 6; k < 9; ++k)` - das Array hat zwar 9 Plätze, aber nur `liste[6]`, `liste[7]`, `liste[8]` werden befüllt.\n\n**3. `switch` entscheidet über Ganzzahl- oder Gleitkomma-Division.**\n\n| Aufruf | `anzahl` vorher | Zweig | Rechnung | `note` |\n|---|---|---|---|---|\n| k=6 | 4 | default | `(++anzahl)=5`, `5 / 2.0` | 2.5 |\n| k=7 | 5 | default | `(++anzahl)=6`, `6 / 2.0` | 3.0 |\n| k=8 | 6 | **case 6** | `(++anzahl)=7`, `7 / 2` = **3** | 3.0 |\n\nBeim dritten Objekt greift `case 6`, weil `anzahl` **vor** dem Präinkrement geprüft wird. Dort steht `7 / 2` - beide Operanden sind `int`, also **Ganzzahl-Division** mit Ergebnis 3. Erst die Zuweisung an das `double`-Attribut macht daraus `3.0`. Die Nachkommastelle geht unwiederbringlich verloren.\n\nMerkregel: *Der Zieltyp rettet nichts - `int / int` wird abgeschnitten, bevor irgendjemand nach `double` schaut.*",
+   "hints": [
+    "Notieren Sie den Wert von `anzahl` vor und nach jedem Konstruktoraufruf - er gehört der Klasse, nicht dem Objekt.",
+    "Wie oft läuft die Schleife wirklich? Sie beginnt bei 6, nicht bei 0.",
+    "Vergleichen Sie die beiden Zweige genau: einmal steht `/ 2`, einmal `/ 2.0`. Was ändert das?",
+    "`switch (anzahl)` prüft den Wert **vor** dem `++anzahl` im jeweiligen Zweig."
+   ],
+   "pitfalls": [
+    "Neun statt drei Ausgabezeilen erwarten, weil das Array `MAX == 9` Plätze hat.",
+    "`7 / 2` als 3.5 rechnen - der Zieltyp `double` kommt zu spät.",
+    "Bei `(++anzahl)` das Präfix mit dem Postfix verwechseln: `++anzahl` liefert den **schon erhöhten** Wert."
+   ],
+   "sources": [
+    {
+     "file": "06_ObjekteMethoden/Ausgabe17.java",
+     "page": 1,
+     "label": "Was ist die Ausgabe dieses Programms?"
+    },
+    {
+     "file": "11_Ueberblick/Klausur07.java",
+     "page": 1,
+     "label": "static-Zaehler im Konstruktor"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 Klassenattribute und Klassenmethoden: static"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 363,
+     "label": "Überblick: Klausur07"
+    }
+   ],
+   "tags": [
+    "static",
+    "zaehler",
+    "konstruktor",
+    "int-division",
+    "switch",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-011",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (swap mit int und mit Objekt)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class Paar {\n  public int x, y;\n  public Paar(int x, int y) { this.x = x; this.y = y; }\n}\nclass Tausch {\n  static void tausche(int a, int b) { int t = a; a = b; b = t; }\n  static void tausche(Paar p)       { int t = p.x; p.x = p.y; p.y = t; }\n\n  public static void main(String[] s) {\n    int a = 1, b = 2;\n    tausche(a, b);\n    System.out.println( a + \" \" + b );\n    Paar p = new Paar(1, 2);\n    tausche(p);\n    System.out.println( p.x + \" \" + p.y );\n  }\n}",
+   "expectedOutput": "1 2\n2 1",
+   "solution": "class Paar {\n  public int x, y;\n  public Paar(int x, int y) { this.x = x; this.y = y; }\n}\nclass Tausch {\n  static void tausche(int a, int b) { int t = a; a = b; b = t; }\n  static void tausche(Paar p)       { int t = p.x; p.x = p.y; p.y = t; }\n\n  public static void main(String[] s) {\n    int a = 1, b = 2;\n    tausche(a, b);\n    System.out.println( a + \" \" + b );\n    Paar p = new Paar(1, 2);\n    tausche(p);\n    System.out.println( p.x + \" \" + p.y );\n  }\n}",
+   "explanation": "Das ist das Beispielpaar `Example1` / `Example2` aus dem Skript (S. 142-150), hier zusätzlich als **überladene** Methode `tausche` geschrieben - der Compiler wählt anhand der Parametertypen aus (S. 152).\n\n**Erster Aufruf, primitive Typen:** `tausche(a, b)` kopiert die *Werte* 1 und 2 in die lokalen Parameter. Der Aktivierungsrahmen von `tausche` hat seine eigenen Variablen `a`, `b`, `t`; das Vertauschen dort berührt `main` nicht. Nach Rückkehr steht immer noch `1 2`.\n\n**Zweiter Aufruf, Objekt:** `tausche(p)` kopiert ebenfalls nur den Wert von `p` - aber der Wert einer Objektvariablen ist eine **Referenz** (S. 111). Kopie und Original zeigen danach auf dasselbe Paar-Objekt auf dem Heap. `p.x = p.y` schreibt also in genau die Felder, die `main` sieht. Ergebnis `2 1`.\n\nDas Skript formuliert es so: *\"Übergabe der Objektreferenz mittels call by value entspricht der Semantik von call by reference\"* (S. 141).\n\nTypischer Denkfehler: Man hält es für inkonsistent, dass der eine Tausch wirkt und der andere nicht. Konsistent ist beides - in beiden Fällen wird die Variable kopiert; nur ist im zweiten Fall der kopierte Inhalt ein Wegweiser.\n\nMerkregel: *Zuweisung **an** den Parameter wirkt nie nach außen; Zuweisung **durch** den Parameter hindurch wirkt immer.*",
+   "hints": [
+    "Zeichnen Sie für beide Aufrufe den Stapel: einen Kasten für `main`, einen für `tausche`.",
+    "Was steht in der Variablen `p` wirklich drin - das Objekt oder eine Adresse?",
+    "Unterscheiden Sie: In der ersten Methode wird `a = b` geschrieben, in der zweiten `p.x = p.y`. Wo landet die Zuweisung?"
+   ],
+   "pitfalls": [
+    "Erwarten, dass auch `int`-Werte getauscht werden ('die Methode heißt doch tausche').",
+    "Denken, Java kenne call by reference. Es kopiert immer - nur eben manchmal eine Referenz.",
+    "Übersehen, dass hier zwei **überladene** Methoden mit gleichem Namen existieren."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 142,
+     "label": "6.3 Referenzen als Parameter: Example1 swap(int,int)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 147,
+     "label": "6.3 Referenzen als Parameter: Example2 swap(Pair)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 141,
+     "label": "6.3 call by value entspricht bei Objekten call by reference"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 152,
+     "label": "6.3 Überladen von Methoden"
+    }
+   ],
+   "tags": [
+    "call-by-value",
+    "referenz",
+    "swap",
+    "overloading",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-012",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (Konstruktor-Verkettung mit this(...))",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? Achten Sie auf die **Reihenfolge** der Zeilen.",
+   "code": "class Kugel {\n  private double x, y, z, r;\n\n  Kugel() {\n    r = 1;\n    System.out.println(\"A\");\n  }\n  Kugel(double x, double y, double z) {\n    this();\n    this.x = x; this.y = y; this.z = z;\n    System.out.println(\"B\");\n  }\n  Kugel(double x, double y, double z, double r) {\n    this(x, y, z);\n    this.r = r;\n    System.out.println(\"C\" + r);\n  }\n  double getR() { return r; }\n}\nclass KugelTest {\n  public static void main(String[] s) {\n    Kugel k1 = new Kugel(0, 1, 0, 3);\n    System.out.println( k1.getR() );\n    Kugel k2 = new Kugel();\n    System.out.println( k2.getR() );\n  }\n}",
+   "expectedOutput": "A\nB\nC3.0\n3.0\nA\n1.0",
+   "solution": "class Kugel {\n  private double x, y, z, r;\n\n  Kugel() {\n    r = 1;\n    System.out.println(\"A\");\n  }\n  Kugel(double x, double y, double z) {\n    this();\n    this.x = x; this.y = y; this.z = z;\n    System.out.println(\"B\");\n  }\n  Kugel(double x, double y, double z, double r) {\n    this(x, y, z);\n    this.r = r;\n    System.out.println(\"C\" + r);\n  }\n  double getR() { return r; }\n}\nclass KugelTest {\n  public static void main(String[] s) {\n    Kugel k1 = new Kugel(0, 1, 0, 3);\n    System.out.println( k1.getR() );\n    Kugel k2 = new Kugel();\n    System.out.println( k2.getR() );\n  }\n}",
+   "explanation": "`new Kugel(0, 1, 0, 3)` wählt den Vier-Parameter-Konstruktor. Dessen erste Anweisung `this(x, y, z)` springt in den Drei-Parameter-Konstruktor, dessen erste Anweisung `this()` in den parameterlosen. Erst dort beginnt echte Arbeit - und danach werden die Ketten **rückwärts** abgearbeitet (S. 116):\n\n1. `Kugel()`: `r = 1`, druckt `A`\n2. zurück in `Kugel(x,y,z)`: setzt die Koordinaten, druckt `B`\n3. zurück in `Kugel(x,y,z,r)`: **überschreibt** `r` mit 3, druckt `C3.0`\n\nDass `C3.0` und nicht `C3` erscheint, liegt daran, dass der Parameter `r` als `double` deklariert ist - die literale `3` wird beim Aufruf implizit nach `double` erweitert (S. 350), und `\"C\" + r` druckt einen `double`.\n\nDann `k1.getR()` -> `3.0`. Für `k2 = new Kugel()` läuft nur der parameterlose Konstruktor: `A`, dann `getR()` -> `1.0` (auch hier wird `int` 1 beim Zuweisen an ein `double`-Attribut zu `1.0`).\n\nTypischer Denkfehler: Man erwartet die Reihenfolge `C B A`, weil man den Aufruf von außen nach innen liest. `this(...)` ist aber ein **Sprung an den Anfang**; die Ausgaben stehen jeweils **danach**, also entsteht `A B C`.\n\nMerkregel: *`this(...)` legt das Fundament zuerst - der eigene Rumpf ist immer das letzte Stockwerk.*",
+   "hints": [
+    "Zeichnen Sie eine Kette: welcher Konstruktor ruft welchen auf?",
+    "`this(...)` steht ganz am Anfang. Wird die eigene `println`-Zeile also vor oder nach dem verketteten Konstruktor ausgeführt?",
+    "Achten Sie auf die Datentypen: `r` ist `double`. Wie druckt Java einen `double`-Wert?",
+    "Der zweite Teil ist einfacher - dort greift kein `this(...)`."
+   ],
+   "pitfalls": [
+    "Die Reihenfolge umdrehen und `C B A` schreiben.",
+    "`C3` statt `C3.0` notieren - der Parameter ist `double`.",
+    "Bei `k2` vergessen, dass `r = 1` als `double`-Attribut `1.0` ergibt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 114,
+     "label": "6.1 Konstruktoren: this(...) als erste Anweisung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 113,
+     "label": "6.1 Konstruktoren: Klasse Kugel"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 116,
+     "label": "6.1 Ablauf bei der Instanziierung Kugel(0,1,0,3)"
+    },
+    {
+     "file": "06_ObjekteMethoden/Kugel.java",
+     "page": 1,
+     "label": "Kugel mit drei Konstruktoren"
+    }
+   ],
+   "tags": [
+    "konstruktor",
+    "this",
+    "konstruktor-verkettung",
+    "ueberladung",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-013",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (fehlendes this)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? Der Code lässt sich fehlerfrei übersetzen.",
+   "code": "class Konto {\n  private String inhaber;\n  private double stand;\n  private static int anzahl = 0;\n\n  public Konto(String inhaber, double stand) {\n    inhaber = inhaber;\n    this.stand = stand;\n    anzahl++;\n  }\n  public void setStand(double stand) {\n    stand = stand;\n  }\n  public String toString() { return inhaber + \": \" + stand; }\n  public static int getAnzahl() { return anzahl; }\n}\nclass KontoTest {\n  public static void main(String[] s) {\n    Konto k1 = new Konto(\"Meier\", 100.0);\n    Konto k2 = new Konto(\"Schmidt\", 50.5);\n    k1.setStand(999.0);\n    System.out.println( k1 );\n    System.out.println( k2 );\n    System.out.println( Konto.getAnzahl() );\n  }\n}",
+   "expectedOutput": "null: 100.0\nnull: 50.5\n2",
+   "solution": "class Konto {\n  private String inhaber;\n  private double stand;\n  private static int anzahl = 0;\n\n  public Konto(String inhaber, double stand) {\n    inhaber = inhaber;\n    this.stand = stand;\n    anzahl++;\n  }\n  public void setStand(double stand) {\n    stand = stand;\n  }\n  public String toString() { return inhaber + \": \" + stand; }\n  public static int getAnzahl() { return anzahl; }\n}\nclass KontoTest {\n  public static void main(String[] s) {\n    Konto k1 = new Konto(\"Meier\", 100.0);\n    Konto k2 = new Konto(\"Schmidt\", 50.5);\n    k1.setStand(999.0);\n    System.out.println( k1 );\n    System.out.println( k2 );\n    System.out.println( Konto.getAnzahl() );\n  }\n}",
+   "explanation": "Der Kern ist die **Verdeckung** (*shadowing*): Sobald ein Parameter denselben Namen trägt wie ein Attribut, bezeichnet der einfache Name `inhaber` innerhalb der Methode **nur noch den Parameter**. Das Attribut erreicht man dann ausschließlich über `this.inhaber` (S. 125).\n\n- `inhaber = inhaber;` weist den Parameter sich selbst zu. Das Attribut bleibt auf seinem Standardwert `null` - deshalb `null: ...` in beiden Zeilen.\n- `this.stand = stand;` ist dagegen korrekt: 100.0 bzw. 50.5 landen im Objekt.\n- `setStand` hat denselben Fehler; `k1.setStand(999.0)` bleibt daher **wirkungslos**, `k1` behält 100.0.\n- `anzahl` ist `static` und wird in jedem Konstruktoraufruf erhöht: nach zwei Objekten steht dort 2.\n\nBesonders gemein: Das ist **kein Compiler-Fehler**. Der Code läuft, tut aber nichts. Genau dieser Fehler steckt in Aufgabe 1b der Probeklausur (`marke = marke;`).\n\nMerkregel: *Links vom `=` muss `this.` stehen, sobald Parameter und Attribut gleich heißen.*",
+   "hints": [
+    "Vergleichen Sie die beiden Zuweisungen im Konstruktor genau - eine hat ein `this.`, die andere nicht.",
+    "Welcher Standardwert steht in einem noch nicht zugewiesenen `String`-Attribut?",
+    "Prüfen Sie, ob `setStand` überhaupt etwas bewirkt.",
+    "`anzahl` ist `static` - wie oft wird der Konstruktor insgesamt durchlaufen?"
+   ],
+   "pitfalls": [
+    "`Meier: 100.0` erwarten - das Attribut wurde nie beschrieben.",
+    "Glauben, `inhaber = inhaber;` sei ein Compiler-Fehler. Es übersetzt sauber und ist deshalb so gefährlich.",
+    "Erwarten, dass `k1.setStand(999.0)` den Stand ändert."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 Die Referenzvariable this: Unterscheidung Attribut / gleichnamiger Parameter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 112,
+     "label": "6.1 Konstruktoren: Attribute mit Standardwerten (0 bzw. null)"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 1b) Fehlersuche: marke = marke;"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 static"
+    }
+   ],
+   "tags": [
+    "this",
+    "verdeckung",
+    "shadowing",
+    "konstruktor",
+    "static",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-014",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (Methodenüberladung)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? Alle sechs Aufrufe wählen eine der vier `drucke`-Methoden aus.",
+   "code": "class Drucker {\n  static void drucke(int z)    { System.out.println(\"int \" + z); }\n  static void drucke(long l)   { System.out.println(\"long \" + l); }\n  static void drucke(double d) { System.out.println(\"double \" + d); }\n  static void drucke(String t) { System.out.println(\"String \" + t); }\n}\nclass DruckerTest {\n  public static void main(String[] s) {\n    Drucker.drucke(10);\n    Drucker.drucke('a');\n    Drucker.drucke(10L);\n    Drucker.drucke(1.5f);\n    Drucker.drucke(\"10\");\n    Drucker.drucke(3 / 2);\n  }\n}",
+   "expectedOutput": "int 10\nint 97\nlong 10\ndouble 1.5\nString 10\nint 1",
+   "solution": "class Drucker {\n  static void drucke(int z)    { System.out.println(\"int \" + z); }\n  static void drucke(long l)   { System.out.println(\"long \" + l); }\n  static void drucke(double d) { System.out.println(\"double \" + d); }\n  static void drucke(String t) { System.out.println(\"String \" + t); }\n}\nclass DruckerTest {\n  public static void main(String[] s) {\n    Drucker.drucke(10);\n    Drucker.drucke('a');\n    Drucker.drucke(10L);\n    Drucker.drucke(1.5f);\n    Drucker.drucke(\"10\");\n    Drucker.drucke(3 / 2);\n  }\n}",
+   "explanation": "Bei **überladenen** Methoden entscheidet der **Compiler** anhand von Anzahl und Typen der aktuellen Parameter, welche Methode genommen wird (S. 152) - nicht die Laufzeit. Java sucht dabei die Methode, die **ohne Genauigkeitsverlust** und mit der **kleinsten** nötigen Erweiterung passt.\n\n| Aufruf | Typ des Arguments | gewählt | warum |\n|---|---|---|---|\n| `drucke(10)` | `int` | `int` | exakte Übereinstimmung |\n| `drucke('a')` | `char` | `int` | `char` wird nach `int` erweitert; `'a'` hat den Code 97 |\n| `drucke(10L)` | `long` | `long` | exakte Übereinstimmung |\n| `drucke(1.5f)` | `float` | `double` | `float` -> `double` ist die einzige passende Erweiterung |\n| `drucke(\"10\")` | `String` | `String` | exakte Übereinstimmung |\n| `drucke(3 / 2)` | `int` (=1) | `int` | Ganzzahl-Division **vor** dem Aufruf: `3/2 == 1` |\n\nDie zweite Zeile ist die eigentliche Falle: `char` ist in Java ein **Ganzzahltyp**. Es gibt keine `drucke(char)`, also erweitert der Compiler stillschweigend nach `int` - und `System.out.println(\"int \" + 97)` druckt die **Zahl**, nicht den Buchstaben.\n\nAuch die letzte Zeile ist typisch: Zuerst wird der Ausdruck in der Parameterliste ausgewertet (S. 133, Schritt 1), erst danach kommt die Methode dran.\n\nMerkregel: *Überladung wählt der Compiler nach Typ - und `char` fällt zuerst in den `int`-Topf.*",
+   "hints": [
+    "Für welche Argumenttypen gibt es eine **exakt** passende Methode?",
+    "`char` ist in Java ein Ganzzahltyp. Welche der vier Methoden passt am ehesten?",
+    "`1.5f` ist ein `float` - eine `drucke(float)` gibt es nicht. Welche Erweiterung ist möglich?",
+    "`3 / 2` wird ausgerechnet, bevor die Methode aufgerufen wird. Welchen Typ und welchen Wert hat das Ergebnis?"
+   ],
+   "pitfalls": [
+    "`drucke('a')` als `int a` oder `String a` lesen - herauskommt der Zahlencode 97.",
+    "`1.5f` der `long`-Variante zuordnen; Gleitkomma wird nie zu `long` erweitert.",
+    "`3 / 2` als 1.5 rechnen - beide Operanden sind `int`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 152,
+     "label": "6.3 Überladen von Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 133,
+     "label": "6.3 Ablauf eines Methodenaufrufs: Parameter werden zuerst ausgewertet"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3: Typkonversion, implizit"
+    }
+   ],
+   "tags": [
+    "overloading",
+    "ueberladung",
+    "char",
+    "typkonversion",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-015",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (Rekursion)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class Rechner {\n  private int tiefe = 0;\n\n  static long fak(long n) {\n    if (n == 0) return 1L;\n    else        return n * fak(n - 1);\n  }\n  public int summe(int n) {\n    tiefe++;\n    if (n <= 0) return 0;\n    return n + summe(n - 1);\n  }\n  public int getTiefe() { return tiefe; }\n}\nclass RechnerTest {\n  public static void main(String[] s) {\n    System.out.println( Rechner.fak(4) );\n    Rechner r = new Rechner();\n    System.out.println( r.summe(3) );\n    System.out.println( r.getTiefe() );\n  }\n}",
+   "expectedOutput": "24\n6\n4",
+   "solution": "class Rechner {\n  private int tiefe = 0;\n\n  static long fak(long n) {\n    if (n == 0) return 1L;\n    else        return n * fak(n - 1);\n  }\n  public int summe(int n) {\n    tiefe++;\n    if (n <= 0) return 0;\n    return n + summe(n - 1);\n  }\n  public int getTiefe() { return tiefe; }\n}\nclass RechnerTest {\n  public static void main(String[] s) {\n    System.out.println( Rechner.fak(4) );\n    Rechner r = new Rechner();\n    System.out.println( r.summe(3) );\n    System.out.println( r.getTiefe() );\n  }\n}",
+   "explanation": "**Zeile 1:** `fak(4)` ist die Fakultät aus dem Skript (S. 153): `4 * 3 * 2 * 1 * 1 = 24`. `fak` ist `static`, wird deshalb über den Klassennamen `Rechner.fak(4)` aufgerufen - ohne dass ein Objekt existiert.\n\n**Zeile 2:** `summe(3)` = `3 + (2 + (1 + 0)) = 6`. Der Abbruchfall `n <= 0` liefert 0; die Additionen werden erst beim **Zurückkehren** ausgeführt.\n\n**Zeile 3:** Das ist die Pointe. `tiefe` ist ein **Instanzattribut** und gehört zum Objekt `r` - es wird nicht pro Aufruf neu angelegt. `summe` wird viermal betreten (`n = 3, 2, 1, 0`), und **jedes Mal** läuft `tiefe++`, auch im Abbruchfall. Also `4`.\n\nDer entscheidende Unterschied: *\"Jede Aktivierung einer Methode bekommt einen eigenen Aktivierungsrahmen auf dem Stapel, damit hat jede Aktivierung ihre eigenen **lokalen Variablen**\"* (S. 154). Der Parameter `n` ist in jedem Rahmen anders - das Attribut `tiefe` liegt dagegen **einmal** im Objekt auf dem Heap und wird von allen Aktivierungen geteilt.\n\nMerkregel: *Parameter sind pro Aufruf, Attribute pro Objekt, `static`-Variablen pro Klasse.*",
+   "hints": [
+    "Rechnen Sie `fak(4)` von innen nach außen aus - der Abbruchfall liefert `1L`.",
+    "Für `summe(3)`: schreiben Sie die Kette der Aufrufe auf, bis der Abbruchfall erreicht ist.",
+    "Zählen Sie für `tiefe`, wie oft die Methode **betreten** wird - und ob `tiefe++` vor oder nach der Abbruchprüfung steht.",
+    "Ist `tiefe` eine lokale Variable oder ein Attribut? Bekommt jede Rekursionsstufe eine eigene Kopie?"
+   ],
+   "pitfalls": [
+    "`tiefe` mit 3 angeben und den Abbruchaufruf `summe(0)` nicht mitzählen.",
+    "`tiefe` für eine lokale Variable halten, die bei jedem Aufruf neu bei 0 startet.",
+    "`fak(4)` als 4 statt 24 ausrechnen, weil die Multiplikation beim Rücksprung vergessen wird."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 153,
+     "label": "6.3 Rekursion: Fakultät"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 154,
+     "label": "6.3 Rekursion: eigener Aktivierungsrahmen pro Aufruf"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 357,
+     "label": "Überblick 6: Rekursion"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 Klassenmethoden über den Klassennamen aufrufen"
+    }
+   ],
+   "tags": [
+    "rekursion",
+    "static",
+    "instanzattribut",
+    "stack",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-016",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (Seiteneffekte in der Parameterliste)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class MeinIntTest {\n  public static void main(String[] s) {\n    MeinInt i = new MeinInt();\n    do {\n      System.out.println( i.zeige(i.wert < 8, i) );\n    } while (i.wert < 14);\n  }\n}\nclass MeinInt {\n  public int wert;\n  public MeinInt() { wert = 5; }\n  public int add4() { wert = wert + 4; return wert; }\n  public String zeige(boolean b, MeinInt of) {\n    if (!b) return \"N\" + \"-\" + of.add4();\n    else    return \"J\" + \"+\" + of.add4();\n  }\n}",
+   "expectedOutput": "J+9\nN-13\nN-17",
+   "solution": "class MeinIntTest {\n  public static void main(String[] s) {\n    MeinInt i = new MeinInt();\n    do {\n      System.out.println( i.zeige(i.wert < 8, i) );\n    } while (i.wert < 14);\n  }\n}\nclass MeinInt {\n  public int wert;\n  public MeinInt() { wert = 5; }\n  public int add4() { wert = wert + 4; return wert; }\n  public String zeige(boolean b, MeinInt of) {\n    if (!b) return \"N\" + \"-\" + of.add4();\n    else    return \"J\" + \"+\" + of.add4();\n  }\n}",
+   "explanation": "Das ist der Aufbau von `Klausur05.java`. Der Schlüssel steht auf S. 133: *\"1. Die Ausdrücke in der Parameterliste werden ausgewertet\"* - **vor** dem Betreten der Methode. Der `boolean` wird also mit dem **alten** `wert` berechnet, während `add4()` erst **im Rumpf** den Wert erhöht.\n\n| Durchlauf | `wert` vorher | `i.wert < 8` | Zweig | `add4()` -> `wert` | Ausgabe | `wert < 14`? |\n|---|---|---|---|---|---|---|\n| 1 | 5 | `true` | `else` | 9 | `J+9` | ja |\n| 2 | 9 | `false` | `if (!b)` | 13 | `N-13` | ja |\n| 3 | 13 | `false` | `if (!b)` | 17 | `N-17` | nein -> Ende |\n\nDrei Feinheiten:\n- `of` ist **dasselbe** Objekt wie `i` (die Referenz wurde kopiert), `of.add4()` verändert also den Zustand, den auch die Schleifenbedingung liest.\n- `\"J\" + \"+\" + of.add4()` verkettet Strings, deshalb erscheint die **Zahl nach** dem Zeichen und wird nicht addiert.\n- Es ist eine `do while`-Schleife: der Rumpf läuft mindestens einmal, die Bedingung wird erst **danach** geprüft.\n\nMerkregel: *Erst die Argumente ausrechnen, dann hineinspringen - Seiteneffekte im Rumpf kommen für die Argumente zu spät.*",
+   "hints": [
+    "Legen Sie eine Tabelle an: `wert` vor dem Aufruf, Ergebnis der Bedingung, `wert` nach `add4()`.",
+    "Wann wird `i.wert < 8` ausgewertet - vor oder nach `add4()`?",
+    "`of` und `i` zeigen auf dasselbe Objekt. Was heißt das für die Schleifenbedingung?",
+    "Achtung, `if (!b)` - der `else`-Zweig gehört zu `b == true`."
+   ],
+   "pitfalls": [
+    "Die Bedingung mit dem **neuen** Wert auswerten und dadurch die Zweige vertauschen.",
+    "Vergessen, dass `do while` den Rumpf mindestens einmal ausführt und erst danach prüft.",
+    "`\"J\" + \"+\" + 9` als Rechnung statt als String-Verkettung lesen."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur05.java",
+     "page": 1,
+     "label": "Was ist die Ausgabe dieses Programms?"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 133,
+     "label": "6.3 Ablauf eines Methodenaufrufs"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 361,
+     "label": "Überblick: Klausur05"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 141,
+     "label": "6.3 Referenzen als Parameter"
+    }
+   ],
+   "tags": [
+    "seiteneffekt",
+    "parameter-auswertung",
+    "referenz",
+    "do-while",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-017",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Was ist die Ausgabe dieses Programms? (Parameter neu zuweisen)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus?",
+   "code": "class Box {\n  public int wert;\n  public Box(int wert) { this.wert = wert; }\n}\nclass Referenztest {\n  static void aendern(Box b, int[] a) {\n    b.wert = 99;\n    a[0]   = 99;\n    b = new Box(-1);\n    a = new int[] { -1, -1 };\n    b.wert = 7;\n    a[1]   = 7;\n  }\n  public static void main(String[] s) {\n    Box box = new Box(1);\n    int[] arr = { 1, 2 };\n    aendern(box, arr);\n    System.out.println( box.wert );\n    System.out.println( arr[0] + \" \" + arr[1] );\n  }\n}",
+   "expectedOutput": "99\n99 2",
+   "solution": "class Box {\n  public int wert;\n  public Box(int wert) { this.wert = wert; }\n}\nclass Referenztest {\n  static void aendern(Box b, int[] a) {\n    b.wert = 99;\n    a[0]   = 99;\n    b = new Box(-1);\n    a = new int[] { -1, -1 };\n    b.wert = 7;\n    a[1]   = 7;\n  }\n  public static void main(String[] s) {\n    Box box = new Box(1);\n    int[] arr = { 1, 2 };\n    aendern(box, arr);\n    System.out.println( box.wert );\n    System.out.println( arr[0] + \" \" + arr[1] );\n  }\n}",
+   "explanation": "Die Methode hat zwei Phasen, und nur die erste ist von außen sichtbar.\n\n**Phase 1 (wirkt):** `b.wert = 99` und `a[0] = 99` greifen **durch** die kopierten Referenzen hindurch auf die Objekte auf dem Heap zu - genau die, die auch `main` sieht (S. 141, S. 148).\n\n**Phase 2 (wirkt nicht):** `b = new Box(-1);` und `a = new int[]{-1,-1};` überschreiben **nur die lokalen Parametervariablen**. Ab hier zeigen `b` und `a` auf frisch erzeugte Objekte, die außerhalb der Methode niemand kennt. Alles danach (`b.wert = 7`, `a[1] = 7`) landet in diesen Wegwerf-Objekten und ist nach Rückkehr Müll für den Garbage Collector (S. 119/121).\n\nErgebnis: `box.wert == 99`, `arr` ist `{99, 2}` - die 2 wurde nie angefasst.\n\nTypischer Denkfehler: Man liest `b = new Box(-1)` als \"das Objekt des Aufrufers wird ersetzt\". Java kennt aber keinen Weg, dem Aufrufer eine **andere** Referenz unterzuschieben; dafür bräuchte man einen Rückgabewert (S. 141: *\"analog können Objekt-Referenzen auch als Ergebnis einer Methode auftreten\"*).\n\nMerkregel: *Am Parameter selbst schrauben = wirkungslos. Durch den Parameter hindurch schrauben = wirksam.*",
+   "hints": [
+    "Teilen Sie die Methode gedanklich in 'vor dem `new`' und 'nach dem `new`'.",
+    "Auf welche Objekte zeigen `b` und `a` nach den beiden `new`-Zuweisungen?",
+    "Welche der vier Zuweisungen erreicht ein Objekt, das `main` kennt?",
+    "Prüfen Sie `arr[1]` gesondert - wurde dieser Platz jemals im **ursprünglichen** Array beschrieben?"
+   ],
+   "pitfalls": [
+    "`-1` oder `7` in der Ausgabe erwarten - diese Werte landen in Objekten, die niemand mehr sieht.",
+    "Annehmen, ein `new` innerhalb der Methode wirke auf den Aufrufer zurück.",
+    "`arr[1]` mit 7 statt 2 angeben."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 141,
+     "label": "6.3 Referenzen als Parameter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 148,
+     "label": "6.3 Stapel und Heap beim Objektparameter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 119,
+     "label": "6.1 Freigabe von Speicherbereichen / Garbage Collection"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 157,
+     "label": "6.4 Arrays von Objekten: Arrays speichern Referenzen"
+    }
+   ],
+   "tags": [
+    "call-by-value",
+    "referenz",
+    "array",
+    "parameter",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-018",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "predict-output",
+   "difficulty": 5,
+   "points": 4,
+   "examStyle": false,
+   "title": "Was ist die Ausgabe dieses Programms? (Initialisierungsreihenfolge)",
+   "prompt": "Was gibt der folgende Code auf der Konsole aus? Achten Sie genau auf die **Reihenfolge** aller Zeilen.",
+   "code": "class Init {\n  static int anzahl;\n  static { anzahl = 100; System.out.println(\"statischer Block\"); }\n\n  private int a = druck(\"Feldinitialisierung\", 1);\n  { druck(\"Instanzblock\", 2); }\n  private int b;\n\n  public Init() {\n    druck(\"Konstruktor\", 3);\n    b = 4;\n  }\n  private static int druck(String t, int w) {\n    System.out.println(t + \" \" + w);\n    return w;\n  }\n}\nclass InitTest {\n  public static void main(String[] s) {\n    System.out.println(\"main startet\");\n    new Init();\n    System.out.println(\"---\");\n    new Init();\n    System.out.println( Init.anzahl );\n  }\n}",
+   "expectedOutput": "main startet\nstatischer Block\nFeldinitialisierung 1\nInstanzblock 2\nKonstruktor 3\n---\nFeldinitialisierung 1\nInstanzblock 2\nKonstruktor 3\n100",
+   "solution": "class Init {\n  static int anzahl;\n  static { anzahl = 100; System.out.println(\"statischer Block\"); }\n\n  private int a = druck(\"Feldinitialisierung\", 1);\n  { druck(\"Instanzblock\", 2); }\n  private int b;\n\n  public Init() {\n    druck(\"Konstruktor\", 3);\n    b = 4;\n  }\n  private static int druck(String t, int w) {\n    System.out.println(t + \" \" + w);\n    return w;\n  }\n}\nclass InitTest {\n  public static void main(String[] s) {\n    System.out.println(\"main startet\");\n    new Init();\n    System.out.println(\"---\");\n    new Init();\n    System.out.println( Init.anzahl );\n  }\n}",
+   "explanation": "Zwei getrennte Zeitachsen muss man auseinanderhalten.\n\n**Pro Klasse - genau einmal:** Der `static`-Block läuft, *\"wenn die Klasse geladen wird\"* (S. 117). Das passiert **nicht** beim Programmstart, sondern beim **ersten** Zugriff auf die Klasse. Gestartet wird `InitTest`, also erscheint `main startet` **zuerst**; erst das erste `new Init()` löst das Laden von `Init` und damit `statischer Block` aus. Beim zweiten `new Init()` passiert das nicht noch einmal.\n\n**Pro Objekt - bei jedem `new`:** Das Skript nennt die Reihenfolge auf S. 115/117:\n1. Objekt anlegen, alle Attribute mit Standardwerten (`0`, `null`, `false`) belegen,\n2. Feldinitialisierer und Instanz-Initialisierungsblock **in Quelltextreihenfolge** - der Block *\"wird für jedes erzeugte Objekt ausgeführt (vor dem Konstruktor)\"*,\n3. Rumpf des Konstruktors.\n\nDaher dreimal die gleiche Gruppe `Feldinitialisierung 1 / Instanzblock 2 / Konstruktor 3` pro Objekt.\n\nZum Schluss `Init.anzahl` -> `100`, weil der statische Block längst gelaufen ist.\n\nMerkregel: *Klasse laden -> `static`-Block; Objekt bauen -> Felder, dann Instanzblock, dann Konstruktor. Der Konstruktor ist immer der Letzte.*",
+   "hints": [
+    "Welche Klasse wird gestartet - und wann wird die andere Klasse überhaupt zum ersten Mal gebraucht?",
+    "Wie oft läuft ein `static`-Block? Und wie oft ein Instanz-Initialisierungsblock?",
+    "S. 117 nennt die Reihenfolge: Feldinitialisierer / Instanzblock / Konstruktor. Welcher kommt zuletzt?",
+    "Vergleichen Sie die Ausgabegruppe des ersten und des zweiten `new` - was fehlt beim zweiten Mal?"
+   ],
+   "pitfalls": [
+    "`statischer Block` vor `main startet` erwarten - die Klasse `Init` wird erst beim ersten `new` geladen.",
+    "Den `static`-Block bei jedem `new` erneut ausführen.",
+    "Denken, der Konstruktor laufe vor den Feldinitialisierern."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 117,
+     "label": "6.1 Weitere Möglichkeiten zur Initialisierung von Attributen (static-Block, Instanzblock)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 115,
+     "label": "6.1 Ablauf bei der Instanziierung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 112,
+     "label": "6.1 Attribute werden mit Standardwerten initialisiert"
+    }
+   ],
+   "tags": [
+    "initialisierung",
+    "static-block",
+    "instanzblock",
+    "konstruktor",
+    "predict-output"
+   ]
+  },
+  {
+   "id": "java-objects-019",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "fill-gaps",
+   "difficulty": 2,
+   "points": 12,
+   "examStyle": true,
+   "title": "Code-Lücken: Klasse Artikel mit Objektzähler",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____`, sodass eine lauffähige Klasse entsteht (je 2 P.).\n\nDas Programm soll ausgeben:\n\n```\nWert:   16.5\nAnzahl: 2\n```",
+   "code": "class Artikel {\n  private String bezeichnung;\n  private int menge;\n  private double einzelpreis;\n  private static int anzahl = 0;      // zählt erzeugte Artikel\n\n  public Artikel(String bezeichnung, int menge, double einzelpreis) {\n    ____(1)____.bezeichnung = bezeichnung;\n    this.menge = ____(2)____;\n    this.einzelpreis = einzelpreis;\n    anzahl____(3)____;\n  }\n  public double gesamtwert() {\n    return ____(4)____ * einzelpreis;\n  }\n  public ____(5)____ int getAnzahl() {   // Klassenmethode\n    return anzahl;\n  }\n}\nclass ArtikelTest {\n  public static void main(String[] s) {\n    Artikel a = ____(6)____ Artikel(\"Kaffee\", 3, 5.5);\n    Artikel b = new Artikel(\"Tee\", 2, 4.0);\n    System.out.println(\"Wert:   \" + a.gesamtwert());\n    System.out.println(\"Anzahl: \" + Artikel.getAnzahl());\n  }\n}",
+   "expectedOutput": "Wert:   16.5\nAnzahl: 2",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "this"
+     ],
+     "explanation": "Der Parameter `bezeichnung` **verdeckt** das gleichnamige Attribut. Nur `this.bezeichnung` erreicht das Attribut (S. 125). Ohne `this.` würde der Parameter sich selbst zugewiesen und das Attribut bliebe `null`."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "menge"
+     ],
+     "explanation": "Rechts vom `=` steht der **Parameter** - also der einfache Name `menge`. `this.menge = this.menge;` wäre sinnlos."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "++",
+      "+= 1",
+      "+=1"
+     ],
+     "explanation": "`anzahl++` erhöht das Klassenattribut bei jedem Konstruktoraufruf - das Standardmuster 'Objekte zählen' aus dem Skript (`Kugel`, S. 113). Da der Wert des Ausdrucks nicht verwendet wird, wären `++anzahl` und `anzahl++` gleichwertig."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "menge",
+      "this.menge"
+     ],
+     "explanation": "In einer Objektmethode spricht man Attribute über ihren einfachen Namen an (S. 124). `menge * einzelpreis` ergibt `3 * 5.5`; das `int` wird dabei implizit nach `double` erweitert - Ergebnis 16.5."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "static"
+     ],
+     "explanation": "`getAnzahl()` liefert ein **Klassenattribut** und soll ohne Objekt aufrufbar sein (`Artikel.getAnzahl()`), also `static` (S. 131). Ohne `static` würde `Artikel.getAnzahl()` einen Compiler-Fehler auslösen."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "new"
+     ],
+     "explanation": "Objekte entstehen ausschließlich mit dem Operator `new` (S. 115): `new Artikel(...)` legt den Speicher an, ruft den passenden Konstruktor auf und liefert die Referenz."
+    }
+   ],
+   "solution": "class Artikel {\n  private String bezeichnung;\n  private int menge;\n  private double einzelpreis;\n  private static int anzahl = 0;      // zählt erzeugte Artikel\n\n  public Artikel(String bezeichnung, int menge, double einzelpreis) {\n    this.bezeichnung = bezeichnung;\n    this.menge = menge;\n    this.einzelpreis = einzelpreis;\n    anzahl++;\n  }\n  public double gesamtwert() {\n    return menge * einzelpreis;\n  }\n  public static int getAnzahl() {\n    return anzahl;\n  }\n}\nclass ArtikelTest {\n  public static void main(String[] s) {\n    Artikel a = new Artikel(\"Kaffee\", 3, 5.5);\n    Artikel b = new Artikel(\"Tee\", 2, 4.0);\n    System.out.println(\"Wert:   \" + a.gesamtwert());\n    System.out.println(\"Anzahl: \" + Artikel.getAnzahl());\n  }\n}",
+   "explanation": "Die Aufgabe ist genau im Zuschnitt von Aufgabe 3 der Probeklausur (dort die Klasse `Rechteck`) und deckt die fünf Bausteine ab, die man dort braucht:\n\n1. **`this.`** zur Unterscheidung von Attribut und gleichnamigem Parameter (S. 125),\n2. **einfacher Name** für den Parameter auf der rechten Seite,\n3. **`static`-Zaehler** im Konstruktor hochzählen (S. 113),\n4. **Instanzmethode**, die Attribute über einfache Namen liest (S. 124),\n5. **Klassenmethode** `static`, die das Klassenattribut liefert (S. 131),\n6. **`new`** als einziger Weg, ein Objekt zu erzeugen (S. 115).\n\nZwei Details, die Punkte kosten: `anzahl` darf **nicht** im Konstruktor deklariert werden (sonst wäre es lokal und der Zaehler startete jedes Mal bei 0), und `getAnzahl()` muss `static` sein, weil es über den Klassennamen aufgerufen wird.\n\nMerkregel: *Was pro Objekt anders ist -> Attribut. Was für alle gleich ist -> `static`. Wer den Namen doppelt vergibt -> `this.`*",
+   "hints": [
+    "Lücke 1 und 2 gehören zusammen: links vom `=` das Attribut, rechts der Parameter.",
+    "Lücke 3: Der Zaehler soll bei jeder Objekterzeugung um genau 1 wachsen.",
+    "Lücke 5: `getAnzahl()` wird als `Artikel.getAnzahl()` aufgerufen - ohne Objekt. Welches Schlüsselwort braucht so eine Methode?",
+    "Lücke 6: Wie entsteht in Java überhaupt ein Objekt?"
+   ],
+   "pitfalls": [
+    "In Lücke 2 `this.menge` schreiben - das würde das (noch leere) Attribut sich selbst zuweisen.",
+    "`getAnzahl()` ohne `static` lassen und dann `Artikel.getAnzahl()` aufrufen.",
+    "In Lücke 3 `anzahl = anzahl++` schreiben: dieser Ausdruck erhöht den Wert **nicht**."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 3 - Code-Lücken ausfüllen (Klasse Rechteck)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 113,
+     "label": "6.1 Konstruktoren: Kugel mit static-Zaehler"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 Die Referenzvariable this"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 Klassenattribute und Klassenmethoden"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "konstruktor",
+    "this",
+    "static",
+    "new",
+    "kapselung"
+   ]
+  },
+  {
+   "id": "java-objects-020",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Code-Lücken: drei Konstruktoren mit this(...)",
+   "prompt": "Die Klasse `Rechteck` besitzt **drei** Konstruktoren, die sich gegenseitig aufrufen. Ergänzen Sie die 6 Lücken `____(n)____` (je 2 P.).\n\nDas Programm soll ausgeben:\n\n```\nR1.0x1.0 4.0\nR3.0x3.0 12.0\nR2.0x5.0 14.0\n```",
+   "code": "class Rechteck {\n  private double laenge, breite;\n  private String name;\n\n  public Rechteck() {\n    ____(1)____(1.0, 1.0);          // ruft Rechteck(double,double) auf\n  }\n  public Rechteck(double seite) {   // Quadrat\n    this(seite, ____(2)____);\n  }\n  public Rechteck(double laenge, double breite) {\n    this.laenge = laenge;\n    ____(3)____.breite = breite;\n    this.name = \"R\" + laenge + \"x\" + breite;\n  }\n  public double umfang() {\n    return ____(4)____ * (laenge + breite);\n  }\n  public String getName() {\n    return ____(5)____;\n  }\n}\nclass RechteckTest {\n  public static void main(String[] s) {\n    Rechteck a = new Rechteck();\n    Rechteck b = new Rechteck(3.0);\n    Rechteck c = ____(6)____ Rechteck(2.0, 5.0);\n    System.out.println( a.getName() + \" \" + a.umfang() );\n    System.out.println( b.getName() + \" \" + b.umfang() );\n    System.out.println( c.getName() + \" \" + c.umfang() );\n  }\n}",
+   "expectedOutput": "R1.0x1.0 4.0\nR3.0x3.0 12.0\nR2.0x5.0 14.0",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "this"
+     ],
+     "explanation": "`this(1.0, 1.0)` ruft einen **anderen Konstruktor derselben Klasse** auf und muss die allererste Anweisung sein (S. 114). `new Rechteck(1.0, 1.0)` wäre falsch: das würde ein zusätzliches, weggeworfenes Objekt erzeugen."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "seite"
+     ],
+     "explanation": "Ein Quadrat hat gleiche Länge und Breite, also wird derselbe Parameter zweimal weitergereicht: `this(seite, seite)`."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "this"
+     ],
+     "explanation": "Auch hier verdeckt der Parameter `breite` das Attribut; nur `this.breite` schreibt ins Objekt (S. 125)."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "2",
+      "2.0"
+     ],
+     "explanation": "Umfang eines Rechtecks: `2 * (laenge + breite)`. Der `int`-Wert 2 wird implizit nach `double` erweitert; `2.0` ginge genauso."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "name",
+      "this.name"
+     ],
+     "explanation": "Die Get-Methode liefert das Attribut zurück. Innerhalb einer Objektmethode genügt der einfache Name (S. 124)."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "new"
+     ],
+     "explanation": "In `main` - außerhalb eines Konstruktors - erzeugt man ein Objekt mit `new`. `this(...)` wäre hier ein Compiler-Fehler, denn `main` ist eine Klassenmethode ohne eigenes Objekt."
+    }
+   ],
+   "solution": "class Rechteck {\n  private double laenge, breite;\n  private String name;\n\n  public Rechteck() {\n    this(1.0, 1.0);\n  }\n  public Rechteck(double seite) {\n    this(seite, seite);\n  }\n  public Rechteck(double laenge, double breite) {\n    this.laenge = laenge;\n    this.breite = breite;\n    this.name = \"R\" + laenge + \"x\" + breite;\n  }\n  public double umfang() {\n    return 2 * (laenge + breite);\n  }\n  public String getName() {\n    return name;\n  }\n}\nclass RechteckTest {\n  public static void main(String[] s) {\n    Rechteck a = new Rechteck();\n    Rechteck b = new Rechteck(3.0);\n    Rechteck c = new Rechteck(2.0, 5.0);\n    System.out.println( a.getName() + \" \" + a.umfang() );\n    System.out.println( b.getName() + \" \" + b.umfang() );\n    System.out.println( c.getName() + \" \" + c.umfang() );\n  }\n}",
+   "explanation": "Die Klasse zeigt das Muster aus dem Skript-Beispiel `Kugel` (S. 113/114): **ein** Konstruktor macht die Arbeit, alle anderen reichen Standardwerte an ihn weiter.\n\nDrei Regeln müssen sitzen:\n1. Konstruktoren dürfen überladen werden - unterschieden werden sie an **Anzahl und Typen** der Parameter (S. 112).\n2. `this(...)` muss die **allererste** Anweisung sein; sonst meldet javac *call to this must be first statement in constructor*.\n3. `this(...)` erzeugt **kein** neues Objekt, es arbeitet am gerade entstehenden weiter. Nur `new` erzeugt Objekte.\n\nZur Ausgabe: `\"R\" + laenge + \"x\" + breite` verkettet `double`-Werte, deshalb `R1.0x1.0` und nicht `R1x1`. Und weil `getName()` erst nach dem Durchlaufen der Kette aufgerufen wird, steht dort immer der Name, den der Drei-Parameter... genauer: der Zwei-Parameter-Konstruktor gesetzt hat.\n\nMerkregel: *Konstruktoren stapeln sich wie Matrjoschkas - der innerste macht die Arbeit.*",
+   "hints": [
+    "Lücke 1: Wie ruft ein Konstruktor einen anderen Konstruktor **derselben** Klasse auf?",
+    "Lücke 2: Ein Quadrat ist ein Rechteck mit zwei gleichen Seiten.",
+    "Lücke 6 sieht ähnlich aus wie Lücke 1 - aber hier stehen wir in `main`, nicht in einem Konstruktor.",
+    "Für Lücke 4: Vergleichen Sie die erwartete Ausgabe `4.0` mit `laenge + breite == 2.0`."
+   ],
+   "pitfalls": [
+    "In Lücke 1 `new Rechteck(1.0, 1.0)` schreiben - das erzeugt ein zweites Objekt, das sofort verloren geht; das eigentliche Objekt bliebe uninitialisiert.",
+    "`this(...)` nicht als erste Anweisung platzieren.",
+    "Erwarten, dass `R1x1` gedruckt wird - die Attribute sind `double`."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 114,
+     "label": "6.1 Konstruktoren: this(...) ruft anderen Konstruktor derselben Klasse"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 113,
+     "label": "6.1 Konstruktoren: Kugel"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 112,
+     "label": "6.1 Konstruktoren können überladen werden"
+    },
+    {
+     "file": "06_ObjekteMethoden/Kugel.java",
+     "page": 1,
+     "label": "drei verkettete Konstruktoren"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "konstruktor",
+    "ueberladung",
+    "this",
+    "new"
+   ]
+  },
+  {
+   "id": "java-objects-021",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Code-Lücken: Kapselung mit prüfender Set-Methode",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____` (je 2 P.), sodass die Klasse `Student` ihre Attribute korrekt kapselt.\n\nDas Programm soll ausgeben:\n\n```\nungueltig: 6.0\n5.0\nHugo (1234567): 1.3\n```",
+   "code": "class Student {\n  private String name;\n  private long matrNr;\n  ____(1)____ double note;             // nur innerhalb dieser Klasse sichtbar\n\n  public Student(String name, long matrNr) {\n    this.name = name;\n    this.matrNr = ____(2)____;\n    this.note = 5.0;\n  }\n  public double getNote() {\n    return ____(3)____;\n  }\n  public void ____(4)____(double note) {   // Set-Methode für die Note\n    if (note >= 1.0 && note <= 5.0)\n      this.note = note;\n    else\n      System.out.println(\"ungueltig: \" + note);\n  }\n  public String toString() {\n    return name + \" (\" + matrNr + \"): \" + note;\n  }\n}\nclass StudentTest {\n  public static void main(String[] s) {\n    Student st = new Student(\"Hugo\", 1234567);\n    st.setNote(6.0);\n    System.out.println( st.____(5)____() );\n    st.setNote(1.3);\n    System.out.println( ____(6)____ );       // nutzt toString()\n  }\n}",
+   "expectedOutput": "ungueltig: 6.0\n5.0\nHugo (1234567): 1.3",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "private"
+     ],
+     "explanation": "*\"private (privat): sichtbar nur innerhalb der Klasse\"* (S. 126). Nur so ist der Zugriff von außen auf die Set-Methode gezwungen und die Prüfung nicht umgehbar."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "matrNr"
+     ],
+     "explanation": "Rechts steht der **Parameter** (einfacher Name), links das Attribut (`this.matrNr`). Ohne `this.` links würde nur der Parameter sich selbst zugewiesen."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "note",
+      "this.note"
+     ],
+     "explanation": "Die Get-Methode liefert den Attributwert. In einer Objektmethode reicht der einfache Name (S. 124); hier gibt es keinen gleichnamigen Parameter, der etwas verdecken könnte."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "setNote"
+     ],
+     "explanation": "Die Konvention lautet `setXxx` für Set-Methoden (S. 127): `private String name;` -> `public void setName(String aName);`. Der Name muss zum Aufruf `st.setNote(6.0)` in `main` passen."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "getNote"
+     ],
+     "explanation": "Gelesen wird über die Get-Methode. `st.note` wäre ein Compiler-Fehler, weil `note` `private` ist."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "st",
+      "st.toString()"
+     ],
+     "explanation": "`System.out.println(st)` ruft automatisch `st.toString()` auf. Beides ist zulässig und liefert dieselbe Zeile."
+    }
+   ],
+   "solution": "class Student {\n  private String name;\n  private long matrNr;\n  private double note;\n\n  public Student(String name, long matrNr) {\n    this.name = name;\n    this.matrNr = matrNr;\n    this.note = 5.0;\n  }\n  public double getNote() {\n    return note;\n  }\n  public void setNote(double note) {\n    if (note >= 1.0 && note <= 5.0)\n      this.note = note;\n    else\n      System.out.println(\"ungueltig: \" + note);\n  }\n  public String toString() {\n    return name + \" (\" + matrNr + \"): \" + note;\n  }\n}\nclass StudentTest {\n  public static void main(String[] s) {\n    Student st = new Student(\"Hugo\", 1234567);\n    st.setNote(6.0);\n    System.out.println( st.getNote() );\n    st.setNote(1.3);\n    System.out.println( st );\n  }\n}",
+   "explanation": "Die Aufgabe zeigt, **warum** Kapselung mehr ist als Bürokratie. Weil `note` `private` ist, gibt es genau **eine** Stelle, an der der Wert verändert werden kann - und dort steht die Prüfung. Der Aufruf `st.setNote(6.0)` wird abgewiesen, das Objekt behält seinen konsistenten Zustand 5.0.\n\nDas Skript formuliert den Nutzen auf S. 127: *\"Get- und Set-Methoden können Prüfungen vornehmen\"* und *\"feste Schnittstelle nach außen, unabhängig von konkreter Speicherung bzw. Darstellung der Daten\"*.\n\nZwei Details, an denen in der Klausur Punkte verloren gehen:\n- In `setNote` heißt der Parameter genauso wie das Attribut. Ohne `this.` (Zeile `this.note = note;`) wäre die Methode wirkungslos - das ist derselbe Fehler wie `marke = marke;` in Aufgabe 1b der Probeklausur.\n- `System.out.println(st)` funktioniert nur sinnvoll, weil `toString()` überschrieben wurde; sonst käme `Student@1b6d3586` heraus.\n\nMerkregel: *`private` + Setter mit `if` = das Objekt passt selbst auf sich auf.*",
+   "hints": [
+    "Lücke 1: Welches Schlüsselwort erzwingt, dass niemand von außen direkt an das Attribut kommt?",
+    "Lücke 4 und 5: Schauen Sie in `main` nach, wie die Methoden dort aufgerufen werden.",
+    "Lücke 6: Was übergibt man `println`, damit `toString()` benutzt wird?",
+    "Überlegen Sie für die erste Ausgabezeile: Was passiert bei `setNote(6.0)`?"
+   ],
+   "pitfalls": [
+    "In Lücke 5/6 direkt auf `st.note` zugreifen wollen - das ist wegen `private` ein Compiler-Fehler.",
+    "In `setNote` das `this.` vergessen; dann bleibt die Note immer 5.0.",
+    "Erwarten, dass `setNote(6.0)` die Note auf 6.0 setzt - die Prüfung verhindert das."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 126,
+     "label": "6.2 Sichtbarkeit: public / private / protected"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get- und Set-Methoden, Prüfungen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 this zur Unterscheidung von Attribut und Parameter"
+    },
+    {
+     "file": "06_ObjekteMethoden/StudentApp.java",
+     "page": 1,
+     "label": "Student mit privaten Attributen und Set/Get für die Note"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "kapselung",
+    "private",
+    "getter",
+    "setter",
+    "tostring"
+   ]
+  },
+  {
+   "id": "java-objects-022",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Code-Lücken: Objekt als Rückgabewert (Zahl.summe)",
+   "prompt": "Die Methode `summe` soll die Summe **als neues Objekt der Klasse `Zahl`** zurückgeben. Ergänzen Sie die 6 Lücken `____(n)____` (je 2 P.).\n\nDas Programm soll ausgeben:\n\n```\n6.75\n9.25\n```",
+   "code": "class Zahl {\n  private double wert = 0.0;\n\n  public Zahl(double wert) {\n    ____(1)____.wert = wert;\n  }\n  // Summe aus dieser Zahl und der übergebenen Zahl, als NEUES Zahl-Objekt:\n  public ____(2)____ summe(Zahl andereZahl) {\n    return new Zahl( this.wert + ____(3)____.getWert() );\n  }\n  public double getWert() {\n    return ____(4)____;\n  }\n}\nclass ZahlTest {\n  public static void main(String[] s) {\n    Zahl z1 = new Zahl(2.5), z2 = ____(5)____ Zahl(4.25);\n    System.out.println( z1.summe(z2).____(6)____ );\n    System.out.println( z1.summe(z2).summe(z1).getWert() );\n  }\n}",
+   "expectedOutput": "6.75\n9.25",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "this"
+     ],
+     "explanation": "Der Parameter `wert` verdeckt das Attribut `wert`; nur `this.wert` schreibt ins Objekt (S. 125)."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "Zahl"
+     ],
+     "explanation": "Der Rückgabetyp ist die Klasse selbst: die Methode liefert eine **Referenz auf ein Zahl-Objekt** (S. 141: *\"analog können Objekt-Referenzen auch als Ergebnis einer Methode auftreten\"*). Mit `double` als Rückgabetyp wäre die Aufgabenstellung verfehlt und die Verkettung in der letzten Zeile unmöglich."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "andereZahl"
+     ],
+     "explanation": "Der Parameter heißt `andereZahl`. Da man sich in derselben Klasse befindet, wäre auch `andereZahl.wert` erlaubt - `private` gilt pro **Klasse**, nicht pro Objekt."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "wert",
+      "this.wert"
+     ],
+     "explanation": "Die Get-Methode liefert das Attribut zurück; hier verdeckt kein Parameter etwas, der einfache Name genügt."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "new"
+     ],
+     "explanation": "`Zahl z1 = new Zahl(2.5), z2 = new Zahl(4.25);` - beide Variablen werden in einer Deklaration angelegt, jede braucht ihr eigenes `new`."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "getWert()",
+      "getWert ()"
+     ],
+     "explanation": "`z1.summe(z2)` liefert ein **Objekt**; `println` würde davon ohne `toString()` nur `Zahl@1b6d3586` drucken. Erst `.getWert()` holt die Zahl heraus. Genau davor warnt die Aufgabenstellung in `Klausur08.java`."
+    }
+   ],
+   "solution": "class Zahl {\n  private double wert = 0.0;\n\n  public Zahl(double wert) {\n    this.wert = wert;\n  }\n  public Zahl summe(Zahl andereZahl) {\n    return new Zahl( this.wert + andereZahl.getWert() );\n  }\n  public double getWert() {\n    return wert;\n  }\n}\nclass ZahlTest {\n  public static void main(String[] s) {\n    Zahl z1 = new Zahl(2.5), z2 = new Zahl(4.25);\n    System.out.println( z1.summe(z2).getWert() );\n    System.out.println( z1.summe(z2).summe(z1).getWert() );\n  }\n}",
+   "explanation": "Das ist `Klausur08.java` - eine der zehn offiziellen Übungsaufgaben des Dozenten. Sie prüft drei Dinge auf einmal:\n\n1. **Konstruktor mit `this.`**: Parameter und Attribut heißen gleich (S. 125).\n2. **Objekt als Rückgabewert**: Der Rückgabetyp ist die Klasse selbst. Die Methode baut mit `new Zahl(...)` ein **drittes** Objekt; `z1` und `z2` bleiben unverändert. Das ist genau die Bauweise, mit der später z.B. `String.substring` oder `BigDecimal.add` arbeiten.\n3. **Verkettung**: Weil `summe` wieder eine `Zahl` liefert, darf man `z1.summe(z2).summe(z1)` schreiben - `2.5 + 4.25 + 2.5 = 9.25`.\n\nDer häufigste Fehler ist, `summe` mit Rückgabetyp `double` zu schreiben. Dann übersetzt zwar die erste Zeile, aber die Verkettung bricht zusammen (*double cannot be dereferenced*) - und die Aufgabenstellung ist verfehlt.\n\nZweithäufigster Fehler: `System.out.println(z1.summe(z2))` ohne `getWert()`. Dann erscheint der Standard-`toString()` aus `Object`.\n\nMerkregel: *Steht als Rückgabetyp eine Klasse da, muss im `return` ein `new` (oder eine vorhandene Referenz) stehen.*",
+   "hints": [
+    "Lücke 2: Was steht in der Aufgabenbeschreibung - was genau soll `summe` zurückgeben?",
+    "Lücke 3: Wie heißt der Parameter der Methode?",
+    "Lücke 6: `z1.summe(z2)` ist ein Objekt. Was druckt `println` bei einem Objekt ohne eigenes `toString()`?",
+    "Prüfen Sie mit der letzten Zeile: `z1.summe(z2).summe(z1)` - das geht nur, wenn `summe` selbst wieder ein Objekt liefert."
+   ],
+   "pitfalls": [
+    "`double` als Rückgabetyp von `summe` wählen - dann ist die Verkettung unmöglich.",
+    "In `summe` das Attribut `this.wert` verändern statt ein neues Objekt zu bauen; dann wäre `z1` nach dem Aufruf kaputt.",
+    "`getWert()` in Lücke 6 vergessen und ein Objekt drucken."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur08.java",
+     "page": 1,
+     "label": "Zahl summe(Zahl andereZahl) - Objekt als Rückgabewert"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 141,
+     "label": "6.3 Objekt-Referenzen als Ergebnis einer Methode"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 Die Referenzvariable this"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get-Methoden"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "objekt-rueckgabe",
+    "konstruktor",
+    "this",
+    "getter",
+    "klausur08"
+   ]
+  },
+  {
+   "id": "java-objects-023",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "Code-Lücken: Klassenkonstante und Klassenmethode",
+   "prompt": "Ergänzen Sie die 6 Lücken `____(n)____` (je 2 P.). `MAX_WERT` soll eine **öffentliche, unveränderliche Konstante der Klasse** sein, `gesamtMessungen` ein von **allen** Sensoren geteilter Zaehler.\n\nDas Programm soll ausgeben:\n\n```\n42.5\n100.0\n2\n100.0\n```",
+   "code": "class Sensor {\n  public ____(1)____ double MAX_WERT = 100.0;   // Konstante der Klasse\n  private static int gesamtMessungen = 0;\n  private String ort;\n  private double letzterWert;\n\n  public Sensor(String ort) {\n    ____(2)____.ort = ort;\n    this.letzterWert = 0.0;\n  }\n  public void miss(double wert) {\n    if (wert > ____(3)____)\n      wert = MAX_WERT;\n    this.letzterWert = wert;\n    ____(4)____++;\n  }\n  public double getLetzterWert() {\n    return letzterWert;\n  }\n  public ____(5)____ int getGesamtMessungen() {\n    return gesamtMessungen;\n  }\n}\nclass SensorTest {\n  public static void main(String[] s) {\n    Sensor s1 = new Sensor(\"Halle\");\n    Sensor s2 = new Sensor(\"Labor\");\n    s1.miss(42.5);\n    s2.miss(180.0);\n    System.out.println( s1.getLetzterWert() );\n    System.out.println( s2.getLetzterWert() );\n    System.out.println( Sensor.getGesamtMessungen() );\n    System.out.println( ____(6)____.MAX_WERT );\n  }\n}",
+   "expectedOutput": "42.5\n100.0\n2\n100.0",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "static final",
+      "final static"
+     ],
+     "explanation": "`static` macht das Attribut zum **Klassenattribut** (existiert genau einmal, auch ohne Objekt), `final` macht es **unveränderlich**. Beide Reihenfolgen sind erlaubt; das Skript schreibt bei `Kugel` `final static double PI` (S. 113), der Überblick `public static int MIN_VALUE` (S. 131). Nur `final` allein wäre eine Konstante **pro Objekt**, nur `static` allein wäre überschreibbar."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "this"
+     ],
+     "explanation": "Der Parameter `ort` verdeckt das gleichnamige Attribut; nur `this.ort` schreibt ins Objekt (S. 125)."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "MAX_WERT",
+      "Sensor.MAX_WERT",
+      "100.0"
+     ],
+     "explanation": "Die Obergrenze steht bereits als Konstante bereit - sie hier zu benutzen ist genau ihr Zweck (eine Zahl, eine Stelle). Innerhalb der Klasse genügt der einfache Name (S. 124)."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "gesamtMessungen",
+      "Sensor.gesamtMessungen"
+     ],
+     "explanation": "Gezählt wird das **Klassenattribut**, damit alle Sensoren denselben Zaehler erhöhen: *\"Werden statische Variablen von einem Objekt verändert, ist diese Veränderung auch in allen anderen Objekten sichtbar\"* (S. 131)."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "static"
+     ],
+     "explanation": "`getGesamtMessungen()` wird in `main` als `Sensor.getGesamtMessungen()` - also **ohne Objekt** - aufgerufen, muss also eine Klassenmethode sein (S. 131)."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "Sensor",
+      "s1",
+      "s2"
+     ],
+     "explanation": "Klassenattribute spricht man üblicherweise über den Klassennamen an: `Sensor.MAX_WERT` (S. 122). Über eine Objektreferenz (`s1.MAX_WERT`) ginge es ebenfalls, ist aber schlechter Stil, weil es so aussieht, als hätte jedes Objekt einen eigenen Wert."
+    }
+   ],
+   "solution": "class Sensor {\n  public static final double MAX_WERT = 100.0;\n  private static int gesamtMessungen = 0;\n  private String ort;\n  private double letzterWert;\n\n  public Sensor(String ort) {\n    this.ort = ort;\n    this.letzterWert = 0.0;\n  }\n  public void miss(double wert) {\n    if (wert > MAX_WERT)\n      wert = MAX_WERT;\n    this.letzterWert = wert;\n    gesamtMessungen++;\n  }\n  public double getLetzterWert() {\n    return letzterWert;\n  }\n  public static int getGesamtMessungen() {\n    return gesamtMessungen;\n  }\n}\nclass SensorTest {\n  public static void main(String[] s) {\n    Sensor s1 = new Sensor(\"Halle\");\n    Sensor s2 = new Sensor(\"Labor\");\n    s1.miss(42.5);\n    s2.miss(180.0);\n    System.out.println( s1.getLetzterWert() );\n    System.out.println( s2.getLetzterWert() );\n    System.out.println( Sensor.getGesamtMessungen() );\n    System.out.println( Sensor.MAX_WERT );\n  }\n}",
+   "explanation": "Die Aufgabe trennt sauber die drei Sorten von Daten in einer Klasse:\n\n| Deklaration | gehört | Anzahl im Speicher | veränderbar |\n|---|---|---|---|\n| `public static final double MAX_WERT` | der Klasse | 1 | nein |\n| `private static int gesamtMessungen` | der Klasse | 1 | ja |\n| `private double letzterWert` | dem Objekt | 1 pro Objekt | ja |\n\n`static final` ist die Standardform für Konstanten - im Skript `final static double PI = 3.14159265;` bei `Kugel` (S. 113) und `private final static short MAX = 4;` in `Klausur07.java`. Konvention: Konstantennamen in GROSSBUCHSTABEN.\n\nBeachten Sie die zweite Ausgabezeile: `s2.miss(180.0)` wird auf `MAX_WERT` gedeckelt, deshalb `100.0` statt `180.0`. Wichtig ist, dass `wert = MAX_WERT;` den **Parameter** ändert - das ist hier völlig in Ordnung, weil danach `this.letzterWert = wert;` folgt.\n\nDer Zaehler steht bewusst in `miss()` und nicht im Konstruktor: gezählt werden **Messungen**, nicht Sensoren. Nach `s1.miss(...)` und `s2.miss(...)` steht er auf 2, obwohl es sich um zwei verschiedene Objekte handelt.\n\nMerkregel: *`static` = einer für alle. `final` = einmal und nie wieder. Zusammen = Konstante der Klasse.*",
+   "hints": [
+    "Lücke 1: Zwei Schlüsselwörter sind nötig - eines für 'gehört der Klasse', eines für 'unveränderlich'.",
+    "Lücke 3: Die Obergrenze ist im Code schon einmal deklariert - benutzen Sie sie statt einer neuen Zahl.",
+    "Lücke 4: Soll jeder Sensor seinen eigenen Zaehler haben oder alle gemeinsam einen?",
+    "Lücke 5 und 6: In `main` gibt es kein Sensor-Objekt vor dem Punkt - was steht dann davor?"
+   ],
+   "pitfalls": [
+    "In Lücke 1 nur `final` schreiben - dann gibt es die Konstante pro Objekt und `Sensor.MAX_WERT` ist ein Compiler-Fehler.",
+    "`gesamtMessungen` als Instanzattribut denken; dann stünde in der dritten Ausgabezeile 1 statt 2.",
+    "`getGesamtMessungen()` ohne `static` lassen - dann lässt sich `Sensor.getGesamtMessungen()` nicht übersetzen."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 113,
+     "label": "6.1 Kugel: final static double PI, static int anzahl"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 Klassenattribute und Klassenmethoden: static, Konstanten"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 122,
+     "label": "6.2 Zugriff über den Klassennamen"
+    },
+    {
+     "file": "11_Ueberblick/Klausur07.java",
+     "page": 1,
+     "label": "private final static short MAX"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "static",
+    "final",
+    "konstante",
+    "klassenmethode"
+   ]
+  },
+  {
+   "id": "java-objects-024",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "Code-Lücken: Bruch mit rekursivem ggT und toString",
+   "prompt": "Die Klasse `Bruch` kürzt jeden Bruch im Konstruktor mit dem **rekursiven** euklidischen Algorithmus. Ergänzen Sie die 6 Lücken `____(n)____` (je 2 P.).\n\nDas Programm soll ausgeben:\n\n```\n3/4\n2/3\n1/2\n```",
+   "code": "class Bruch {\n  private int zaehler, nenner;\n\n  public Bruch(int zaehler, int nenner) {\n    int g = ggt(Math.abs(zaehler), Math.abs(nenner));\n    this.zaehler = zaehler / g;\n    this.nenner  = nenner / ____(1)____;\n  }\n  // rekursiver euklidischer Algorithmus\n  private static int ggt(int a, int b) {\n    if (b == ____(2)____) return a;\n    return ggt(b, a ____(3)____ b);\n  }\n  public Bruch mal(Bruch andere) {\n    return ____(4)____ Bruch( this.zaehler * andere.zaehler,\n                              this.nenner  * ____(5)____.nenner );\n  }\n  public ____(6)____ toString() {\n    return zaehler + \"/\" + nenner;\n  }\n}\nclass BruchTest {\n  public static void main(String[] s) {\n    Bruch b1 = new Bruch(6, 8);\n    Bruch b2 = new Bruch(2, 3);\n    System.out.println( b1 );\n    System.out.println( b2 );\n    System.out.println( b1.mal(b2) );\n  }\n}",
+   "expectedOutput": "3/4\n2/3\n1/2",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "g"
+     ],
+     "explanation": "Zaehler und Nenner werden durch **denselben** größten gemeinsamen Teiler geteilt - sonst wäre es kein gleichwertiger Bruch mehr. `g` wurde eine Zeile vorher berechnet."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "0"
+     ],
+     "explanation": "Der **Abbruchfall** der Rekursion: Ist der Rest 0, ist `a` der ggT. Ohne diesen Fall liefe die Rekursion endlos und endete mit `StackOverflowError` (vgl. Abbruchfall `n == 0` bei `fak`, S. 153)."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "%"
+     ],
+     "explanation": "Euklid: `ggt(a, b) = ggt(b, a mod b)`. In Java ist der Modulo-Operator `%`. Mit `/` (Ganzzahl-Division) käme etwas ganz anderes heraus."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "new"
+     ],
+     "explanation": "Die Methode liefert ein **neues** Bruch-Objekt zurück; erzeugt wird es mit `new` (S. 115). Der Konstruktor kürzt das Ergebnis dabei automatisch."
+    },
+    {
+     "id": 5,
+     "accept": [
+      "andere"
+     ],
+     "explanation": "Der Parameter heißt `andere`. Da `mal` in derselben Klasse steht, darf sie direkt auf das `private`-Attribut `andere.nenner` zugreifen - `private` gilt pro Klasse, nicht pro Objekt."
+    },
+    {
+     "id": 6,
+     "accept": [
+      "String"
+     ],
+     "explanation": "`toString()` muss exakt die Signatur `public String toString()` haben, damit sie die Methode aus `Object` überschreibt und von `println` automatisch benutzt wird. Mit einem anderen Rückgabetyp wäre es keine Überschreibung - javac meldete dann sogar einen Fehler."
+    }
+   ],
+   "solution": "class Bruch {\n  private int zaehler, nenner;\n\n  public Bruch(int zaehler, int nenner) {\n    int g = ggt(Math.abs(zaehler), Math.abs(nenner));\n    this.zaehler = zaehler / g;\n    this.nenner  = nenner / g;\n  }\n  private static int ggt(int a, int b) {\n    if (b == 0) return a;\n    return ggt(b, a % b);\n  }\n  public Bruch mal(Bruch andere) {\n    return new Bruch( this.zaehler * andere.zaehler,\n                      this.nenner  * andere.nenner );\n  }\n  public String toString() {\n    return zaehler + \"/\" + nenner;\n  }\n}\nclass BruchTest {\n  public static void main(String[] s) {\n    Bruch b1 = new Bruch(6, 8);\n    Bruch b2 = new Bruch(2, 3);\n    System.out.println( b1 );\n    System.out.println( b2 );\n    System.out.println( b1.mal(b2) );\n  }\n}",
+   "explanation": "Die Klasse vereint vier Themen des Kapitels:\n\n**Rekursion als Hilfsmethode.** `ggt` ist `private static` - sie braucht kein Objekt und soll von außen nicht sichtbar sein. Das Skript nennt genau diesen Verwendungszweck für `static`: *\"Hilfsmethoden\"* (S. 131). Der Ablauf für `ggt(6, 8)`: `ggt(8, 6)` -> `ggt(6, 2)` -> `ggt(2, 0)` -> `2`. Also `6/2 = 3` und `8/2 = 4` - Ausgabe `3/4`.\n\n**Konstruktor mit Nebenaufgabe.** Der Konstruktor initialisiert nicht nur, er normalisiert auch. Dadurch ist **jedes** Bruch-Objekt garantiert gekürzt - eine Klasseninvariante, die nur haltbar ist, weil `zaehler` und `nenner` `private` sind.\n\n**Objekt als Rückgabewert.** `mal` baut mit `new` einen dritten Bruch; die beiden Operanden bleiben unverändert. `3/4 * 2/3 = 6/12`, und der Konstruktor kürzt das zu `1/2`.\n\n**`toString()`.** Ohne diese Methode würde `println(b1)` `Bruch@1b6d3586` drucken.\n\nMerkregel: *Jede Rekursion braucht zuerst einen Abbruchfall - schreiben Sie ihn immer als erste Zeile hin.*",
+   "hints": [
+    "Lücke 2 und 3: Wie lautet der euklidische Algorithmus? `ggT(a,b) = ggT(b, a mod b)` bis der Rest 0 ist.",
+    "Lücke 1: Wodurch müssen Zaehler **und** Nenner geteilt werden, damit der Bruch gleich bleibt?",
+    "Lücke 6: Welche Signatur muss `toString()` genau haben, damit `println` sie automatisch benutzt?",
+    "Rechnen Sie zur Kontrolle `ggt(6,8)` von Hand durch."
+   ],
+   "pitfalls": [
+    "In Lücke 3 `/` statt `%` schreiben - dann terminiert die Rekursion zwar oft, liefert aber falsche Werte.",
+    "Den Abbruchfall auf `a == 0` statt `b == 0` prüfen.",
+    "`toString()` mit `void` oder `int` als Rückgabetyp deklarieren - dann überschreibt sie nichts."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 153,
+     "label": "6.3 Rekursion: Abbruchfall und Rekursionsschritt"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 static für Hilfsmethoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 141,
+     "label": "6.3 Objekt-Referenzen als Ergebnis einer Methode"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Kapselung: private Attribute"
+    }
+   ],
+   "tags": [
+    "fill-gaps",
+    "rekursion",
+    "static",
+    "konstruktor",
+    "tostring",
+    "objekt-rueckgabe"
+   ]
+  },
+  {
+   "id": "java-objects-025",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: genau 3 Fehler benennen und korrigieren (Auto)",
+   "prompt": "Der folgende Code enthält genau **3 Fehler**: **2 Compiler-Fehler** und **1 logischen Fehler** (der Code würde nach Behebung der Compiler-Fehler zwar laufen, aber das Falsche tun).\n\nBenennen Sie die Fehler mit Zeilennummer und geben Sie jeweils die Korrektur an.\n\nNach der Korrektur soll das Programm `VW` ausgeben.",
+   "code": "class Auto {\n  private String marke;\n  public Auto(String marke) {\n    marke = marke;\n  }\n  public string getMarke() {\n    return marke;\n  }\n}\nclass AutoTest {\n  public static void main(String[] s) {\n    Auto a = Auto(\"VW\");\n    System.out.println(a.getMarke());\n  }\n}",
+   "expectedOutput": "VW",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "marke = marke;",
+     "fix": "this.marke = marke;",
+     "why": "**Logischer Fehler** (kein Compiler-Fehler!). Der Parameter `marke` **verdeckt** das gleichnamige Attribut, `marke = marke;` weist den Parameter sich selbst zu. Das Attribut bleibt `null`, das Programm druckt `null`. Nur `this.marke` erreicht das Attribut (S. 125)."
+    },
+    {
+     "line": 6,
+     "wrong": "public string getMarke() {",
+     "fix": "public String getMarke() {",
+     "why": "**Compiler-Fehler**: *cannot find symbol - symbol: class string*. Java unterscheidet Groß- und Kleinschreibung; der Klassentyp heißt `String` (groß), `string` gibt es nicht. Nur die **primitiven** Typen (`int`, `double`, `boolean`, `char`, ...) werden kleingeschrieben."
+    },
+    {
+     "line": 12,
+     "wrong": "Auto a = Auto(\"VW\");",
+     "fix": "Auto a = new Auto(\"VW\");",
+     "why": "**Compiler-Fehler**: *cannot find symbol - symbol: method Auto(String)*. Ohne `new` liest der Compiler das als Aufruf einer Methode namens `Auto` in der Klasse `AutoTest` - die es nicht gibt. Objekte entstehen ausschließlich mit `new <Klassenname>(...)` (S. 115)."
+    }
+   ],
+   "solution": "class Auto {\n  private String marke;\n  public Auto(String marke) {\n    this.marke = marke;\n  }\n  public String getMarke() {\n    return marke;\n  }\n}\nclass AutoTest {\n  public static void main(String[] s) {\n    Auto a = new Auto(\"VW\");\n    System.out.println(a.getMarke());\n  }\n}",
+   "explanation": "Das ist Aufgabe 1b der Probeklausur - drei Fehler, die alle drei zum Pflichtstoff dieses Kapitels gehören.\n\nDie eigentliche Klausurfalle ist der **erste** Fehler: `marke = marke;` übersetzt sauber. javac gibt nicht einmal eine Warnung aus. Wer nur nach roten Unterstreichungen in der IDE sucht, findet ihn nie - man muss verstehen, dass ein Parameter das gleichnamige Attribut verdeckt (*shadowing*) und der einfache Name ab da nur noch den Parameter meint (S. 125).\n\nDie beiden Compiler-Fehler sind Standard: `String` groß geschrieben (Klassen groß, primitive Typen klein) und `new` vor dem Konstruktoraufruf.\n\nEin nützlicher Selbsttest: Schreiben Sie hinter jede Zuweisung im Konstruktor gedanklich \"welches Feld im Objekt wird hier beschrieben?\". Bei `marke = marke;` lautet die Antwort \"keines\" - dann fehlt `this.`.\n\nMerkregel: *Konstruktorparameter heißen gerne wie das Attribut - dann gehört links immer `this.` davor.*",
+   "hints": [
+    "Suchen Sie zuerst die beiden Fehler, die javac gar nicht erst übersetzen lässt - beide betreffen Schreibweisen.",
+    "Achten Sie auf Groß- und Kleinschreibung bei Typnamen.",
+    "Wie erzeugt man in Java ein Objekt? Welches Schlüsselwort fehlt in `main`?",
+    "Der dritte Fehler ist unsichtbar für den Compiler: Verfolgen Sie, welchen Wert das Attribut `marke` nach dem Konstruktoraufruf hat."
+   ],
+   "pitfalls": [
+    "Nur die beiden Compiler-Fehler finden und den logischen Fehler `marke = marke;` übersehen.",
+    "`return marke;` in `getMarke()` für fehlerhaft halten - dort verdeckt nichts, der einfache Name ist korrekt.",
+    "`private String marke;` für den Fehler halten - `private` ist hier genau richtig."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 1b) Fehlersuche (6 P.)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 Die Referenzvariable this"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 115,
+     "label": "6.1 Erzeugung von Objekten mit new"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 350,
+     "label": "Überblick 3: Klassen als benutzerdefinierte Typen"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "this",
+    "verdeckung",
+    "new",
+    "String",
+    "probeklausur"
+   ]
+  },
+  {
+   "id": "java-objects-026",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: 3 Compiler-Fehler im statischen Kontext",
+   "prompt": "In welchen **3 Zeilen** befinden sich Compiler-Fehler? Benennen Sie sie und geben Sie jeweils die Korrektur an.\n\nNach der Korrektur soll das Programm ausgeben:\n\n```\n1 1\n5\n```",
+   "code": "class Zaehler {\n  private int wert = 0;\n  private static int gesamt = 0;\n\n  public void erhoehe() {\n    wert++;\n    gesamt++;\n  }\n  public static int getWert() {\n    return wert;\n  }\n  public static void main(String[] s) {\n    erhoehe();\n    System.out.println( getWert() + \" \" + gesamt );\n    this.wert = 5;\n  }\n}",
+   "expectedOutput": "1 1\n5",
+   "errors": [
+    {
+     "line": 10,
+     "wrong": "return wert;   (in public static int getWert())",
+     "fix": "public int getWert() { return wert; }   // static streichen",
+     "why": "*non-static variable wert cannot be referenced from a static context*. Eine Klassenmethode besitzt kein Objekt - sie kann also nicht wissen, **wessen** `wert` gemeint ist. Entweder man streicht `static` (dann ist es eine Objektmethode mit `this`), oder man macht `wert` selbst `static` (dann gäbe es aber nur noch einen einzigen Zaehler für alle Objekte)."
+    },
+    {
+     "line": 13,
+     "wrong": "erhoehe();",
+     "fix": "Zaehler z = new Zaehler();  z.erhoehe();",
+     "why": "*non-static method erhoehe() cannot be referenced from a static context*. `main` ist selbst `static`. Eine Objektmethode muss laut Skript *\"an einem konkret instanziierten Objekt aufgerufen werden\"* (S. 131) - also braucht man zuerst ein Objekt."
+    },
+    {
+     "line": 15,
+     "wrong": "this.wert = 5;",
+     "fix": "z.wert = 5;",
+     "why": "*non-static variable this cannot be referenced from a static context*. `this` *\"existiert in jeder Methode außer in Klassenmethoden\"* (S. 125) - in `main` gibt es kein eigenes Objekt, auf das `this` zeigen könnte."
+    }
+   ],
+   "solution": "class Zaehler {\n  private int wert = 0;\n  private static int gesamt = 0;\n\n  public void erhoehe() {\n    wert++;\n    gesamt++;\n  }\n  public int getWert() {\n    return wert;\n  }\n  public static void main(String[] s) {\n    Zaehler z = new Zaehler();\n    z.erhoehe();\n    System.out.println( z.getWert() + \" \" + gesamt );\n    z.wert = 5;\n    System.out.println( z.getWert() );\n  }\n}",
+   "explanation": "Alle drei Fehler haben dieselbe Ursache: **eine Klassenmethode hat kein Objekt**.\n\n`static` heißt \"gehört der Klasse\". Eine `static`-Methode wird ausgeführt, ohne dass irgendein Objekt existieren muss - also gibt es dort weder `this` noch Instanzattribute noch Instanzmethoden ohne Empfänger. Die Fehlermeldung dazu lautet immer gleich: *non-static ... cannot be referenced from a static context*.\n\nDie umgekehrte Richtung ist dagegen **immer erlaubt**: `erhoehe()` (Objektmethode) darf `gesamt` (Klassenattribut) hochzählen. Deshalb steht in der Ausgabe `1 1` - `wert` gehört dem einen Objekt, `gesamt` der Klasse, beide wurden einmal erhöht.\n\nBesonders klausurrelevant ist, dass `main` selbst `static` ist. Genau deshalb sieht man in allen Beispielen des Skripts das Muster *\"erst ein Objekt bauen, dann darauf arbeiten\"* - z.B. `WordleClass w = new WordleClass(); w.run();` (S. 151).\n\n`z.wert = 5;` ist übrigens erlaubt, obwohl `wert` `private` ist: `main` steht **innerhalb** derselben Klasse, und `private` gilt pro Klasse.\n\nMerkregel: *In `main` existiert kein `this` - was ein Objekt braucht, muss dort erst mit `new` beschafft werden.*",
+   "hints": [
+    "Alle drei Fehler produzieren dieselbe Sorte Meldung. Welches Schlüsselwort taucht in dieser Meldung auf?",
+    "Welche Methode ist der Startpunkt des Programms - und ist sie eine Objekt- oder eine Klassenmethode?",
+    "Prüfen Sie für jede Zeile: Wird hier etwas benutzt, das zu einem bestimmten Objekt gehört?",
+    "Für die Reparatur brauchen Sie in `main` genau ein zusätzliches `new`."
+   ],
+   "pitfalls": [
+    "`gesamt++` in `erhoehe()` für einen Fehler halten - Objektmethoden dürfen Klassenattribute benutzen.",
+    "`z.wert = 5;` wegen `private` für falsch halten - der Zugriff steht in derselben Klasse.",
+    "Das Problem lösen, indem man einfach alles `static` macht: dann teilen sich alle Objekte einen Zaehler und die Aufgabenstellung ist verfehlt."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 Klassenattribute und Klassenmethoden: static"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 this existiert nicht in Klassenmethoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 123,
+     "label": "6.2 Namen: Zugriff über einfache Namen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 151,
+     "label": "6.3 WordleClass: main ist eine Klassenmethode"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "static",
+    "main",
+    "this",
+    "klassenmethode"
+   ]
+  },
+  {
+   "id": "java-objects-027",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "find-errors",
+   "difficulty": 3,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: Konstruktor mit Rückgabetyp und private-Zugriff",
+   "prompt": "Der folgende Code enthält genau **3 Compiler-Fehler**. Benennen Sie sie mit Zeilennummer und geben Sie jeweils die Korrektur an.\n\nNach der Korrektur soll das Programm ausgeben:\n\n```\nJava\n500 Seiten\n```",
+   "code": "class Buch {\n  private String titel;\n  private int seiten;\n  public void Buch(String titel, int seiten) {\n    this.titel = titel;\n    this.seiten = seiten;\n  }\n  public String getTitel() { return titel; }\n}\nclass Regal {\n  public static void main(String[] s) {\n    Buch b = new Buch(\"Java\", 500);\n    System.out.println( b.titel );\n    System.out.println( b.seiten + \" Seiten\" );\n  }\n}",
+   "expectedOutput": "Java\n500 Seiten",
+   "errors": [
+    {
+     "line": 12,
+     "wrong": "Buch b = new Buch(\"Java\", 500);",
+     "fix": "Ursache in Zeile 4: `public void Buch(...)` -> `public Buch(...)` (das `void` streichen)",
+     "why": "*constructor Buch in class Buch cannot be applied to given types; required: no arguments, found: String,int*. Durch das `void` ist `Buch(String,int)` **kein Konstruktor**, sondern eine ganz gewöhnliche Methode, die zufällig wie die Klasse heißt. Die Klasse hat damit gar keinen selbst definierten Konstruktor - Java erzeugt den parameterlosen Default-Konstruktor, und der passt nicht zu zwei Argumenten. Ein Konstruktor *\"hat keinen Ergebnistyp (nicht einmal void)\"* (S. 112)."
+    },
+    {
+     "line": 13,
+     "wrong": "System.out.println( b.titel );",
+     "fix": "System.out.println( b.getTitel() );",
+     "why": "*titel has private access in Buch*. `Regal` ist eine **andere** Klasse; auf `private`-Attribute darf sie nicht zugreifen (S. 126). Der Zugriff läuft über die vorhandene Get-Methode."
+    },
+    {
+     "line": 14,
+     "wrong": "System.out.println( b.seiten + \" Seiten\" );",
+     "fix": "System.out.println( b.getSeiten() + \" Seiten\" );   // Get-Methode ergänzen",
+     "why": "*seiten has private access in Buch*. Für `seiten` gibt es noch gar keine Get-Methode - sie muss zusätzlich geschrieben werden: `public int getSeiten() { return seiten; }` (S. 127)."
+    }
+   ],
+   "solution": "class Buch {\n  private String titel;\n  private int seiten;\n  public Buch(String titel, int seiten) {\n    this.titel = titel;\n    this.seiten = seiten;\n  }\n  public String getTitel()  { return titel; }\n  public int    getSeiten() { return seiten; }\n}\nclass Regal {\n  public static void main(String[] s) {\n    Buch b = new Buch(\"Java\", 500);\n    System.out.println( b.getTitel() );\n    System.out.println( b.getSeiten() + \" Seiten\" );\n  }\n}",
+   "explanation": "Zwei unabhängige Konzepte stecken in dieser Aufgabe.\n\n**1. Konstruktor vs. Methode.** Ein Konstruktor hat *\"immer denselben Namen wie die Klasse\"* und *\"keinen Ergebnistyp (nicht einmal void)\"* (S. 112). Schreibt man `void` davor, entsteht klammheimlich eine normale Methode `void Buch(String,int)` - syntaktisch völlig korrekt, deshalb meckert javac an Zeile 4 nicht. Der Fehler taucht erst dort auf, wo `new Buch(\"Java\", 500)` steht. Diese Fehlermeldung an einer scheinbar unschuldigen Stelle ist typisch: **Meldung und Ursache stehen in verschiedenen Zeilen.**\n\n**2. Kapselung.** `private` bedeutet *\"sichtbar nur innerhalb der Klasse\"* (S. 126). `Regal` ist eine eigene Klasse, also sind `b.titel` und `b.seiten` gesperrt. Die Lösung ist nicht, die Attribute `public` zu machen, sondern die vorgesehene Schnittstelle zu benutzen bzw. zu ergänzen (S. 127).\n\nAchtung beim Zählen: javac meldet nur **eine** Zeile für den Konstruktorfehler (Zeile 12), obwohl die Ursache in Zeile 4 steht. In der Klausur sollte man beides nennen.\n\nMerkregel: *Steht vor dem Klassennamen ein Rückgabetyp, ist es kein Konstruktor mehr.*",
+   "hints": [
+    "Vergleichen Sie Zeile 4 mit der Definition eines Konstruktors: Was darf dort auf keinen Fall stehen?",
+    "Zwei Fehler haben denselben Grund - schauen Sie auf die Sichtbarkeit der Attribute und darauf, aus welcher Klasse heraus zugegriffen wird.",
+    "Für eines der beiden Attribute fehlt noch eine Methode. Welche?",
+    "Achtung: javac meldet einen der Fehler in einer anderen Zeile, als die Ursache steht."
+   ],
+   "pitfalls": [
+    "Die Attribute `public` machen statt Get-Methoden zu benutzen - dann ist die Kapselung zerstört.",
+    "`public void Buch(...)` nur zu `void Buch(...)` ändern - das `void` selbst ist das Problem.",
+    "Übersehen, dass für `seiten` noch gar keine Get-Methode existiert."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 112,
+     "label": "6.1 Konstruktoren: kein Ergebnistyp, Default-Konstruktor"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 126,
+     "label": "6.2 Sichtbarkeit: private"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get- und Set-Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 128,
+     "label": "6.2 Beispiel Book / BookShelf / BookCase"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "konstruktor",
+    "private",
+    "getter",
+    "kapselung"
+   ]
+  },
+  {
+   "id": "java-objects-028",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Fehlersuche: this(...), final und der fehlende Default-Konstruktor",
+   "prompt": "Der folgende Code enthält genau **3 Compiler-Fehler**. Benennen Sie sie mit Zeilennummer und geben Sie jeweils die Korrektur an.\n\nNach der Korrektur soll das Programm ausgeben:\n\n```\n100\n101\n```",
+   "code": "class Ticket {\n  private int nummer;\n  private String kunde;\n  private static final int START = 100;\n  private static int naechste = START;\n\n  public Ticket(String kunde) {\n    this.kunde = kunde;\n    this(naechste);\n  }\n  public Ticket(int nummer) {\n    this.nummer = nummer;\n    naechste++;\n  }\n  public void resetStart() {\n    START = 0;\n  }\n  public static void main(String[] s) {\n    Ticket t = new Ticket();\n    System.out.println( t.nummer );\n  }\n}",
+   "expectedOutput": "100\n101",
+   "errors": [
+    {
+     "line": 9,
+     "wrong": "this(naechste);   (steht nach this.kunde = kunde;)",
+     "fix": "this(naechste);\nthis.kunde = kunde;   // Reihenfolge tauschen",
+     "why": "*call to this must be first statement in constructor*. `this(...)` *\"als erste Anweisung führt zum Aufruf eines anderen Konstruktors für dasselbe Objekt\"* (S. 114) - jede andere Position ist ein Compiler-Fehler, weil sonst die Initialisierung des Objekts in unbestimmter Reihenfolge liefe."
+    },
+    {
+     "line": 16,
+     "wrong": "START = 0;",
+     "fix": "naechste = START;   // die Konstante bleibt unangetastet",
+     "why": "*cannot assign a value to static final variable START*. `final` bedeutet: nach der Initialisierung nie wieder beschreibbar. Zurücksetzen lässt sich nur die veränderliche Zählvariable `naechste`."
+    },
+    {
+     "line": 19,
+     "wrong": "Ticket t = new Ticket();",
+     "fix": "Ticket t = new Ticket(\"Meier\");",
+     "why": "*no suitable constructor found for Ticket(no arguments)*. Der automatisch erzeugte parameterlose Konstruktor entfällt, sobald die Klasse **einen eigenen** Konstruktor definiert (S. 112) - hier gibt es sogar zwei, aber keinen ohne Parameter."
+    }
+   ],
+   "solution": "class Ticket {\n  private int nummer;\n  private String kunde;\n  private static final int START = 100;\n  private static int naechste = START;\n\n  public Ticket(String kunde) {\n    this(naechste);\n    this.kunde = kunde;\n  }\n  public Ticket(int nummer) {\n    this.nummer = nummer;\n    naechste++;\n  }\n  public void resetStart() {\n    naechste = START;\n  }\n  public int getNummer() { return nummer; }\n}\nclass TicketTest {\n  public static void main(String[] s) {\n    Ticket t1 = new Ticket(\"Meier\");\n    System.out.println( t1.getNummer() );\n    Ticket t2 = new Ticket(\"Schmidt\");\n    System.out.println( t2.getNummer() );\n  }\n}",
+   "explanation": "Drei Regeln des Kapitels werden hier gleichzeitig verletzt.\n\n**`this(...)` muss ganz vorne stehen.** Der Grund ist inhaltlich: der verkettete Konstruktor legt den Grundzustand des Objekts fest. Dürfte man vorher schon Attribute setzen, könnte der andere Konstruktor sie überschreiben und niemand wüsste, welcher Wert am Ende gilt. Deshalb erzwingt Java die Reihenfolge (S. 114).\n\n**`final` heißt wirklich final.** `START` ist `static final`, also eine Konstante der Klasse. Die Zuweisung `START = 0;` wäre selbst dann verboten, wenn sie nur einmal ausgeführt würde.\n\n**Der Default-Konstruktor ist ein Geschenk auf Widerruf.** *\"Definiert eine Klasse keinen Konstruktor, wird automatisch ein parameterloser Konstruktor erzeugt\"* (S. 112). `Ticket` definiert zwei - also gibt es `Ticket()` nicht.\n\nNach der Reparatur zeigt das Programm nebenbei das Zählmuster: `naechste` startet bei `START = 100`, `Ticket(\"Meier\")` bekommt 100 und erhöht auf 101, `Ticket(\"Schmidt\")` bekommt 101.\n\nMerkregel: *`this(...)` zuerst, `final` nie wieder, und wer selbst einen Konstruktor schreibt, verliert den geschenkten.*",
+   "hints": [
+    "Ein Fehler betrifft die **Position** einer Anweisung, nicht ihren Inhalt.",
+    "Schauen Sie sich die Deklaration von `START` genau an - welches Schlüsselwort verbietet die Zuweisung in `resetStart()`?",
+    "Zählen Sie die Konstruktoren der Klasse. Gibt es darunter einen ohne Parameter?",
+    "Für die Ausgabe `100` / `101` müssen zwei Tickets erzeugt werden."
+   ],
+   "pitfalls": [
+    "Den `this(naechste)`-Aufruf ganz löschen statt ihn nach vorn zu ziehen - dann bliebe `nummer` bei 0.",
+    "`final` von `START` entfernen, um die Zuweisung zu erlauben - die Konstante ist beabsichtigt; geändert werden soll `naechste`.",
+    "Einen leeren `public Ticket() {}` ergänzen: das übersetzt zwar, liefert dann aber Ticketnummer 0."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 114,
+     "label": "6.1 Konstruktoren: this(...) muss die allererste Anweisung sein"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 112,
+     "label": "6.1 Konstruktoren: kein eigener -> Default-Konstruktor"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 113,
+     "label": "6.1 final static Konstanten und static-Zaehler"
+    },
+    {
+     "file": "11_Ueberblick/Klausur07.java",
+     "page": 1,
+     "label": "private final static short MAX"
+    }
+   ],
+   "tags": [
+    "find-errors",
+    "this",
+    "konstruktor",
+    "final",
+    "static",
+    "default-konstruktor"
+   ]
+  },
+  {
+   "id": "java-objects-029",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Klasse Zahl: Summe als Objekt zurückgeben (Klausur08)",
+   "prompt": "Vervollständigen Sie die Klasse `Zahl` und die `main`-Methode.\n\n- Der Konstruktor soll das Attribut `wert` initialisieren.\n- Die Methode `summe(Zahl andereZahl)` soll die Summe aus **dieser** Zahl und der im Parameter angegebenen Zahl **als Objekt der Klasse `Zahl`** zurückgeben.\n- Vervollständigen Sie die Get-Methode `getWert()`.\n- Schreiben Sie in `main` die Anweisung, die die Summe von `z1` und `z2` auf der Konsole ausgibt. Benutzen Sie dafür **nur** die Methode `summe()`. Achtung: `println()` druckt bei einem Objekt der Klasse `Zahl` **nicht** automatisch den Wert des Attributs `wert` aus.\n\n*Hinweis zur Ausgabe:* `1.23 + 4.56` ergibt in `double`-Arithmetik nicht exakt `5.79`; erwartet wird genau das, was Java druckt.",
+   "starterCode": "class Klausur08 {\n  public static void main(String[] s) {\n    Zahl z1 = new Zahl(1.23), z2 = new Zahl(4.56);\n    // Was muss hier geschrieben werden, um die Summe von z1 und z2 in der Konsole zu erhalten?\n    // Benutze nur die summe() Methode.\n    System.out.println( /* hier ausfüllen */ );\n  }\n}\nclass Zahl {\n  private double wert = 0.0;\n  // Initialisiere die Attribute der Klasse hier:\n  public Zahl(double wert) {\n\n  }\n  // Diese Methode gibt die Summe aus dieser Zahl und der im Parameter angegebenen Zahl\n  // als Objekt von Klasse Zahl zurück:\n  public Zahl summe(Zahl andereZahl) {\n\n  }\n  // Vervollständige diese get-Methode:\n  public double getWert() {\n\n  }\n}",
+   "constraints": [
+    "Die Summe muss über die Methode summe() berechnet werden.",
+    "summe() muss ein Objekt der Klasse Zahl zurückgeben.",
+    "Das Attribut wert bleibt private."
+   ],
+   "expectedOutput": "5.789999999999999",
+   "required": [
+    "new Zahl",
+    "summe",
+    "getWert"
+   ],
+   "solution": "class Klausur08 {\n  public static void main(String[] s) {\n    Zahl z1 = new Zahl(1.23), z2 = new Zahl(4.56);\n    System.out.println( z1.summe(z2).getWert() );\n  }\n}\nclass Zahl {\n  private double wert = 0.0;\n\n  public Zahl(double wert) {\n    this.wert = wert;\n  }\n  public Zahl summe(Zahl andereZahl) {\n    return new Zahl( this.wert + andereZahl.getWert() );\n  }\n  public double getWert() {\n    return wert;\n  }\n}",
+   "explanation": "Das ist `Klausur08.java` aus dem Uebungs-Repository des Dozenten - eine der zehn offiziellen Klausur-Übungsaufgaben.\n\nDrei Bausteine müssen zusammenpassen:\n\n1. **Konstruktor:** `this.wert = wert;` - Parameter und Attribut heißen gleich, ohne `this.` bliebe das Attribut auf 0.0 (S. 125).\n2. **`summe` liefert ein Objekt:** Der Rückgabetyp ist die Klasse selbst, im `return` steht `new Zahl(...)`. Weder `z1` noch `z2` werden dabei verändert - man baut ein drittes Objekt. Das Skript erlaubt das ausdrücklich: *\"analog können Objekt-Referenzen auch als Ergebnis einer Methode auftreten\"* (S. 141).\n3. **Ausgabe:** `z1.summe(z2)` ist ein Objekt. Ohne `toString()` würde `println` `Zahl@1b6d3586` drucken - deshalb `.getWert()` anhängen.\n\nDie Ausgabe `5.789999999999999` ist kein Fehler, sondern die übliche Ungenauigkeit von `double`: 1.23 und 4.56 lassen sich binär nicht exakt darstellen. Wer die Zahl schön ausgeben will, braucht `printf(\"%.2f\", ...)` - das ist hier aber nicht verlangt.\n\nAlternativ wäre `andereZahl.wert` statt `andereZahl.getWert()` erlaubt: `private` gilt **pro Klasse**, nicht pro Objekt.\n\nMerkregel: *Rückgabetyp = Klassenname bedeutet: im `return` steht ein `new`.*",
+   "hints": [
+    "Was muss im Konstruktor stehen, damit das Attribut `wert` nicht 0.0 bleibt? Denken Sie an gleichnamige Parameter.",
+    "Welchen Typ hat der Rückgabewert von `summe`? Dann wissen Sie auch, was hinter `return` stehen muss.",
+    "In `main`: `z1.summe(z2)` liefert ein Objekt. Wie kommt man an die Zahl darin?",
+    "Sie dürfen Methodenaufrufe verketten: `objekt.methode1().methode2()`."
+   ],
+   "pitfalls": [
+    "`summe` mit Rückgabetyp `double` schreiben - die Aufgabenstellung verlangt ausdrücklich ein Objekt.",
+    "In `summe` `this.wert = this.wert + ...` schreiben: das verändert `z1`, statt ein neues Objekt zu liefern.",
+    "`System.out.println(z1.summe(z2))` ohne `getWert()` - dann erscheint `Zahl@...`."
+   ],
+   "sources": [
+    {
+     "file": "11_Ueberblick/Klausur08.java",
+     "page": 1,
+     "label": "offizielle Klausur-Übungsaufgabe"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 141,
+     "label": "6.3 Objekt-Referenzen als Ergebnis einer Methode"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 Die Referenzvariable this"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get- und Set-Methoden"
+    }
+   ],
+   "tags": [
+    "code",
+    "objekt-rueckgabe",
+    "konstruktor",
+    "this",
+    "getter",
+    "klausur08"
+   ]
+  },
+  {
+   "id": "java-objects-030",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Klasse Student mit Kapselung (StudentApp)",
+   "prompt": "Erstellen Sie eine Klasse `StudentApp`, die über die Methode `main()` ein Objekt der Klasse `Student` erzeugt.\n\n- Die Klasse `Student` soll einen **Namen**, eine **Matrikelnummer** und eine **Note** als `private` Attribute enthalten.\n- Der Konstruktor von `Student` soll es erlauben, den Namen und die Matrikelnummer anzugeben; die Note startet bei `5.0`.\n- Zusätzliche öffentliche Methoden sollen das **Setzen und Abrufen** der Note ermöglichen. Die Set-Methode soll nur Noten im Bereich `1.0` bis `5.0` übernehmen und andere Werte ignorieren.\n- Ergänzen Sie außerdem Get-Methoden für Name und Matrikelnummer.\n\nDas Programm soll genau diese Ausgabe erzeugen:\n\n```\nHugo Habicht 10023422\n5.0\n1.7\n1.7\n```",
+   "starterCode": "class Student {\n  // private Attribute: name, matrikelNr, note\n\n  // Konstruktor: Name und Matrikelnummer\n\n  // Get-Methoden für name und matrikelNr\n\n  // getNote() und setNote(double note) mit Prüfung 1.0 .. 5.0\n\n}\nclass StudentApp {\n  public static void main(String[] s) {\n    // Objekt erzeugen und die Methoden testen:\n    // 1) Name und Matrikelnummer ausgeben\n    // 2) Startnote ausgeben\n    // 3) Note auf 1.7 setzen und ausgeben\n    // 4) Note auf 0.7 setzen (ungueltig!) und erneut ausgeben\n\n  }\n}",
+   "constraints": [
+    "Alle Attribute müssen private sein.",
+    "Der Zugriff von außen erfolgt nur über Methoden."
+   ],
+   "expectedOutput": "Hugo Habicht 10023422\n5.0\n1.7\n1.7",
+   "required": [
+    "private",
+    "new Student"
+   ],
+   "solution": "class Student {\n  private String name;\n  private long matrikelNr;\n  private double note;\n\n  public Student(String name, long matrikelNr) {\n    this.name = name;\n    this.matrikelNr = matrikelNr;\n    this.note = 5.0;\n  }\n  public String getName()       { return name; }\n  public long   getMatrikelNr() { return matrikelNr; }\n  public double getNote()       { return note; }\n\n  public void setNote(double note) {\n    if (note >= 1.0 && note <= 5.0)\n      this.note = note;\n  }\n}\nclass StudentApp {\n  public static void main(String[] s) {\n    Student st = new Student(\"Hugo Habicht\", 10023422);\n    System.out.println( st.getName() + \" \" + st.getMatrikelNr() );\n    System.out.println( st.getNote() );\n    st.setNote(1.7);\n    System.out.println( st.getNote() );\n    st.setNote(0.7);\n    System.out.println( st.getNote() );\n  }\n}",
+   "explanation": "Das ist die Aufgabe aus `06_ObjekteMethoden/StudentApp.java` - und zugleich die Standardform von Aufgabe 4 der Klausur (*\"Klasse mit Methoden schreiben (inkl. main)\"*).\n\nDie Lösung folgt genau dem Schema von S. 127:\n\n```java\nprivate String name;                 // Attribut\npublic String getName();             // Get-Methode\npublic void setName(String aName);   // Set-Methode\n```\n\nVier Punkte, auf die Korrektoren achten:\n1. **Alle** Attribute `private` - das ist der Kern der Aufgabe (Geheimnisprinzip, S. 110).\n2. Der Konstruktor setzt nur Name und Matrikelnummer; die Note bekommt einen sinnvollen Startwert. Er hat **keinen** Rückgabetyp (S. 112).\n3. In Konstruktor und Setter ist `this.` nötig, weil die Parameter genauso heißen wie die Attribute (S. 125).\n4. Die Prüfung im Setter ist genau der im Skript genannte Vorteil: *\"Get- und Set-Methoden können Prüfungen vornehmen\"* (S. 127). Deshalb steht in der letzten Zeile weiterhin `1.7`.\n\n`matrikelNr` als `long` zu wählen entspricht dem Skript-Beispiel `long matrNr;` (S. 111) - eine 8-stellige Nummer passt zwar auch in `int`, aber `long` ist die Vorlage.\n\nMerkregel: *Attribute privat, Konstruktor für die Pflichtdaten, Setter mit `if` für die veränderlichen.*",
+   "hints": [
+    "Beginnen Sie mit den drei Attributen und machen Sie alle `private`.",
+    "Der Konstruktor bekommt zwei Parameter. Wo kommt der Startwert der Note her?",
+    "In Konstruktor und Setter heißen Parameter und Attribut gleich - was fehlt dann links vom `=`?",
+    "Die letzte Ausgabezeile ist nur dann `1.7`, wenn der Setter ungültige Werte wirklich verwirft."
+   ],
+   "pitfalls": [
+    "Attribute `public` machen und die Get-/Set-Methoden weglassen.",
+    "Im Setter `note = note;` schreiben - dann bleibt die Note für immer 5.0.",
+    "Die Prüfung im Setter vergessen; dann steht in der letzten Zeile `0.7`.",
+    "Dem Konstruktor einen Rückgabetyp geben (`public void Student(...)`) - dann ist es kein Konstruktor mehr."
+   ],
+   "sources": [
+    {
+     "file": "06_ObjekteMethoden/StudentApp.java",
+     "page": 1,
+     "label": "Aufgabenstellung Student / StudentApp"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get- und Set-Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 126,
+     "label": "6.2 Sichtbarkeit"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 111,
+     "label": "6.1 Beispiel Student mit vorname, name, matrNr"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 4 - Klasse mit Methoden schreiben"
+    }
+   ],
+   "tags": [
+    "code",
+    "kapselung",
+    "konstruktor",
+    "getter",
+    "setter",
+    "private"
+   ]
+  },
+  {
+   "id": "java-objects-031",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "code",
+   "difficulty": 3,
+   "points": 12,
+   "examStyle": true,
+   "title": "Klasse Punkt mit verschiebe, abstandZu und toString",
+   "prompt": "Schreiben Sie eine Klasse `Punkt` mit zwei `private int`-Attributen `x` und `y` sowie den folgenden **Instanzmethoden** (ohne `static`):\n\na) Einen Konstruktor `Punkt(int x, int y)`, der beide Attribute setzt.\n\nb) `void verschiebe(int dx, int dy)`, die den Punkt um `dx` bzw. `dy` verschiebt.\n\nc) `double abstandZu(Punkt anderer)`, die den euklidischen Abstand zu einem **anderen Punkt-Objekt** liefert. (`Math.sqrt(double)` zieht die Wurzel.)\n\nd) `String toString()`, die den Punkt in der Form `(x,y)` liefert.\n\nErgänzen Sie außerdem eine Klassenmethode `main` in der Klasse `PunktApp`, die genau diese Ausgabe erzeugt:\n\n```\n(1,2)\n(4,6)\n5.0\n(4,6)\n0.0\n```",
+   "starterCode": "class Punkt {\n  // a) private Attribute x, y und Konstruktor\n\n  // b) verschiebe(int dx, int dy)\n\n  // c) abstandZu(Punkt anderer)\n\n  // d) toString()\n\n}\nclass PunktApp {\n  public static void main(String[] s) {\n    // Zwei Punkte (1,2) und (4,6) erzeugen, beide ausgeben,\n    // Abstand ausgeben, ersten Punkt um (3,4) verschieben,\n    // erneut ausgeben und den neuen Abstand ausgeben.\n\n  }\n}",
+   "constraints": [
+    "Die Attribute x und y müssen private sein.",
+    "verschiebe, abstandZu und toString sind Instanzmethoden (kein static)."
+   ],
+   "expectedOutput": "(1,2)\n(4,6)\n5.0\n(4,6)\n0.0",
+   "required": [
+    "private",
+    "toString",
+    "Math.sqrt"
+   ],
+   "solution": "class Punkt {\n  private int x, y;\n\n  public Punkt(int x, int y) {\n    this.x = x;\n    this.y = y;\n  }\n  public void verschiebe(int dx, int dy) {\n    this.x = this.x + dx;\n    this.y = this.y + dy;\n  }\n  public double abstandZu(Punkt anderer) {\n    int dx = this.x - anderer.x;\n    int dy = this.y - anderer.y;\n    return Math.sqrt(dx * dx + dy * dy);\n  }\n  public String toString() {\n    return \"(\" + x + \",\" + y + \")\";\n  }\n}\nclass PunktApp {\n  public static void main(String[] s) {\n    Punkt p1 = new Punkt(1, 2);\n    Punkt p2 = new Punkt(4, 6);\n    System.out.println( p1 );\n    System.out.println( p2 );\n    System.out.println( p1.abstandZu(p2) );\n    p1.verschiebe(3, 4);\n    System.out.println( p1 );\n    System.out.println( p1.abstandZu(p2) );\n  }\n}",
+   "explanation": "Die Aufgabe hat das Format von Aufgabe 4 der Klausur (*\"Klasse mit Methoden schreiben inkl. main\"*) und übt vier verschiedene Methodenarten:\n\n- **Konstruktor** mit `this.`, weil die Parameter genauso heißen wie die Attribute (S. 125).\n- **Zustandsändernde Methode** `verschiebe`: kein Rückgabewert, sie arbeitet auf `this`. `dx` und `dy` sind hier bewusst **anders** benannt als die Attribute - dann braucht man kein `this.` und der Code bleibt lesbar.\n- **Methode mit Objektparameter** `abstandZu(Punkt anderer)`: Übergeben wird eine **Referenz**, kein kopiertes Objekt (S. 141). Innerhalb der Klasse darf man `anderer.x` lesen, obwohl `x` `private` ist - `private` gilt pro Klasse.\n- **`toString()`**: dadurch genügt `System.out.println(p1)`.\n\nDie erwartete Ausgabe ist bewusst so gewählt, dass keine krummen Zahlen entstehen: `(1,2)` zu `(4,6)` sind 3 und 4 Einheiten, also `sqrt(9+16) = 5.0` (das berühmte 3-4-5-Dreieck). Nach `verschiebe(3,4)` liegen beide Punkte aufeinander - Abstand `0.0`.\n\nBeachten Sie: `Math.sqrt` liefert `double`, deshalb erscheint `5.0` und nicht `5`.\n\nMerkregel: *Wer den Zustand des eigenen Objekts ändert, braucht keinen Rückgabewert - wer etwas über ein anderes Objekt wissen will, bekommt es als Parameter.*",
+   "hints": [
+    "Fangen Sie mit den Attributen und dem Konstruktor an - beachten Sie gleichnamige Parameter.",
+    "`abstandZu` bekommt ein ganzes Objekt übergeben. Auf dessen Attribute dürfen Sie zugreifen, weil Sie sich in derselben Klasse befinden.",
+    "Satz des Pythagoras: `sqrt(dx*dx + dy*dy)`. Achten Sie auf den Rückgabetyp.",
+    "`toString()` muss exakt `public String toString()` heißen, damit `println(p1)` sie automatisch benutzt."
+   ],
+   "pitfalls": [
+    "`abstandZu` als `static` deklarieren - dann gibt es kein `this` und der eigene Punkt fehlt.",
+    "In `verschiebe` neue lokale Variablen `x`/`y` anlegen statt die Attribute zu ändern.",
+    "`toString()` `drucke()` nennen - dann funktioniert `println(p1)` nicht mehr automatisch.",
+    "`5` statt `5.0` erwarten - `Math.sqrt` liefert einen `double`."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 4 - Klasse mit Methoden schreiben (inkl. main)"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 171,
+     "label": "6.5 UML: Kreis mit zeichnen/verschieben/skalieren"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 141,
+     "label": "6.3 Referenzen als Parameter"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 125,
+     "label": "6.2 Die Referenzvariable this"
+    }
+   ],
+   "tags": [
+    "code",
+    "instanzmethode",
+    "objektparameter",
+    "tostring",
+    "konstruktor"
+   ]
+  },
+  {
+   "id": "java-objects-032",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "code",
+   "difficulty": 4,
+   "points": 12,
+   "examStyle": true,
+   "title": "Klasse Konto: Konstruktor-Überladung, Klassenkonstante und Objektzähler",
+   "prompt": "Schreiben Sie eine Klasse `Konto` mit folgenden Bestandteilen:\n\na) Eine **öffentliche Klassenkonstante** `ZINSSATZ` mit dem Wert `0.02` und ein **privates Klassenattribut** `anzahl`, das die erzeugten Konten zählt.\n\nb) Private Attribute `inhaber` (`String`) und `stand` (`double`).\n\nc) **Zwei Konstruktoren**: `Konto(String inhaber, double stand)` und `Konto(String inhaber)` (Startguthaben 0.0). Der zweite muss den ersten per `this(...)` aufrufen. Der Zaehler darf **nur an einer Stelle** erhöht werden.\n\nd) `void einzahlen(double betrag)` (nur positive Beträge), `boolean abheben(double betrag)` (nur wenn positiv und gedeckt; liefert `true` bei Erfolg), `double zinsen()` (`stand * ZINSSATZ`), `double getStand()`, die Klassenmethode `static int getAnzahl()` und `String toString()` in der Form `inhaber: stand`.\n\ne) Eine `main`-Methode in der Klasse `KontoApp`, die genau diese Ausgabe erzeugt:\n\n```\nMeier: 500.0\nSchmidt: 200.0\nfalse\ntrue\n400.0\n8.0\n2\n```",
+   "starterCode": "class Konto {\n  // a) public static final double ZINSSATZ = 0.02;  und  private static int anzahl\n\n  // b) private Attribute inhaber, stand\n\n  // c) zwei Konstruktoren, der zweite ruft den ersten mit this(...) auf\n\n  // d) einzahlen, abheben, zinsen, getStand, getAnzahl, toString\n\n}\nclass KontoApp {\n  public static void main(String[] s) {\n    // Konto \"Meier\" mit 500.0 und Konto \"Schmidt\" ohne Startguthaben erzeugen,\n    // auf Schmidt 200.0 einzahlen, beide Konten ausgeben,\n    // von Meier 600.0 abheben (Rückgabe ausgeben), dann 100.0 abheben (Rückgabe ausgeben),\n    // Stand und Zinsen von Meier ausgeben, zum Schluss die Anzahl der Konten.\n\n  }\n}",
+   "constraints": [
+    "inhaber und stand müssen private sein.",
+    "Der zweite Konstruktor muss this(...) benutzen.",
+    "anzahl darf nur an einer einzigen Stelle erhöht werden."
+   ],
+   "expectedOutput": "Meier: 500.0\nSchmidt: 200.0\nfalse\ntrue\n400.0\n8.0\n2",
+   "required": [
+    "static final",
+    "this(",
+    "static int getAnzahl",
+    "toString"
+   ],
+   "solution": "class Konto {\n  public static final double ZINSSATZ = 0.02;\n  private static int anzahl = 0;\n\n  private String inhaber;\n  private double stand;\n\n  public Konto(String inhaber, double stand) {\n    this.inhaber = inhaber;\n    this.stand = stand;\n    anzahl++;\n  }\n  public Konto(String inhaber) {\n    this(inhaber, 0.0);\n  }\n  public void einzahlen(double betrag) {\n    if (betrag > 0)\n      stand = stand + betrag;\n  }\n  public boolean abheben(double betrag) {\n    if (betrag > 0 && betrag <= stand) {\n      stand = stand - betrag;\n      return true;\n    }\n    return false;\n  }\n  public double zinsen() {\n    return stand * ZINSSATZ;\n  }\n  public double getStand() { return stand; }\n\n  public static int getAnzahl() { return anzahl; }\n\n  public String toString() {\n    return inhaber + \": \" + stand;\n  }\n}\nclass KontoApp {\n  public static void main(String[] s) {\n    Konto a = new Konto(\"Meier\", 500.0);\n    Konto b = new Konto(\"Schmidt\");\n    b.einzahlen(200.0);\n    System.out.println( a );\n    System.out.println( b );\n    System.out.println( a.abheben(600.0) );\n    System.out.println( a.abheben(100.0) );\n    System.out.println( a.getStand() );\n    System.out.println( a.zinsen() );\n    System.out.println( Konto.getAnzahl() );\n  }\n}",
+   "explanation": "Diese Aufgabe bündelt fast alle Bausteine des Kapitels in einer Klasse.\n\n**Konstruktor-Verkettung.** `Konto(String)` besteht nur aus `this(inhaber, 0.0);`. Dadurch steht die eigentliche Initialisierung - inklusive `anzahl++` - an **genau einer** Stelle. Hätte man `anzahl++` in beide Konstruktoren geschrieben, würde der Zaehler bei `new Konto(\"Schmidt\")` **zweimal** hochlaufen und am Ende `3` statt `2` ausgeben. Das ist der klassische Fehler bei dieser Aufgabenform (S. 114).\n\n**`static final` vs. `static` vs. Instanzattribut.** `ZINSSATZ` ist für alle Konten gleich und unveränderlich; `anzahl` gehört der Klasse und ändert sich; `stand` gehört dem einzelnen Objekt (S. 113, S. 131).\n\n**Methode mit `boolean`-Rückgabe.** `abheben` meldet Erfolg oder Misserfolg zurück, statt einfach stillschweigend nichts zu tun - genau der im Skript genannte Vorteil prüfender Zugriffsmethoden (S. 127). `a.abheben(600.0)` scheitert (Deckung 500.0) -> `false`, `a.abheben(100.0)` gelingt -> `true`, Rest 400.0.\n\n**Zinsen:** `400.0 * 0.02 = 8.0`.\n\nMerkregel: *Ein Konstruktor macht die Arbeit, alle anderen reichen per `this(...)` durch - dann kann der Zaehler nicht doppelt zählen.*",
+   "hints": [
+    "Beginnen Sie mit dem Konstruktor, der **alle** Daten bekommt. Der zweite soll nur Standardwerte ergänzen.",
+    "Überlegen Sie genau, in welchem der beiden Konstruktoren `anzahl++` stehen darf, damit am Ende 2 herauskommt.",
+    "`abheben` muss zwei Dinge tun: prüfen und melden. Welchen Rückgabetyp braucht es dafür?",
+    "`getAnzahl()` wird als `Konto.getAnzahl()` aufgerufen - also ohne Objekt."
+   ],
+   "pitfalls": [
+    "`anzahl++` in **beide** Konstruktoren schreiben - dann steht am Ende 3 statt 2.",
+    "Im zweiten Konstruktor `new Konto(inhaber, 0.0)` statt `this(inhaber, 0.0)` schreiben: das erzeugt ein zusätzliches Objekt, zählt doppelt und lässt das eigentliche Objekt leer.",
+    "`getAnzahl()` ohne `static` deklarieren und dann über den Klassennamen aufrufen.",
+    "`ZINSSATZ` als Instanzattribut deklarieren - dann gäbe es den Zinssatz pro Konto."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 114,
+     "label": "6.1 Konstruktoren: this(...) als erste Anweisung"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 113,
+     "label": "6.1 Kugel: final static PI, static anzahl"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 131,
+     "label": "6.2 Klassenattribute und Klassenmethoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 127,
+     "label": "6.2 Get- und Set-Methoden mit Prüfungen"
+    },
+    {
+     "file": "Probeklausur_Java_ausfuellbar.pdf",
+     "page": 3,
+     "label": "Aufgabe 4 - Klasse mit Methoden schreiben"
+    }
+   ],
+   "tags": [
+    "code",
+    "konstruktor-ueberladung",
+    "this",
+    "static",
+    "final",
+    "tostring",
+    "kapselung"
+   ]
+  },
+  {
+   "id": "java-objects-033",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "code",
+   "difficulty": 5,
+   "points": 12,
+   "examStyle": false,
+   "title": "Rekursive Potenz mit überladener Methode und Aufrufzähler",
+   "prompt": "Schreiben Sie eine Klasse `Rechner` mit:\n\na) einem privaten Instanzattribut `aufrufe`, das zählt, wie oft die **rekursive** Methode betreten wurde,\n\nb) einer **rekursiven** Instanzmethode `long potenz(long basis, int exponent)`, die `basis^exponent` berechnet (`exponent >= 0`, Abbruchfall `exponent == 0` liefert `1L`). Sie erhöht bei **jedem** Betreten `aufrufe` um 1. **Keine Schleife verwenden.**\n\nc) einer **überladenen** Methode `long potenz(long basis)`, die das Quadrat liefert und dafür die zweistellige Variante aufruft (sie selbst erhöht `aufrufe` nicht),\n\nd) `int getAufrufe()`,\n\ne) einer `main`-Methode in `RechnerApp`, die genau diese Ausgabe erzeugt:\n\n```\n1024\n25\n14\n```",
+   "starterCode": "class Rechner {\n  // a) private int aufrufe\n\n  // b) rekursiv: long potenz(long basis, int exponent)   -- ohne Schleife!\n\n  // c) überladen: long potenz(long basis)  -> Quadrat\n\n  // d) int getAufrufe()\n\n}\nclass RechnerApp {\n  public static void main(String[] s) {\n    // Ein Rechner-Objekt erzeugen, 2 hoch 10 ausgeben,\n    // das Quadrat von 5 ausgeben, danach die Zahl der rekursiven Aufrufe.\n\n  }\n}",
+   "constraints": [
+    "Keine Schleifen (for, while, do) in potenz.",
+    "potenz muss überladen sein (zwei Methoden gleichen Namens).",
+    "aufrufe ist ein privates Instanzattribut."
+   ],
+   "expectedOutput": "1024\n25\n14",
+   "forbidden": [
+    "for (",
+    "while (",
+    "for(",
+    "while("
+   ],
+   "required": [
+    "potenz(basis, exponent - 1)"
+   ],
+   "solution": "class Rechner {\n  private int aufrufe = 0;\n\n  public long potenz(long basis, int exponent) {\n    aufrufe++;\n    if (exponent == 0)\n      return 1L;\n    return basis * potenz(basis, exponent - 1);\n  }\n  public long potenz(long basis) {\n    return potenz(basis, 2);\n  }\n  public int getAufrufe() { return aufrufe; }\n}\nclass RechnerApp {\n  public static void main(String[] s) {\n    Rechner r = new Rechner();\n    System.out.println( r.potenz(2, 10) );\n    System.out.println( r.potenz(5) );\n    System.out.println( r.getAufrufe() );\n  }\n}",
+   "explanation": "Drei Konzepte greifen ineinander.\n\n**Rekursion.** `potenz(basis, e) = basis * potenz(basis, e-1)` mit Abbruchfall `e == 0` -> `1L`. Das ist exakt die Bauform der Fakultät aus dem Skript (S. 153). Wichtig: Der Abbruchfall muss **vor** dem rekursiven Aufruf geprüft werden, sonst läuft die Methode bis zum `StackOverflowError`.\n\n**Überladung.** `potenz(long)` und `potenz(long, int)` haben denselben Namen, aber verschiedene Parameterlisten - der Compiler wählt anhand der Argumente aus (S. 152). `potenz(5)` ruft `potenz(5, 2)` auf; die einstellige Variante ist damit nur eine bequeme Abkürzung.\n\n**Der Zaehler erklärt die 14.** `aufrufe` ist ein **Instanzattribut**, kein lokaler Wert - jede Rekursionsstufe erhöht **dasselbe** Feld im Objekt (S. 154: eigene Aktivierungsrahmen betreffen nur *lokale* Variablen).\n\n- `potenz(2, 10)`: Exponenten 10, 9, ..., 1, 0 -> **11** Aufrufe.\n- `potenz(5)`: ruft `potenz(5, 2)` -> Exponenten 2, 1, 0 -> **3** Aufrufe. Die einstellige Variante zählt selbst nicht mit.\n- Summe: 11 + 3 = **14**.\n\nMerkregel: *Bei `n` Rekursionsschritten wird die Methode `n + 1` mal betreten - der Abbruchfall zählt mit.*",
+   "hints": [
+    "Schreiben Sie zuerst den Abbruchfall hin: was liefert `potenz(basis, 0)`?",
+    "Der rekursive Schritt reduziert immer den **Exponenten**, nicht die Basis.",
+    "Wo genau muss `aufrufe++` stehen, damit auch der Abbruchfall mitgezählt wird?",
+    "Zählen Sie für die 14 beide Aufrufketten getrennt durch und addieren Sie."
+   ],
+   "pitfalls": [
+    "`aufrufe` als lokale Variable in der Methode deklarieren - dann startet der Zaehler bei jedem Aufruf neu bei 0.",
+    "`aufrufe++` erst nach der `if`-Abfrage schreiben; dann fehlt der Abbruchfall in der Zählung und es kommt 12 heraus.",
+    "In `potenz(long)` den Zaehler zusätzlich erhöhen - dann wären es 15.",
+    "Eine Schleife verwenden - die Aufgabe verlangt ausdrücklich Rekursion."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 153,
+     "label": "6.3 Rekursion: Fakultät"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 154,
+     "label": "6.3 Rekursion: eigener Aktivierungsrahmen, eigene lokale Variablen"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 152,
+     "label": "6.3 Überladen von Methoden"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 357,
+     "label": "Überblick 6: Rekursion"
+    }
+   ],
+   "tags": [
+    "code",
+    "rekursion",
+    "overloading",
+    "instanzattribut",
+    "zaehler"
+   ]
+  },
+  {
+   "id": "java-objects-034",
+   "lang": "java",
+   "topicId": "java-objects",
+   "type": "code",
+   "difficulty": 5,
+   "points": 12,
+   "examStyle": false,
+   "title": "Objekte in Objekten: Bibliothek mit Regalen und Büchern",
+   "prompt": "Ein `Buch` hat einen Titel und eine ISBN. Ein `Regal` enthält mehrere `Buch`-Objekte. Eine `Bibliothek` besteht aus mehreren `Regal`-Objekten.\n\nSchreiben Sie die drei Klassen mit **privaten** Attributen und passenden Konstruktoren:\n\n- `Buch(String titel, String isbn)` mit `getTitel()` und `getIsbn()`.\n- `Regal(int platz)` legt ein Array für `platz` Bücher an; `setBuch(int i, String titel, String isbn)` erzeugt an Position `i` ein neues Buch (nur wenn `i` gültig ist); `getBuch(int i)` und `getPlatz()`.\n- `Bibliothek(int anzahlRegale, int platzProRegal)` legt die Regale an **und erzeugt sie auch alle**; `getRegal(int i)` und `getAnzahlRegale()`.\n\nErzeugen Sie in `main` (Klasse `BibliothekApp`) eine Bibliothek mit **6 Regalen zu je 80 Büchern**, setzen Sie das erste Buch im ersten Regal auf `\"Steal me\"` mit ISBN `\"1-2-3\"` und erzeugen Sie genau diese Ausgabe:\n\n```\n6\n80\nSteal me\n1-2-3\nnull\n```\n\n(Die letzte Zeile fragt `getRegal(5).getBuch(79)` ab - dort wurde nie ein Buch abgelegt.)",
+   "starterCode": "class Buch {\n  // private titel, isbn; Konstruktor; getTitel(); getIsbn()\n\n}\nclass Regal {\n  // private Buch[] buecher; Konstruktor(int platz);\n  // setBuch(int i, String titel, String isbn); getBuch(int i); getPlatz()\n\n}\nclass Bibliothek {\n  // private Regal[] regale; Konstruktor(int anzahlRegale, int platzProRegal);\n  // getRegal(int i); getAnzahlRegale()\n\n}\nclass BibliothekApp {\n  public static void main(String[] s) {\n    // Bibliothek mit 6 Regalen zu je 80 Büchern erzeugen,\n    // erstes Buch im ersten Regal setzen und die geforderten Zeilen ausgeben.\n\n  }\n}",
+   "constraints": [
+    "Alle Attribute müssen private sein.",
+    "Die Bücher dürfen nicht im Konstruktor von Regal vorab erzeugt werden."
+   ],
+   "expectedOutput": "6\n80\nSteal me\n1-2-3\nnull",
+   "required": [
+    "new Regal[",
+    "new Buch(",
+    "private"
+   ],
+   "solution": "class Buch {\n  private String titel, isbn;\n\n  public Buch(String titel, String isbn) {\n    this.titel = titel;\n    this.isbn = isbn;\n  }\n  public String getTitel() { return titel; }\n  public String getIsbn()  { return isbn; }\n}\nclass Regal {\n  private Buch[] buecher;\n\n  public Regal(int platz) {\n    buecher = new Buch[platz];\n  }\n  public void setBuch(int i, String titel, String isbn) {\n    if (i >= 0 && i < buecher.length)\n      buecher[i] = new Buch(titel, isbn);\n  }\n  public Buch getBuch(int i) { return buecher[i]; }\n  public int  getPlatz()     { return buecher.length; }\n}\nclass Bibliothek {\n  private Regal[] regale;\n\n  public Bibliothek(int anzahlRegale, int platzProRegal) {\n    regale = new Regal[anzahlRegale];\n    for (int i = 0; i < anzahlRegale; i++)\n      regale[i] = new Regal(platzProRegal);\n  }\n  public Regal getRegal(int i)   { return regale[i]; }\n  public int   getAnzahlRegale() { return regale.length; }\n}\nclass BibliothekApp {\n  public static void main(String[] s) {\n    Bibliothek b = new Bibliothek(6, 80);\n    b.getRegal(0).setBuch(0, \"Steal me\", \"1-2-3\");\n    System.out.println( b.getAnzahlRegale() );\n    System.out.println( b.getRegal(0).getPlatz() );\n    System.out.println( b.getRegal(0).getBuch(0).getTitel() );\n    System.out.println( b.getRegal(0).getBuch(0).getIsbn() );\n    System.out.println( b.getRegal(5).getBuch(79) );\n  }\n}",
+   "explanation": "Das ist die Aufgabe `BeispielBooks.java` aus dem Skript (S. 128) - inhaltlich identisch zum `MusicLib`-Beispiel (S. 170).\n\nDer entscheidende Punkt steht auf S. 157: *\"Wie in einfachen Variablen werden in Arrays nur Objektreferenzen gespeichert\"*. `new Regal[6]` legt **keine** sechs Regale an, sondern nur sechs Plätze für Referenzen, alle mit `null` belegt. Deshalb braucht der Konstruktor der `Bibliothek` eine Schleife mit `regale[i] = new Regal(...)`. Wer sie vergisst, bekommt beim ersten Zugriff eine `NullPointerException`.\n\nDie Bücher dagegen werden **nicht** vorab erzeugt - ein Regal ist am Anfang leer. Genau das zeigt die letzte Ausgabezeile: `getRegal(5).getBuch(79)` liefert `null`, und `println(null)` druckt `null`. Wäre man mit `.getTitel()` drangegangen, gäbe es eine `NullPointerException`.\n\n**Bemerkenswert an der Verkettung** `b.getRegal(0).setBuch(0, ...)`: Jeder Get-Aufruf liefert eine Referenz, auf der sofort weitergearbeitet wird - so klettert man durch die Objekthierarchie, ohne die Kapselung aufzugeben. Die Alternative (`public Buch[] books;` wie im Skript-Entwurf) wäre kürzer, gibt aber die Interna preis.\n\n**Warum `getPlatz()` `buecher.length` liefert:** Die Länge steckt schon im Array; ein zusätzliches Attribut `size` wäre redundant und könnte auseinanderlaufen.\n\nMerkregel: *`new Typ[n]` erzeugt n Zeiger auf nichts - die Objekte muss man einzeln nachliefern.*",
+   "hints": [
+    "Überlegen Sie zuerst, was `new Regal[6]` tatsächlich im Speicher anlegt.",
+    "In welchem Konstruktor müssen die einzelnen Regale erzeugt werden - und mit welcher Schleife?",
+    "Für die Ausgabe dürfen Sie Aufrufe verketten: `b.getRegal(0).getBuch(0).getTitel()`.",
+    "Die letzte Zeile soll `null` drucken - also darf dort **keine** Methode auf dem Buch aufgerufen werden."
+   ],
+   "pitfalls": [
+    "Im Bibliothek-Konstruktor nur `regale = new Regal[n];` schreiben und die Schleife vergessen -> `NullPointerException`.",
+    "Auch die Bücher im Regal-Konstruktor vorab erzeugen - dann steht in der letzten Zeile nicht `null`.",
+    "`getPlatz()` über ein zusätzliches Attribut lösen und dabei vergessen, es zu setzen.",
+    "Die Arrays `public` machen; die Aufgabe verlangt Kapselung."
+   ],
+   "sources": [
+    {
+     "file": "OFP_Java.pdf",
+     "page": 128,
+     "label": "6.2 Beispiel Book / BookShelf / BookCase"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 157,
+     "label": "6.4 Arrays von Objekten: nur Referenzen, Initialisierung mit null"
+    },
+    {
+     "file": "OFP_Java.pdf",
+     "page": 170,
+     "label": "6.5 Beispiel MusicLib / Album / Song"
+    },
+    {
+     "file": "06_ObjekteMethoden/BeispielBooks.java",
+     "page": 1,
+     "label": "Aufgabenstellung Bookcase / BookShelf / Book"
+    },
+    {
+     "file": "06_ObjekteMethoden/BeispielMusik_Loesung.java",
+     "page": 1,
+     "label": "Musterlösung mit Objekt-Arrays"
+    }
+   ],
+   "tags": [
+    "code",
+    "objekt-array",
+    "referenz",
+    "null",
+    "kapselung",
+    "konstruktor"
+   ]
+  }
+ ]
+}

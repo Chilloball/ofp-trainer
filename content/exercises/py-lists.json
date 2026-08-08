@@ -1,0 +1,1694 @@
+{
+ "topicId": "py-lists",
+ "exercises": [
+  {
+   "id": "py-lists-001",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "predict-output",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "Eine Liste anlegen und darauf zugreifen",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Geben Sie jede Ausgabezeile einzeln an.",
+   "code": "meine_liste = [5, \"hallo\", 6.3, True, None]\nprint(meine_liste[1])\nprint(meine_liste[-1])\nprint(len(meine_liste))\nprint(type(meine_liste[2]))",
+   "expectedOutput": "hallo\nNone\n5\n<class 'float'>",
+   "solution": "meine_liste = [5, \"hallo\", 6.3, True, None]\nprint(meine_liste[1])   # hallo   -> Index 1 ist das ZWEITE Element\nprint(meine_liste[-1])  # None    -> negative Indizes zählen von hinten\nprint(len(meine_liste)) # 5       -> Anzahl der Einträge\nprint(type(meine_liste[2]))  # <class 'float'>\n",
+   "explanation": "Listen werden mit eckigen Klammern geschrieben und dürfen Elemente **unterschiedlicher Datentypen** enthalten — hier stecken ein int, ein str, ein float, ein bool und `None` in derselben Liste. Die Indizierung beginnt wie bei Strings bei **0**, deshalb liefert `meine_liste[1]` nicht die `5`, sondern `\"hallo\"`. Negative Indizes verhalten sich zyklisch: `-1` ist das letzte Element, `-2` das vorletzte. `len` liefert die Anzahl der Elemente (5), nicht den größten Index (4) — das ist der häufigste Zählfehler. `type` zeigt, dass jedes Element seinen eigenen Typ behält; die Liste ist nur die Sammelhülle darum. Merkregel: *Index startet bei 0, `len` zählt ab 1, größter gültiger Index ist immer `len(...) - 1`.*",
+   "hints": [
+    "Bei welcher Zahl beginnt Python zu zählen?",
+    "`-1` ist kein Fehler, sondern eine gültige Position — welche?",
+    "`type` gibt den Typ des Elements aus, nicht den der Liste."
+   ],
+   "pitfalls": [
+    "`meine_liste[1]` für das erste Element halten.",
+    "`len` mit dem größten Index verwechseln (5 statt 4 oder umgekehrt).",
+    "Glauben, eine Liste dürfe nur einen einzigen Datentyp enthalten."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 13,
+     "label": "Listen: eckige Klammern, unterschiedliche Datentypen, mutabel"
+    },
+    {
+     "file": "pythonvorlesung_03.ipynb",
+     "page": 1,
+     "label": "meine_liste = [5, \"hallo\", 6.3, True, None]"
+    }
+   ],
+   "tags": [
+    "liste",
+    "indizierung",
+    "len",
+    "type"
+   ]
+  },
+  {
+   "id": "py-lists-002",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "mc",
+   "difficulty": 1,
+   "points": 2,
+   "examStyle": false,
+   "title": "Was macht pop() ohne Argument?",
+   "prompt": "Gegeben ist der folgende Code:\n\n```python\npreiskarten = [1, 2, 3, 4]\nkarte = preiskarten.pop()\n```\n\nWelche Aussage beschreibt den Zustand nach der zweiten Zeile korrekt?",
+   "code": "preiskarten = [1, 2, 3, 4]\nkarte = preiskarten.pop()",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`karte` hat den Wert `4`, `preiskarten` ist `[1, 2, 3]`.",
+     "correct": true,
+     "why": "Richtig. `.pop()` ohne Index nimmt immer das **letzte** Element, gibt es zurück und entfernt es gleichzeitig aus der Liste."
+    },
+    {
+     "id": "b",
+     "text": "`karte` hat den Wert `1`, `preiskarten` ist `[2, 3, 4]`.",
+     "correct": false,
+     "why": "Das wäre `preiskarten.pop(0)`. Ohne Argument ist der Default-Index -1, also das letzte Element."
+    },
+    {
+     "id": "c",
+     "text": "`karte` hat den Wert `4`, `preiskarten` bleibt `[1, 2, 3, 4]`.",
+     "correct": false,
+     "why": "`pop` liefert nicht nur zurück, sondern **entfernt** das Element auch — Listen sind mutable."
+    },
+    {
+     "id": "d",
+     "text": "Es entsteht ein Fehler, weil `pop` zwingend einen Index braucht.",
+     "correct": false,
+     "why": "Der Index ist optional; der Default ist -1. Ein Fehler entstünde nur bei einer leeren Liste (IndexError)."
+    }
+   ],
+   "solution": "Antwort a). `preiskarten.pop()` gibt `4` zurück und lässt `[1, 2, 3]` in der Liste stehen.",
+   "explanation": "In der Vorlesung wurde genau diese Frage am Goofspiel entwickelt: *„Was wir herausfinden wollten: `.pop()` ohne Index nimmt immer das letzte Element der Liste!“* Daraus folgt die einfachste Realisierung des Kartenziehens: **einmal am Anfang mischen (`random.shuffle`), danach immer die oberste Karte mit `.pop()` ziehen**. Wichtig ist die Doppelnatur von `pop`: Es ist gleichzeitig ein **Rückgabewert** (die gezogene Karte) und ein **Nebeneffekt** (die Liste wird kürzer). Genau deshalb funktioniert `while (len(preiskarten) > 0)` als Schleifenbedingung — die Liste leert sich von selbst. Mit einem Argument, z. B. `pop(0)`, zieht man an einer bestimmten Position; der Default ist -1. Merkregel: *`pop` = zurückgeben **und** löschen, ohne Argument immer hinten.*",
+   "hints": [
+    "Der Standardwert des Index-Arguments ist -1.",
+    "Verändert `pop` die Liste oder liefert es nur einen Wert?"
+   ],
+   "pitfalls": [
+    "`pop()` mit `remove()` verwechseln — `remove` sucht nach einem **Wert** und gibt nichts zurück.",
+    "Annehmen, `pop` liefere eine neue Liste zurück."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 15,
+     "label": ".pop() ohne index nimmt immer das letzte Element der Liste!"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 9,
+     "label": "Vorlesung 1d: Listen — append, remove, insert, pop"
+    }
+   ],
+   "tags": [
+    "pop",
+    "liste",
+    "mutable"
+   ]
+  },
+  {
+   "id": "py-lists-003",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "predict-output",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": true,
+   "title": "append, insert, remove, pop — und was sie zurückgeben",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Achten Sie besonders auf die **Rückgabewerte** der Listenmethoden.",
+   "code": "meine_liste = [5, \"hallo\", 6.3]\nmeine_liste.append(6)\nmeine_liste.insert(2, \"zusammen\")\nprint(meine_liste)\nmeine_liste.remove(\"zusammen\")\nprint(meine_liste)\nprint(meine_liste.pop(0))\nprint(meine_liste.append(99))\nprint(meine_liste)",
+   "expectedOutput": "[5, 'hallo', 'zusammen', 6.3, 6]\n[5, 'hallo', 6.3, 6]\n5\nNone\n['hallo', 6.3, 6, 99]",
+   "solution": "meine_liste = [5, \"hallo\", 6.3]\nmeine_liste.append(6)            # hängt hinten an   -> [5, 'hallo', 6.3, 6]\nmeine_liste.insert(2, \"zusammen\")# fügt an Index 2 ein -> [5, 'hallo', 'zusammen', 6.3, 6]\nprint(meine_liste)               # [5, 'hallo', 'zusammen', 6.3, 6]\nmeine_liste.remove(\"zusammen\")   # entfernt den WERT   -> [5, 'hallo', 6.3, 6]\nprint(meine_liste)               # [5, 'hallo', 6.3, 6]\nprint(meine_liste.pop(0))        # 5   (gibt zurück UND entfernt)\nprint(meine_liste.append(99))    # None (append gibt nichts zurück!)\nprint(meine_liste)               # ['hallo', 6.3, 6, 99]\n",
+   "explanation": "Die vier Methoden aus der Klausurrelevanz-Liste unterscheiden sich in **zwei** Dimensionen: wie sie die Liste verändern und was sie zurückgeben. `append(x)` hängt hinten an, `insert(i, x)` schiebt an Position `i` ein (das erste Argument ist der **Index**, das zweite der Wert — nicht verwechseln!), `remove(x)` sucht den **Wert** `x` und löscht sein erstes Vorkommen, `pop(i)` löscht **an einer Position** und liefert das gelöschte Element zurück. Der entscheidende Klausurpunkt steht in Zeile 8: `append` (wie auch `insert` und `remove`) verändert die Liste an Ort und Stelle und gibt **`None`** zurück. Wer `meine_liste = meine_liste.append(99)` schreibt, hat danach `None` statt einer Liste — ein Klassiker. Nur `pop` liefert einen sinnvollen Rückgabewert. Merkregel: *`pop` gibt etwas zurück, die anderen geben `None` zurück und arbeiten per Nebeneffekt.*",
+   "hints": [
+    "Bei `insert` ist das erste Argument der Index, nicht der Wert.",
+    "`remove` bekommt einen Wert, `pop` einen Index — welcher der beiden liefert etwas zurück?",
+    "Was passiert, wenn man den Rückgabewert einer Methode druckt, die die Liste nur verändert?"
+   ],
+   "pitfalls": [
+    "`insert(2, \"zusammen\")` als „füge 2 an Position 'zusammen' ein“ lesen.",
+    "Erwarten, dass `print(meine_liste.append(99))` die neue Liste ausgibt.",
+    "Bei `pop(0)` das letzte statt des ersten Elements nehmen."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 14,
+     "label": "Was können wir mit Listen alles machen? append/insert/remove"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 22,
+     "label": "Klausurrelevante Dinge/Befehle: append insert remove pop"
+    },
+    {
+     "file": "pythonvorlesung_03.ipynb",
+     "page": 1,
+     "label": "append / insert / remove am Beispiel"
+    }
+   ],
+   "tags": [
+    "append",
+    "insert",
+    "remove",
+    "pop",
+    "none",
+    "nebeneffekt"
+   ]
+  },
+  {
+   "id": "py-lists-004",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "code",
+   "difficulty": 2,
+   "points": 3,
+   "examStyle": false,
+   "title": "Ein neues Kartenspiel erzeugen",
+   "prompt": "Schreiben Sie die Funktion `neues_kartenspiel(n=13)` aus der Vorlesung: Sie erzeugt ein neues Kartenspiel in Form einer **Liste** mit den ganzen Zahlen von 1 bis `n` (jeweils einschließlich). Der Parameter `n` ist ein **keyword argument** mit dem Standardwert 13.\n\nBeginnen Sie die Funktion mit einem docstring, der Eingabe und Ausgabe beschreibt. Verwenden Sie `range` und wandeln Sie das Ergebnis in eine Liste um.\n\nBeispiel: `neues_kartenspiel(6)` → `[1, 2, 3, 4, 5, 6]`",
+   "starterCode": "def neues_kartenspiel(n=13):\n    \"\"\"\n    Erstellt ein neues Kartenspiel in Form einer Liste mit Zahlen von 1 bis n\n    Eingabe: Integer n\n    Ausgabe: Liste mit Integern von 1 bis n\n    \"\"\"\n    # Ihr Code hier\n",
+   "required": [
+    "range("
+   ],
+   "tests": [
+    {
+     "name": "Standardgröße 13",
+     "call": "neues_kartenspiel()",
+     "expected": "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]"
+    },
+    {
+     "name": "Kleines Spiel mit 6 Karten",
+     "call": "neues_kartenspiel(6)",
+     "expected": "[1, 2, 3, 4, 5, 6]"
+    },
+    {
+     "name": "Rückgabetyp ist eine Liste",
+     "call": "type(neues_kartenspiel(3))",
+     "expected": "list"
+    },
+    {
+     "name": "n = 1",
+     "call": "neues_kartenspiel(1)",
+     "expected": "[1]"
+    },
+    {
+     "name": "n = 0 ergibt die leere Liste",
+     "call": "neues_kartenspiel(0)",
+     "expected": "[]"
+    },
+    {
+     "name": "Als keyword argument aufrufbar",
+     "call": "neues_kartenspiel(n=4)",
+     "expected": "[1, 2, 3, 4]"
+    }
+   ],
+   "solution": "def neues_kartenspiel(n=13):\n    \"\"\"\n    Erstellt ein neues Kartenspiel in Form einer Liste mit Zahlen von 1 bis n\n    Eingabe: Integer n\n    Ausgabe: Liste mit Integern von 1 bis n\n    \"\"\"\n    return list(range(1, n + 1))\n",
+   "explanation": "Diese Funktion steht wörtlich in der `helper.py` des Professors und ist der Einstieg in fast jedes Goofspiel-Beispiel. Drei Dinge werden hier gleichzeitig geübt. Erstens das **keyword argument mit Default**: `n=13` erlaubt sowohl `neues_kartenspiel()` als auch `neues_kartenspiel(6)`. Zweitens `range(a, b)`, das bei `a` beginnt und **vor** `b` endet — deshalb muss man `n + 1` schreiben, sonst fehlt die höchste Karte. Drittens die **Konvertierung** `list(...)`: `range` ist selbst keine Liste, sondern ein iterierbares Objekt; erst `list` materialisiert es. Für `n = 0` liefert `range(1, 1)` korrekt die leere Liste. Die auskommentierte Alternative des Professors baut dieselbe Liste mit `liste = []` und `liste.append(i)` in einer Schleife — funktional identisch, aber deutlich länger. Merkregel: *`range` ist keine Liste, `list(range(...))` schon.*",
+   "hints": [
+    "`range(1, 5)` liefert 1, 2, 3, 4 — die obere Grenze ist ausgeschlossen.",
+    "Der Rückgabetyp muss `list` sein, nicht `range`.",
+    "Der Standardwert wird direkt in die Parameterliste geschrieben: `def f(n=13):`"
+   ],
+   "pitfalls": [
+    "`range(1, n)` statt `range(1, n + 1)` — die höchste Karte fehlt.",
+    "`return range(1, n + 1)` ohne `list(...)` — der Typ stimmt dann nicht.",
+    "Bei 0 beginnen und `[0, 1, ..., 12]` liefern."
+   ],
+   "sources": [
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "def neues_kartenspiel(n=13)"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "return list(range(1,n+1))"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 10,
+     "label": "Vorlesung 2: positional und keyword Argumente, docstring"
+    }
+   ],
+   "tags": [
+    "liste",
+    "range",
+    "konvertierung",
+    "keyword-argument",
+    "goofspiel"
+   ]
+  },
+  {
+   "id": "py-lists-005",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Slicing auf Listen",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Geben Sie alle sechs Ausgabezeilen an.",
+   "code": "karten = [1, 2, 3, 4, 5, 6, 7, 8]\nprint(karten[2:5])\nprint(karten[:3])\nprint(karten[-2:])\nprint(karten[::2])\nprint(karten[::-1])\nprint(karten[5:2])",
+   "expectedOutput": "[3, 4, 5]\n[1, 2, 3]\n[7, 8]\n[1, 3, 5, 7]\n[8, 7, 6, 5, 4, 3, 2, 1]\n[]",
+   "solution": "karten = [1, 2, 3, 4, 5, 6, 7, 8]\nprint(karten[2:5])   # [3, 4, 5]  ab Index 2 bis VOR Index 5\nprint(karten[:3])    # [1, 2, 3]  vom Anfang bis vor Index 3\nprint(karten[-2:])   # [7, 8]     die letzten beiden\nprint(karten[::2])   # [1, 3, 5, 7]  jedes zweite Element\nprint(karten[::-1])  # [8, 7, ..., 1]  Schrittweite -1 kehrt um\nprint(karten[5:2])   # []  Start hinter Ende -> leere Liste, KEIN Fehler\n",
+   "explanation": "Slicing `[a:b:c]` funktioniert bei Listen exakt wie bei Strings — nur ist das Ergebnis wieder eine **Liste**, kein String. Die drei Regeln aus der Vorlesung: die Indizierung beginnt bei 0, die obere Grenze `b` ist **ausgeschlossen**, und die Zahl nach dem zweiten Doppelpunkt ist die **Schrittweite**. Fehlt `a`, wird ab dem Anfang geschnitten, fehlt `b`, bis zum Ende. Negative Indizes zählen zyklisch von hinten, deshalb sind `karten[-2:]` die letzten beiden Karten. `[::-1]` ist der Standardtrick zum Umdrehen. Die letzte Zeile ist die eigentliche Falle: Ein Slice mit Start hinter dem Ende ist **kein Fehler**, sondern liefert stillschweigend die leere Liste — anders als ein einzelner Index `karten[99]`, der einen `IndexError` wirft. Slicing erzeugt außerdem immer eine **neue** Liste; das Original bleibt unverändert. Merkregel: *Einzelindex kann krachen, Slicing nie.*",
+   "hints": [
+    "Zählen Sie die Indizes einmal explizit unter die Liste: 0 1 2 3 4 5 6 7.",
+    "Die obere Grenze gehört nie mit dazu.",
+    "Was passiert, wenn der Startindex größer ist als der Endindex — Fehler oder etwas anderes?"
+   ],
+   "pitfalls": [
+    "`karten[2:5]` als vier Elemente lesen (obere Grenze mitzählen).",
+    "Bei `karten[5:2]` einen Fehler oder `[6, 5, 4]` erwarten — dafür bräuchte man die Schrittweite -1.",
+    "`karten[::2]` als „die ersten zwei“ lesen."
+   ],
+   "sources": [
+    {
+     "file": "1_strings_26.pdf",
+     "page": 3,
+     "label": "Slicing: Indizierung ab 0, obere Grenze ausgeschlossen, Schrittweite"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 13,
+     "label": "Klausurrelevante Dinge/Befehle: Slicing [a:b:c]"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 5,
+     "label": "Erste 3 Runden mit Slicing: alle_runden[i][:3]"
+    }
+   ],
+   "tags": [
+    "slicing",
+    "liste",
+    "negative-indizes",
+    "schrittweite"
+   ]
+  },
+  {
+   "id": "py-lists-006",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "Ein Element zurückgeben und gleichzeitig löschen",
+   "prompt": "a) Mit welchem Befehl kann man **das letzte Element einer Liste zurückgeben und dieses gleichzeitig aus der Liste löschen**? Beschreiben Sie in zwei Sätzen ein Anwendungsbeispiel.\n\nb) Was ändert sich, wenn Sie dem Befehl die Zahl `0` als Argument übergeben?\n\nc) Wie hätten Sie dasselbe Ergebnis erreicht, ohne diesen Befehl zu benutzen? Geben Sie zwei Zeilen Code an.",
+   "solution": "**a)** `liste.pop()`. Ohne Argument wird immer das **letzte** Element zurückgegeben und gleichzeitig aus der Liste entfernt.\n\n*Anwendungsbeispiel:* Beim Goofspiel mischt man die Preiskarten einmal mit `random.shuffle(preiskarten)` und zieht dann in jeder Runde mit `preiskarte = preiskarten.pop()` die oberste Karte vom Stapel. Weil `pop` die Karte zugleich entfernt, kann dieselbe Preiskarte nicht zweimal auftauchen, und `while len(preiskarten) > 0` beendet das Spiel automatisch.\n\n**b)** `liste.pop(0)` gibt das **erste** Element zurück und entfernt es. Das Argument ist der **Index**, an dem gezogen wird; der Standardwert ist -1, also das letzte Element.\n\n**c)** Von Hand über Index und `remove` (bzw. Slicing):\n```python\noberste_karte = liste[-1]\nliste.remove(oberste_karte)\n```\noder ohne Mutation:\n```python\noberste_karte = liste[-1]\nliste = liste[:-1]\n```\n\n**Bewertungsrubrik (3 P):**\n* 1 P: `pop()` genannt und erklärt, dass es zurückgibt **und** löscht\n* 1 P: sinnvolles Anwendungsbeispiel (Karte vom Stapel ziehen o. Ä.) mit Begründung\n* 0,5 P: `pop(0)` = erstes Element, Argument ist der Index (Default -1)\n* 0,5 P: korrekte Alternative über Index + `remove` oder Slicing",
+   "explanation": "Diese Frage stammt fast wörtlich aus der Klausur-Überblicksfolie („Mit welchem Befehl kann man das letzte Element einer Liste zurückgeben und dieses gleichzeitig aus der Liste löschen? Beschreiben sie in zwei Sätzen ein Anwendungsbeispiel.“) — sie ist also ein sehr heißer Kandidat für die Kurzfragen. Der Kern ist die Doppelfunktion von `pop`: **Rückgabewert plus Nebeneffekt**. Genau deshalb hat der Professor das Kartenziehen so umgesetzt: einmal mischen, dann immer oben abheben. Bei der handgemachten Alternative lauert eine Falle: `liste.remove(oberste_karte)` entfernt das **erste Vorkommen dieses Werts** — bei doppelten Werten (z. B. Würfelaugen) löscht es also womöglich die falsche Position. Sauberer ist deshalb `liste = liste[:-1]`, was zudem ohne Mutation auskommt. Merkregel: *`pop` arbeitet mit Positionen, `remove` mit Werten.*",
+   "hints": [
+    "Die Antwort steht auf der Folie zu den Listen-Methoden und wurde am Preiskartenstapel entwickelt.",
+    "Überlegen Sie, warum man beim Kartenziehen unbedingt beides braucht: den Wert und das Entfernen.",
+    "Welchen Standardwert hat das Index-Argument?"
+   ],
+   "pitfalls": [
+    "`remove` statt `pop` nennen — `remove` gibt nichts zurück und arbeitet mit Werten.",
+    "Behaupten, `pop()` liefere eine neue Liste.",
+    "Bei c) vergessen, dass `remove` bei doppelten Werten das erste Vorkommen trifft, nicht das letzte."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 9,
+     "label": "Mit welchem Befehl kann man das letzte Element zurückgeben und löschen?"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 15,
+     "label": "Mische die Preiskarten, dann ziehe immer die oberste Karte mit .pop()"
+    },
+    {
+     "file": "pythonvorlesung_03.ipynb",
+     "page": 1,
+     "label": "händisch vs. vorimplementiert: liste.pop()"
+    }
+   ],
+   "tags": [
+    "pop",
+    "remove",
+    "liste",
+    "mutable",
+    "kurzfrage",
+    "goofspiel"
+   ]
+  },
+  {
+   "id": "py-lists-007",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Code-Analyse: Listen, Tupel und Dictionaries in Funktionen",
+   "prompt": "Geben Sie für jedes der fünf Programme an, **was auf der Kommandozeile ausgegeben wird oder ob ein Fehler auftritt**. Begründen Sie Ihre Antwort jeweils in einem Satz. (je 1 P)\n\n**a)**\n```python\nkarten = [1, 2, 3]\ndef f():\n    karten.append(4)\nf()\nprint(karten)\n```\n\n**b)**\n```python\nkarten = [1, 2, 3]\ndef g():\n    karten = [9]\n    karten.append(7)\ng()\nprint(karten)\n```\n\n**c)**\n```python\nkarten = (1, 2, 3)\ndef h(k):\n    k = k + (4,)\nh(karten)\nprint(karten)\n```\n\n**d)**\n```python\nstate = {'punkte': 0, 'karten': [1, 2]}\ndef m(s):\n    s['punkte'] = s['punkte'] + 5\nm(state)\nprint(state)\n```\n\n**e)**\n```python\nkarten = [1, 2, 3]\ndef n():\n    karten = karten + [4]\n    return karten\nprint(n())\n```",
+   "solution": "**a) `[1, 2, 3, 4]`** — `karten` ist eine globale, **mutable** Liste; `append` verändert das Objekt selbst, dafür braucht man kein `global`.\n\n**b) `[1, 2, 3]`** — durch die Zuweisung `karten = [9]` entsteht eine **lokale** Variable, die die globale nur verdeckt; `append(7)` wirkt auf die lokale Liste, die beim Verlassen der Funktion verschwindet.\n\n**c) `(1, 2, 3)`** — Tupel sind **immutable**: `k + (4,)` erzeugt ein **neues** Tupel und bindet den lokalen Namen `k` daran; das Original bleibt unangetastet, und ohne `return` geht das neue Tupel verloren.\n\n**d) `{'punkte': 5, 'karten': [1, 2]}`** — Dictionaries sind mutable, `s` zeigt auf dasselbe Objekt wie `state`, also ist die Änderung auch außerhalb sichtbar.\n\n**e) `UnboundLocalError`** — weil `karten` in der Funktion **zugewiesen** wird, gilt es im ganzen Funktionskörper als lokal; auf der rechten Seite wird es aber gelesen, bevor es einen Wert hat. Abhilfe: `global karten` oder `karten` als Argument übergeben.\n\n**Bewertungsrubrik (5 P):** je 1 P pro Teilaufgabe, davon 0,5 P für die richtige Ausgabe bzw. den richtigen Fehlertyp und 0,5 P für die korrekte Begründung (mutable/immutable bzw. lokal/global).",
+   "explanation": "Diese Aufgabe hat exakt das Format von Aufgabe 2 der Probeklausur und kombiniert die zwei Achsen, an denen fast alle Fehler entstehen: **mutable vs. immutable** und **lokal vs. global**. Die entscheidende Regel lautet: Eine **Zuweisung** (`name = ...`) innerhalb einer Funktion erzeugt immer eine lokale Variable — deshalb ändert b) nichts und e) stürzt sogar ab. Ein **Methodenaufruf** auf einem mutable Objekt (`append`, `s['x'] = ...`) verändert dagegen das Objekt selbst, auf das auch außen ein Name zeigt — deshalb wirken a) und d) nach außen. c) zeigt, warum Tupel in der funktionalen Programmierung so beliebt sind: Man *kann* sie gar nicht versehentlich ändern, jede „Änderung“ ist in Wahrheit ein neues Objekt, das man zurückgeben muss. Merkregel: *`=` erzeugt lokal, `.methode()` verändert global — aber nur, wenn das Objekt mutable ist.*",
+   "hints": [
+    "Fragen Sie sich bei jedem Programm zuerst: Wird der Name **zugewiesen** oder wird eine **Methode** auf ihm aufgerufen?",
+    "Mutable in Python: list, dict, set. Immutable: int, float, bool, string, tuple.",
+    "In e) steht `karten` auf beiden Seiten des `=` — was macht der Interpreter daraus?"
+   ],
+   "pitfalls": [
+    "Bei b) `[9, 7]` antworten und die lokale Variable mit der globalen verwechseln.",
+    "Bei c) `(1, 2, 3, 4)` antworten — Tupel-Addition erzeugt ein neues Tupel, sie verändert nichts.",
+    "Bei e) `[1, 2, 3, 4]` antworten, statt den `UnboundLocalError` zu erkennen."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2: Code-Analyse — Geltungsbereiche und Mutability"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 8,
+     "label": "Geltungsbereich und Lebensdauer von Variablen"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 11,
+     "label": "Aufgabe A2 — Was gibt der Code aus?"
+    }
+   ],
+   "tags": [
+    "scope",
+    "mutable",
+    "immutable",
+    "tupel",
+    "dictionary",
+    "unboundlocalerror"
+   ]
+  },
+  {
+   "id": "py-lists-008",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Ungerade Zahlen durch die nächstgrößere gerade Zahl ersetzen",
+   "prompt": "Vervollständigen Sie die beiden Lücken so, dass **alle ungeraden Zahlen in der Eingabeliste `liste` durch die nächstgrößere gerade Zahl ersetzt werden**. Sie dürfen davon ausgehen, dass die Liste nur natürliche Zahlen enthält.\n\nBeachten Sie: Die Funktion hat **keine Rückgabe** — überlegen Sie beim Lösen, warum sie trotzdem funktioniert (die Antwort steht in der Erklärung).",
+   "code": "def runde_ungerade_zahlen_auf(liste):\n    \"\"\"Ersetzt jede ungerade Zahl in liste durch die naechstgroessere gerade Zahl.\"\"\"\n    for i in range(len(liste)):\n        if ## Lücke 1 ##:\n            ## Lücke 2 ##\n\ntestliste = [1, 2, 3, 4, 5]\nprint(runde_ungerade_zahlen_auf(testliste))\nprint(testliste)",
+   "expectedOutput": "None\n[2, 2, 4, 4, 6]",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "liste[i] % 2 != 0",
+      "liste[i]%2!=0",
+      "liste[i] % 2 == 1",
+      "liste[i]%2==1",
+      "liste[i] % 2",
+      "not liste[i] % 2 == 0"
+     ],
+     "explanation": "Ungerade heißt: Der Rest bei der Division durch 2 ist nicht 0, also `liste[i] % 2 != 0` (gleichwertig `== 1`). Wichtig ist der Zugriff über den **Index** `liste[i]`, nicht über das Element selbst."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "liste[i] = liste[i] + 1",
+      "liste[i] += 1",
+      "liste[i]=liste[i]+1",
+      "liste[i]+=1"
+     ],
+     "explanation": "Die nächstgrößere gerade Zahl einer ungeraden Zahl ist immer die Zahl plus 1. Die Zuweisung muss **an die Position in der Liste** gehen (`liste[i] = ...`), damit die Änderung außerhalb sichtbar ist."
+    }
+   ],
+   "solution": "def runde_ungerade_zahlen_auf(liste):\n    \"\"\"Ersetzt jede ungerade Zahl in liste durch die naechstgroessere gerade Zahl.\"\"\"\n    for i in range(len(liste)):\n        if liste[i] % 2 != 0:\n            liste[i] = liste[i] + 1\n\ntestliste = [1, 2, 3, 4, 5]\nprint(runde_ungerade_zahlen_auf(testliste))  # None -> die Funktion gibt nichts zurück\nprint(testliste)                             # [2, 2, 4, 4, 6] -> die Liste wurde mutiert\n",
+   "explanation": "Genau diese Aufgabe steht auf der Klausur-Überblicksfolie zu Vorlesung 1d. Der Schlüssel ist die Schleife **über die Indizes** (`for i in range(len(liste))`) statt über die Elemente: Bei `for zahl in liste` würde `zahl = zahl + 1` nur die lokale Kopie ändern, die Liste bliebe unverändert. Nur über `liste[i] = ...` schreibt man wirklich in die Liste zurück. Zur Zusatzfrage des Professors („Die Funktion hat keine Rückgabe definiert. Macht diese Funktion so überhaupt Sinn?“): **Ja** — weil Listen **mutable** sind, wirkt die Änderung über den Nebeneffekt auch außerhalb der Funktion; deshalb gibt `print(runde_ungerade_zahlen_auf(...))` auch `None` aus. Aus Sicht der funktionalen Programmierung ist das aber gerade **kein** guter Stil: Die Funktion ist nicht pure, sie ändert ihr Eingabeargument. Die saubere Variante aus der Zusammenfassung des Professors arbeitet mit `liste2 = liste.copy()` und gibt `liste2` zurück. Merkregel: *Ohne `return` funktioniert nur, was mutable ist — und genau das will funktionale Programmierung vermeiden.*",
+   "hints": [
+    "Wie prüft man mit `%`, ob eine Zahl ungerade ist?",
+    "Sie laufen über die Indizes — greifen Sie also mit `liste[i]` auf das Element zu.",
+    "Die nächstgrößere gerade Zahl einer ungeraden Zahl liegt genau 1 höher."
+   ],
+   "pitfalls": [
+    "In Lücke 2 `liste[i] + 1` ohne Zuweisung schreiben — der Wert wird berechnet und weggeworfen.",
+    "`zahl = zahl + 1` mit einer Element-Schleife statt Index-Schleife verwenden; die Liste bleibt dann unverändert.",
+    "Erwarten, dass der erste `print` die geänderte Liste ausgibt, statt `None`."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 9,
+     "label": "Vervollständigen sie die beiden Lücken (ungerade Zahlen ersetzen)"
+    },
+    {
+     "file": "zusammenfassung.ipynb",
+     "page": 1,
+     "label": "def runde_ungerade_zahlen_auf(liste) mit liste.copy()"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    }
+   ],
+   "tags": [
+    "liste",
+    "mutable",
+    "luecken",
+    "index",
+    "modulo",
+    "pure-function"
+   ]
+  },
+  {
+   "id": "py-lists-009",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "code",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": true,
+   "title": "Karte entfernen — als pure function für Listen und Tupel",
+   "prompt": "Im funktionalen Goofspiel darf das Kartenspiel nicht mehr mutiert werden. Schreiben Sie deshalb eine **pure function**\n\n```python\ndef entferne_karte(kartenspiel, karte):\n```\n\ndie ein **neues** Kartenspiel ohne das erste Vorkommen von `karte` zurückgibt. Das übergebene `kartenspiel` darf dabei **nicht verändert** werden.\n\nIhre Lösung muss sowohl für eine **Liste** als auch für ein **Tupel** funktionieren und in beiden Fällen denselben Typ zurückgeben wie die Eingabe.\n\n**Verboten:** `remove`, `pop` sowie `for`- und `while`-Schleifen.\n**Hinweis:** Suchen Sie zuerst mit `.index(...)` die Position der Karte und setzen Sie das Ergebnis dann mit Slicing zusammen.",
+   "starterCode": "def entferne_karte(kartenspiel, karte):\n    \"\"\"\n    Gibt ein neues Kartenspiel ohne das erste Vorkommen von karte zurueck.\n    Eingabe: kartenspiel (Liste oder Tupel), karte (Element daraus)\n    Ausgabe: neue Liste bzw. neues Tupel\n    \"\"\"\n    # Ihr Code hier\n",
+   "forbidden": [
+    ".remove(",
+    ".pop(",
+    "for ",
+    "while "
+   ],
+   "required": [
+    ".index("
+   ],
+   "tests": [
+    {
+     "name": "Tupel: mittlere Karte entfernen",
+     "call": "entferne_karte((1, 2, 3, 4), 3)",
+     "expected": "(1, 2, 4)"
+    },
+    {
+     "name": "Liste: erste Karte entfernen",
+     "call": "entferne_karte([1, 2, 3], 1)",
+     "expected": "[2, 3]"
+    },
+    {
+     "name": "Letzte Karte entfernen",
+     "call": "entferne_karte((5, 9), 9)",
+     "expected": "(5,)"
+    },
+    {
+     "name": "Ein-Element-Tupel wird leer",
+     "call": "entferne_karte((7,), 7)",
+     "expected": "()"
+    },
+    {
+     "name": "Nur das erste Vorkommen wird entfernt",
+     "call": "entferne_karte([3, 1, 3], 3)",
+     "expected": "[1, 3]"
+    },
+    {
+     "name": "Rückgabetyp bleibt Tupel",
+     "call": "type(entferne_karte((1, 2), 1))",
+     "expected": "tuple"
+    },
+    {
+     "name": "Eingabe bleibt unverändert (pure function)",
+     "call": "(lambda k: (entferne_karte(k, 2), k)[1])([1, 2, 3])",
+     "expected": "[1, 2, 3]"
+    }
+   ],
+   "solution": "def entferne_karte(kartenspiel, karte):\n    \"\"\"\n    Gibt ein neues Kartenspiel ohne das erste Vorkommen von karte zurueck.\n    Eingabe: kartenspiel (Liste oder Tupel), karte (Element daraus)\n    Ausgabe: neue Liste bzw. neues Tupel\n    \"\"\"\n    i = kartenspiel.index(karte)\n    return kartenspiel[:i] + kartenspiel[i+1:]\n",
+   "explanation": "Diese Funktion steht genau so in der `helper-2.py` des Professors — inklusive seines Kommentars *„finde eine Funktion, die mir den Index i von karte in kartenspiel liefert. Dann: return kartenspiel[:i] + kartenspiel[i+1:]“*. Der Trick besteht aus zwei Bausteinen: `.index(karte)` liefert die **Position** des ersten Vorkommens, und Slicing schneidet die beiden Stücke davor und dahinter heraus, die mit `+` zu einem **neuen** Objekt konkateniert werden. Genau deshalb funktioniert die Lösung für Listen und Tupel gleichermaßen: Slicing und `+` sind für beide definiert und liefern jeweils denselben Typ zurück. Der Kontrast zur imperativen Variante `kartenspiel.remove(karte)` ist der Kern der Vorlesung: `remove` mutiert das Argument (Nebeneffekt, nicht pure), Slicing erzeugt ein neues Objekt und lässt die Eingabe in Ruhe. Beachten Sie außerdem, dass `kartenspiel[i+1:]` auch dann korrekt ist, wenn `i` das letzte Element war — dann ist das zweite Stück einfach leer. Merkregel: *Nicht löschen, sondern neu zusammensetzen.*",
+   "hints": [
+    "`.index(x)` gibt die Position des ersten Vorkommens von `x` zurück.",
+    "Sie brauchen zwei Slices: alles **vor** der Position und alles **nach** der Position.",
+    "`(1, 2) + (4,)` ergibt `(1, 2, 4)` — `+` funktioniert für Tupel genauso wie für Listen."
+   ],
+   "pitfalls": [
+    "`kartenspiel[i:]` statt `kartenspiel[i+1:]` — dann bleibt die Karte drin.",
+    "Das Ergebnis mit `list(...)` umwandeln und damit den Typ eines Tupels zerstören.",
+    "Doch `remove` benutzen: Das Ergebnis stimmt zwar oft, die Funktion ist dann aber nicht mehr pure und gibt `None` zurück."
+   ],
+   "sources": [
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "def entferne_karte(kartenspiel, karte)"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Goofspiel funktionaler machen: Immutable Variablen verwenden"
+    },
+    {
+     "file": "1_strings_26.pdf",
+     "page": 3,
+     "label": "Slicing [a:b:c]"
+    }
+   ],
+   "tags": [
+    "pure-function",
+    "slicing",
+    "index",
+    "tupel",
+    "liste",
+    "goofspiel",
+    "immutable"
+   ]
+  },
+  {
+   "id": "py-lists-010",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": true,
+   "title": "random.sample und random.shuffle im Vergleich",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Der Seed ist gesetzt, die Ausgabe ist also eindeutig — überlegen Sie genau, **welche der beiden Zufallsfunktionen die Liste `karten` verändert** und **was sie jeweils zurückgeben**.",
+   "code": "import random\nrandom.seed(7)\n\nkarten = [1, 2, 3, 4, 5, 6]\nhand = random.sample(karten, 3)\nprint(len(hand), len(set(hand)))\nprint(karten)\nprint(random.shuffle(karten))\nprint(sorted(karten))",
+   "expectedOutput": "3 3\n[1, 2, 3, 4, 5, 6]\nNone\n[1, 2, 3, 4, 5, 6]",
+   "solution": "import random\nrandom.seed(7)\n\nkarten = [1, 2, 3, 4, 5, 6]\nhand = random.sample(karten, 3)\nprint(len(hand), len(set(hand)))  # 3 3  -> 3 Karten, alle verschieden\nprint(karten)                    # [1, 2, 3, 4, 5, 6]  -> sample ändert NICHTS\nprint(random.shuffle(karten))    # None -> shuffle gibt nichts zurück\nprint(sorted(karten))            # [1, 2, 3, 4, 5, 6] -> dieselben Elemente,\n                                 #                       nur in anderer Reihenfolge\n",
+   "explanation": "Hier stehen sich die zwei Bauarten von Zufallsfunktionen gegenüber. `random.sample(population, k)` ist praktisch eine **pure function**: Es liefert eine **neue Liste** mit `k` verschiedenen Elementen und lässt die Eingabe völlig in Ruhe — deshalb ist `karten` in Zeile 7 noch unverändert, und `len(set(hand))` ist genau 3, weil `sample` **ohne Zurücklegen** zieht. `random.shuffle(liste)` ist das Gegenteil: Es permutiert die Liste **an Ort und Stelle** (Nebeneffekt) und gibt deshalb `None` zurück. Wer `karten = random.shuffle(karten)` schreibt, hat danach `None` statt einer Liste — der Klassiker aus der Übung. Dass nach dem Mischen `sorted(karten)` wieder die Ausgangsliste ergibt, zeigt sauber: Es sind dieselben Elemente, nur anders angeordnet, es kommt nichts hinzu und nichts weg. Merkregel: *`sample` gibt zurück und ändert nichts, `shuffle` ändert alles und gibt nichts zurück.*",
+   "hints": [
+    "Was ist der Rückgabewert einer Funktion, die nur einen Nebeneffekt hat?",
+    "Zieht `sample` mit oder ohne Zurücklegen? Was bedeutet das für `set(hand)`?",
+    "`sorted(...)` liefert eine neue sortierte Liste — was bleibt nach dem Mischen davon übrig?"
+   ],
+   "pitfalls": [
+    "Erwarten, dass `print(random.shuffle(karten))` die gemischte Liste ausgibt.",
+    "Glauben, `random.sample` würde die gezogenen Karten aus `karten` entfernen.",
+    "Bei `len(set(hand))` mit Doppelungen rechnen — `sample` zieht ohne Zurücklegen."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Stufe B5 — Die mutable-Falle: random.shuffle(karten)"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 28,
+     "label": "Lösung B5: shuffle verändert die übergebene Liste direkt"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 22,
+     "label": "Klausurrelevante Dinge/Befehle: random.shuffle"
+    }
+   ],
+   "tags": [
+    "random",
+    "shuffle",
+    "sample",
+    "mutable",
+    "nebeneffekt",
+    "set"
+   ]
+  },
+  {
+   "id": "py-lists-011",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "mc",
+   "difficulty": 3,
+   "points": 2,
+   "examStyle": false,
+   "title": "Ein-Element-Tupel und Tupel-Addition",
+   "prompt": "Was gibt der folgende Code aus?\n\n```python\na = (5)\nb = (5,)\nc = b + (6,)\nprint(type(a), len(b), c)\n```",
+   "code": "a = (5)\nb = (5,)\nc = b + (6,)\nprint(type(a), len(b), c)",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`<class 'tuple'> 1 (5, 6)`",
+     "correct": false,
+     "why": "`(5)` ist **kein** Tupel: Die Klammern sind hier bloße Rechenklammern, `a` ist ein `int`. Erst das Komma macht das Tupel."
+    },
+    {
+     "id": "b",
+     "text": "`<class 'int'> 1 (5, 6)`",
+     "correct": true,
+     "why": "Richtig. `(5)` ist ein int, `(5,)` ist ein Tupel der Länge 1, und `+` konkateniert zwei Tupel zu einem neuen Tupel `(5, 6)`."
+    },
+    {
+     "id": "c",
+     "text": "`<class 'int'> 1 (11,)`",
+     "correct": false,
+     "why": "`+` addiert bei Tupeln nicht elementweise, sondern **konkateniert** — genau wie bei Listen und Strings."
+    },
+    {
+     "id": "d",
+     "text": "`<class 'tuple'> 2 (5, 6)`",
+     "correct": false,
+     "why": "`b` enthält genau ein Element, `len(b)` ist also 1. Das Komma ist ein Trennzeichen, kein zusätzliches Element."
+    },
+    {
+     "id": "e",
+     "text": "Fehler: Tupel sind immutable, `b + (6,)` ist deshalb nicht erlaubt.",
+     "correct": false,
+     "why": "Immutable heißt nur, dass man ein bestehendes Tupel nicht **ändern** kann. Ein neues Tupel aus zwei alten zu bauen ist erlaubt und die übliche Vorgehensweise."
+    }
+   ],
+   "solution": "Antwort b): `<class 'int'> 1 (5, 6)`",
+   "explanation": "Drei Details auf einmal, die in der Vorlesung alle vorkamen. Erstens: Ein **Ein-Element-Tupel** braucht zwingend das nachgestellte Komma — `(5)` ist die Zahl 5 in Klammern, `(5,)` ist das Tupel. Genau deshalb schreibt der Professor im Goofspiel `states = ({...}, )` mit Komma und `states += (helper.spielrunde(states[-1]),)`. Zweitens: Die **Addition von Tupeln führt zu einem neuen Tupel, das beide konkateniert** — so steht es wörtlich auf seiner Folie „Gelernte Befehle + Konzepte“. Drittens: Immutabilität verbietet nicht das Rechnen mit Tupeln, sondern nur das Verändern eines bestehenden Tupels (`b[0] = 9` wäre ein `TypeError`). Merkregel: *Nicht die Klammern machen das Tupel, sondern das Komma.*",
+   "hints": [
+    "Woran erkennt Python ein Tupel — an den Klammern oder am Komma?",
+    "Was macht `+` bei Listen und Strings? Bei Tupeln ist es dasselbe."
+   ],
+   "pitfalls": [
+    "`(5)` für ein Tupel halten.",
+    "`+` bei Tupeln als elementweise Addition lesen.",
+    "Denken, immutable bedeute, man dürfe mit Tupeln gar nicht rechnen."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 11,
+     "label": "Die Addition von Tupeln; führt zu einem neuen Tupel, das beide konkateniert"
+    },
+    {
+     "file": "goofspiel26-3.py",
+     "page": 1,
+     "label": "states = ({...}, ) und states += (helper.spielrunde(states[-1]),)"
+    }
+   ],
+   "tags": [
+    "tupel",
+    "ein-element-tupel",
+    "konkatenation",
+    "immutable"
+   ]
+  },
+  {
+   "id": "py-lists-012",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "short-answer",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Für welche Variablen ist t[2] = 0 möglich?",
+   "prompt": "Gegeben sind vier Variablen:\n\n```python\nt1 = [4, 8, 15, 16]\nt2 = (4, 8, 15, 16)\nt3 = \"4815\"\nt4 = {0: 4, 1: 8}\n```\n\na) Für welche der Variablen wäre ein Aufruf der Form `t[2] = 0` **ohne Fehler** möglich? Woran liegt dies?\n\nb) Geben Sie für die fehlschlagenden Fälle den Fehlertyp und den Grund an.\n\nc) Bei einer der erfolgreichen Varianten bedeutet die `2` **etwas anderes** als bei den übrigen. Erklären Sie den Unterschied und geben Sie den Inhalt der Variablen nach der Zuweisung an.",
+   "solution": "**a)** Ohne Fehler möglich ist es für **`t1` (Liste)** und **`t4` (Dictionary)**.\n\n* `t1[2] = 0` funktioniert, weil Listen **mutable** sind: Ein einzelner Eintrag darf an Ort und Stelle überschrieben werden. Ergebnis: `[4, 8, 0, 16]`.\n* `t4[2] = 0` funktioniert, weil Dictionaries ebenfalls mutable sind.\n\n**b)**\n* `t2[2] = 0` → `TypeError: 'tuple' object does not support item assignment`, weil Tupel **immutable** sind.\n* `t3[2] = 0` → `TypeError: 'str' object does not support item assignment`, weil Strings ebenfalls **immutable** sind.\n\n**c)** Bei `t1` ist die `2` eine **Position (Index)** — der bereits vorhandene dritte Eintrag wird überschrieben, die Länge bleibt 4. Bei `t4` ist die `2` dagegen ein **Schlüssel (key)** — da dieser Schlüssel noch nicht existiert, wird ein **neues Schlüssel-Wert-Paar angelegt**, das Dictionary wächst: `{0: 4, 1: 8, 2: 0}`.\n\n**Bewertungsrubrik (4 P):**\n* 1 P: `t1` und `t4` als möglich erkannt\n* 1 P: Begründung über mutable/immutable\n* 1 P: beide Fehlerfälle mit `TypeError` und Begründung (Tupel und String sind immutable)\n* 1 P: Unterschied Index vs. Schlüssel erklärt und `{0: 4, 1: 8, 2: 0}` angegeben",
+   "explanation": "Die Kernfrage stammt wörtlich von der Klausur-Überblicksfolie: *„Für welches der t1, t2, t3 wäre ein Aufruf der Form `t1[2] = 0` ohne Fehler möglich? Woran liegt dies?“* Die Antwort ist die Mutable/Immutable-Tabelle der Vorlesung: **veränderbar** sind `list`, `dict`, `set` und selbstgeschriebene Klassen, **unveränderbar** sind `int`, `float`, `bool`, `string`, `unicode` und `tuple`. Die eckigen Klammern sehen bei allen vier Typen gleich aus, bedeuten aber Verschiedenes: Bei Liste, Tupel und String ist die Zahl eine **Position**, bei einem Dictionary ein **Schlüssel**. Deshalb kann man bei einer Liste nur bestehende Indizes überschreiben (`t1[9] = 0` gäbe einen `IndexError`), während ein Dictionary bei einem unbekannten Schlüssel einfach einen **neuen Eintrag anlegt** — nur beim *Lesen* eines unbekannten Schlüssels gibt es einen `KeyError`. Merkregel: *Bei Listen zählt die Position, bei Dictionaries zählt der Name.*",
+   "hints": [
+    "Ordnen Sie zuerst jeden der vier Typen in mutable oder immutable ein.",
+    "Bedeutet die `2` in den eckigen Klammern überall dasselbe?",
+    "Was passiert bei einem Dictionary, wenn man auf einen noch nicht vorhandenen Schlüssel **schreibt**?"
+   ],
+   "pitfalls": [
+    "`t4` vergessen, weil man Dictionaries nicht mit eckigen Klammern assoziiert.",
+    "Bei `t4` erwarten, dass ein `KeyError` auftritt — der kommt nur beim Lesen, nicht beim Schreiben.",
+    "Strings für mutable halten, weil `t3[2]` lesend funktioniert."
+   ],
+   "sources": [
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 12,
+     "label": "Für welches der t1, t2, t3 wäre t1[2] = 0 ohne Fehler möglich?"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Veränderbar: list, dict, set — Unveränderbar: int, float, bool, string, tuple"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1b: mutable/immutable einordnen"
+    }
+   ],
+   "tags": [
+    "mutable",
+    "immutable",
+    "tupel",
+    "dictionary",
+    "string",
+    "typeerror",
+    "kurzfrage"
+   ]
+  },
+  {
+   "id": "py-lists-013",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "predict-output",
+   "difficulty": 3,
+   "points": 3,
+   "examStyle": false,
+   "title": "Mengen und die Konvertierungen list(), tuple(), set()",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? (`sorted(...)` liefert eine neue, aufsteigend sortierte **Liste**.)",
+   "code": "wuerfe = [1, 3, 6, 2, 3, 1, 5, 6, 4, 2]\nunterschiedliche = set(wuerfe)\nprint(len(wuerfe), len(unterschiedliche))\nprint(sorted(unterschiedliche))\nprint(6 in unterschiedliche, 7 in unterschiedliche)\naugen = tuple(sorted(unterschiedliche))\nprint(augen, type(augen))\nprint(list(augen)[:3])",
+   "expectedOutput": "10 6\n[1, 2, 3, 4, 5, 6]\nTrue False\n(1, 2, 3, 4, 5, 6) <class 'tuple'>\n[1, 2, 3]",
+   "solution": "wuerfe = [1, 3, 6, 2, 3, 1, 5, 6, 4, 2]\nunterschiedliche = set(wuerfe)\nprint(len(wuerfe), len(unterschiedliche))       # 10 6  -> Duplikate fallen weg\nprint(sorted(unterschiedliche))                 # [1, 2, 3, 4, 5, 6]\nprint(6 in unterschiedliche, 7 in unterschiedliche)  # True False\naugen = tuple(sorted(unterschiedliche))\nprint(augen, type(augen))                       # (1, 2, 3, 4, 5, 6) <class 'tuple'>\nprint(list(augen)[:3])                          # [1, 2, 3]\n",
+   "explanation": "Eine **Menge** (`set`) ist eine Sammlung, in der jedes Element **höchstens einmal** vorkommt und in der es **keine Reihenfolge** gibt. Deshalb schrumpfen die zehn Würfe auf sechs unterschiedliche Augenzahlen — genau die Aufgabe „Findet heraus, welche unterschiedlichen Augenzahlen vorkamen“ aus der Übung. Weil eine Menge ungeordnet ist, darf man sich auf keine Reihenfolge verlassen; sobald man eine feste Ausgabe braucht, schreibt man `sorted(...)` darum, und das liefert wieder eine **Liste**. Der Test `x in menge` ist die zweite typische Anwendung: nachschauen, ob ein Wert überhaupt vorkommt. Die letzten Zeilen zeigen den freien Wechsel zwischen den drei Sammel-Typen: `set(liste)` entfernt Duplikate, `tuple(...)` friert das Ergebnis unveränderlich ein, `list(...)` macht es wieder veränderbar und slicebar. Merkregel: *`set` = Duplikate weg und ungeordnet, `tuple` = eingefroren, `list` = veränderbar.*",
+   "hints": [
+    "Streichen Sie in der Liste `wuerfe` alle Wiederholungen durch und zählen Sie, was übrig bleibt.",
+    "`in` prüft die Mitgliedschaft und liefert einen Boolean.",
+    "`tuple(...)` ändert nur den Typ, nicht die Reihenfolge oder die Elemente."
+   ],
+   "pitfalls": [
+    "`len(unterschiedliche)` als 10 angeben und das Entfernen der Duplikate übersehen.",
+    "Erwarten, dass ein `set` seine Elemente in der ursprünglichen Reihenfolge behält.",
+    "`type(augen)` als `<class 'list'>` angeben, weil innen `sorted` steht."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 12,
+     "label": "Aufgabe A4 — Set: welche unterschiedlichen Augenzahlen kamen vor?"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Kurz gesehen: Tupel, Menge, Dictionary"
+    }
+   ],
+   "tags": [
+    "set",
+    "menge",
+    "konvertierung",
+    "tupel",
+    "liste",
+    "in"
+   ]
+  },
+  {
+   "id": "py-lists-014",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "Augenzahlen zählen mit einem Dictionary",
+   "prompt": "Gegeben ist eine Liste von Würfelergebnissen, z. B. `wuerfe = [1, 3, 6, 2, 3, 1, 5, 6, 4, 2]`.\n\nSchreiben Sie eine Funktion `haeufigkeiten(wuerfe)`, die **zählt, wie oft jede Augenzahl vorkam**, und das Ergebnis als **Dictionary** zurückgibt:\n\n```python\nhaeufigkeiten([1, 3, 6, 2, 3, 1, 5, 6, 4, 2])\n# -> {1: 2, 2: 2, 3: 2, 4: 1, 5: 1, 6: 2}\n```\n\nAugenzahlen, die gar nicht vorkommen, dürfen **nicht** im Dictionary auftauchen. Für eine leere Liste ist das Ergebnis das leere Dictionary `{}`.",
+   "starterCode": "def haeufigkeiten(wuerfe):\n    \"\"\"\n    Zaehlt, wie oft jeder Wert in wuerfe vorkommt.\n    Eingabe: wuerfe - Liste von Werten\n    Ausgabe: Dictionary {wert: anzahl}\n    \"\"\"\n    # Ihr Code hier\n",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "haeufigkeiten([1, 3, 6, 2, 3, 1, 5, 6, 4, 2])",
+     "expected": "{1: 2, 2: 2, 3: 2, 4: 1, 5: 1, 6: 2}"
+    },
+    {
+     "name": "Leere Liste",
+     "call": "haeufigkeiten([])",
+     "expected": "{}"
+    },
+    {
+     "name": "Nur ein Wert",
+     "call": "haeufigkeiten([4, 4, 4])",
+     "expected": "{4: 3}"
+    },
+    {
+     "name": "Keine Schlüssel ohne Vorkommen",
+     "call": "sorted(haeufigkeiten([2, 2, 5]).keys())",
+     "expected": "[2, 5]"
+    },
+    {
+     "name": "Summe der Werte = Anzahl der Würfe",
+     "call": "sum(haeufigkeiten([1, 1, 2, 3]).values())",
+     "expected": "4"
+    },
+    {
+     "name": "Funktioniert auch mit Strings als Schlüssel",
+     "call": "haeufigkeiten(['rot', 'blau', 'rot'])",
+     "expected": "{'rot': 2, 'blau': 1}"
+    },
+    {
+     "name": "Eingabeliste bleibt unverändert",
+     "call": "(lambda w: (haeufigkeiten(w), w)[1])([1, 1, 2])",
+     "expected": "[1, 1, 2]"
+    }
+   ],
+   "solution": "def haeufigkeiten(wuerfe):\n    \"\"\"\n    Zaehlt, wie oft jeder Wert in wuerfe vorkommt.\n    Eingabe: wuerfe - Liste von Werten\n    Ausgabe: Dictionary {wert: anzahl}\n    \"\"\"\n    zaehler = {}\n    for wurf in wuerfe:\n        if wurf in zaehler:\n            zaehler[wurf] = zaehler[wurf] + 1\n        else:\n            zaehler[wurf] = 1\n    return zaehler\n\n# Alternative ohne if/else, mit der count-Methode der Liste und einem set:\n# def haeufigkeiten(wuerfe):\n#     return {wert: wuerfe.count(wert) for wert in set(wuerfe)}\n",
+   "explanation": "Das ist die Dict-Teilaufgabe aus Übung A4 („Zählt, wie oft jede Augenzahl vorkam“) und zugleich das Grundmuster jeder Statistik über einem Dictionary. Zwei Dinge sind hier zentral. Erstens der **Unterschied zwischen Lesen und Schreiben**: `zaehler[wurf] = 1` legt einen neuen Schlüssel an, `zaehler[wurf]` auf der rechten Seite dagegen wirft einen `KeyError`, falls der Schlüssel noch nicht existiert — deshalb muss man mit `if wurf in zaehler` prüfen (oder `zaehler.get(wurf, 0)` verwenden). Zweitens: Ein Dictionary vergleicht sich mit `==` **unabhängig von der Reihenfolge** der Einträge, die Tests bestehen also auch, wenn Ihre Schlüssel in anderer Reihenfolge entstehen. Die kompakte Alternative kombiniert die Ideen aus dieser Lektion: `set(wuerfe)` liefert die vorkommenden Werte ohne Duplikate, `wuerfe.count(wert)` zählt sie in der Liste. Merkregel: *Schreiben auf einen unbekannten Schlüssel legt ihn an, Lesen davon knallt.*",
+   "hints": [
+    "Legen Sie ein leeres Dictionary an und laufen Sie einmal über alle Würfe.",
+    "Prüfen Sie mit `in`, ob der Wert schon ein Schlüssel ist — sonst gibt es beim Lesen einen `KeyError`.",
+    "Alternativ: `set(wuerfe)` liefert alle vorkommenden Werte, `wuerfe.count(wert)` die Anzahl."
+   ],
+   "pitfalls": [
+    "`zaehler[wurf] = zaehler[wurf] + 1` ohne vorherige Prüfung — `KeyError` beim ersten Vorkommen.",
+    "Das Dictionary mit allen Augenzahlen 1..6 vorbelegen; dann stehen dort auch Nullen, die nicht gefordert sind.",
+    "Die Zählvariable außerhalb der Funktion anlegen und dadurch eine unreine Funktion mit Nebeneffekt bauen."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 12,
+     "label": "Aufgabe A4 — Dict: zählt, wie oft jede Augenzahl vorkam"
+    },
+    {
+     "file": "Beispielaufgaben_VL3.pdf",
+     "page": 4,
+     "label": "Würfelspiel — Punkte zählen mit einem Dictionary"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Kurz gesehen: Tupel, Menge, Dictionary"
+    }
+   ],
+   "tags": [
+    "dictionary",
+    "zaehlen",
+    "keyerror",
+    "set",
+    "count"
+   ]
+  },
+  {
+   "id": "py-lists-015",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "code",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": false,
+   "title": "min_max — zwei Werte als Tupel zurückgeben",
+   "prompt": "Schreiben Sie eine Funktion `min_max(liste)`, die das **kleinste und das größte Element** einer nichtleeren Liste als **Tupel** zurückgibt.\n\nSie soll sich so aufrufen lassen:\n\n```python\nkleinstes, groesstes = min_max([3, 7, 1, 8, 4])\nprint(kleinstes, groesstes)   # 1 8\n```\n\nDie Rückgabe muss wirklich vom Typ `tuple` sein.",
+   "starterCode": "def min_max(liste):\n    \"\"\"\n    Bestimmt das kleinste und groesste Element einer nichtleeren Liste.\n    Eingabe: liste - nichtleere Liste von Zahlen\n    Ausgabe: Tupel (kleinstes, groesstes)\n    \"\"\"\n    # Ihr Code hier\n",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "min_max([3, 7, 1, 8, 4])",
+     "expected": "(1, 8)"
+    },
+    {
+     "name": "Ein einziges Element",
+     "call": "min_max([5])",
+     "expected": "(5, 5)"
+    },
+    {
+     "name": "Negative Zahlen",
+     "call": "min_max([-3, -9, -1])",
+     "expected": "(-9, -1)"
+    },
+    {
+     "name": "Rückgabetyp ist tuple",
+     "call": "type(min_max([1, 2]))",
+     "expected": "tuple"
+    },
+    {
+     "name": "Länge des Tupels ist 2",
+     "call": "len(min_max([4, 2, 9]))",
+     "expected": "2"
+    },
+    {
+     "name": "Entpacken funktioniert",
+     "call": "(lambda p: p[1] - p[0])(min_max([3, 7, 1, 8, 4]))",
+     "expected": "7"
+    },
+    {
+     "name": "Eingabeliste bleibt unverändert",
+     "call": "(lambda l: (min_max(l), l)[1])([3, 1, 2])",
+     "expected": "[3, 1, 2]"
+    }
+   ],
+   "solution": "def min_max(liste):\n    \"\"\"\n    Bestimmt das kleinste und groesste Element einer nichtleeren Liste.\n    Eingabe: liste - nichtleere Liste von Zahlen\n    Ausgabe: Tupel (kleinstes, groesstes)\n    \"\"\"\n    return (min(liste), max(liste))\n\n# Variante ohne die Hilfsfunktionen min/max:\n# def min_max(liste):\n#     kleinstes = liste[0]\n#     groesstes = liste[0]\n#     for wert in liste:\n#         if wert < kleinstes:\n#             kleinstes = wert\n#         if wert > groesstes:\n#             groesstes = wert\n#     return kleinstes, groesstes\n",
+   "explanation": "Diese Aufgabe stammt aus Übung A4 („Tupel: Schreibt eine Funktion `min_max(liste)`, die das kleinste und das größte Element einer Liste als Tupel zurückgibt“). Der interessante Punkt ist nicht das Minimum, sondern die **Rückgabe mehrerer Werte**: In Python gibt eine Funktion immer genau *einen* Wert zurück — will man zwei, packt man sie in ein **Tupel**. Dabei sind die Klammern optional: `return kleinstes, groesstes` erzeugt genauso ein Tupel wie `return (kleinstes, groesstes)`; es ist **das Komma**, das das Tupel macht. Auf der Aufruferseite lässt sich das Tupel direkt wieder **entpacken**: `kleinstes, groesstes = min_max(...)`. Genau dieses Muster benutzt der Professor in `runde_auswerten`, das mit `return punkte_spieler1, punkte_spieler2` zwei Punktestände zurückgibt und mit `ps1, ps2 = runde_auswerten(...)` aufgerufen wird. Merkregel: *Mehrere Rückgabewerte sind in Wahrheit ein Tupel.*",
+   "hints": [
+    "Es gibt die eingebauten Funktionen `min(...)` und `max(...)` für iterierbare Objekte.",
+    "Ein Tupel entsteht durch das Komma — die Klammern sind optional.",
+    "Beim Aufruf lässt sich ein Tupel mit `a, b = funktion(...)` direkt in zwei Variablen entpacken."
+   ],
+   "pitfalls": [
+    "Eine **Liste** `[min(liste), max(liste)]` zurückgeben — der Typtest schlägt dann fehl.",
+    "Zwei `return`-Anweisungen hintereinander schreiben; die zweite wird nie erreicht.",
+    "Bei der Handvariante mit `kleinstes = 0` starten und bei rein positiven Listen ein falsches Minimum bekommen."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 12,
+     "label": "Aufgabe A4 — Tupel: min_max(liste)"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "return punkte_spieler1, punkte_spieler2"
+    },
+    {
+     "file": "pythonvorlesung_04.ipynb",
+     "page": 1,
+     "label": "ps1, ps2 = runde_auswerten(...)"
+    }
+   ],
+   "tags": [
+    "tupel",
+    "rueckgabewerte",
+    "entpacken",
+    "min",
+    "max"
+   ]
+  },
+  {
+   "id": "py-lists-016",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "fill-gaps",
+   "difficulty": 3,
+   "points": 4,
+   "examStyle": true,
+   "title": "Zufallsbefehle des Moduls random einsetzen",
+   "prompt": "Vervollständigen Sie die vier Lücken so, dass der Kommentar hinter jeder Zeile erfüllt ist. Verwenden Sie ausschließlich Befehle aus dem Modul `random` bzw. die Konvertierung `list(range(...))`.\n\nDie Ausgabe des Programms ist durch den gesetzten Seed **unabhängig vom Zufall** immer dieselbe.",
+   "code": "import random\nrandom.seed(1)\n\nkartenspiel = ## Lücke 1 ##   # Liste mit den Zahlen 1 bis 13\nzufallskarte = ## Lücke 2 ##  # EINE zufällige Karte aus kartenspiel, ohne sie zu entfernen\nhand = ## Lücke 3 ##          # 5 verschiedene zufällige Karten aus kartenspiel\naugenzahl = ## Lücke 4 ##     # eine zufällige ganze Zahl von 1 bis 6 (beide einschließlich)\n\nprint(kartenspiel)\nprint(zufallskarte in kartenspiel, len(kartenspiel))\nprint(len(hand), len(set(hand)))\nprint(1 <= augenzahl <= 6)",
+   "expectedOutput": "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]\nTrue 13\n5 5\nTrue",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "list(range(1, 14))",
+      "list(range(1,14))",
+      "list(range(1, 13 + 1))",
+      "list(range(1,13+1))",
+      "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]"
+     ],
+     "explanation": "`range(1, 14)` liefert 1 bis 13 (die obere Grenze ist ausgeschlossen), `list(...)` macht daraus eine echte Liste — das ist die `neues_kartenspiel`-Funktion aus der Vorlesung."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "random.choice(kartenspiel)"
+     ],
+     "explanation": "`random.choice(iterierbares_objekt)` wählt genau **ein** zufälliges Element aus und lässt die Sammlung unverändert."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "random.sample(kartenspiel, 5)",
+      "random.sample(kartenspiel,5)",
+      "random.sample(kartenspiel, k=5)"
+     ],
+     "explanation": "`random.sample(population, k)` zieht `k` **verschiedene** Elemente (ohne Zurücklegen) und gibt sie als neue Liste zurück, ohne die Eingabe zu verändern."
+    },
+    {
+     "id": 4,
+     "accept": [
+      "random.randint(1, 6)",
+      "random.randint(1,6)"
+     ],
+     "explanation": "`random.randint(a, b)` liefert eine ganze Zahl zwischen `a` und `b` — anders als bei `range` ist die **obere Grenze eingeschlossen**."
+    }
+   ],
+   "solution": "import random\nrandom.seed(1)\n\nkartenspiel = list(range(1, 14))\nzufallskarte = random.choice(kartenspiel)\nhand = random.sample(kartenspiel, 5)\naugenzahl = random.randint(1, 6)\n\nprint(kartenspiel)   # [1, ..., 13]  -> unverändert, choice und sample entfernen nichts\nprint(zufallskarte in kartenspiel, len(kartenspiel))  # True 13\nprint(len(hand), len(set(hand)))                      # 5 5 -> alle verschieden\nprint(1 <= augenzahl <= 6)                            # True\n",
+   "explanation": "Hier stehen die vier Zufallsbefehle nebeneinander, die im Kurs gebraucht werden — und der Unterschied liegt weniger im Zufall als in ihrem **Umgang mit der Datenstruktur**. `random.choice(x)` liefert genau ein Element, `random.sample(x, k)` liefert `k` verschiedene Elemente als **neue Liste**; beide **verändern die Eingabe nicht** (deshalb ist `kartenspiel` danach immer noch 13 Karten lang). `random.randint(a, b)` erzeugt dagegen gar keine Auswahl aus einer Sammlung, sondern eine Zahl — und zwar **inklusive beider Grenzen**, im Gegensatz zu `range(a, b)`. Der vierte Befehl der Familie, `random.shuffle(liste)`, fehlt hier bewusst: Er ist der einzige, der die Liste **mutiert**, und er würde `kartenspiel` verändern. `random.seed(1)` macht die Ergebnisse reproduzierbar — der Professor benutzt dafür die gleichwertige Variante `random.Random(seed)`, um seine Spielrunden als pure functions schreiben zu können. Merkregel: *`choice`/`sample` nehmen heraus, ohne wegzunehmen; `shuffle` legt um; `randint` würfelt inklusive.*",
+   "hints": [
+    "Für Lücke 1: `range` endet immer **vor** der oberen Grenze.",
+    "Für Lücke 2 und 3: Beide Befehle bekommen die Sammlung als erstes Argument — einer liefert ein Element, der andere `k` Elemente.",
+    "Für Lücke 4: Bei `randint(1, 6)` ist die 6 möglich — das ist der Standard-Würfelbefehl aus dem Pig-Spiel."
+   ],
+   "pitfalls": [
+    "`random.shuffle(kartenspiel)[:5]` für Lücke 3 verwenden — `shuffle` gibt `None` zurück und mutiert die Liste.",
+    "`random.randint(1, 7)` schreiben, weil man an `range` denkt.",
+    "`random.choice` mit `random.choices` (mit s, mit Zurücklegen) verwechseln."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 16,
+     "label": "Import-Befehl, Modul random"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 4,
+     "label": "Stufe 2: einen W6 werfen — random.randint(1, 6)"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "karte = random.choice(kartenspiel)"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "zufallsgenerator_mit_seed = random.Random(seed)"
+    }
+   ],
+   "tags": [
+    "random",
+    "choice",
+    "sample",
+    "randint",
+    "seed",
+    "liste",
+    "luecken"
+   ]
+  },
+  {
+   "id": "py-lists-017",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "multi-mc",
+   "difficulty": 3,
+   "points": 5,
+   "examStyle": false,
+   "title": "Welche Aussagen über Listen, Tupel, Dictionaries und Mengen sind richtig?",
+   "prompt": "Kreuzen Sie **alle** zutreffenden Aussagen an.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "`list`, `dict` und `set` sind mutable; `tuple` und `str` sind immutable.",
+     "correct": true,
+     "why": "Genau die Einteilung der Vorlesungsfolie: veränderbar sind list, dict, set und selbstgeschriebene Klassen; unveränderbar sind int, float, bool, string und tuple."
+    },
+    {
+     "id": "b",
+     "text": "`len(set([1, 2, 2, 3]))` ergibt 3, weil eine Menge jedes Element nur einmal enthält.",
+     "correct": true,
+     "why": "Richtig — Duplikate verschwinden beim Umwandeln in ein `set`."
+    },
+    {
+     "id": "c",
+     "text": "`tuple([1, 2, 3])` erzeugt `(1, 2, 3)` und lässt die Liste dabei unverändert.",
+     "correct": true,
+     "why": "Richtig. Konvertierungen erzeugen immer ein **neues** Objekt; die Ausgangsliste wird nicht angefasst."
+    },
+    {
+     "id": "d",
+     "text": "Eine Liste kann als Schlüssel (key) in einem Dictionary verwendet werden.",
+     "correct": false,
+     "why": "Falsch: `{[1]: 2}` wirft `TypeError: unhashable type: 'list'`. Als Schlüssel taugen nur unveränderbare Objekte, z. B. Zahlen, Strings oder Tupel."
+    },
+    {
+     "id": "e",
+     "text": "`t = (1, 2)` gefolgt von `t += (3,)` führt zu einem Fehler, weil Tupel immutable sind.",
+     "correct": false,
+     "why": "Falsch: `t += (3,)` ist die Kurzform für `t = t + (3,)`. Es entsteht ein **neues** Tupel `(1, 2, 3)`, an das der Name `t` neu gebunden wird — genau so hängt der Professor states aneinander."
+    },
+    {
+     "id": "f",
+     "text": "`random.shuffle` lässt sich auf eine Liste anwenden, auf ein Tupel dagegen nicht.",
+     "correct": true,
+     "why": "Richtig. `shuffle` vertauscht Einträge an Ort und Stelle; bei einem Tupel gibt das `TypeError: 'tuple' object does not support item assignment`."
+    },
+    {
+     "id": "g",
+     "text": "Bei einem Dictionary liefert `d[\"neu\"] = 1` einen `KeyError`, wenn der Schlüssel noch nicht existiert.",
+     "correct": false,
+     "why": "Falsch: **Schreiben** auf einen unbekannten Schlüssel legt ihn neu an. Nur das **Lesen** eines unbekannten Schlüssels wirft einen `KeyError`."
+    },
+    {
+     "id": "h",
+     "text": "Ein Tupel darf eine Liste enthalten, und diese Liste bleibt dann veränderbar.",
+     "correct": true,
+     "why": "Richtig. Immutabilität des Tupels heißt nur, dass man seine Einträge nicht **ersetzen** darf; ein enthaltenes mutables Objekt kann sehr wohl verändert werden."
+    },
+    {
+     "id": "i",
+     "text": "`random.randint(1, 6)` kann die 6 liefern, `range(1, 6)` enthält die 6 dagegen nicht.",
+     "correct": true,
+     "why": "Richtig. Bei `randint(a, b)` sind **beide** Grenzen eingeschlossen (der Würfelbefehl aus dem Pig-Spiel), bei `range(a, b)` ist die obere Grenze ausgeschlossen."
+    },
+    {
+     "id": "j",
+     "text": "`random.choice(kartenspiel)` entfernt die gezogene Karte aus `kartenspiel`.",
+     "correct": false,
+     "why": "Falsch. `choice` **liest** nur ein zufälliges Element aus und lässt die Sammlung unverändert. Deshalb steht in `helper.py` hinter `karte = random.choice(kartenspiel)` noch ein eigenes `kartenspiel.remove(karte)`."
+    }
+   ],
+   "solution": "Richtig sind **a, b, c, f, h und i**. Falsch sind d (Listen sind nicht hashbar und taugen nicht als Schlüssel), e (`+=` erzeugt bei Tupeln ein neues Tupel, kein Fehler), g (Schreiben legt den Schlüssel an, nur Lesen wirft `KeyError`) und j (`choice` liest nur, es entfernt nichts).",
+   "explanation": "Die Aufgabe geht die vier Sammel-Datentypen im Schnelldurchlauf durch. Die tragende Achse ist wieder **mutable vs. immutable** (a): Nur mutable Objekte lassen sich an Ort und Stelle verändern, deshalb funktioniert `shuffle` bei Listen und nicht bei Tupeln (f). Daraus folgt auch die Schlüsselregel für Dictionaries (d): Ein Schlüssel muss **hashbar**, also praktisch unveränderbar sein — Zahlen, Strings und Tupel gehen, Listen und Mengen nicht. Aussage e prüft das häufigste Missverständnis zu Tupeln: Immutabilität verbietet das **Ändern**, nicht das **Neubauen**; `t += (3,)` bindet den Namen einfach an ein neues Tupel. Aussage h ist die feine Kehrseite davon: Ein Tupel schützt nur seine eigene Struktur, nicht den Inhalt seiner Elemente. Und g trennt Lesen von Schreiben beim Dictionary. Die letzten beiden Aussagen betreffen das Modul `random`: `randint(a, b)` schließt **beide** Grenzen ein (anders als `range`), und `choice` **entnimmt** nichts — wer eine gezogene Karte wirklich loswerden will, muss sie zusätzlich mit `remove` (imperativ) oder per Slicing (funktional) entfernen. Merkregel: *Immutabilität ist eine Aussage über das Objekt selbst, nicht über alles, was darin steckt.*",
+   "hints": [
+    "Gehen Sie jede Aussage durch und fragen Sie: Wird hier etwas **verändert** oder etwas **neu erzeugt**?",
+    "Welche Objekte dürfen Schlüssel eines Dictionaries sein — und warum?",
+    "Bei Dictionaries verhält sich Lesen anders als Schreiben."
+   ],
+   "pitfalls": [
+    "Aussage e für richtig halten, weil dort 'immutable' vorkommt.",
+    "Aussage h übersehen und Tupel für 'tief unveränderbar' halten.",
+    "Bei d annehmen, dass alles als Schlüssel taugt, was man hinschreiben kann.",
+    "Bei j von `choice` erwarten, dass es wie `pop` zugleich entfernt."
+   ],
+   "sources": [
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "Kurz gesehen: Tupel, Menge, Dictionary"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 11,
+     "label": "Die Addition von Tupeln führt zu einem neuen Tupel"
+    },
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 1,
+     "label": "Aufgabe 1b: mutable/immutable einordnen"
+    },
+    {
+     "file": "helper.py",
+     "page": 1,
+     "label": "karte = random.choice(kartenspiel); kartenspiel.remove(karte)"
+    }
+   ],
+   "tags": [
+    "choice",
+    "dictionary",
+    "hashable",
+    "immutable",
+    "mutable",
+    "randint",
+    "random",
+    "set",
+    "tupel",
+    "ueberblick"
+   ]
+  },
+  {
+   "id": "py-lists-018",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "find-errors",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Finden Sie die 3 Fehler im Preiskarten-Stapel",
+   "prompt": "Der folgende Code soll die Preiskarten des Goofspiels mischen, **die oberste Karte (also das letzte Element) ziehen** und ihren Wert Spieler 1 gutschreiben. Zur Kontrolle wird ausgegeben, wie viele Preiskarten übrig sind und ob die Punkte korrekt gutgeschrieben wurden (erwartet: `4 True`).\n\nIn diesem Programm stecken genau **3 Fehler**. Geben Sie an, in welchen Zeilen sie sich befinden, warum sie falsch sind und wie man sie korrigiert. (Zeile 1 ist `import random`, Zeile 3 ist die Leerzeile.)",
+   "code": "import random\nrandom.seed(3)\n\npreiskarten = (1, 2, 3, 4, 5)\nrandom.shuffle(preiskarten)\npreiskarte = preiskarten.pop(0)\npunkte = {}\npunkte[\"spieler1\"] = punkte[\"spieler1\"] + preiskarte\nprint(len(preiskarten), punkte[\"spieler1\"] == preiskarte)",
+   "errors": [
+    {
+     "line": 4,
+     "wrong": "preiskarten = (1, 2, 3, 4, 5)",
+     "fix": "preiskarten = [1, 2, 3, 4, 5]",
+     "why": "Die Preiskarten sind hier ein **Tupel** und damit immutable. `random.shuffle` vertauscht die Einträge aber an Ort und Stelle und braucht deshalb einen mutablen Typ: Zeile 5 wirft `TypeError: 'tuple' object does not support item assignment`. Auch `pop` gibt es bei Tupeln nicht (`AttributeError: 'tuple' object has no attribute 'pop'`). Beides ist behoben, sobald hier eine **Liste** steht."
+    },
+    {
+     "line": 6,
+     "wrong": "preiskarte = preiskarten.pop(0)",
+     "fix": "preiskarte = preiskarten.pop()",
+     "why": "`pop(0)` zieht das **erste** Element, gefordert ist aber die oberste Karte, also das **letzte**. Ohne Argument ist der Default-Index -1 und `pop()` liefert genau das letzte Element. Dieser Fehler erzeugt keine Fehlermeldung — das Programm läuft und rechnet trotzdem falsch."
+    },
+    {
+     "line": 8,
+     "wrong": "punkte[\"spieler1\"] = punkte[\"spieler1\"] + preiskarte",
+     "fix": "punkte = {\"spieler1\": 0}   # in Zeile 7 initialisieren\n# oder direkt: punkte[\"spieler1\"] = preiskarte",
+     "why": "`punkte` ist ein leeres Dictionary. Auf der **rechten** Seite wird `punkte[\"spieler1\"]` gelesen, obwohl der Schlüssel noch nicht existiert: `KeyError: 'spieler1'`. Schreiben legt einen Schlüssel an, Lesen nicht — der Punktestand muss also vorher mit 0 initialisiert werden."
+    }
+   ],
+   "solution": "import random\nrandom.seed(3)\n\npreiskarten = [1, 2, 3, 4, 5]          # Fehler 1: Liste statt Tupel (mutable!)\nrandom.shuffle(preiskarten)\npreiskarte = preiskarten.pop()         # Fehler 2: pop() ohne Index = letztes Element\npunkte = {\"spieler1\": 0}               # Fehler 3: Schlüssel initialisieren\npunkte[\"spieler1\"] = punkte[\"spieler1\"] + preiskarte\nprint(len(preiskarten), punkte[\"spieler1\"] == preiskarte)\n# Ausgabe: 4 True\n",
+   "expectedOutput": "4 True",
+   "explanation": "Die drei Fehler gehören zu drei verschiedenen Klassen, und genau daran erkennt man sie in der Klausur. **Fehler 1 ist ein Typfehler mit Absturz**: `random.shuffle` ist der Prototyp einer Funktion, die nur auf **mutablen** Datenstrukturen arbeitet — sie vertauscht Einträge über Zuweisungen wie `x[i], x[j] = x[j], x[i]`, was bei einem Tupel sofort scheitert. **Fehler 2 ist ein reiner Logikfehler ohne Fehlermeldung**: `pop(0)` und `pop()` sind beide syntaktisch einwandfrei, aber nur `pop()` zieht die oberste Karte. Solche stillen Fehler sind die gefährlichsten. **Fehler 3 ist ein `KeyError`** und beruht auf der Asymmetrie von Dictionaries: `punkte[\"spieler1\"] = 5` legt den Schlüssel an, `... + punkte[\"spieler1\"]` setzt voraus, dass er schon da ist. Deshalb initialisiert der Professor seinen state immer vollständig, bevor das Spiel losgeht. Merkregeln: *Mischen geht nur mit Listen; `pop()` ohne Argument nimmt hinten; und ein Dictionary muss man erst füllen, bevor man daraus liest.*",
+   "hints": [
+    "Fragen Sie sich bei Zeile 5 zuerst: Auf welchen Datentypen kann `shuffle` überhaupt arbeiten?",
+    "Ein Fehler erzeugt gar keine Fehlermeldung — vergleichen Sie den Code mit dem, was der Aufgabentext verlangt.",
+    "Was steht in `punkte`, wenn Zeile 8 ausgeführt wird?"
+   ],
+   "pitfalls": [
+    "Nur die beiden Abstürze finden und den stillen Logikfehler in Zeile 6 übersehen.",
+    "Zeile 5 als Fehler benennen statt Zeile 4 — die Ursache ist der falsche Datentyp, nicht der `shuffle`-Aufruf.",
+    "Bei Fehler 3 nur `punkte[\"spieler1\"] = preiskarte` schreiben und dabei übersehen, dass in einem echten Spiel über mehrere Runden aufsummiert werden muss."
+   ],
+   "sources": [
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 15,
+     "label": "Mische die Preiskarten, dann ziehe die oberste Karte mit .pop()"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 14,
+     "label": "Stufe B5 — Die mutable-Falle"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Mutable und Immutable Variablen"
+    }
+   ],
+   "tags": [
+    "fehlersuche",
+    "shuffle",
+    "tupel",
+    "pop",
+    "dictionary",
+    "keyerror",
+    "mutable"
+   ]
+  },
+  {
+   "id": "py-lists-019",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Tupel sind immutable — aber wie tief?",
+   "prompt": "Was gibt der folgende Code auf der Kommandozeile aus? Begründen Sie für sich jede Zeile.",
+   "code": "t = (1, 2)\ndef erweitere(t):\n    t = t + (3,)\n    return t\ns = erweitere(t)\nprint(t, s)\n\nu = (1, [2, 3])\nu[1].append(4)\nprint(u)\nprint(len(u))",
+   "expectedOutput": "(1, 2) (1, 2, 3)\n(1, [2, 3, 4])\n2",
+   "solution": "t = (1, 2)\ndef erweitere(t):\n    t = t + (3,)   # erzeugt ein NEUES Tupel, bindet den lokalen Namen t daran\n    return t\ns = erweitere(t)\nprint(t, s)        # (1, 2) (1, 2, 3)  -> das Original ist unverändert\n\nu = (1, [2, 3])\nu[1].append(4)     # erlaubt! die LISTE im Tupel ist mutable\nprint(u)           # (1, [2, 3, 4])\nprint(len(u))      # 2  -> das Tupel hat weiterhin genau zwei Einträge\n",
+   "explanation": "Der erste Teil ist Aufgabe 2e der Probeklausur: `t + (3,)` **verändert kein Tupel**, sondern konkateniert zwei Tupel zu einem **neuen**. Der lokale Name `t` wird an dieses neue Objekt gebunden, das globale `t` zeigt weiter auf `(1, 2)`. Ohne `return` wäre das Ergebnis komplett verloren — deshalb muss man in der funktionalen Programmierung jeden neuen Zustand zurückgeben. Der zweite Teil zeigt die Feinheit dahinter: Immutabilität eines Tupels bedeutet nur, dass man **seine Einträge nicht ersetzen** darf (`u[1] = [9]` wäre ein `TypeError`). Der Eintrag an Position 1 ist aber eine **Liste**, und die bleibt für sich genommen mutable — `u[1].append(4)` ist erlaubt und ändert den Inhalt des Tupels sichtbar. Die **Länge** des Tupels bleibt dabei 2, denn es hat immer noch zwei Einträge, nur der zweite ist gewachsen. Genau deshalb speichert der Professor in seinem state-Tupel ausschließlich unveränderbare Werte. Merkregel: *Ein Tupel friert die Struktur ein, nicht den Inhalt seiner Elemente.*",
+   "hints": [
+    "Was passiert mit dem globalen `t`, wenn innerhalb der Funktion `t = ...` steht?",
+    "`u[1] = [9]` wäre verboten — aber ist `u[1].append(4)` dasselbe?",
+    "`len` zählt die Einträge des Tupels, nicht die Elemente darin."
+   ],
+   "pitfalls": [
+    "`(1, 2, 3)` für das globale `t` angeben und die Neuzuweisung mit einer Mutation verwechseln.",
+    "Bei `u[1].append(4)` einen `TypeError` erwarten, weil Tupel immutable sind.",
+    "`len(u)` als 4 angeben und die Liste im Tupel mitzählen."
+   ],
+   "sources": [
+    {
+     "file": "Probeklausur_Python_ausfuellbar.pdf",
+     "page": 2,
+     "label": "Aufgabe 2e: t = (1, 2); t = t + (3,)"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 11,
+     "label": "Die Addition von Tupeln führt zu einem neuen Tupel"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 4,
+     "label": "Unveränderbar: tuple — Veränderbar: list"
+    }
+   ],
+   "tags": [
+    "tupel",
+    "immutable",
+    "konkatenation",
+    "verschachtelt",
+    "scope"
+   ]
+  },
+  {
+   "id": "py-lists-020",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "predict-output",
+   "difficulty": 4,
+   "points": 4,
+   "examStyle": true,
+   "title": "Der state als Dictionary — verändern, neu binden oder kopieren?",
+   "prompt": "Der Zustand eines Spiels wird als Dictionary geführt. Drei Funktionen gehen unterschiedlich damit um. Was gibt der Code auf der Kommandozeile aus?",
+   "code": "state = {'punkte': 0, 'karten': [1, 2, 3]}\n\ndef a(s):\n    s['punkte'] = s['punkte'] + 10\n\ndef b(s):\n    s = {'punkte': 99, 'karten': []}\n\ndef c(s):\n    neu = s.copy()\n    neu['punkte'] = 42\n    return neu\n\na(state)\nprint(state['punkte'])\nb(state)\nprint(state['punkte'])\nneuer = c(state)\nprint(state['punkte'], neuer['punkte'])\nneuer['karten'].append(4)\nprint(state['karten'])",
+   "expectedOutput": "10\n10\n10 42\n[1, 2, 3, 4]",
+   "solution": "state = {'punkte': 0, 'karten': [1, 2, 3]}\n\ndef a(s):\n    s['punkte'] = s['punkte'] + 10   # MUTATION des übergebenen Dictionaries\n\ndef b(s):\n    s = {'punkte': 99, 'karten': []} # nur eine LOKALE Neubindung, wirkungslos\n\ndef c(s):\n    neu = s.copy()                   # flache Kopie\n    neu['punkte'] = 42\n    return neu\n\na(state)\nprint(state['punkte'])               # 10 -> a hat den state wirklich verändert\nb(state)\nprint(state['punkte'])               # 10 -> b hat gar nichts bewirkt\nneuer = c(state)\nprint(state['punkte'], neuer['punkte'])  # 10 42 -> c lässt das Original in Ruhe\nneuer['karten'].append(4)\nprint(state['karten'])               # [1, 2, 3, 4] -> ACHTUNG: flache Kopie!\n",
+   "explanation": "Drei Umgangsweisen mit einem state-Dictionary, drei verschiedene Ergebnisse. **`a` mutiert**: `s['punkte'] = ...` schreibt in das Objekt, auf das auch `state` zeigt — der Effekt ist außen sichtbar, die Funktion ist nicht pure. **`b` bindet nur lokal neu**: `s = {...}` erzeugt ein frisches Dictionary und lässt den lokalen Namen `s` darauf zeigen; das Objekt draußen bleibt völlig unberührt (dasselbe Phänomen wie bei `a = [5]` in der Vorlesung). **`c` ist der funktionale Weg**: kopieren, die Kopie ändern, die Kopie zurückgeben — das Original bleibt gültig, genau wie beim Professor, wo `spielrunde(state)` ein **neues** Dictionary konstruiert, statt das alte anzufassen. Die letzte Zeile ist die eigentliche Falle: `.copy()` ist eine **flache** Kopie. Das neue Dictionary hat zwar eigene Schlüssel, aber die Werte sind **dieselben Objekte** — die Liste unter `'karten'` ist in beiden Dictionaries ein und dieselbe. Deshalb wirkt `neuer['karten'].append(4)` auch auf `state`. Merkregel: *Eine flache Kopie kopiert die Schachtel, nicht den Inhalt — deshalb speichert man in states am besten Tupel.*",
+   "hints": [
+    "Unterscheiden Sie in jeder Funktion: Wird ein **Eintrag geändert** oder der **ganze Name neu zugewiesen**?",
+    "Wieso ändert `b` nichts, obwohl dort ein vollständiges Dictionary steht?",
+    "Bei der letzten Zeile: Wie viele Listen existieren nach `s.copy()` wirklich?"
+   ],
+   "pitfalls": [
+    "Nach `b(state)` den Wert 99 erwarten.",
+    "Nach `c(state)` glauben, `state['punkte']` sei nun 42.",
+    "Die letzte Zeile als `[1, 2, 3]` beantworten und die flache Kopie übersehen."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Alles, was als state wichtig ist, in einer state-Variablen sammeln"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "def spielrunde(state): ... return { ... } (neues Dictionary)"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "copy()"
+    }
+   ],
+   "tags": [
+    "dictionary",
+    "state",
+    "mutation",
+    "copy",
+    "pure-function",
+    "scope"
+   ]
+  },
+  {
+   "id": "py-lists-021",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "fill-gaps",
+   "difficulty": 4,
+   "points": 6,
+   "examStyle": true,
+   "title": "Goofspiel-Runde mit state-Dictionary und states-Tupel",
+   "prompt": "Der Zustand des Goofspiels wird als **Dictionary** geführt; alle Zustände werden in einem **Tupel** `states` gesammelt. In jeder Runde wird die **letzte** Preiskarte aufgedeckt; wer die höhere Karte legt, bekommt ihren Wert gutgeschrieben.\n\nFüllen Sie die drei Lücken so aus, dass das Programm die angegebene Ausgabe erzeugt. `spielrunde` darf den übergebenen `state` **nicht verändern**.",
+   "code": "anfangs_state = {'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}\n\ndef spielrunde(state, karte1, karte2):\n    preiskarte = state['preiskarten'][-1]\n    neuer_state = {'punkte1': state['punkte1'],\n                   'punkte2': state['punkte2'],\n                   'preiskarten': ## Lücke 1 ##}   # alle Preiskarten AUSSER der letzten\n    if karte1 > karte2:\n        neuer_state['punkte1'] = ## Lücke 2 ##     # Preiskarte für Spieler 1\n    elif karte2 > karte1:\n        neuer_state['punkte2'] = state['punkte2'] + preiskarte\n    return neuer_state\n\nstates = (anfangs_state,)\nstates += ## Lücke 3 ##    # hänge das Ergebnis von spielrunde(states[-1], 5, 2) an\nprint(states[-1])\nprint(len(states), states[0]['punkte1'])",
+   "expectedOutput": "{'punkte1': 3, 'punkte2': 0, 'preiskarten': (1, 2)}\n2 0",
+   "gaps": [
+    {
+     "id": 1,
+     "accept": [
+      "state['preiskarten'][:-1]",
+      "state[\"preiskarten\"][:-1]",
+      "state['preiskarten'][0:-1]",
+      "state['preiskarten'][:len(state['preiskarten'])-1]"
+     ],
+     "explanation": "Slicing funktioniert bei Tupeln genau wie bei Listen und liefert ein **neues** Tupel. `[:-1]` bedeutet 'alles bis auf das letzte Element' — die aufgedeckte Preiskarte ist damit aus dem Stapel verschwunden, ohne dass etwas mutiert wurde."
+    },
+    {
+     "id": 2,
+     "accept": [
+      "state['punkte1'] + preiskarte",
+      "state[\"punkte1\"] + preiskarte",
+      "neuer_state['punkte1'] + preiskarte",
+      "state['punkte1']+preiskarte"
+     ],
+     "explanation": "Der alte Punktestand plus der Wert der Preiskarte. Man liest aus dem **alten** state und schreibt in das **neue** Dictionary."
+    },
+    {
+     "id": 3,
+     "accept": [
+      "(spielrunde(states[-1], 5, 2),)",
+      "(spielrunde(states[-1],5,2),)"
+     ],
+     "explanation": "Um an ein Tupel anzuhängen, addiert man ein **Ein-Element-Tupel** — das nachgestellte Komma ist zwingend. Ohne Komma stünde dort ein Dictionary in Klammern und `tuple + dict` wäre ein `TypeError`."
+    }
+   ],
+   "solution": "anfangs_state = {'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}\n\ndef spielrunde(state, karte1, karte2):\n    preiskarte = state['preiskarten'][-1]\n    neuer_state = {'punkte1': state['punkte1'],\n                   'punkte2': state['punkte2'],\n                   'preiskarten': state['preiskarten'][:-1]}\n    if karte1 > karte2:\n        neuer_state['punkte1'] = state['punkte1'] + preiskarte\n    elif karte2 > karte1:\n        neuer_state['punkte2'] = state['punkte2'] + preiskarte\n    return neuer_state\n\nstates = (anfangs_state,)\nstates += (spielrunde(states[-1], 5, 2),)\nprint(states[-1])   # {'punkte1': 3, 'punkte2': 0, 'preiskarten': (1, 2)}\nprint(len(states), states[0]['punkte1'])   # 2 0  -> der Anfangszustand ist erhalten\n",
+   "explanation": "Das ist das Herzstück des funktionalen Goofspiels aus `goofspiel26-3.py`. Drei Konzepte greifen ineinander. Erstens: Der **state ist ein Dictionary** — alle für den Spielverlauf wichtigen Werte stecken unter sprechenden Schlüsseln in einer einzigen Variablen, statt in einem Dutzend Einzelvariablen. Zweitens: Statt den state zu mutieren, baut `spielrunde` ein **neues Dictionary** und gibt es zurück; die Preiskarten sind ein **Tupel**, aus dem mit `[:-1]` ein neues, kürzeres Tupel entsteht. Drittens: Alle Zustände werden in einem **Tupel von states** gesammelt, an das mit `states += (neuer_state,)` angehängt wird — exakt die Zeile `states += (helper.spielrunde(states[-1]),)` des Professors. Dass `states[0]['punkte1']` am Ende immer noch 0 ist, beweist die Pureness: Der Anfangszustand wurde nie angefasst, man kann den ganzen Spielverlauf im Nachhinein rekonstruieren und die Dokumentation (die `print`-Befehle) sauber vom Spiel trennen. Merkregel: *Nicht den Zustand ändern, sondern den nächsten Zustand berechnen und anhängen.*",
+   "hints": [
+    "Für Lücke 1: Wie schneidet man mit Slicing das letzte Element weg — und was liefert Slicing bei einem Tupel zurück?",
+    "Für Lücke 2: Der neue Punktestand ergibt sich aus dem alten Punktestand des states plus dem Wert der Preiskarte.",
+    "Für Lücke 3: `tupel + irgendetwas` funktioniert nur, wenn rechts auch ein Tupel steht — und ein Tupel mit einem Element braucht ein Komma."
+   ],
+   "pitfalls": [
+    "In Lücke 3 das Komma vergessen: `(spielrunde(...))` ist ein Dictionary in Klammern, `tuple + dict` gibt einen `TypeError`.",
+    "In Lücke 1 `state['preiskarten'].pop()` schreiben — Tupel haben kein `pop`, und es wäre eine Mutation.",
+    "In Lücke 2 auf `neuer_state['punkte1']` zugreifen, bevor es gesetzt ist (hier zufällig unkritisch, weil es oben schon initialisiert wurde)."
+   ],
+   "sources": [
+    {
+     "file": "goofspiel26-3.py",
+     "page": 1,
+     "label": "states = ({...},) und states += (helper.spielrunde(states[-1]),)"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 4,
+     "label": "tuple mit allen states, an das wir in jeder Runde einen Eintrag anhängen"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "def spielrunde(state) gibt ein neues Dictionary zurück"
+    }
+   ],
+   "tags": [
+    "dictionary",
+    "state",
+    "tupel",
+    "slicing",
+    "pure-function",
+    "goofspiel",
+    "luecken"
+   ]
+  },
+  {
+   "id": "py-lists-022",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "code",
+   "difficulty": 4,
+   "points": 5,
+   "examStyle": false,
+   "title": "Punkte gutschreiben — ohne den state zu verändern",
+   "prompt": "Der state eines Zweispieler-Spiels ist ein Dictionary mit den Schlüsseln `'spieler1'`, `'spieler2'` und `'runde'`:\n\n```python\nstate = {'spieler1': 0, 'spieler2': 0, 'runde': 0}\n```\n\nSchreiben Sie eine **pure function**\n\n```python\ndef punkte_gutschreiben(state, spieler, punkte):\n```\n\nDie Funktion gibt einen **neuen** state zurück, in dem dem angegebenen Spieler (`spieler` ist einer der Schlüssel `'spieler1'` oder `'spieler2'`) die `punkte` gutgeschrieben wurden und `'runde'` um 1 erhöht ist. Der übergebene `state` darf dabei **nicht verändert** werden.\n\nBeispiel:\n```python\npunkte_gutschreiben({'spieler1': 0, 'spieler2': 0, 'runde': 0}, 'spieler1', 7)\n# -> {'spieler1': 7, 'spieler2': 0, 'runde': 1}\n```",
+   "starterCode": "def punkte_gutschreiben(state, spieler, punkte):\n    \"\"\"\n    Gibt einen NEUEN state zurueck, in dem spieler die punkte gutgeschrieben\n    wurden und die Rundenzahl um 1 erhoeht ist.\n    Eingabe: state (dict), spieler (str), punkte (int)\n    Ausgabe: neues dict\n    \"\"\"\n    # Ihr Code hier\n",
+   "tests": [
+    {
+     "name": "Punkte werden addiert",
+     "call": "punkte_gutschreiben({'spieler1': 0, 'spieler2': 0, 'runde': 0}, 'spieler1', 7)",
+     "expected": "{'spieler1': 7, 'spieler2': 0, 'runde': 1}"
+    },
+    {
+     "name": "Der andere Spieler bleibt unberührt",
+     "call": "punkte_gutschreiben({'spieler1': 3, 'spieler2': 9, 'runde': 4}, 'spieler2', 5)",
+     "expected": "{'spieler1': 3, 'spieler2': 14, 'runde': 5}"
+    },
+    {
+     "name": "Null Punkte erhöhen nur die Runde",
+     "call": "punkte_gutschreiben({'spieler1': 2, 'spieler2': 2, 'runde': 1}, 'spieler1', 0)",
+     "expected": "{'spieler1': 2, 'spieler2': 2, 'runde': 2}"
+    },
+    {
+     "name": "Der übergebene state bleibt unverändert (pure)",
+     "call": "(lambda s: (punkte_gutschreiben(s, 'spieler1', 5), s)[1])({'spieler1': 0, 'spieler2': 0, 'runde': 0})",
+     "expected": "{'spieler1': 0, 'spieler2': 0, 'runde': 0}"
+    },
+    {
+     "name": "Rückgabe ist nicht dasselbe Objekt",
+     "call": "(lambda s: punkte_gutschreiben(s, 'spieler1', 1) is s)({'spieler1': 0, 'spieler2': 0, 'runde': 0})",
+     "expected": "False"
+    },
+    {
+     "name": "Mehrfach hintereinander anwendbar",
+     "call": "punkte_gutschreiben(punkte_gutschreiben({'spieler1': 0, 'spieler2': 0, 'runde': 0}, 'spieler1', 2), 'spieler1', 3)",
+     "expected": "{'spieler1': 5, 'spieler2': 0, 'runde': 2}"
+    },
+    {
+     "name": "Rückgabetyp ist ein Dictionary",
+     "call": "type(punkte_gutschreiben({'spieler1': 0, 'spieler2': 0, 'runde': 0}, 'spieler2', 1))",
+     "expected": "dict"
+    }
+   ],
+   "solution": "def punkte_gutschreiben(state, spieler, punkte):\n    \"\"\"\n    Gibt einen NEUEN state zurueck, in dem spieler die punkte gutgeschrieben\n    wurden und die Rundenzahl um 1 erhoeht ist.\n    Eingabe: state (dict), spieler (str), punkte (int)\n    Ausgabe: neues dict\n    \"\"\"\n    neuer_state = state.copy()\n    neuer_state[spieler] = state[spieler] + punkte\n    neuer_state['runde'] = state['runde'] + 1\n    return neuer_state\n\n# Variante im Stil der Vorlesung: das neue Dictionary komplett aufschreiben\n# def punkte_gutschreiben(state, spieler, punkte):\n#     neuer_state = {'spieler1': state['spieler1'],\n#                    'spieler2': state['spieler2'],\n#                    'runde': state['runde'] + 1}\n#     neuer_state[spieler] = state[spieler] + punkte\n#     return neuer_state\n",
+   "explanation": "Die Aufgabe übt das zentrale Muster der Vorlesung: **Zustandsänderung ohne Mutation**. Statt `state[spieler] += punkte` zu schreiben (was den übergebenen state verändern und die Funktion unrein machen würde), erzeugt man eine Kopie oder gleich ein komplett neues Dictionary, ändert nur diese und gibt sie zurück. Der Aufrufer entscheidet dann selbst mit `state = punkte_gutschreiben(state, ...)`, ob er den alten Zustand behalten will — genau das braucht man, um wie im Goofspiel alle states in einem Tupel zu sammeln. Zwei Details sind wichtig: Erstens ist `spieler` eine **Variable, die einen Schlüssel enthält** — `neuer_state[spieler]` greift auf den Schlüssel zu, dessen Name in `spieler` steht, nicht auf einen Schlüssel namens `\"spieler\"`. Zweitens ist `.copy()` hier unbedenklich, weil alle Werte Zahlen (also immutable) sind; stünde eine Liste im state, wäre die flache Kopie eine Falle. Merkregel: *Pure functions berechnen den nächsten Zustand, sie überschreiben nicht den aktuellen.*",
+   "hints": [
+    "Wie erzeugen Sie ein Dictionary, das dieselben Einträge hat wie ein anderes, aber ein eigenständiges Objekt ist?",
+    "`spieler` enthält den Schlüsselnamen — schreiben Sie `neuer_state[spieler]`, nicht `neuer_state['spieler']`.",
+    "Der Test prüft, dass das zurückgegebene Objekt nicht dasselbe (`is`) wie der Eingabe-state ist."
+   ],
+   "pitfalls": [
+    "`state[spieler] = state[spieler] + punkte` direkt auf dem Argument ausführen — der Test auf Unverändertheit schlägt fehl.",
+    "`neuer_state['spieler']` schreiben und damit einen neuen Schlüssel `'spieler'` anlegen.",
+    "Das Erhöhen von `'runde'` vergessen oder es aus dem bereits kopierten Wert falsch ableiten."
+   ],
+   "sources": [
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 3,
+     "label": "Nebeneffekte vermeiden, state in einer state-Variablen sammeln"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "spielrunde(state) gibt ein neues Dictionary zurück"
+    },
+    {
+     "file": "3_mutable_variables_scopes_and_motivation_of_func_prog_26.pdf",
+     "page": 18,
+     "label": "copy()"
+    }
+   ],
+   "tags": [
+    "dictionary",
+    "state",
+    "pure-function",
+    "copy",
+    "immutable"
+   ]
+  },
+  {
+   "id": "py-lists-023",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "code",
+   "difficulty": 5,
+   "points": 6,
+   "examStyle": false,
+   "title": "Statistik über verschachtelte Listen",
+   "prompt": "In `alle_runden` werden die gespielten Runden eines Spielers gesammelt. `alle_runden` ist eine **Liste von Listen**: Jeder Eintrag ist eine Runde, und jede Runde ist selbst eine Liste der Würfe dieser Runde. Beispiel:\n\n```python\nalle_runden = [[3, 2, 4], [1], [6, 5, 1], [4, 3, 5, 6]]\n```\n\nEine Runde ist eine **Pech-Runde**, wenn ihr **letzter** Wurf eine 1 ist. Sie dürfen annehmen, dass keine Runde leer ist.\n\nSchreiben Sie `statistik(alle_runden)`, die ein **Dictionary** mit genau diesen vier Schlüsseln zurückgibt:\n\n* `'anzahl_runden'` — Anzahl der gespielten Runden\n* `'pech_runden'` — Anzahl der Runden, die mit einer 1 enden\n* `'laengste_runde'` — Anzahl der Würfe der längsten Runde (0, wenn es keine Runden gibt)\n* `'gerade_wuerfe'` — Anzahl aller geraden Würfe über alle Runden hinweg\n\nFür das Beispiel oben ergibt das `{'anzahl_runden': 4, 'pech_runden': 2, 'laengste_runde': 4, 'gerade_wuerfe': 5}`.",
+   "starterCode": "def statistik(alle_runden):\n    \"\"\"\n    Wertet eine Liste von Runden aus; jede Runde ist eine Liste von Wuerfen.\n    Eingabe: alle_runden - Liste von Listen von Integern\n    Ausgabe: Dictionary mit anzahl_runden, pech_runden, laengste_runde, gerade_wuerfe\n    \"\"\"\n    # Ihr Code hier\n",
+   "tests": [
+    {
+     "name": "Beispiel aus der Aufgabe",
+     "call": "statistik([[3, 2, 4], [1], [6, 5, 1], [4, 3, 5, 6]])",
+     "expected": "{'anzahl_runden': 4, 'pech_runden': 2, 'laengste_runde': 4, 'gerade_wuerfe': 5}"
+    },
+    {
+     "name": "Keine Runden gespielt",
+     "call": "statistik([])",
+     "expected": "{'anzahl_runden': 0, 'pech_runden': 0, 'laengste_runde': 0, 'gerade_wuerfe': 0}"
+    },
+    {
+     "name": "Eine einzige Runde mit einem Wurf",
+     "call": "statistik([[2]])",
+     "expected": "{'anzahl_runden': 1, 'pech_runden': 0, 'laengste_runde': 1, 'gerade_wuerfe': 1}"
+    },
+    {
+     "name": "Nur Pech-Runden",
+     "call": "statistik([[1], [1], [1]])['pech_runden']",
+     "expected": "3"
+    },
+    {
+     "name": "Längste Runde",
+     "call": "statistik([[1, 2, 3], [4, 5]])['laengste_runde']",
+     "expected": "3"
+    },
+    {
+     "name": "Eine 1 mitten in der Runde ist kein Pech",
+     "call": "statistik([[1, 4]])['pech_runden']",
+     "expected": "0"
+    },
+    {
+     "name": "Gerade Würfe über mehrere Runden",
+     "call": "statistik([[2, 2], [3, 4, 6]])['gerade_wuerfe']",
+     "expected": "4"
+    },
+    {
+     "name": "Eingabe bleibt unverändert",
+     "call": "(lambda r: (statistik(r), r)[1])([[1, 2], [3]])",
+     "expected": "[[1, 2], [3]]"
+    }
+   ],
+   "solution": "def statistik(alle_runden):\n    \"\"\"\n    Wertet eine Liste von Runden aus; jede Runde ist eine Liste von Wuerfen.\n    Eingabe: alle_runden - Liste von Listen von Integern\n    Ausgabe: Dictionary mit anzahl_runden, pech_runden, laengste_runde, gerade_wuerfe\n    \"\"\"\n    pech = 0\n    laengste = 0\n    gerade = 0\n    for runde in alle_runden:\n        if runde[-1] == 1:              # negativer Index: der letzte Wurf\n            pech = pech + 1\n        if len(runde) > laengste:\n            laengste = len(runde)\n        for wurf in runde:              # verschachtelte Schleife: Würfe INNERHALB der Runde\n            if wurf % 2 == 0:\n                gerade = gerade + 1\n    return {'anzahl_runden': len(alle_runden),\n            'pech_runden': pech,\n            'laengste_runde': laengste,\n            'gerade_wuerfe': gerade}\n",
+   "explanation": "Das ist Stufe 6 der Pig-Übung („Spielstatistik“) in kompakter Form und der Standardtest für **verschachtelte Listen**. Der entscheidende gedankliche Schritt ist, sauber zwischen den beiden Ebenen zu unterscheiden: `alle_runden[i]` ist eine ganze **Runde** (eine Liste), `alle_runden[i][j]` ein einzelner **Wurf** (eine Zahl). Deshalb braucht `'gerade_wuerfe'` eine **verschachtelte** Schleife, während `'anzahl_runden'` einfach `len(alle_runden)` ist — ein häufiger Fehler ist, `len` auf die falsche Ebene anzuwenden. Für die Pech-Runden nutzt man den **negativen Index** `runde[-1]`, der genau den letzten Wurf liefert; eine 1 mitten in der Runde zählt ausdrücklich nicht. Bei `'laengste_runde'` muss der Startwert 0 sein, damit die leere Eingabe korrekt 0 ergibt. Wer schon `map`, `filter` und `reduce` beherrscht, kann dieselbe Statistik später schleifenfrei schreiben — etwa `len(list(filter(lambda r: r[-1] == 1, alle_runden)))` für die Pech-Runden. Merkregel: *Bei verschachtelten Listen immer zuerst klären, auf welcher Ebene man gerade steht.*",
+   "hints": [
+    "Laufen Sie einmal über `alle_runden` — jedes Element ist selbst eine Liste.",
+    "Der letzte Wurf einer Runde ist `runde[-1]`; die Länge einer Runde ist `len(runde)`.",
+    "Für die geraden Würfe brauchen Sie eine zweite Schleife **innerhalb** der ersten."
+   ],
+   "pitfalls": [
+    "`len(alle_runden)` mit der Gesamtzahl der Würfe verwechseln.",
+    "Prüfen, ob `1 in runde` statt `runde[-1] == 1` — dann zählen auch Runden mit einer 1 in der Mitte als Pech.",
+    "`laengste` mit `len(alle_runden[0])` initialisieren und bei leerer Eingabe einen `IndexError` bekommen."
+   ],
+   "sources": [
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 5,
+     "label": "Stufe 6 — Spielstatistik: alle_runden = [[], []], runde[-1] == 1"
+    },
+    {
+     "file": "PushYourLuck_Aufgaben_und_Loesungen.pdf",
+     "page": 13,
+     "label": "Stufe B3 — alle_runden[i] ist eine Liste, deren Einträge selbst Listen sind"
+    },
+    {
+     "file": "1_if_else_while_26.pdf",
+     "page": 20,
+     "label": "for-Schleifen über iterierbare Objekte"
+    }
+   ],
+   "tags": [
+    "verschachtelte-listen",
+    "dictionary",
+    "negative-indizes",
+    "len",
+    "statistik"
+   ]
+  },
+  {
+   "id": "py-lists-024",
+   "lang": "python",
+   "topicId": "py-lists",
+   "type": "code",
+   "difficulty": 5,
+   "points": 7,
+   "examStyle": true,
+   "title": "Den gesamten Spielverlauf als Tupel von states",
+   "prompt": "Ein Goofspiel-Zustand ist ein Dictionary mit den Schlüsseln `'punkte1'`, `'punkte2'` und `'preiskarten'` (ein **Tupel**). In jeder Runde wird die **letzte** Preiskarte aufgedeckt und aus dem Stapel entfernt; wer die höhere Karte legt, bekommt ihren Wert gutgeschrieben, bei Gleichstand bekommt niemand Punkte.\n\nSchreiben Sie eine **pure function**\n\n```python\ndef spiele(anfangs_state, zuege):\n```\n\n* `zuege` ist ein **Tupel von Paaren** `(karte1, karte2)` — eines pro Runde. Sie dürfen annehmen, dass es höchstens so viele Züge wie Preiskarten gibt.\n* Rückgabe ist das **Tupel aller states**: an Position 0 der Anfangszustand, danach für jeden Zug ein neuer Zustand.\n* Weder `anfangs_state` noch die darin enthaltenen Objekte dürfen verändert werden; jeder Zustand ist ein **neues** Dictionary.\n\nBeispiel:\n```python\nspiele({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}, ((5, 2),))\n# -> ({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)},\n#     {'punkte1': 3, 'punkte2': 0, 'preiskarten': (1, 2)})\n```",
+   "starterCode": "def spiele(anfangs_state, zuege):\n    \"\"\"\n    Spielt alle Zuege und liefert das Tupel aller states.\n    Eingabe: anfangs_state (dict), zuege (Tupel von (karte1, karte2)-Paaren)\n    Ausgabe: Tupel von states (dicts), beginnend mit anfangs_state\n    \"\"\"\n    # Ihr Code hier\n",
+   "tests": [
+    {
+     "name": "Ein Zug: Spieler 1 gewinnt die Preiskarte 3",
+     "call": "spiele({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}, ((5, 2),))",
+     "expected": "({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}, {'punkte1': 3, 'punkte2': 0, 'preiskarten': (1, 2)})"
+    },
+    {
+     "name": "Länge des states-Tupels ist Anzahl Züge + 1",
+     "call": "len(spiele({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}, ((5, 2), (1, 9))))",
+     "expected": "3"
+    },
+    {
+     "name": "Zwei Runden, beide Spieler punkten",
+     "call": "spiele({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}, ((5, 2), (1, 9)))[-1]",
+     "expected": "{'punkte1': 3, 'punkte2': 2, 'preiskarten': (1,)}"
+    },
+    {
+     "name": "Gleichstand: niemand bekommt Punkte",
+     "call": "spiele({'punkte1': 0, 'punkte2': 0, 'preiskarten': (4,)}, ((7, 7),))[-1]",
+     "expected": "{'punkte1': 0, 'punkte2': 0, 'preiskarten': ()}"
+    },
+    {
+     "name": "Ohne Züge bleibt nur der Anfangszustand",
+     "call": "spiele({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1,)}, ())",
+     "expected": "({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1,)},)"
+    },
+    {
+     "name": "Rückgabetyp ist ein Tupel",
+     "call": "type(spiele({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1,)}, ()))",
+     "expected": "tuple"
+    },
+    {
+     "name": "Anfangszustand wird nicht verändert (pure)",
+     "call": "(lambda s: (spiele(s, ((5, 2),)), s)[1])({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)})",
+     "expected": "{'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}"
+    },
+    {
+     "name": "Der Anfangszustand steht unverändert an Position 0",
+     "call": "spiele({'punkte1': 4, 'punkte2': 1, 'preiskarten': (7, 8)}, ((3, 9),))[0]",
+     "expected": "{'punkte1': 4, 'punkte2': 1, 'preiskarten': (7, 8)}"
+    },
+    {
+     "name": "Drei Runden am Stück",
+     "call": "spiele({'punkte1': 0, 'punkte2': 0, 'preiskarten': (1, 2, 3)}, ((9, 1), (9, 1), (9, 1)))[-1]",
+     "expected": "{'punkte1': 6, 'punkte2': 0, 'preiskarten': ()}"
+    }
+   ],
+   "solution": "def spielrunde(state, karte1, karte2):\n    \"\"\"Berechnet aus einem state und den gelegten Karten den naechsten state.\"\"\"\n    preiskarte = state['preiskarten'][-1]\n    punkte1 = state['punkte1']\n    punkte2 = state['punkte2']\n    if karte1 > karte2:\n        punkte1 = punkte1 + preiskarte\n    elif karte2 > karte1:\n        punkte2 = punkte2 + preiskarte\n    return {'punkte1': punkte1,\n            'punkte2': punkte2,\n            'preiskarten': state['preiskarten'][:-1]}\n\n\ndef spiele(anfangs_state, zuege):\n    \"\"\"\n    Spielt alle Zuege und liefert das Tupel aller states.\n    Eingabe: anfangs_state (dict), zuege (Tupel von (karte1, karte2)-Paaren)\n    Ausgabe: Tupel von states (dicts), beginnend mit anfangs_state\n    \"\"\"\n    states = (anfangs_state,)\n    for karte1, karte2 in zuege:\n        states += (spielrunde(states[-1], karte1, karte2),)\n    return states\n\n# Rein rekursive Variante ohne Schleife (im Stil von helper-3.py):\n# def spiele(anfangs_state, zuege):\n#     if len(zuege) == 0:\n#         return (anfangs_state,)\n#     states = spiele(anfangs_state, zuege[:-1])\n#     return states + (spielrunde(states[-1], zuege[-1][0], zuege[-1][1]),)\n",
+   "explanation": "Das ist der Transfer-Höhepunkt dieses Themas und genau die Architektur von `goofspiel26-3.py`. Vier Bausteine greifen ineinander. **(1) Der state ist ein Dictionary** — der komplette Spielstand steckt in einer Variablen. **(2) Die Preiskarten sind ein Tupel**, aus dem mit `[:-1]` ein neues, kürzeres Tupel entsteht; nichts wird mutiert, deshalb bleibt jeder frühere Zustand gültig. **(3) `spielrunde` ist eine pure function**: gleiche Eingabe, gleiche Ausgabe, kein Nebeneffekt — man kann sie isoliert testen. **(4) Der Spielverlauf ist ein Tupel von states**, an das mit `states += (neuer_state,)` angehängt wird; `states[-1]` ist immer der aktuelle Zustand. Zwei Feinheiten lohnen sich zu merken: Das **Ein-Element-Tupel braucht das Komma**, sonst gibt es einen `TypeError`, und `for karte1, karte2 in zuege` **entpackt** jedes Paar direkt in zwei Variablen. Der Gewinn dieser Bauweise ist, dass die Dokumentation vollständig vom Spiel getrennt ist: Erst nach dem Spiel läuft man einmal über `states` und druckt — der einzige Nebeneffekt des ganzen Programms. Merkregel: *Zustände nicht überschreiben, sondern sammeln.*",
+   "hints": [
+    "Bauen Sie zuerst eine Hilfsfunktion, die aus einem state und zwei Karten den **nächsten** state berechnet.",
+    "Die aufgedeckte Preiskarte ist `state['preiskarten'][-1]`; der Reststapel ist `state['preiskarten'][:-1]`.",
+    "Starten Sie mit `states = (anfangs_state,)` und hängen Sie in jeder Runde mit `states += (naechster,)` an — das Komma ist Pflicht."
+   ],
+   "pitfalls": [
+    "`states += (naechster)` ohne Komma schreiben — `tuple + dict` ergibt einen `TypeError`.",
+    "Den Anfangszustand vergessen, sodass das Ergebnis einen Eintrag zu kurz ist.",
+    "Den state mutieren (`state['punkte1'] += preiskarte`) — dann sind alle gesammelten states dasselbe Objekt und der Purity-Test schlägt fehl.",
+    "Die Preiskarte vorne statt hinten abtragen (`[1:]` statt `[:-1]`)."
+   ],
+   "sources": [
+    {
+     "file": "goofspiel26-3.py",
+     "page": 1,
+     "label": "states += (helper.spielrunde(states[-1]),)"
+    },
+    {
+     "file": "4_func_programming_and_recursion_26.pdf",
+     "page": 4,
+     "label": "tuple mit allen states, an das wir in jeder Runde einen Eintrag anhängen"
+    },
+    {
+     "file": "helper-2.py",
+     "page": 1,
+     "label": "def spielrunde(state) — neues state-Dictionary"
+    },
+    {
+     "file": "end_summary_python_26.pdf",
+     "page": 14,
+     "label": "state eines Programms in einem dictionary speichern, alle states als Tupel merken"
+    }
+   ],
+   "tags": [
+    "dictionary",
+    "state",
+    "tupel",
+    "pure-function",
+    "goofspiel",
+    "slicing",
+    "transfer"
+   ]
+  }
+ ]
+}

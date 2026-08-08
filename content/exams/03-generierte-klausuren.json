@@ -1,0 +1,52 @@
+{
+  "id": "generiert-python-a",
+  "lang": "python",
+  "title": "Simulierte Klausur Python — Variante A",
+  "subtitle": "Gleicher Bauplan wie das Original, aber mit anderen Aufgaben aus der Bank",
+  "minutes": 60,
+  "totalPoints": 49,
+  "origin": "generated",
+  "note": "Die Aufgaben werden nach dem Bauplan der Originalklausur aus der Aufgabenbank gezogen: Kurzfragen, Code-Analyse zu Scopes und Mutability, map/filter/reduce, Rekursion und funktionales Umschreiben.",
+  "tasks": [
+    {
+      "id": "g1",
+      "label": "Aufgabe 1",
+      "title": "Kurzfragen",
+      "points": 8,
+      "instructions": "Vier Kurzfragen. Antworte knapp und mit den richtigen Fachbegriffen.",
+      "blueprint": { "topicIds": ["py-funcprog", "py-scope-mutability", "py-recursion", "py-mfr"], "type": "short-answer", "count": 4 }
+    },
+    {
+      "id": "g2",
+      "label": "Aufgabe 2",
+      "title": "Code-Analyse — Geltungsbereiche und Mutability",
+      "points": 10,
+      "instructions": "Gib jeweils an, was ausgegeben wird oder ob ein Fehler auftritt.",
+      "blueprint": { "topicIds": ["py-scope-mutability"], "type": "predict-output", "count": 5, "minDifficulty": 2 }
+    },
+    {
+      "id": "g3",
+      "label": "Aufgabe 3",
+      "title": "Programmieren mit map, filter und reduce",
+      "points": 11,
+      "instructions": "Keine `for`- oder `while`-Schleifen. `lambda` verwenden.",
+      "blueprint": { "topicIds": ["py-mfr"], "type": "code", "count": 4, "minDifficulty": 2 }
+    },
+    {
+      "id": "g4",
+      "label": "Aufgabe 4",
+      "title": "Programmieren mit Rekursion",
+      "points": 12,
+      "instructions": "Ausschließlich Rekursion, keine Schleifen.",
+      "blueprint": { "topicIds": ["py-recursion"], "type": "code", "count": 3, "minDifficulty": 3 }
+    },
+    {
+      "id": "g5",
+      "label": "Aufgabe 5",
+      "title": "Currying & Decorators",
+      "points": 8,
+      "instructions": "",
+      "blueprint": { "topicIds": ["py-currying-decorators"], "type": "code", "count": 3, "minDifficulty": 3 }
+    }
+  ]
+}

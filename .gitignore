@@ -1,0 +1,14 @@
+# Abhängigkeiten
+/node_modules
+
+# Build-Ergebnisse
+/.next
+/out
+
+# aus content/ erzeugt — wird beim Bauen neu geschrieben
+/public/content
+
+# System
+.DS_Store
+*.log
+.vercel
