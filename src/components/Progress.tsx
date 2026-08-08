@@ -92,7 +92,7 @@ export function ProgressPage() {
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-[15px] font-semibold">Themen nach Punkterisiko</h2>
           <span className="text-[13px] text-muted">
-            Prognose {readiness.score} % · noch {Math.max(0, Math.ceil(daysUntil(EXAM_DATE)))} Tage
+            Prognose {readiness.score} % · noch {Math.max(0, Math.floor(daysUntil(EXAM_DATE)))} Tage
           </span>
         </div>
         <div className="overflow-x-auto">
