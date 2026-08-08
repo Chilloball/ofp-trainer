@@ -115,23 +115,28 @@ function ExamRow({
     <li>
       <Link
         href={`/klausur/${exam.id}`}
-        className="panel flex flex-wrap items-center gap-x-5 gap-y-2 px-4 py-3.5 transition-colors hover:border-lineStrong hover:bg-sunken"
+        className="panel block px-4 py-3.5 transition-colors hover:border-lineStrong hover:bg-sunken
+                   sm:flex sm:items-center sm:gap-5"
       >
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
+        <div className="min-w-0 sm:flex-1">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span className="text-[14.5px] font-medium">{exam.title}</span>
             <span className={`tag ${exam.lang === 'python' ? 'tag-py' : exam.lang === 'java' ? 'tag-java' : ''}`}>
               {exam.lang === 'python' ? 'Python' : exam.lang === 'java' ? 'Java' : 'Gemischt'}
             </span>
           </div>
-          {exam.subtitle && <div className="mt-0.5 text-[13px] text-muted">{exam.subtitle}</div>}
+          {exam.subtitle && <div className="mt-1 text-[13px] text-muted">{exam.subtitle}</div>}
         </div>
-        <div className="tabnum flex shrink-0 items-center gap-5 text-[13px] text-muted">
+        <div className="tabnum mt-2 flex shrink-0 items-center gap-4 text-[13px] text-muted sm:mt-0 sm:gap-5">
           <span>{exam.minutes} min</span>
           <span>
             {exam.totalPoints} P{exam.bonusPoints ? ` + ${exam.bonusPoints} Bonus` : ''}
           </span>
-          <span className={`w-16 text-right font-medium ${best === undefined ? 'text-faint' : best >= 0.5 ? 'text-ok' : 'text-bad'}`}>
+          <span
+            className={`font-medium sm:w-16 sm:text-right ${
+              best === undefined ? 'text-faint' : best >= 0.5 ? 'text-ok' : 'text-bad'
+            }`}
+          >
             {best === undefined ? 'neu' : `${Math.round(best * 100)} %`}
           </span>
         </div>
