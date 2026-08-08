@@ -8,7 +8,8 @@ import { loadTheory, loadTopicExercises } from '@/lib/content'
 import { useStore } from '@/lib/store'
 import { ExerciseView } from './Exercise'
 import { Markdown } from './Markdown'
-import { Loading, Meter, Segmented } from './ui'
+import { Loading, Segmented } from './ui'
+import { Meter, toneFor } from './viz'
 import { Page } from './Shell'
 
 type Tab = 'theorie' | 'aufgaben' | 'klausur'
@@ -65,11 +66,7 @@ export function TopicDetail({ topicId }: { topicId: string }) {
             <span className="tabnum text-[20px] font-semibold leading-none">
               {m?.seen ? `${Math.round(m.mastery * 100)}%` : '—'}
             </span>
-            <Meter
-              value={m?.mastery ?? 0}
-              tone={!m || m.seen === 0 ? 'accent' : m.mastery >= 0.75 ? 'ok' : m.mastery >= 0.4 ? 'warn' : 'bad'}
-              className="w-24"
-            />
+            <Meter value={m?.mastery ?? 0} tone={toneFor(m?.mastery ?? 0, (m?.seen ?? 0) > 0)} className="w-24" />
           </div>
         </div>
         <div>
@@ -151,7 +148,7 @@ export function TopicDetail({ topicId }: { topicId: string }) {
                       </span>
                     </button>
                     {open && (
-                      <div className="enter border-t border-line bg-paper px-4 py-5">
+                      <div className="border-t border-line bg-paper px-4 py-5">
                         <ExerciseView
                           exercise={ex}
                           onDone={(r) => {
@@ -172,7 +169,7 @@ export function TopicDetail({ topicId }: { topicId: string }) {
         {tab === 'klausur' && (
           <div className="grid gap-5 lg:grid-cols-2">
             <section className="panel px-5 py-4">
-              <h3 className="text-[14.5px] font-semibold">Typische Aufgabenformate</h3>
+              <h3 className="text-[16px]">Typische Aufgabenformate</h3>
               <ul className="mt-2 space-y-1 text-[13.5px] text-muted">
                 {topic.examFormats.map((f) => (
                   <li key={f} className="flex gap-2">
@@ -183,7 +180,7 @@ export function TopicDetail({ topicId }: { topicId: string }) {
               </ul>
               {topic.sources?.length ? (
                 <>
-                  <h3 className="mt-5 text-[14.5px] font-semibold">Quellen</h3>
+                  <h3 className="mt-6 text-[16px]">Quellen</h3>
                   <ul className="mt-2 space-y-1 text-[13px] text-muted">
                     {topic.sources.map((s, i) => (
                       <li key={i}>
@@ -198,7 +195,7 @@ export function TopicDetail({ topicId }: { topicId: string }) {
             </section>
 
             <section className="panel px-5 py-4">
-              <h3 className="text-[14.5px] font-semibold">Das musst du können</h3>
+              <h3 className="text-[16px]">Das musst du können</h3>
               <ul className="mt-3 space-y-4">
                 {topic.subtopics.map((s) => (
                   <li key={s.id}>

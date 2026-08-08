@@ -19,6 +19,8 @@ const config: Config = {
         accent: rgb('accent'),
         accentInk: rgb('accent-ink'),
         accentWash: rgb('accent-wash'),
+        brass: rgb('brass'),
+        brassWash: rgb('brass-wash'),
         ok: rgb('ok'),
         okWash: rgb('ok-wash'),
         warn: rgb('warn'),
@@ -29,12 +31,14 @@ const config: Config = {
         java: rgb('java'),
       },
       fontFamily: {
-        sans: ['var(--font-sans)'],
-        mono: ['var(--font-mono)'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'Georgia', 'serif'],
+        mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       /* Feinere Abstufungen als die Voreinstellung — Flächen sollen sich
-         nur andeuten, nicht aufdrängen. */
+         andeuten, nicht aufdrängen. */
       opacity: {
+        4: '0.04',
         6: '0.06',
         8: '0.08',
         12: '0.12',
@@ -48,17 +52,23 @@ const config: Config = {
         85: '0.85',
       },
       borderRadius: {
-        DEFAULT: '5px',
-        md: '7px',
+        DEFAULT: '6px',
+        md: '8px',
         lg: '10px',
         xl: '13px',
+        '2xl': '18px',
       },
       maxWidth: {
         prose: '68ch',
-        content: '1120px',
+        content: '1140px',
       },
       boxShadow: {
-        pop: '0 1px 2px rgb(0 0 0 / 0.04), 0 8px 28px -12px rgb(0 0 0 / 0.22)',
+        pop: '0 2px 6px rgb(var(--shadow-color) / 0.08), 0 20px 48px -20px rgb(var(--shadow-color) / 0.35)',
+        inset: 'inset 0 1px 0 rgb(255 255 255 / 0.12)',
+      },
+      transitionTimingFunction: {
+        // ruhiges Ausschwingen, kein Federn
+        out: 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
     },
   },

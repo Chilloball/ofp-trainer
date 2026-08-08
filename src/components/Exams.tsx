@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useMemo } from 'react'
 import { useStore } from '@/lib/store'
-import { Loading } from './ui'
+import { Loading, Reveal } from './ui'
 import { Page } from './Shell'
 
 export function ExamList() {
@@ -36,33 +36,37 @@ export function ExamList() {
     >
       <div className="space-y-9">
         <section>
-          <h2 className="mb-1 text-[15px] font-semibold">Originalklausuren</h2>
+          <h2 className="mb-1 text-[19px]">Originalklausuren</h2>
           <p className="mb-3 max-w-prose text-[13.5px] text-muted">
             Wortgleich aus den ausgeteilten Probeklausuren übernommen, inklusive Punkteverteilung.
           </p>
           <ul className="space-y-2">
-            {originals.map((e) => (
-              <ExamRow key={e.id} exam={e} best={best.get(e.id)} />
+            {originals.map((e, i) => (
+              <Reveal key={e.id} index={i}>
+                <ExamRow exam={e} best={best.get(e.id)} />
+              </Reveal>
             ))}
           </ul>
         </section>
 
         <section>
-          <h2 className="mb-1 text-[15px] font-semibold">Generierte Klausuren</h2>
+          <h2 className="mb-1 text-[19px]">Generierte Klausuren</h2>
           <p className="mb-3 max-w-prose text-[13.5px] text-muted">
             Gleicher Bauplan, andere Aufgaben — bei jedem Start neu aus der Aufgabenbank gezogen. Damit kannst du das
             Format beliebig oft üben, ohne die Lösungen auswendig zu können.
           </p>
           <ul className="space-y-2">
-            {generated.map((e) => (
-              <ExamRow key={e.id} exam={e} best={best.get(e.id)} />
+            {generated.map((e, i) => (
+              <Reveal key={e.id} index={i}>
+                <ExamRow exam={e} best={best.get(e.id)} />
+              </Reveal>
             ))}
           </ul>
         </section>
 
         {progress.exams.length > 0 && (
           <section>
-            <h2 className="mb-3 text-[15px] font-semibold">Deine Versuche</h2>
+            <h2 className="mb-3 text-[19px]">Deine Versuche</h2>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] border-collapse text-[13.5px]">
                 <thead>
@@ -115,8 +119,7 @@ function ExamRow({
     <li>
       <Link
         href={`/klausur/${exam.id}`}
-        className="panel block px-4 py-3.5 transition-colors hover:border-lineStrong hover:bg-sunken
-                   sm:flex sm:items-center sm:gap-5"
+        className="panel-link block px-4 py-4 sm:flex sm:items-center sm:gap-5"
       >
         <div className="min-w-0 sm:flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">

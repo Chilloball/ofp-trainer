@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { fontClass } from './fonts'
 import { StoreProvider } from '@/lib/store'
 import { Shell } from '@/components/Shell'
 import { asset } from '@/lib/paths'
@@ -17,8 +18,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#0f1114' },
-    { media: '(prefers-color-scheme: light)', color: '#faf9f7' },
+    { media: '(prefers-color-scheme: dark)', color: '#121215' },
+    { media: '(prefers-color-scheme: light)', color: '#f7f4ef' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -36,7 +37,7 @@ const THEME_BOOT = `(function(){try{
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de" suppressHydrationWarning>
+    <html lang="de" className={fontClass} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
       </head>

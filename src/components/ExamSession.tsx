@@ -12,7 +12,8 @@ import { useJava } from '@/lib/useJava'
 import { ExerciseView, Solution, initialAnswer } from './Exercise'
 import { Markdown } from './Markdown'
 import { CodeBlock } from './CodeBlock'
-import { Dialog, Loading, Meter, Spinner } from './ui'
+import { AnimatedNumber, Dialog, EASE, Loading, Reveal, Spinner } from './ui'
+import { Meter, Ring, toneFor } from './viz'
 import { Page } from './Shell'
 
 /* ==================================================================== *
@@ -400,45 +401,55 @@ function ExamResult({
 
   return (
     <Page title="Auswertung" lead={exam.title}>
-      <section className="panel px-5 py-5">
-        <div className="flex flex-wrap items-end gap-x-10 gap-y-4">
-          <div>
-            <div className="eyebrow">Ergebnis</div>
-            <div className="tabnum mt-1 text-[38px] font-semibold leading-none">
-              {Math.round(attempt.total * 10) / 10}
-              <span className="text-[18px] font-normal text-muted"> / {attempt.max} P</span>
+      <Reveal>
+        <section className="panel flex flex-col items-center gap-9 p-7 sm:flex-row">
+          <Ring value={pct / 100} size={172} tone={passed ? 'ok' : 'bad'}>
+            <div>
+              <div className="numeral text-[40px] leading-none">
+                <AnimatedNumber value={Math.round(pct)} />
+                <span className="text-[22px]">%</span>
+              </div>
+              <div className="mt-1 text-[11px] uppercase tracking-[0.09em] text-faint">
+                {passed ? 'bestanden' : 'nicht bestanden'}
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="eyebrow">Prozent</div>
-            <div className={`tabnum mt-1 text-[38px] font-semibold leading-none ${passed ? 'text-ok' : 'text-bad'}`}>
-              {Math.round(pct)}%
-            </div>
-          </div>
-          <div>
-            <div className="eyebrow">Note</div>
-            <div className="tabnum mt-1 text-[38px] font-semibold leading-none">{attempt.grade}</div>
-          </div>
-          <div className="ml-auto text-right">
-            <div className="eyebrow">Zeit</div>
-            <div className="tabnum mt-1 text-[20px] font-semibold leading-none">
-              {Math.round(attempt.durationMs / 60000)} min
-              <span className="text-[13px] font-normal text-muted"> von {exam.minutes}</span>
-            </div>
-          </div>
-        </div>
-        <Meter value={pct / 100} tone={passed ? 'ok' : 'bad'} className="mt-5" />
-        <p className="mt-2.5 text-[13px] text-muted">
-          {passed
-            ? 'Bestanden. Die Grenze liegt üblicherweise bei 50 Prozent.'
-            : 'Noch nicht bestanden — üblich sind 50 Prozent zum Bestehen.'}{' '}
-          Kurzantworten und UML-Aufgaben lassen sich nicht automatisch bewerten und zählen hier mit null Punkten; sieh
-          sie dir unten selbst an.
-        </p>
-      </section>
+          </Ring>
 
-      <section className="mt-6">
-        <h2 className="mb-3 text-[15px] font-semibold">Nach Aufgaben</h2>
+          <div className="min-w-0 flex-1">
+            <div className="grid grid-cols-3 gap-6">
+              <div>
+                <div className="eyebrow">Punkte</div>
+                <div className="numeral mt-1.5 text-[28px] leading-none">
+                  <AnimatedNumber value={Math.round(attempt.total * 10) / 10} decimals={1} />
+                  <span className="text-[15px] text-muted"> / {attempt.max}</span>
+                </div>
+              </div>
+              <div>
+                <div className="eyebrow">Note</div>
+                <div className="numeral mt-1.5 text-[28px] leading-none">{attempt.grade}</div>
+              </div>
+              <div>
+                <div className="eyebrow">Zeit</div>
+                <div className="numeral mt-1.5 text-[28px] leading-none">
+                  <AnimatedNumber value={Math.round(attempt.durationMs / 60000)} />
+                  <span className="text-[15px] text-muted"> / {exam.minutes} min</span>
+                </div>
+              </div>
+            </div>
+            <p className="mt-5 border-t border-line pt-4 text-[13.5px] leading-relaxed text-muted">
+              {passed
+                ? 'Bestanden — die Grenze liegt üblicherweise bei 50 Prozent.'
+                : 'Noch nicht bestanden; üblich sind 50 Prozent zum Bestehen.'}{' '}
+              Kurzantworten und UML-Aufgaben lassen sich nicht automatisch bewerten und zählen hier mit null Punkten.
+              Geh sie unten selbst durch.
+            </p>
+          </div>
+        </section>
+      </Reveal>
+
+      <Reveal index={1}>
+      <section className="mt-8">
+        <h2 className="mb-3 text-[19px]">Nach Aufgaben</h2>
         <table className="w-full border-collapse text-[13.5px]">
           <tbody>
             {byTask.map(([taskId, list]) => {
@@ -454,7 +465,7 @@ function ExamResult({
                     <div className="text-[12.5px] text-muted">{list.length} Teilaufgaben</div>
                   </td>
                   <td className="w-[180px] py-2.5 pr-3">
-                    <Meter value={ratio} tone={ratio >= 0.75 ? 'ok' : ratio >= 0.4 ? 'warn' : 'bad'} />
+                    <Meter value={ratio} tone={toneFor(ratio)} />
                   </td>
                   <td className="w-[110px] py-2.5 text-right tabnum">
                     {Math.round(got * 10) / 10} / {Math.round(max * 10) / 10} P
@@ -465,9 +476,10 @@ function ExamResult({
           </tbody>
         </table>
       </section>
+      </Reveal>
 
-      <section className="mt-8">
-        <h2 className="mb-3 text-[15px] font-semibold">Alle Aufgaben durchgehen</h2>
+      <section className="mt-10">
+        <h2 className="mb-3 text-[19px]">Alle Aufgaben durchgehen</h2>
         <ul className="space-y-6">
           {slots.map((s) => {
             const r = results[s.exercise.id]

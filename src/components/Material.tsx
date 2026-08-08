@@ -110,7 +110,7 @@ export function Material() {
       <div className="space-y-8">
         {grouped.map(([kind, items]) => (
           <section key={kind}>
-            <h2 className="mb-3 text-[15px] font-semibold">{kind}</h2>
+            <h2 className="mb-3 text-[19px]">{kind}</h2>
             <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
               {items.map((m) => {
                 const topics = sourceIndex.get(m.file) ?? []

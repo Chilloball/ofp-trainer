@@ -3,69 +3,79 @@
 @tailwind utilities;
 
 /* ==================================================================== *
- *  Gestaltung
+ *  Gestaltung — „Papier, Tinte, Messing"
  *
- *  Ruhige, papierartige Oberfläche mit einer einzigen Akzentfarbe.
- *  Kein Farbverlauf, keine Schlagschatten — Struktur entsteht durch
- *  Haarlinien, Weißraum und eine klare typografische Hierarchie.
+ *  Grundgedanke: ein gut gesetztes Lehrbuch, das man anfassen möchte.
+ *  Warmes Papier, tiefe Tinte, ein Petrol für Aktionen und ein
+ *  Messington für alles, was Fortschritt und Erfolg zeigt.
+ *
+ *  Tiefe entsteht durch gestufte Flächen und getönte Schatten, nicht
+ *  durch Farbverläufe. Bewegung kommuniziert Zustand, nie Dekoration.
  * ==================================================================== */
 
 @layer base {
   :root {
-    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', Roboto,
-      'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
-    --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, 'JetBrains Mono', 'Cascadia Mono', Menlo,
-      Consolas, 'Liberation Mono', monospace;
-
     /* Papier & Tinte */
-    --paper: 250 249 247;
+    --paper: 247 244 239;
     --surface: 255 255 255;
-    --sunken: 244 242 239;
-    --line: 226 222 216;
-    --line-strong: 205 200 192;
-    --ink: 24 26 30;
-    --muted: 104 108 115;
-    --faint: 148 152 159;
+    --sunken: 240 236 229;
+    --line: 226 220 209;
+    --line-strong: 205 197 183;
+    --ink: 27 26 23;
+    --muted: 106 101 91;
+    --faint: 150 143 132;
 
-    /* Akzent: gedecktes Tiefblau */
-    --accent: 27 78 138;
+    /* Petrol — Aktionen, Navigation, Verweise */
+    --accent: 20 85 95;
     --accent-ink: 255 255 255;
-    --accent-wash: 233 239 247;
+    --accent-wash: 226 239 240;
 
-    --ok: 22 106 68;
-    --ok-wash: 231 243 236;
-    --warn: 155 98 8;
-    --warn-wash: 250 240 224;
-    --bad: 168 39 32;
-    --bad-wash: 251 234 232;
+    /* Messing — Fortschritt, Serie, Erfolge */
+    --brass: 165 118 27;
+    --brass-wash: 246 235 212;
 
-    --py: 39 96 154;
-    --java: 158 82 22;
+    --ok: 39 106 69;
+    --ok-wash: 226 240 230;
+    --warn: 152 101 18;
+    --warn-wash: 249 238 218;
+    --bad: 166 47 40;
+    --bad-wash: 250 231 228;
+
+    /* Die beiden Hälften des Fachs */
+    --py: 46 95 150;
+    --java: 176 86 42;
+
+    --shadow-color: 40 33 22;
   }
 
   .dark {
-    --paper: 15 17 20;
-    --surface: 23 26 30;
-    --sunken: 30 34 39;
-    --line: 44 49 56;
-    --line-strong: 62 68 77;
-    --ink: 232 231 227;
-    --muted: 155 160 168;
-    --faint: 116 122 131;
+    --paper: 18 18 21;
+    --surface: 26 26 31;
+    --sunken: 33 33 39;
+    --line: 46 46 54;
+    --line-strong: 68 68 79;
+    --ink: 234 231 224;
+    --muted: 156 151 141;
+    --faint: 116 111 102;
 
-    --accent: 122 166 224;
-    --accent-ink: 12 20 32;
-    --accent-wash: 28 40 56;
+    --accent: 92 193 206;
+    --accent-ink: 8 40 44;
+    --accent-wash: 22 51 58;
 
-    --ok: 92 190 140;
-    --ok-wash: 22 42 34;
-    --warn: 217 165 74;
-    --warn-wash: 46 38 22;
-    --bad: 234 122 112;
-    --bad-wash: 50 28 27;
+    --brass: 223 174 94;
+    --brass-wash: 51 41 26;
 
-    --py: 122 173 224;
-    --java: 219 149 82;
+    --ok: 95 190 134;
+    --ok-wash: 22 48 31;
+    --warn: 217 168 78;
+    --warn-wash: 50 39 21;
+    --bad: 232 131 122;
+    --bad-wash: 51 29 27;
+
+    --py: 123 169 224;
+    --java: 222 143 92;
+
+    --shadow-color: 0 0 0;
   }
 
   html {
@@ -74,24 +84,42 @@
 
   body {
     @apply bg-paper text-ink;
-    font-family: var(--font-sans);
+    font-family: var(--font-sans), system-ui, sans-serif;
     font-size: 15px;
-    line-height: 1.55;
+    line-height: 1.6;
+    font-feature-settings: 'ss01', 'cv01';
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+  }
+
+  /* Feines Korn — der Unterschied zwischen „Bildschirm" und „Papier".
+     Als Hintergrundkachel auf dem Body, nicht als fixierte Überlagerung:
+     eine feste Ebene über dem ganzen Viewport müsste bei jedem Scrollen
+     neu gerastert werden und macht das Scrollen zäh. */
+  body {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-blend-mode: overlay;
+  }
+
+  .dark body {
+    background-blend-mode: soft-light;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display), Georgia, serif;
+    font-variation-settings: 'SOFT' 20, 'WONK' 0, 'opsz' 40;
+    letter-spacing: -0.014em;
+    font-weight: 600;
   }
 
   ::selection {
-    background: rgb(var(--accent) / 0.22);
+    background: rgb(var(--accent) / 0.2);
   }
 
   :focus-visible {
     outline: 2px solid rgb(var(--accent));
     outline-offset: 2px;
-  }
-
-  h1, h2, h3, h4 {
-    letter-spacing: -0.012em;
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar {
@@ -116,25 +144,59 @@
 @layer components {
   /* ------------------------------ Flächen ------------------------------ */
   .panel {
-    @apply rounded-lg border border-line bg-surface;
-  }
-  .panel-quiet {
-    @apply rounded-lg border border-line bg-sunken;
+    @apply rounded-xl border border-line bg-surface;
+    box-shadow:
+      0 1px 1px rgb(var(--shadow-color) / 0.04),
+      0 4px 14px -8px rgb(var(--shadow-color) / 0.14);
   }
 
-  /* Kleine Überschrift über einem Abschnitt */
+  /* Hebt sich beim Überfahren leicht an — für alles Anklickbare. */
+  .panel-link {
+    @apply panel transition-[transform,box-shadow,border-color] duration-200;
+  }
+  .panel-link:hover {
+    @apply border-lineStrong;
+    transform: translateY(-1px);
+    box-shadow:
+      0 1px 1px rgb(var(--shadow-color) / 0.05),
+      0 10px 26px -12px rgb(var(--shadow-color) / 0.24);
+  }
+
+  .panel-quiet {
+    @apply rounded-xl border border-line bg-sunken;
+  }
+
   .eyebrow {
-    @apply text-[11px] font-semibold uppercase tracking-[0.09em] text-faint;
+    @apply text-[11px] font-semibold uppercase tracking-[0.1em] text-faint;
+  }
+
+  /* Display-Ziffern: für alles, was groß und wichtig ist. */
+  .numeral {
+    font-family: var(--font-display), Georgia, serif;
+    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 96;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
   }
 
   /* ----------------------------- Schaltflächen ----------------------------- */
   .btn {
-    @apply inline-flex select-none items-center justify-center gap-2 rounded-md px-3.5 py-2
-           text-[13.5px] font-medium leading-5 transition-colors duration-100
-           disabled:pointer-events-none disabled:opacity-45;
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-lg px-3.5 py-2
+           text-[13.5px] font-medium leading-5
+           transition-[background-color,border-color,color,transform,box-shadow] duration-150
+           active:scale-[0.985] disabled:pointer-events-none disabled:opacity-45;
   }
   .btn-primary {
-    @apply btn bg-accent text-accentInk hover:bg-accent/90 active:bg-accent;
+    @apply btn bg-accent text-accentInk;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.14),
+      0 1px 2px rgb(var(--shadow-color) / 0.2);
+  }
+  .btn-primary:hover {
+    background: rgb(var(--accent) / 0.9);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.18),
+      0 3px 10px -3px rgb(var(--accent) / 0.5);
   }
   .btn-secondary {
     @apply btn border border-lineStrong bg-surface text-ink hover:bg-sunken;
@@ -143,7 +205,7 @@
     @apply btn text-muted hover:bg-sunken hover:text-ink;
   }
   .btn-danger {
-    @apply btn border border-bad/35 bg-transparent text-bad hover:bg-bad/8;
+    @apply btn border border-bad/35 text-bad hover:bg-bad/8;
   }
   .btn-lg {
     @apply px-5 py-2.5 text-[15px];
@@ -154,33 +216,22 @@
 
   /* -------------------------------- Marken -------------------------------- */
   .tag {
-    @apply inline-flex items-center gap-1.5 rounded border border-line bg-sunken px-1.5 py-0.5
-           text-[11px] font-medium leading-[1.45] text-muted;
+    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-sunken px-1.5 py-0.5
+           text-[11px] font-medium leading-[1.5] text-muted;
   }
-  .tag-py {
-    @apply border-py/30 bg-py/8 text-py;
-  }
-  .tag-java {
-    @apply border-java/30 bg-java/8 text-java;
-  }
-  .tag-accent {
-    @apply border-accent/30 bg-accent/8 text-accent;
-  }
-  .tag-ok {
-    @apply border-ok/30 bg-ok/8 text-ok;
-  }
-  .tag-warn {
-    @apply border-warn/30 bg-warn/8 text-warn;
-  }
-  .tag-bad {
-    @apply border-bad/30 bg-bad/8 text-bad;
-  }
+  .tag-py { @apply border-py/30 bg-py/8 text-py; }
+  .tag-java { @apply border-java/30 bg-java/8 text-java; }
+  .tag-accent { @apply border-accent/30 bg-accent/8 text-accent; }
+  .tag-brass { @apply border-brass/35 bg-brass/10 text-brass; }
+  .tag-ok { @apply border-ok/30 bg-ok/8 text-ok; }
+  .tag-warn { @apply border-warn/30 bg-warn/8 text-warn; }
+  .tag-bad { @apply border-bad/30 bg-bad/8 text-bad; }
 
   /* ------------------------------- Eingaben ------------------------------- */
   .field {
-    @apply w-full rounded-md border border-lineStrong bg-surface px-3 py-2 text-[14px] text-ink
+    @apply w-full rounded-lg border border-lineStrong bg-surface px-3 py-2 text-[14px] text-ink
            placeholder:text-faint transition-colors
-           focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20;
+           focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/12;
   }
   .field-mono {
     @apply field font-mono text-[13px];
@@ -191,40 +242,39 @@
 
   /* --------------------------------- Text --------------------------------- */
   .prose-ofp {
-    @apply text-[15px] leading-[1.65] text-ink;
+    @apply text-[15px] leading-[1.68] text-ink;
   }
   .prose-ofp > *:first-child { @apply mt-0; }
   .prose-ofp > *:last-child { @apply mb-0; }
-  .prose-ofp h1 { @apply mb-3 mt-8 text-[22px] font-semibold; }
-  .prose-ofp h2 { @apply mb-2 mt-7 text-[17px] font-semibold; }
-  .prose-ofp h3 { @apply mb-1.5 mt-5 text-[15px] font-semibold; }
+  .prose-ofp h1 { @apply mb-3 mt-8 text-[24px]; }
+  .prose-ofp h2 { @apply mb-2 mt-8 text-[19px]; }
+  .prose-ofp h3 { @apply mb-1.5 mt-6 text-[16px]; }
   .prose-ofp p { @apply my-3; }
-  .prose-ofp ul { @apply my-3 list-disc space-y-1 pl-5 marker:text-faint; }
-  .prose-ofp ol { @apply my-3 list-decimal space-y-1 pl-5 marker:text-faint; }
+  .prose-ofp ul { @apply my-3 list-disc space-y-1.5 pl-5 marker:text-brass; }
+  .prose-ofp ol { @apply my-3 list-decimal space-y-1.5 pl-5 marker:text-faint; }
   .prose-ofp li > ul, .prose-ofp li > ol { @apply my-1; }
   .prose-ofp a { @apply text-accent underline decoration-accent/35 underline-offset-2 hover:decoration-accent; }
   .prose-ofp strong { @apply font-semibold; }
   .prose-ofp code {
-    @apply rounded border border-line bg-sunken px-1 py-px font-mono text-[0.87em];
+    @apply rounded border border-line bg-sunken px-1 py-px font-mono text-[0.86em];
   }
   .prose-ofp pre {
-    @apply my-4 overflow-x-auto rounded-md border border-line bg-sunken p-3.5 font-mono text-[13px] leading-[1.6];
+    @apply my-4 overflow-x-auto rounded-lg border border-line bg-sunken p-3.5 font-mono text-[13px] leading-[1.62];
   }
   .prose-ofp pre code { @apply border-0 bg-transparent p-0 text-[13px]; }
   .prose-ofp blockquote {
-    @apply my-4 border-l-2 border-accent/45 py-1 pl-4 text-muted;
+    @apply my-4 border-l-2 border-brass/50 py-1 pl-4 text-muted;
   }
   .prose-ofp table { @apply my-4 w-full border-collapse text-[14px]; }
   .prose-ofp th { @apply border-b border-lineStrong px-2.5 py-1.5 text-left font-semibold; }
   .prose-ofp td { @apply border-b border-line px-2.5 py-1.5 align-top; }
-  .prose-ofp hr { @apply my-7 border-line; }
+  .prose-ofp hr { @apply my-8 border-line; }
 
-  /* Fortschrittsbalken */
   .meter {
     @apply relative h-1.5 w-full overflow-hidden rounded-full bg-line;
   }
   .meter > span {
-    @apply absolute inset-y-0 left-0 rounded-full transition-[width] duration-500;
+    @apply absolute inset-y-0 left-0 rounded-full;
   }
 }
 
@@ -233,16 +283,53 @@
   .balance { text-wrap: balance; }
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { scrollbar-width: none; }
-  .rule { @apply border-t border-line; }
+  .font-display { font-family: var(--font-display), Georgia, serif; }
 }
 
-/* Bewusst sparsame Bewegung: kurz, linear, nie federnd. */
-.enter {
-  animation: enter 160ms cubic-bezier(0.2, 0, 0.2, 1) both;
+/* ------------------------------ Bewegung ------------------------------ */
+
+/* Richtig oder falsch — der Rahmen reagiert einmal kurz, dann ist Ruhe. */
+@keyframes pulse-ok {
+  0% { box-shadow: 0 0 0 0 rgb(var(--ok) / 0.35); }
+  100% { box-shadow: 0 0 0 14px rgb(var(--ok) / 0); }
 }
-@keyframes enter {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: none; }
+@keyframes pulse-bad {
+  0% { box-shadow: 0 0 0 0 rgb(var(--bad) / 0.35); }
+  100% { box-shadow: 0 0 0 14px rgb(var(--bad) / 0); }
+}
+.pulse-ok { animation: pulse-ok 700ms ease-out; }
+.pulse-bad { animation: pulse-bad 700ms ease-out; }
+
+@keyframes nudge {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  45% { transform: translateX(4px); }
+  70% { transform: translateX(-2px); }
+}
+.nudge { animation: nudge 340ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+/* Häkchen zeichnet sich, statt zu erscheinen. */
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+.draw {
+  stroke-dasharray: 32;
+  stroke-dashoffset: 32;
+  animation: draw 420ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* Schimmer für Ladezustände — dezent, nicht blinkend. */
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+.shimmer {
+  @apply relative overflow-hidden bg-sunken;
+}
+.shimmer::after {
+  content: '';
+  @apply absolute inset-0 -translate-x-full;
+  background: linear-gradient(90deg, transparent, rgb(var(--ink) / 0.06), transparent);
+  animation: shimmer 1.6s infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -253,25 +340,19 @@
   }
 }
 
-/* CodeMirror an das Farbschema anpassen */
+/* ---------------------------- CodeMirror ---------------------------- */
 .cm-editor {
   font-size: 13px;
   background: rgb(var(--surface));
 }
-.cm-editor.cm-focused {
-  outline: none;
-}
+.cm-editor.cm-focused { outline: none; }
 .cm-gutters {
   background: rgb(var(--sunken)) !important;
   border-right: 1px solid rgb(var(--line)) !important;
   color: rgb(var(--faint)) !important;
 }
-.cm-activeLine {
-  background: rgb(var(--accent) / 0.045) !important;
-}
-.cm-activeLineGutter {
-  background: rgb(var(--accent) / 0.07) !important;
-}
+.cm-activeLine { background: rgb(var(--accent) / 0.05) !important; }
+.cm-activeLineGutter { background: rgb(var(--accent) / 0.08) !important; }
 .cm-selectionBackground,
 .cm-editor .cm-selectionBackground {
   background: rgb(var(--accent) / 0.18) !important;

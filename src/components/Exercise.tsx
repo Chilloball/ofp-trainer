@@ -1,5 +1,6 @@
 'use client'
 
+import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Exercise as Ex } from '@/lib/types'
 import { combineCodeResult, gradeAnswer, gradeCodeStatic, normOutput, type GradeResult } from '@/lib/grade'
@@ -10,7 +11,8 @@ import { CodeBlock, Console } from './CodeBlock'
 import { CodeEditor } from './CodeEditor'
 import { Markdown } from './Markdown'
 import { Mermaid } from './Mermaid'
-import { Disclosure, Spinner } from './ui'
+import { AnimatedNumber, Disclosure, EASE, Spinner } from './ui'
+import { OutputDiff } from './viz'
 
 const DIFF = ['', 'Aufwärmen', 'Leicht', 'Klausurniveau', 'Schwer', 'Härtetest']
 
@@ -53,7 +55,13 @@ export function ExerciseView({
   const [revealed, setRevealed] = useState(false)
   const [busy, setBusy] = useState<'check' | 'run' | null>(null)
   const [output, setOutput] = useState<{ stdout: string; stderr?: string | null } | null>(null)
+  /** kurzes visuelles Echo nach dem Prüfen */
+  const [echo, setEcho] = useState<'ok' | 'bad' | null>(null)
   const started = useRef(Date.now())
+  /* Eine Aufgabe darf genau einmal gewertet werden: Beim automatischen
+     Abschluss bleibt der «Weiter»-Knopf während der Ausblendanimation
+     noch klickbar — ohne diese Sperre zählte die Antwort doppelt. */
+  const finished = useRef(false)
 
   const isCode = exercise.type === 'code'
   const runnable = isCode || (exercise.lang === 'java' && !!exercise.code)
@@ -64,7 +72,9 @@ export function ExerciseView({
     setHints(0)
     setRevealed(false)
     setOutput(null)
+    setEcho(null)
     started.current = Date.now()
+    finished.current = false
     if (isCode) {
       if (exercise.lang === 'python') python.preload()
       else java.preload()
@@ -79,6 +89,8 @@ export function ExerciseView({
 
   const finish = useCallback(
     (score: number) => {
+      if (finished.current) return
+      finished.current = true
       onDone({ score, ms: Date.now() - started.current, usedHints: hints, revealed })
     },
     [hints, onDone, revealed],
@@ -105,7 +117,11 @@ export function ExerciseView({
             ? {
                 score: ok ? 1 : 0,
                 correct: ok,
-                feedback: run.error ? `Fehler beim Ausführen: ${run.error}` : ok ? 'Die Ausgabe stimmt exakt.' : 'Die Ausgabe weicht noch ab.',
+                feedback: run.error
+                  ? `Fehler beim Ausführen: ${run.error}`
+                  : ok
+                    ? 'Die Ausgabe stimmt exakt.'
+                    : 'Die Ausgabe weicht noch ab — der Vergleich unten zeigt, wo.',
               }
             : rules
         } else {
@@ -130,7 +146,7 @@ export function ExerciseView({
               ? 'Übersetzt und die Ausgabe stimmt exakt.'
               : r.exception
                 ? `Das Programm bricht ab: ${r.exception.type}`
-                : 'Übersetzt, aber die Ausgabe weicht ab.',
+                : 'Übersetzt, aber die Ausgabe weicht ab — der Vergleich unten zeigt, wo.',
           }
         } else {
           res = { score: 0, correct: false, needsSelfCheck: true, feedback: 'Übersetzt fehlerfrei. Vergleiche mit der Musterlösung.' }
@@ -140,6 +156,10 @@ export function ExerciseView({
       }
 
       setResult(res)
+      if (!res.needsSelfCheck) {
+        setEcho(res.correct ? 'ok' : 'bad')
+        setTimeout(() => setEcho(null), 800)
+      }
       if (!res.needsSelfCheck && !examMode) finish(res.score)
     } finally {
       setBusy(null)
@@ -177,19 +197,40 @@ export function ExerciseView({
   const solved = result?.correct === true
   const loading = busy === 'check' && python.status === 'loading'
 
+  /* Soll-Ist-Vergleich: bei „Ausgabe vorhersagen" gegen die Eingabe,
+     bei Programmieraufgaben gegen die tatsächliche Programmausgabe. */
+  const diff =
+    result && !result.correct && exercise.expectedOutput
+      ? exercise.type === 'predict-output'
+        ? { expected: exercise.expectedOutput, got: String(answer ?? '') }
+        : isCode && output && !output.stderr
+          ? { expected: exercise.expectedOutput, got: output.stdout }
+          : null
+      : null
+
   return (
     <article>
-      {/* Kopfzeile: alles Nebensächliche klein und ruhig */}
+      {/* Kopfzeile */}
       <div className="mb-3 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[12.5px] text-muted">
         <span className={`tag ${exercise.lang === 'python' ? 'tag-py' : 'tag-java'}`}>
           {exercise.lang === 'python' ? 'Python' : 'Java'}
         </span>
         <span>{topic?.title ?? exercise.topicId}</span>
         <span className="text-faint">·</span>
-        <span title={`Schwierigkeit ${exercise.difficulty} von 5`}>{DIFF[exercise.difficulty]}</span>
+        <span title={`Schwierigkeit ${exercise.difficulty} von 5`} className="flex items-center gap-1.5">
+          <span className="flex gap-[3px]" aria-hidden>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <span
+                key={i}
+                className={`h-1 w-1 rounded-full ${i <= exercise.difficulty ? 'bg-brass' : 'bg-line'}`}
+              />
+            ))}
+          </span>
+          {DIFF[exercise.difficulty]}
+        </span>
         <span className="text-faint">·</span>
         <span className="tabnum">{exercise.points} P</span>
-        {exercise.examStyle && <span className="tag tag-warn">Klausurformat</span>}
+        {exercise.examStyle && <span className="tag tag-brass">Klausurformat</span>}
 
         <div className="ml-auto flex items-center gap-2.5">
           {!examMode && typeof position === 'number' && typeof total === 'number' && (
@@ -200,7 +241,7 @@ export function ExerciseView({
           {onToggleFlag && (
             <button
               onClick={onToggleFlag}
-              className={`text-[12.5px] transition-colors ${flagged ? 'text-warn' : 'text-faint hover:text-ink'}`}
+              className={`text-[12.5px] transition-colors ${flagged ? 'text-brass' : 'text-faint hover:text-ink'}`}
               title="Zum Wiederholen markieren"
             >
               {flagged ? '★ markiert' : '☆ merken'}
@@ -209,14 +250,14 @@ export function ExerciseView({
         </div>
       </div>
 
-      <div className="panel overflow-hidden">
-        <header className="border-b border-line px-5 py-4">
-          <h2 className="balance text-[17px] font-semibold">{exercise.title}</h2>
-          <div className="mt-1.5">
+      <div className={`panel overflow-hidden ${echo === 'ok' ? 'pulse-ok' : echo === 'bad' ? 'pulse-bad' : ''}`}>
+        <header className="border-b border-line px-5 py-5">
+          <h2 className="balance text-[19px] leading-snug">{exercise.title}</h2>
+          <div className="mt-2">
             <Markdown>{exercise.prompt}</Markdown>
           </div>
           {exercise.constraints?.length ? (
-            <ul className="mt-2.5 space-y-1">
+            <ul className="mt-3 space-y-1">
               {exercise.constraints.map((c, i) => (
                 <li key={i} className="flex gap-2 text-[13px] text-bad">
                   <span aria-hidden>▸</span>
@@ -229,7 +270,7 @@ export function ExerciseView({
           {exercise.code && <CodeBlock code={exercise.code} language={exercise.lang} maxHeight={520} />}
         </header>
 
-        <div className="px-5 py-4">
+        <motion.div className="px-5 py-5" animate={echo === 'bad' ? { x: [0, -5, 4, -2, 0] } : {}} transition={{ duration: 0.34 }}>
           <AnswerArea
             exercise={exercise}
             answer={answer}
@@ -240,17 +281,27 @@ export function ExerciseView({
             onRun={runnable ? runOnly : undefined}
           />
 
-          {output && (
-            <div className="mt-3">
-              <Console stdout={output.stdout} stderr={output.stderr} />
-            </div>
-          )}
-        </div>
+          <AnimatePresence>
+            {output && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: EASE }}
+                className="overflow-hidden"
+              >
+                <div className="mt-4">
+                  <Console stdout={output.stdout} stderr={output.stderr} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
-        <footer className="flex flex-wrap items-center gap-2 border-t border-line bg-sunken px-5 py-3">
+        <footer className="flex flex-wrap items-center gap-2 border-t border-line bg-sunken/70 px-5 py-3.5">
           {examMode && (
             <span className="text-[12.5px] text-faint">
-              In der Klausursimulation gibt es keine Rückmeldung — bewertet wird erst bei der Abgabe.
+              In der Klausursimulation gibt es keine Rückmeldung — bewertet wird bei der Abgabe.
             </span>
           )}
 
@@ -307,6 +358,8 @@ export function ExerciseView({
                 onClick={() => {
                   setResult(null)
                   setOutput(null)
+                  finished.current = false
+                  started.current = Date.now()
                   if (!examMode) setAnswer(initialAnswer(exercise))
                 }}
                 className="btn-quiet"
@@ -323,23 +376,53 @@ export function ExerciseView({
         </footer>
       </div>
 
-      {hints > 0 && !revealed && (
-        <ol className="mt-3 space-y-2">
-          {exercise.hints!.slice(0, hints).map((h, i) => (
-            <li key={i} className="enter rounded-md border border-warn/25 bg-warnWash px-4 py-2.5">
-              <div className="eyebrow !text-warn">Tipp {i + 1}</div>
-              <Markdown className="mt-1 !text-[14px]">{h}</Markdown>
-            </li>
-          ))}
-        </ol>
-      )}
+      {/* Tipps */}
+      <AnimatePresence>
+        {hints > 0 && !revealed && (
+          <motion.ol
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="mt-3 space-y-2"
+          >
+            {exercise.hints!.slice(0, hints).map((h, i) => (
+              <motion.li
+                key={i}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: EASE }}
+                className="rounded-lg border border-brass/30 bg-brassWash px-4 py-3"
+              >
+                <div className="eyebrow !text-brass">Tipp {i + 1}</div>
+                <Markdown className="mt-1 !text-[14px]">{h}</Markdown>
+              </motion.li>
+            ))}
+          </motion.ol>
+        )}
+      </AnimatePresence>
 
-      {result && (
-        <div className="enter mt-4 space-y-3">
-          <Feedback exercise={exercise} result={result} revealed={revealed} onSelfGrade={finish} examMode={examMode} />
-          {!examMode && <Solution exercise={exercise} open={!solved || revealed} />}
-        </div>
-      )}
+      {/* Rückmeldung */}
+      <AnimatePresence>
+        {result && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.32, ease: EASE }}
+            className="mt-4 space-y-3"
+          >
+            <Feedback
+              exercise={exercise}
+              result={result}
+              revealed={revealed}
+              onSelfGrade={finish}
+              examMode={examMode}
+            />
+            {diff && <OutputDiff expected={diff.expected} got={diff.got} />}
+            {!examMode && <Solution exercise={exercise} open={!solved || revealed} />}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </article>
   )
 }
@@ -362,100 +445,130 @@ function Feedback({
   const [picked, setPicked] = useState<number | null>(null)
   const solved = result.correct
   const tone = solved
-    ? 'border-ok/35 bg-okWash'
+    ? 'border-ok/40 bg-okWash'
     : result.needsSelfCheck
       ? 'border-line bg-surface'
       : result.nearMiss
-        ? 'border-warn/35 bg-warnWash'
-        : 'border-bad/35 bg-badWash'
+        ? 'border-warn/40 bg-warnWash'
+        : 'border-bad/40 bg-badWash'
 
   return (
-    <div className={`rounded-lg border px-5 py-4 ${tone}`}>
-      <div className="flex flex-wrap items-baseline gap-x-3">
+    <div className={`rounded-xl border px-5 py-4 ${tone}`}>
+      <div className="flex items-start gap-3">
         <span
-          className={`text-[15px] font-semibold ${
-            solved ? 'text-ok' : result.needsSelfCheck ? 'text-ink' : result.nearMiss ? 'text-warn' : 'text-bad'
+          className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full ${
+            solved ? 'bg-ok/15 text-ok' : result.needsSelfCheck ? 'bg-accent/12 text-accent' : 'bg-bad/15 text-bad'
           }`}
+          aria-hidden
         >
-          {solved
-            ? 'Richtig'
-            : result.needsSelfCheck
-              ? 'Selbst einschätzen'
-              : result.nearMiss
-                ? 'Fast richtig'
-                : 'Noch nicht richtig'}
+          {solved ? (
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="3">
+              <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" className="draw" />
+            </svg>
+          ) : result.needsSelfCheck ? (
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" strokeLinejoin="round" />
+              <circle cx="12" cy="12" r="2.6" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.6">
+              <path d="m6 6 12 12M18 6 6 18" strokeLinecap="round" />
+            </svg>
+          )}
         </span>
-        {!result.needsSelfCheck && (
-          <span className="tabnum text-[13px] text-muted">
-            {Math.round(result.score * exercise.points * 10) / 10} von {exercise.points} Punkten
-          </span>
-        )}
-      </div>
-      {result.feedback && <p className="mt-1 text-[13.5px] text-muted">{result.feedback}</p>}
 
-      {result.parts?.length ? (
-        <ul className="mt-3 space-y-1.5">
-          {result.parts.map((p, i) => (
-            <li
-              key={i}
-              className={`flex gap-2.5 rounded border px-3 py-2 text-[13px] ${
-                p.correct ? 'border-ok/25 bg-surface' : 'border-line bg-surface'
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-3">
+            <span
+              className={`text-[16px] font-semibold ${
+                solved ? 'text-ok' : result.needsSelfCheck ? 'text-ink' : result.nearMiss ? 'text-warn' : 'text-bad'
               }`}
             >
-              <span className={`shrink-0 font-semibold ${p.correct ? 'text-ok' : 'text-bad'}`} aria-hidden>
-                {p.correct ? '✓' : '✗'}
+              {solved
+                ? 'Richtig'
+                : result.needsSelfCheck
+                  ? 'Selbst einschätzen'
+                  : result.nearMiss
+                    ? 'Fast richtig'
+                    : 'Noch nicht richtig'}
+            </span>
+            {!result.needsSelfCheck && (
+              <span className="tabnum text-[13px] text-muted">
+                <AnimatedNumber value={Math.round(result.score * exercise.points * 10) / 10} decimals={1} /> von{' '}
+                {exercise.points} Punkten
               </span>
-              <div className="min-w-0 flex-1">
-                {p.note && <div className="text-muted">{p.note}</div>}
-                {!p.correct && p.expected !== undefined && (
-                  <div className="mt-1 font-mono text-[12px]">
-                    {p.got ? (
-                      <div>
-                        <span className="text-faint">deine Antwort: </span>
-                        <span className="text-bad">{p.got}</span>
-                      </div>
-                    ) : null}
-                    <div>
-                      <span className="text-faint">erwartet: </span>
-                      <span className="text-ok">{p.expected}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
-      {result.needsSelfCheck && !examMode && (
-        <div className="mt-4">
-          <div className="eyebrow">Wie sicher konntest du das?</div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {[
-              { label: 'Gar nicht', score: 0 },
-              { label: 'Mit Mühe', score: 0.5 },
-              { label: 'Gut', score: 0.85 },
-              { label: 'Sicher', score: 1 },
-            ].map((b, i) => (
-              <button
-                key={b.label}
-                onClick={() => {
-                  setPicked(i)
-                  onSelfGrade(revealed ? Math.min(b.score, 0.4) : b.score)
-                }}
-                className={`btn-secondary ${picked === i ? '!border-accent !text-accent' : ''}`}
-              >
-                {b.label}
-              </button>
-            ))}
+            )}
           </div>
-          {revealed && (
-            <p className="mt-2 text-[12.5px] text-faint">
-              Weil du die Lösung gesehen hast, zählt die Aufgabe nur teilweise und kommt bald wieder.
-            </p>
+          {result.feedback && <p className="mt-1 text-[13.5px] text-muted">{result.feedback}</p>}
+
+          {result.parts?.length ? (
+            <ul className="mt-3 space-y-1.5">
+              {result.parts.map((p, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.28, ease: EASE, delay: i * 0.05 }}
+                  className={`flex gap-2.5 rounded-lg border px-3 py-2 text-[13px] ${
+                    p.correct ? 'border-ok/25 bg-surface' : 'border-line bg-surface'
+                  }`}
+                >
+                  <span className={`shrink-0 font-semibold ${p.correct ? 'text-ok' : 'text-bad'}`} aria-hidden>
+                    {p.correct ? '✓' : '✗'}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    {p.note && <div className="text-muted">{p.note}</div>}
+                    {!p.correct && p.expected !== undefined && (
+                      <div className="mt-1 font-mono text-[12px]">
+                        {p.got ? (
+                          <div>
+                            <span className="text-faint">deine Antwort: </span>
+                            <span className="text-bad">{p.got}</span>
+                          </div>
+                        ) : null}
+                        <div>
+                          <span className="text-faint">erwartet: </span>
+                          <span className="text-ok">{p.expected}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </motion.li>
+              ))}
+            </ul>
+          ) : null}
+
+          {result.needsSelfCheck && !examMode && (
+            <div className="mt-4">
+              <div className="eyebrow">Wie sicher konntest du das?</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {[
+                  { label: 'Gar nicht', score: 0 },
+                  { label: 'Mit Mühe', score: 0.5 },
+                  { label: 'Gut', score: 0.85 },
+                  { label: 'Sicher', score: 1 },
+                ].map((b, i) => (
+                  <button
+                    key={b.label}
+                    onClick={() => {
+                      setPicked(i)
+                      onSelfGrade(revealed ? Math.min(b.score, 0.4) : b.score)
+                    }}
+                    className={`btn-secondary ${picked === i ? '!border-accent !text-accent' : ''}`}
+                  >
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+              {revealed && (
+                <p className="mt-2 text-[12.5px] text-faint">
+                  Weil du die Lösung gesehen hast, zählt die Aufgabe nur teilweise und kommt bald wieder.
+                </p>
+              )}
+            </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   )
 }
@@ -467,7 +580,7 @@ export function Solution({ exercise, open }: { exercise: Ex; open: boolean }) {
         {exercise.type === 'mc' || exercise.type === 'multi-mc' ? (
           <ul className="space-y-1.5">
             {exercise.choices?.map((c) => (
-              <li key={c.id} className={`rounded border px-3 py-2 text-[13.5px] ${c.correct ? 'border-ok/35 bg-okWash' : 'border-line'}`}>
+              <li key={c.id} className={`rounded-lg border px-3 py-2 text-[13.5px] ${c.correct ? 'border-ok/35 bg-okWash' : 'border-line'}`}>
                 <span className={c.correct ? 'font-medium text-ok' : 'text-muted'}>
                   {c.correct ? '✓ ' : '✗ '}
                   {c.text}
@@ -479,7 +592,7 @@ export function Solution({ exercise, open }: { exercise: Ex; open: boolean }) {
         ) : exercise.type === 'find-errors' && exercise.errors?.length ? (
           <ul className="space-y-2">
             {exercise.errors.map((e, i) => (
-              <li key={i} className="rounded border border-line px-3.5 py-2.5">
+              <li key={i} className="rounded-lg border border-line px-3.5 py-2.5">
                 <div className="eyebrow !text-bad">
                   Fehler {i + 1}
                   {e.line ? ` — Zeile ${e.line}` : ''}
@@ -506,7 +619,7 @@ export function Solution({ exercise, open }: { exercise: Ex; open: boolean }) {
         </div>
 
         {exercise.pitfalls?.length ? (
-          <div className="rounded border border-warn/25 bg-warnWash px-4 py-3">
+          <div className="rounded-lg border border-warn/25 bg-warnWash px-4 py-3">
             <div className="eyebrow !text-warn">Typische Fehler</div>
             <ul className="mt-1.5 space-y-1 text-[13.5px]">
               {exercise.pitfalls.map((p, i) => (
@@ -562,15 +675,16 @@ function AnswerArea({
       const picked = new Set<string>(Array.isArray(answer) ? (answer as string[]) : answer ? [String(answer)] : [])
       const multi = exercise.type === 'multi-mc'
       return (
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {multi && <p className="mb-1 text-[12.5px] text-faint">Mehrere Antworten können richtig sein.</p>}
-          {exercise.choices?.map((c) => {
+          {exercise.choices?.map((c, i) => {
             const on = picked.has(c.id)
             const shown = !!result
             return (
-              <button
+              <motion.button
                 key={c.id}
                 disabled={disabled}
+                whileTap={disabled ? undefined : { scale: 0.995 }}
                 onClick={() => {
                   if (multi) {
                     const next = new Set(picked)
@@ -579,20 +693,28 @@ function AnswerArea({
                     setAnswer([...next])
                   } else setAnswer(c.id)
                 }}
-                className={`flex w-full items-start gap-3 rounded-md border px-3.5 py-2.5 text-left transition-colors
+                animate={
+                  shown && c.correct
+                    ? { borderColor: 'rgb(var(--ok) / 0.5)' }
+                    : shown && on && !c.correct
+                      ? { borderColor: 'rgb(var(--bad) / 0.5)' }
+                      : {}
+                }
+                transition={{ duration: 0.3, delay: shown ? i * 0.05 : 0 }}
+                className={`flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors
                   ${
                     shown && c.correct
-                      ? 'border-ok/45 bg-okWash'
+                      ? 'bg-okWash'
                       : shown && on && !c.correct
-                        ? 'border-bad/45 bg-badWash'
+                        ? 'bg-badWash'
                         : on
                           ? 'border-accent bg-accentWash'
                           : 'border-line hover:border-lineStrong hover:bg-sunken'
                   } disabled:cursor-default`}
               >
                 <span
-                  className={`mt-px grid h-[19px] w-[19px] shrink-0 place-items-center border text-[11px] font-semibold
-                    ${multi ? 'rounded-[4px]' : 'rounded-full'}
+                  className={`mt-px grid h-5 w-5 shrink-0 place-items-center border text-[11px] font-semibold transition-colors
+                    ${multi ? 'rounded-[5px]' : 'rounded-full'}
                     ${on ? 'border-accent bg-accent text-accentInk' : 'border-lineStrong text-faint'}`}
                 >
                   {on ? '✓' : c.id.toUpperCase()}
@@ -600,7 +722,7 @@ function AnswerArea({
                 <span className="min-w-0 flex-1">
                   <Markdown className="!text-[14px] [&>p]:!my-0">{c.text}</Markdown>
                 </span>
-              </button>
+              </motion.button>
             )
           })}
         </div>
@@ -611,10 +733,15 @@ function AnswerArea({
       const vals = (answer ?? {}) as Record<string, string>
       return (
         <div className="grid gap-3 sm:grid-cols-2">
-          {exercise.gaps?.map((g) => {
+          {exercise.gaps?.map((g, i) => {
             const part = result?.parts?.find((p) => p.id === g.id)
             return (
-              <div key={g.id}>
+              <motion.div
+                key={g.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, ease: EASE, delay: i * 0.04 }}
+              >
                 <label className="label" htmlFor={`gap-${g.id}`}>
                   Lücke {g.id}
                 </label>
@@ -634,7 +761,7 @@ function AnswerArea({
                     }
                   }}
                 />
-              </div>
+              </motion.div>
             )
           })}
         </div>
@@ -703,7 +830,7 @@ function AnswerArea({
             onRun={onRun}
           />
           {exercise.tests?.filter((t) => t.visible !== false).length ? (
-            <div className="mt-2.5">
+            <div className="mt-3">
               <div className="eyebrow">Diese Beispiele müssen stimmen</div>
               <ul className="mt-1.5 space-y-1 font-mono text-[12px] text-muted">
                 {exercise.tests.slice(0, 4).map((t, i) => (
