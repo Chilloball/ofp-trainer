@@ -86,7 +86,7 @@ export function CodeEditor({
 
   return (
     <div
-      className="overflow-hidden rounded-md border border-lineStrong bg-surface transition-colors
+      className="overflow-hidden rounded-md border border-ruleStrong bg-surface transition-colors
                  focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20"
       style={{ minHeight }}
     >

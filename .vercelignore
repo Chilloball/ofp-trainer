@@ -1,0 +1,13 @@
+# Achtung: Existiert diese Datei, ignoriert Vercel die .gitignore KOMPLETT.
+# Deshalb hier alles aufführen — bis auf public/material: die PDFs sollen
+# mit deployen, dürfen aber nicht ins öffentliche GitHub-Repo.
+node_modules
+.next
+out
+.git
+.vercel
+.env*
+*.log
+.DS_Store
+tsconfig.tsbuildinfo
+public/content

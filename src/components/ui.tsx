@@ -2,20 +2,55 @@
 
 import { AnimatePresence, motion, useReducedMotion, useSpring, useTransform } from 'motion/react'
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
+import { calendarDaysUntil } from '@/lib/day'
 
 /* ==================================================================== *
  *  Bausteine und Bewegung
  *
- *  Grundregel: Eine Animation darf nur bleiben, wenn ohne sie etwas an
- *  Klarheit fehlt. Zahlen zählen hoch, damit man die Veränderung sieht.
- *  Listen laufen gestaffelt ein, damit man die Reihenfolge erfasst.
- *  Alles andere ist still.
+ *  Regel für jede Animation hier: Sie darf nur bleiben, wenn ohne sie
+ *  etwas an Klarheit fehlt.
+ *
+ *  Deshalb gibt es hier bewusst KEIN „alles fährt beim Erscheinen von
+ *  unten ein". Dieses Muster war in der Vorfassung über jede Seite
+ *  gelegt; es sagt nichts aus, ermüdet nach dem dritten Seitenwechsel
+ *  und ist eines der zuverlässigsten Erkennungszeichen generierter
+ *  Oberflächen. Was geblieben ist: hochzählende Zahlen (man sieht die
+ *  Veränderung und ihre Richtung), sich füllende Balken, gleitende
+ *  Marken zwischen Zuständen, das sich zeichnende Häkchen.
  * ==================================================================== */
 
 /** Ruhiges Ausschwingen — die Hausbewegung dieser App. */
 export const EASE = [0.22, 1, 0.36, 1] as const
 
-/* ------------------------------ Struktur ------------------------------ */
+/* ------------------------------- Struktur ------------------------------- */
+
+/**
+ * Rubrik mit durchlaufender Linie. Das redaktionelle Grundmuster dieser
+ * App: Abschnitte werden von einer Linie getrennt, nicht von einer
+ * weiteren Karte umschlossen.
+ */
+export function SectionHead({
+  title,
+  hint,
+  action,
+  as: Tag = 'h2',
+  className = '',
+}: {
+  title: ReactNode
+  hint?: ReactNode
+  action?: ReactNode
+  as?: 'h2' | 'h3'
+  className?: string
+}) {
+  return (
+    <div className={`mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 ${className}`}>
+      <Tag className={Tag === 'h2' ? 'text-[17px]' : 'text-[15px]'}>{title}</Tag>
+      {hint && <span className="text-[12.5px] text-faint">{hint}</span>}
+      <span className="mx-1 hidden h-px min-w-6 flex-1 bg-rule sm:block" />
+      {action}
+    </div>
+  )
+}
 
 export function Section({
   title,
@@ -32,24 +67,21 @@ export function Section({
 }) {
   return (
     <section className={className}>
-      {(title || action) && (
-        <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          {title && <h2 className="text-[17px]">{title}</h2>}
-          {hint && <span className="text-[13px] text-faint">{hint}</span>}
-          {action && <div className="ml-auto">{action}</div>}
-        </div>
-      )}
+      {(title || action) && <SectionHead title={title ?? ''} hint={hint} action={action} />}
       {children}
     </section>
   )
 }
 
-/** Läuft beim ersten Erscheinen kurz ein; in Listen gestaffelt über `index`. */
+/**
+ * Nur noch ein sanftes Auftauchen ohne Versatz — für Inhalte, die nach
+ * dem Laden nachgereicht werden, damit sie nicht hart einspringen.
+ * Der frühere gestaffelte `index` bleibt in der Signatur, wird aber
+ * bewusst ignoriert.
+ */
 export function Reveal({
   children,
-  index = 0,
   className = '',
-  y = 8,
 }: {
   children: ReactNode
   index?: number
@@ -60,21 +92,21 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={still ? false : { opacity: 0, y }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: EASE, delay: Math.min(index, 8) * 0.035 }}
+      initial={still ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.28, ease: 'linear' }}
     >
       {children}
     </motion.div>
   )
 }
 
-/* ------------------------------- Zahlen ------------------------------- */
+/* -------------------------------- Zahlen -------------------------------- */
 
 /**
- * Zählt weich auf den neuen Wert. Sinn dahinter: Nach einer Antwort
- * verändern sich Punkte und Prognose — die Bewegung macht sichtbar,
- * dass sich etwas getan hat, und in welche Richtung.
+ * Zählt weich auf den neuen Wert. Der Sinn: Nach einer Antwort ändern
+ * sich Punkte und Prognose — die Bewegung macht sichtbar, DASS sich
+ * etwas getan hat, und in welche Richtung.
  */
 export function AnimatedNumber({
   value,
@@ -117,26 +149,45 @@ export function Stat({
   value: number | string
   unit?: string
   hint?: ReactNode
-  tone?: 'ok' | 'warn' | 'bad' | 'brass'
+  tone?: 'pos' | 'neg' | 'oxide' | 'accent'
   animate?: boolean
 }) {
   const toneClass =
-    tone === 'ok' ? 'text-ok' : tone === 'warn' ? 'text-warn' : tone === 'bad' ? 'text-bad' : tone === 'brass' ? 'text-brass' : 'text-ink'
+    tone === 'pos'
+      ? 'text-pos'
+      : tone === 'neg'
+        ? 'text-neg'
+        : tone === 'oxide'
+          ? 'text-oxide'
+          : tone === 'accent'
+            ? 'text-accent'
+            : 'text-ink'
   return (
     <div>
       <div className="eyebrow">{label}</div>
-      <div className={`mt-1.5 flex items-baseline gap-1.5 ${toneClass}`}>
-        <span className="numeral text-[28px] leading-none">
+      <div className={`mt-2 flex items-baseline gap-1.5 ${toneClass}`}>
+        <span className="numeral text-[27px] leading-none">
           {typeof value === 'number' && animate ? <AnimatedNumber value={value} /> : value}
         </span>
-        {unit && <span className="text-[13px] font-medium text-muted">{unit}</span>}
+        {unit && <span className="font-mono text-[11.5px] text-faint">{unit}</span>}
       </div>
-      {hint && <div className="mt-1.5 text-[12.5px] text-muted">{hint}</div>}
+      {hint && <div className="mt-1.5 text-[12.5px] leading-snug text-muted">{hint}</div>}
     </div>
   )
 }
 
-/* ------------------------------ Auswahl ------------------------------ */
+/* ------------------------------- Tastatur ------------------------------- */
+
+/** Tastenhinweis. Die Übungsrunde ist vollständig mit der Tastatur bedienbar. */
+export function Kbd({ children }: { children: ReactNode }) {
+  return (
+    <kbd className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-[3px] border border-rule bg-raised px-1 font-mono text-[10.5px] font-medium text-muted">
+      {children}
+    </kbd>
+  )
+}
+
+/* -------------------------------- Auswahl -------------------------------- */
 
 export function Segmented<T extends string>({
   value,
@@ -149,7 +200,7 @@ export function Segmented<T extends string>({
   onChange: (v: T) => void
   options: { value: T; label: string; title?: string }[]
   size?: 'sm' | 'md'
-  /** eigener Name, damit der gleitende Marker nicht zwischen Gruppen springt */
+  /** eigener Name, damit die gleitende Marke nicht zwischen Gruppen springt */
   name?: string
 }) {
   /* useId ist über Server- und Clientseite hinweg stabil — eine
@@ -157,7 +208,7 @@ export function Segmented<T extends string>({
   const auto = useId()
   const group = name ?? auto
   return (
-    <div className="inline-flex rounded-lg border border-line bg-sunken p-0.5" role="tablist">
+    <div className="inline-flex rounded-md border border-rule bg-raised p-[3px]" role="tablist">
       {options.map((o) => {
         const on = value === o.value
         return (
@@ -167,15 +218,15 @@ export function Segmented<T extends string>({
             aria-selected={on}
             title={o.title}
             onClick={() => onChange(o.value)}
-            className={`relative rounded-[7px] font-medium transition-colors ${
-              size === 'sm' ? 'px-2.5 py-1 text-[12px]' : 'px-3.5 py-1.5 text-[13px]'
+            className={`relative rounded-[4px] font-medium transition-colors ${
+              size === 'sm' ? 'px-2.5 py-1 text-[12px]' : 'px-3.5 py-[5px] text-[13px]'
             } ${on ? 'text-ink' : 'text-muted hover:text-ink'}`}
           >
             {on && (
               <motion.span
                 layoutId={group}
-                className="absolute inset-0 rounded-[7px] border border-line bg-surface shadow-[0_1px_2px_rgb(var(--shadow-color)/0.12)]"
-                transition={{ duration: 0.22, ease: EASE }}
+                className="absolute inset-0 rounded-[4px] border border-rule bg-surface"
+                transition={{ duration: 0.2, ease: EASE }}
               />
             )}
             <span className="relative">{o.label}</span>
@@ -186,13 +237,15 @@ export function Segmented<T extends string>({
   )
 }
 
-/* ------------------------------ Zustände ------------------------------ */
+/* -------------------------------- Zustände -------------------------------- */
 
-export function Empty({ title, children }: { title: string; children?: ReactNode }) {
+/** Ehrlicher Leerzustand: sagt, warum hier nichts steht, und was hilft. */
+export function Empty({ title, children, action }: { title: string; children?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="panel px-5 py-10 text-center">
-      <div className="text-[16px] font-medium">{title}</div>
-      {children && <div className="mx-auto mt-2 max-w-prose text-[13.5px] text-muted">{children}</div>}
+    <div className="rounded-md border border-dashed border-ruleStrong px-5 py-12 text-center">
+      <div className="text-[15.5px] font-medium">{title}</div>
+      {children && <div className="mx-auto mt-2 max-w-prose text-[13.5px] leading-relaxed text-muted">{children}</div>}
+      {action && <div className="mt-5">{action}</div>}
     </div>
   )
 }
@@ -200,7 +253,7 @@ export function Empty({ title, children }: { title: string; children?: ReactNode
 export function Spinner({ className = '' }: { className?: string }) {
   return (
     <span
-      className={`inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent opacity-60 ${className}`}
+      className={`inline-block h-3.5 w-3.5 animate-spin rounded-full border-[1.5px] border-current border-t-transparent opacity-60 ${className}`}
       aria-hidden
     />
   )
@@ -210,19 +263,19 @@ export function Spinner({ className = '' }: { className?: string }) {
 export function Loading({ label = 'Wird geladen …', lines = 3 }: { label?: string; lines?: number }) {
   return (
     <div className="space-y-3" role="status" aria-live="polite">
-      <div className="flex items-center gap-2.5 text-[13.5px] text-muted">
+      <div className="flex items-center gap-2.5 font-mono text-[11.5px] uppercase tracking-[0.1em] text-faint">
         <Spinner /> {label}
       </div>
       <div className="space-y-2.5">
         {Array.from({ length: lines }).map((_, i) => (
-          <div key={i} className="shimmer h-11 rounded-lg" style={{ opacity: 1 - i * 0.22 }} />
+          <div key={i} className="shimmer h-11 rounded-md" style={{ opacity: 1 - i * 0.2 }} />
         ))}
       </div>
     </div>
   )
 }
 
-/* ------------------------------- Dialog ------------------------------- */
+/* --------------------------------- Dialog --------------------------------- */
 
 export function Dialog({
   open,
@@ -260,8 +313,8 @@ export function Dialog({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
-            className="absolute inset-0 bg-ink/30 backdrop-blur-[3px]"
+            transition={{ duration: 0.16 }}
+            className="absolute inset-0 bg-ink/40 backdrop-blur-[2px]"
             onClick={onClose}
           />
           <motion.div
@@ -270,17 +323,17 @@ export function Dialog({
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.99 }}
-            transition={{ duration: 0.26, ease: EASE }}
-            className="relative w-full max-w-lg rounded-t-2xl border border-line bg-surface shadow-pop outline-none sm:rounded-2xl"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.22, ease: EASE }}
+            className="relative w-full max-w-lg rounded-t-xl border border-rule bg-surface shadow-float outline-none sm:rounded-xl"
           >
-            <div className="border-b border-line px-5 py-4">
-              <h2 className="text-[17px]">{title}</h2>
+            <div className="border-b border-rule px-5 py-3.5">
+              <h2 className="text-[16px]">{title}</h2>
             </div>
             <div className="max-h-[62vh] overflow-y-auto px-5 py-4">{children}</div>
-            {footer && <div className="flex justify-end gap-2 border-t border-line px-5 py-3.5">{footer}</div>}
+            {footer && <div className="flex justify-end gap-2 border-t border-rule px-5 py-3">{footer}</div>}
           </motion.div>
         </div>
       )}
@@ -288,7 +341,7 @@ export function Dialog({
   )
 }
 
-/* ---------------------------- Aufklappbereich ---------------------------- */
+/* ----------------------------- Aufklappbereich ----------------------------- */
 
 export function Disclosure({
   summary,
@@ -307,16 +360,16 @@ export function Disclosure({
       <button
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="flex w-full items-center gap-2.5 px-4 py-3 text-left text-[14px] font-medium transition-colors hover:bg-sunken"
+        className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-[13.5px] font-medium transition-colors hover:bg-raised"
       >
         <motion.svg
-          className="h-3.5 w-3.5 shrink-0 text-faint"
+          className="h-3 w-3 shrink-0 text-faint"
           viewBox="0 0 16 16"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.8"
+          strokeWidth="2"
           animate={{ rotate: open ? 90 : 0 }}
-          transition={{ duration: 0.22, ease: EASE }}
+          transition={{ duration: 0.2, ease: EASE }}
         >
           <path d="M6 3.5 10.5 8 6 12.5" strokeLinecap="round" strokeLinejoin="round" />
         </motion.svg>
@@ -328,10 +381,10 @@ export function Disclosure({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: EASE }}
+            transition={{ duration: 0.24, ease: EASE }}
             className="overflow-hidden"
           >
-            <div className="border-t border-line px-4 py-4">{children}</div>
+            <div className="border-t border-rule px-4 py-4">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -339,7 +392,7 @@ export function Disclosure({
   )
 }
 
-/* ------------------------------ Countdown ------------------------------ */
+/* -------------------------------- Countdown -------------------------------- */
 
 export function useCountdown(iso: string) {
   const [left, setLeft] = useState<{ d: number; h: number; m: number; past: boolean } | null>(null)
@@ -348,7 +401,8 @@ export function useCountdown(iso: string) {
       const ms = new Date(iso).getTime() - Date.now()
       const abs = Math.abs(ms)
       setLeft({
-        d: Math.floor(abs / 86_400_000),
+        /* Kalendertage — dieselbe Zahl wie im Lernplan. */
+        d: Math.abs(calendarDaysUntil(iso)),
         h: Math.floor((abs % 86_400_000) / 3_600_000),
         m: Math.floor((abs % 3_600_000) / 60_000),
         past: ms < 0,

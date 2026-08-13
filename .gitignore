@@ -12,3 +12,10 @@
 .DS_Store
 *.log
 .vercel
+.env*
+
+# Vorlesungs-PDFs — nur im Deployment, NICHT im öffentlichen Repo
+/public/material
+
+# TypeScript-Buildcache
+tsconfig.tsbuildinfo

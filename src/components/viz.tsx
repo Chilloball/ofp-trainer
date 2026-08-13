@@ -17,29 +17,39 @@ import { dayFromKey, dayKey } from '@/lib/day'
  *    Diff      — worin genau weicht meine Ausgabe von der richtigen ab?
  * ==================================================================== */
 
-type Tone = 'accent' | 'brass' | 'ok' | 'warn' | 'bad' | 'py' | 'java' | 'line'
+/* Die Palette hat fünf Farben — mehr Töne gibt es hier bewusst nicht.
+   Python läuft in Ultramarin (der Aktionsfarbe), Java in Oxid. */
+export type Tone = 'accent' | 'oxide' | 'pos' | 'neg' | 'rule'
 
 const STROKE: Record<Tone, string> = {
   accent: 'rgb(var(--accent))',
-  brass: 'rgb(var(--brass))',
-  ok: 'rgb(var(--ok))',
-  warn: 'rgb(var(--warn))',
-  bad: 'rgb(var(--bad))',
-  py: 'rgb(var(--py))',
-  java: 'rgb(var(--java))',
-  line: 'rgb(var(--line))',
+  oxide: 'rgb(var(--oxide))',
+  pos: 'rgb(var(--pos))',
+  neg: 'rgb(var(--neg))',
+  rule: 'rgb(var(--rule-strong))',
 }
 
 const FILL: Record<Tone, string> = {
-  accent: 'bg-accent', brass: 'bg-brass', ok: 'bg-ok', warn: 'bg-warn',
-  bad: 'bg-bad', py: 'bg-py', java: 'bg-java', line: 'bg-line',
+  accent: 'bg-accent',
+  oxide: 'bg-oxide',
+  pos: 'bg-pos',
+  neg: 'bg-neg',
+  rule: 'bg-ruleStrong',
 }
 
+/** Farbe der Sprache — Python Ultramarin, Java Oxid. */
+export const langTone = (lang: 'python' | 'java'): Tone => (lang === 'python' ? 'accent' : 'oxide')
+
+/**
+ * Ampel für einen Beherrschungsgrad. Die Schwellen sind nicht beliebig:
+ * 75 % entspricht ungefähr der Grenze, ab der eine Aufgabe in der Klausur
+ * verlässlich sitzt; unter 40 % ist sie faktisch ungelernt.
+ */
 export function toneFor(value: number, seen = true): Tone {
-  if (!seen || !Number.isFinite(value)) return 'line'
-  if (value >= 0.75) return 'ok'
-  if (value >= 0.4) return 'warn'
-  return 'bad'
+  if (!seen || !Number.isFinite(value)) return 'rule'
+  if (value >= 0.75) return 'pos'
+  if (value >= 0.4) return 'oxide'
+  return 'neg'
 }
 
 /* -------------------------------- Balken -------------------------------- */
@@ -115,9 +125,9 @@ export function Ring({
                 cy={size / 2}
                 r={radius}
                 fill="none"
-                stroke="rgb(var(--line))"
+                stroke="rgb(var(--sink))"
                 strokeWidth={r.w}
-                opacity={i === 0 ? 1 : 0.6}
+                opacity={i === 0 ? 1 : 0.7}
               />
               <motion.circle
                 cx={size / 2}
@@ -224,7 +234,7 @@ export function ActivityCalendar({
     if (done < goal) return 3
     return 4
   }
-  const bg = ['bg-line', 'bg-brass/25', 'bg-brass/45', 'bg-brass/70', 'bg-brass']
+  const bg = ['bg-rule', 'bg-accent/25', 'bg-accent/45', 'bg-accent/70', 'bg-accent']
 
   const cols = `repeat(${weeks}, minmax(9px, 1fr))`
 
@@ -249,7 +259,7 @@ export function ActivityCalendar({
             <motion.div
               key={c.iso}
               title={`${c.label}: ${c.done} ${c.done === 1 ? 'Aufgabe' : 'Aufgaben'}`}
-              className={`aspect-square rounded-[3px] ${c.future ? 'bg-line/40' : bg[level(c.done)]}`}
+              className={`aspect-square rounded-[2px] ${c.future ? 'bg-rule/40' : bg[level(c.done)]}`}
               initial={still ? false : { opacity: 0, scale: 0.6 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, ease: EASE, delay: Math.min(i * 0.0016, 0.5) }}
@@ -321,8 +331,8 @@ export function TopicMap({
           >
             <Link
               href={href(t.id)}
-              className="group relative block h-[84px] overflow-hidden rounded-lg border border-line bg-sunken p-2.5
-                         transition-[border-color,transform] duration-200 hover:border-lineStrong"
+              className="group relative block h-[86px] overflow-hidden rounded-md border border-rule bg-surface p-2.5
+                         transition-[border-color] duration-200 hover:border-ink"
               title={`${t.title} — rund ${Math.round(t.weight * totalPoints)} Klausurpunkte, ${t.seen} von ${t.total} Aufgaben bearbeitet, ${Math.round(t.mastery * 100)} % beherrscht`}
             >
               {/* Füllstand von unten */}
@@ -336,7 +346,7 @@ export function TopicMap({
               <span className="relative flex h-full flex-col justify-between gap-1">
                 <span className="line-clamp-2 text-[12.5px] font-medium leading-[1.25]">{t.short}</span>
                 <span className="flex items-baseline gap-1.5">
-                  <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${t.lang === 'python' ? 'bg-py' : 'bg-java'}`} />
+                  <span className={`h-1.5 w-1.5 shrink-0 rounded-[1px] ${t.lang === 'python' ? 'bg-accent' : 'bg-oxide'}`} />
                   <span className="tabnum text-[11px] text-muted">
                     {t.seen ? `${Math.round(t.mastery * 100)} %` : '—'}
                   </span>
@@ -438,18 +448,18 @@ export function OutputDiff({
   const wrong = rows.filter((r) => r.kind !== 'same').length
 
   return (
-    <div className={`overflow-hidden rounded-lg border border-line ${className}`}>
-      <div className="flex items-center gap-3 border-b border-line bg-sunken px-3 py-2">
+    <div className={`overflow-hidden rounded-md border border-rule ${className}`}>
+      <div className="flex items-center gap-3 border-b border-rule bg-raised px-3 py-2">
         <span className="eyebrow">Vergleich</span>
         <span className="text-[11.5px] text-muted">
           {wrong === 0 ? 'alle Zeilen stimmen' : `${wrong} von ${rows.length} Zeilen weichen ab`}
         </span>
         <span className="ml-auto flex items-center gap-3 text-[11px] text-faint">
           <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-sm bg-ok/60" /> erwartet
+            <span className="h-2 w-2 rounded-sm bg-pos/60" /> erwartet
           </span>
           <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-sm bg-bad/60" /> deine Ausgabe
+            <span className="h-2 w-2 rounded-sm bg-neg/60" /> deine Ausgabe
           </span>
         </span>
       </div>
@@ -463,11 +473,11 @@ export function OutputDiff({
               initial={still ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.25, delay: Math.min(idx * 0.02, 0.3) }}
-              className={`grid grid-cols-[2.2rem_1fr] border-b border-line/60 last:border-0 ${
-                ok ? '' : 'bg-bad/4'
+              className={`grid grid-cols-[2.2rem_1fr] border-b border-rule/60 last:border-0 ${
+                ok ? '' : 'bg-neg/4'
               }`}
             >
-              <span className="select-none border-r border-line/60 px-2 py-1 text-right text-[11px] text-faint">
+              <span className="select-none border-r border-rule/60 px-2 py-1 text-right text-[11px] text-faint">
                 {r.n}
               </span>
               <span className="min-w-0 px-2.5 py-1">
@@ -477,33 +487,33 @@ export function OutputDiff({
                   <span className="block space-y-0.5">
                     {r.expected !== undefined && (
                       <span className="block whitespace-pre-wrap break-words">
-                        <span className="mr-1.5 select-none text-ok">soll</span>
+                        <span className="mr-1.5 select-none text-pos">soll</span>
                         {spans ? (
                           <>
                             {r.expected.slice(0, spans.start)}
-                            <mark className="rounded-sm bg-ok/25 px-px text-ink">
+                            <mark className="rounded-sm bg-pos/25 px-px text-ink">
                               {visible(r.expected.slice(spans.start, spans.endA))}
                             </mark>
                             {r.expected.slice(spans.endA)}
                           </>
                         ) : (
-                          <mark className="rounded-sm bg-ok/20 px-px text-ink">{visible(r.expected)}</mark>
+                          <mark className="rounded-sm bg-pos/20 px-px text-ink">{visible(r.expected)}</mark>
                         )}
                       </span>
                     )}
                     {r.got !== undefined && (
                       <span className="block whitespace-pre-wrap break-words">
-                        <span className="mr-1.5 select-none text-bad">ist&nbsp;</span>
+                        <span className="mr-1.5 select-none text-neg">ist&nbsp;</span>
                         {spans ? (
                           <>
                             {r.got.slice(0, spans.start)}
-                            <mark className="rounded-sm bg-bad/25 px-px text-ink">
+                            <mark className="rounded-sm bg-neg/25 px-px text-ink">
                               {visible(r.got.slice(spans.start, spans.endB))}
                             </mark>
                             {r.got.slice(spans.endB)}
                           </>
                         ) : (
-                          <mark className="rounded-sm bg-bad/20 px-px text-ink">{visible(r.got)}</mark>
+                          <mark className="rounded-sm bg-neg/20 px-px text-ink">{visible(r.got)}</mark>
                         )}
                       </span>
                     )}
@@ -547,16 +557,16 @@ export function PointsBar({
   const total = segments.reduce((s, x) => s + x.weight, 0) || 1
   return (
     <div>
-      <div className="flex h-9 w-full overflow-hidden rounded-lg border border-line bg-sunken">
+      <div className="flex h-10 w-full overflow-hidden rounded-md border border-rule bg-raised">
         {segments.map((s, i) => (
           <div
             key={s.id}
-            className="relative border-r border-paper/60 last:border-0"
+            className="relative border-r border-canvas/60 last:border-0"
             style={{ width: `${(s.weight / total) * 100}%` }}
             title={`${s.title}: ${Math.round((s.weight / total) * 100)} % der Punkte, ${Math.round(s.mastery * 100)} % beherrscht`}
           >
             <motion.span
-              className={`absolute inset-x-0 bottom-0 ${s.lang === 'python' ? 'bg-py' : 'bg-java'}`}
+              className={`absolute inset-x-0 bottom-0 ${s.lang === 'python' ? 'bg-accent' : 'bg-oxide'}`}
               initial={still ? false : { height: 0 }}
               animate={{ height: `${Math.max(3, s.mastery * 100)}%` }}
               transition={{ duration: 0.8, ease: EASE, delay: 0.1 + Math.min(i * 0.02, 0.35) }}
@@ -566,10 +576,10 @@ export function PointsBar({
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] text-faint">
         <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-py" /> Python
+          <span className="h-2.5 w-2.5 rounded-sm bg-accent" /> Python
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-java" /> Java
+          <span className="h-2.5 w-2.5 rounded-sm bg-oxide" /> Java
         </span>
         <span>Breite = Punktegewicht in der Klausur · Füllhöhe = dein Stand</span>
       </div>

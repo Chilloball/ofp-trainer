@@ -204,7 +204,7 @@ export function ExamSession({ examId }: { examId: string }) {
   if (error) {
     return (
       <Page title="Klausur">
-        <div className="panel border-bad/35 bg-badWash px-5 py-4 text-[14px] text-bad">{error}</div>
+        <div className="panel border-neg/35 bg-negSoft px-5 py-4 text-[14px] text-neg">{error}</div>
         <Link href="/klausur" className="btn-secondary mt-4">
           Zurück zur Übersicht
         </Link>
@@ -225,7 +225,7 @@ export function ExamSession({ examId }: { examId: string }) {
     return (
       <Page title={exam.title} lead={exam.subtitle}>
         <div className="panel max-w-prose px-5 py-5">
-          <dl className="grid grid-cols-3 gap-4 border-b border-line pb-4">
+          <dl className="grid grid-cols-3 gap-4 border-b border-rule pb-4">
             <div>
               <dt className="eyebrow">Bearbeitungszeit</dt>
               <dd className="tabnum mt-1 text-[20px] font-semibold">{exam.minutes} min</dd>
@@ -264,7 +264,7 @@ export function ExamSession({ examId }: { examId: string }) {
           </div>
 
           {previous.length > 0 && (
-            <p className="mt-4 border-t border-line pt-3 text-[13px] text-muted">
+            <p className="mt-4 border-t border-rule pt-3 text-[13px] text-muted">
               Bisher {previous.length}× geschrieben, bestes Ergebnis{' '}
               <span className="tabnum font-medium text-ink">
                 {Math.round(Math.max(...previous.map((p) => (p.max ? p.total / p.max : 0))) * 100)} %
@@ -297,7 +297,7 @@ export function ExamSession({ examId }: { examId: string }) {
   if (!slot) {
     return (
       <Page title={exam.title}>
-        <div className="panel border-bad/35 bg-badWash px-5 py-4 text-[14px] text-bad">
+        <div className="panel border-neg/35 bg-negSoft px-5 py-4 text-[14px] text-neg">
           Diese Klausur enthält keine Aufgaben.
         </div>
       </Page>
@@ -309,10 +309,10 @@ export function ExamSession({ examId }: { examId: string }) {
 
   return (
     <div className="mx-auto w-full max-w-content px-4 py-5 sm:px-7 sm:py-6">
-      <div className="sticky top-0 z-20 -mx-4 mb-5 border-b border-line bg-paper/95 px-4 py-2.5 backdrop-blur sm:-mx-7 sm:px-7">
+      <div className="sticky top-0 z-20 -mx-4 mb-5 border-b border-rule bg-canvas/95 px-4 py-2.5 backdrop-blur sm:-mx-7 sm:px-7">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <span className="text-[14px] font-medium">{exam.title}</span>
-          <span className={`tabnum text-[15px] font-semibold ${urgent ? 'text-bad' : ''}`}>
+          <span className={`tabnum text-[15px] font-semibold ${urgent ? 'text-neg' : ''}`}>
             {String(mins).padStart(2, '0')}:{String(secs).padStart(2, '0')}
           </span>
           <span className="tabnum text-[13px] text-muted">
@@ -331,7 +331,7 @@ export function ExamSession({ examId }: { examId: string }) {
                 onClick={() => setCursor(i)}
                 title={`${s.task.label} — ${s.exercise.title}`}
                 className={`h-1.5 flex-1 min-w-[10px] rounded-full transition-colors ${
-                  i === cursor ? 'bg-accent' : done ? 'bg-ok/60' : 'bg-line'
+                  i === cursor ? 'bg-accent' : done ? 'bg-pos/60' : 'bg-rule'
                 }`}
                 aria-label={`Zu Aufgabe ${i + 1}`}
               />
@@ -359,7 +359,7 @@ export function ExamSession({ examId }: { examId: string }) {
         onAnswerChange={(a) => setAnswers((prev) => ({ ...prev, [slot.exercise.id]: a }))}
       />
 
-      <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
+      <div className="mt-6 flex items-center justify-between border-t border-rule pt-4">
         <button onClick={() => setCursor((c) => Math.max(0, c - 1))} disabled={cursor === 0} className="btn-secondary">
           ← Zurück
         </button>
@@ -430,7 +430,7 @@ function ExamResult({
     <Page title="Auswertung" lead={exam.title}>
       <Reveal>
         <section className="panel flex flex-col items-center gap-9 p-7 sm:flex-row">
-          <Ring value={pct / 100} size={172} tone={passed ? 'ok' : 'bad'}>
+          <Ring value={pct / 100} size={172} tone={passed ? 'pos' : 'neg'}>
             <div>
               <div className="numeral text-[40px] leading-none">
                 <AnimatedNumber value={Math.round(pct)} />
@@ -463,7 +463,7 @@ function ExamResult({
                 </div>
               </div>
             </div>
-            <p className="mt-5 border-t border-line pt-4 text-[13.5px] leading-relaxed text-muted">
+            <p className="mt-5 border-t border-rule pt-4 text-[13.5px] leading-relaxed text-muted">
               {passed
                 ? 'Bestanden — die Grenze liegt üblicherweise bei 50 Prozent.'
                 : 'Noch nicht bestanden; üblich sind 50 Prozent zum Bestehen.'}{' '}
@@ -484,7 +484,7 @@ function ExamResult({
               const max = attempt.maxScores[taskId] ?? list[0].task.points
               const ratio = max ? got / max : 0
               return (
-                <tr key={taskId} className="border-b border-line">
+                <tr key={taskId} className="border-b border-rule">
                   <td className="py-2.5 pr-3">
                     <div className="font-medium">
                       {list[0].task.label} — {list[0].task.title}
@@ -511,12 +511,12 @@ function ExamResult({
           {slots.map((s) => {
             const r = results[s.exercise.id]
             return (
-              <li key={s.exercise.id} className="border-t border-line pt-5">
+              <li key={s.exercise.id} className="border-t border-rule pt-5">
                 <div className="mb-2 flex flex-wrap items-baseline gap-3 text-[13px]">
                   <span className="eyebrow">{s.task.label}</span>
                   <span
                     className={`font-medium ${
-                      r?.correct ? 'text-ok' : r?.needsSelfCheck ? 'text-muted' : 'text-bad'
+                      r?.correct ? 'text-pos' : r?.needsSelfCheck ? 'text-muted' : 'text-neg'
                     }`}
                   >
                     {r?.correct ? 'richtig' : r?.needsSelfCheck ? 'selbst prüfen' : 'nicht richtig'}
@@ -532,7 +532,7 @@ function ExamResult({
         </ul>
       </section>
 
-      <div className="mt-8 flex flex-wrap gap-2 border-t border-line pt-5">
+      <div className="mt-8 flex flex-wrap gap-2 border-t border-rule pt-5">
         <button onClick={onRetry} className="btn-primary">
           Neue Variante schreiben
         </button>
@@ -553,8 +553,8 @@ function ReviewItem({ exercise, answer }: { exercise: Exercise; answer: unknown 
       <div className="text-[14.5px] font-medium">{exercise.title}</div>
       <Markdown className="mt-1 !text-[13.5px]">{exercise.prompt}</Markdown>
       {exercise.code && <CodeBlock code={exercise.code} language={exercise.lang} maxHeight={320} />}
-      <div className="mt-2 overflow-hidden rounded-md border border-line">
-        <div className="border-b border-line bg-sunken px-3 py-1.5">
+      <div className="mt-2 overflow-hidden rounded-md border border-rule">
+        <div className="border-b border-rule bg-raised px-3 py-1.5">
           <span className="eyebrow">Deine Antwort</span>
         </div>
         <pre className="whitespace-pre-wrap break-words bg-surface px-3 py-2 font-mono text-[12.5px]">

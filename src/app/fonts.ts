@@ -1,43 +1,44 @@
-import { Fraunces, Schibsted_Grotesk, JetBrains_Mono } from 'next/font/google'
+import { Archivo, IBM_Plex_Mono } from 'next/font/google'
 
 /* ==================================================================== *
- *  Schriften
+ *  Schriften — „eine Familie, viele Stimmen"
  *
- *  Bewusst abseits der üblichen Verdächtigen (Inter, Geist, Space Grotesk),
- *  weil die einem Projekt sofort das Gesicht nehmen.
+ *  Die vorherige Fassung setzte auf eine Antiqua (Fraunces) über warmem
+ *  Cremeweiß. Genau diese Kombination ist inzwischen die Signatur der
+ *  KI-Werkzeuge selbst — sie nimmt einem Projekt das Gesicht, statt ihm
+ *  eines zu geben. Also der Gegenentwurf:
  *
- *    Fraunces          — Überschriften und große Zahlen. Eine variable
- *                        Antiqua mit optischer Achse: wirkt gedruckt,
- *                        akademisch, und gibt der App einen Charakter,
- *                        den keine Grotesk liefert.
- *    Schibsted Grotesk — Bedienoberfläche und Fließtext. Redaktionelle
- *                        Grotesk mit eigenwilligem a und g, sehr gut
- *                        lesbar in kleinen Graden.
- *    JetBrains Mono    — Quelltext. Für Code zählt Lesbarkeit vor
- *                        Eigenwilligkeit: klare Klammern, unterscheidbares
- *                        0/O und l/1/I.
+ *    Archivo        — eine Grotesk mit echter BREITENACHSE (wdth 62–125).
+ *                     Das ist der Trick des ganzen Systems: Überschriften
+ *                     laufen breit (wdth 112–122) und wirken dadurch
+ *                     plakatartig gesetzt; Fließtext läuft normal und
+ *                     liest sich ruhig. Eine Familie, aber zwei klar
+ *                     unterscheidbare Stimmen — das ist das Kennzeichen
+ *                     eines gebauten Systems statt zweier zufällig
+ *                     kombinierter Google-Fonts.
  *
- *  next/font lädt sie beim Bauen herunter und liefert sie selbst aus —
- *  keine Anfrage an Google zur Laufzeit, kein Ruckeln beim Schriftwechsel.
+ *    IBM Plex Mono  — Quelltext, Zahlen, Kennzeichnungen. Übernimmt hier
+ *                     bewusst auch Aufgaben außerhalb von Code: Punkte,
+ *                     Daten, Themenkürzel. Das gibt der Oberfläche einen
+ *                     technischen Grundton, der zum Fach passt, und ist
+ *                     nicht die übliche Editor-Schrift.
+ *
+ *  next/font lädt beides beim Bauen herunter und liefert es selbst aus —
+ *  keine Anfrage an Google zur Laufzeit, kein Umspringen der Schrift.
  * ==================================================================== */
 
-export const display = Fraunces({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-display',
-  axes: ['SOFT', 'WONK', 'opsz'],
-})
-
-export const sans = Schibsted_Grotesk({
+export const sans = Archivo({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-sans',
+  axes: ['wdth'],
 })
 
-export const mono = JetBrains_Mono({
+export const mono = IBM_Plex_Mono({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-mono',
+  weight: ['400', '500', '600'],
 })
 
-export const fontClass = `${display.variable} ${sans.variable} ${mono.variable}`
+export const fontClass = `${sans.variable} ${mono.variable}`

@@ -3,133 +3,158 @@
 @tailwind utilities;
 
 /* ==================================================================== *
- *  Gestaltung — „Papier, Tinte, Messing"
+ *  GESTALTUNG — „Blaupause"
  *
- *  Grundgedanke: ein gut gesetztes Lehrbuch, das man anfassen möchte.
- *  Warmes Papier, tiefe Tinte, ein Petrol für Aktionen und ein
- *  Messington für alles, was Fortschritt und Erfolg zeigt.
+ *  Leitbild: das Reinheft eines Ingenieurs. Kühles Papier, tiefschwarze
+ *  Tinte, exakt eine Signalfarbe (Ultramarin) für alles, was man
+ *  anfassen kann, und Oxidrot als zweite Datenfarbe. Struktur entsteht
+ *  über HAARLINIEN und Typografie, nicht über schwebende Karten mit
+ *  Schatten — Schatten trägt hier nur, was wirklich über der Seite
+ *  liegt: Dialog, Menü, Meldung.
  *
- *  Tiefe entsteht durch gestufte Flächen und getönte Schatten, nicht
- *  durch Farbverläufe. Bewegung kommuniziert Zustand, nie Dekoration.
+ *  Bewusst NICHT: warmes Cremeweiß mit Antiqua-Überschriften. Das ist
+ *  inzwischen die Handschrift der Werkzeuge, nicht die des Projekts.
+ *
+ *  Die Palette hat fünf Farben, nicht acht:
+ *    Ultramarin  Aktion, Navigation, Python, Fortschritt
+ *    Oxid        Java, Achtung
+ *    Grün        richtig, erledigt
+ *    Rot         falsch, Risiko
+ *    Tinte       alles andere
  * ==================================================================== */
 
 @layer base {
   :root {
-    /* Papier & Tinte */
-    --paper: 247 244 239;
+    color-scheme: light;
+
+    /* --- Flächen: Papier (Untergrund) < Bogen (Inhalt) --- */
+    --canvas: 236 239 242;
     --surface: 255 255 255;
-    --sunken: 240 236 229;
-    --line: 226 220 209;
-    --line-strong: 205 197 183;
-    --ink: 27 26 23;
-    --muted: 106 101 91;
-    --faint: 150 143 132;
+    --raised: 245 247 249;
+    --sink: 226 231 236;
 
-    /* Petrol — Aktionen, Navigation, Verweise */
-    --accent: 20 85 95;
+    /* --- Linien --- */
+    --rule: 214 220 227;
+    --rule-strong: 183 193 204;
+
+    /* --- Tinte --- */
+    --ink: 10 14 19;
+    --muted: 78 90 102;
+    --faint: 126 138 151;
+
+    /* --- Ultramarin: alles Anklickbare, Python, Fortschritt --- */
+    --accent: 27 52 214;
     --accent-ink: 255 255 255;
-    --accent-wash: 226 239 240;
+    --accent-soft: 227 231 252;
 
-    /* Messing — Fortschritt, Serie, Erfolge */
-    --brass: 165 118 27;
-    --brass-wash: 246 235 212;
+    /* --- Oxid: Java, Achtung --- */
+    --oxide: 163 74 18;
+    --oxide-soft: 250 234 223;
 
-    --ok: 39 106 69;
-    --ok-wash: 226 240 230;
-    --warn: 152 101 18;
-    --warn-wash: 249 238 218;
-    --bad: 166 47 40;
-    --bad-wash: 250 231 228;
+    /* --- Ergebnis --- */
+    --pos: 6 114 74;
+    --pos-soft: 223 241 232;
+    --neg: 190 36 24;
+    --neg-soft: 251 228 225;
 
-    /* Die beiden Hälften des Fachs */
-    --py: 46 95 150;
-    --java: 176 86 42;
-
-    --shadow-color: 40 33 22;
+    --shadow: 10 16 26;
   }
 
   .dark {
-    --paper: 18 18 21;
-    --surface: 26 26 31;
-    --sunken: 33 33 39;
-    --line: 46 46 54;
-    --line-strong: 68 68 79;
-    --ink: 234 231 224;
-    --muted: 156 151 141;
-    --faint: 116 111 102;
+    color-scheme: dark;
 
-    --accent: 92 193 206;
-    --accent-ink: 8 40 44;
-    --accent-wash: 22 51 58;
+    --canvas: 6 8 11;
+    --surface: 13 17 22;
+    --raised: 20 26 33;
+    --sink: 16 21 26;
 
-    --brass: 223 174 94;
-    --brass-wash: 51 41 26;
+    --rule: 30 37 46;
+    --rule-strong: 48 58 70;
 
-    --ok: 95 190 134;
-    --ok-wash: 22 48 31;
-    --warn: 217 168 78;
-    --warn-wash: 50 39 21;
-    --bad: 232 131 122;
-    --bad-wash: 51 29 27;
+    --ink: 231 236 241;
+    --muted: 152 164 177;
+    --faint: 108 120 133;
 
-    --py: 123 169 224;
-    --java: 222 143 92;
+    --accent: 143 163 255;
+    --accent-ink: 6 10 32;
+    --accent-soft: 21 28 60;
 
-    --shadow-color: 0 0 0;
+    --oxide: 227 148 86;
+    --oxide-soft: 46 29 16;
+
+    --pos: 76 197 140;
+    --pos-soft: 13 43 31;
+    --neg: 245 129 116;
+    --neg-soft: 51 21 18;
+
+    --shadow: 0 0 0;
   }
 
   html {
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
-    @apply bg-paper text-ink;
+    @apply bg-canvas text-ink;
     font-family: var(--font-sans), system-ui, sans-serif;
     font-size: 15px;
     line-height: 1.6;
-    font-feature-settings: 'ss01', 'cv01';
+    font-variation-settings: 'wdth' 100;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Feines Korn — der Unterschied zwischen „Bildschirm" und „Papier".
-     Als Hintergrundkachel auf dem Body, nicht als fixierte Überlagerung:
-     eine feste Ebene über dem ganzen Viewport müsste bei jedem Scrollen
-     neu gerastert werden und macht das Scrollen zäh. */
-  body {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-blend-mode: overlay;
-  }
-
-  .dark body {
-    background-blend-mode: soft-light;
-  }
-
-  h1, h2, h3 {
-    font-family: var(--font-display), Georgia, serif;
-    font-variation-settings: 'SOFT' 20, 'WONK' 0, 'opsz' 40;
-    letter-spacing: -0.014em;
+  /* --------------------------------------------------------------- *
+   *  Überschriften laufen BREIT (wdth 112–118).
+   *
+   *  Das ist der eine typografische Griff, der das ganze System trägt:
+   *  Archivo hat eine echte Breitenachse. Eine breit laufende Grotesk
+   *  in der Headline wirkt gesetzt und plakatiert, während derselbe
+   *  Schnitt im Fließtext ruhig bleibt. Eine Familie, zwei Stimmen —
+   *  das kann keine Kombination aus zwei fremden Schriften.
+   * --------------------------------------------------------------- */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-variation-settings: 'wdth' 112;
     font-weight: 600;
+    letter-spacing: -0.018em;
+    line-height: 1.16;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-variation-settings: 'wdth' 116;
+    letter-spacing: -0.026em;
   }
 
   ::selection {
-    background: rgb(var(--accent) / 0.2);
+    background: rgb(var(--accent) / 0.22);
   }
 
   :focus-visible {
     outline: 2px solid rgb(var(--accent));
     outline-offset: 2px;
-    border-radius: 3px;
+    border-radius: 2px;
   }
 
+  /* Der Bildlaufbalken ist Teil der Oberfläche, nicht des Systems. */
   ::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgb(var(--line-strong));
+    background: rgb(var(--rule-strong));
     border-radius: 99px;
-    border: 3px solid transparent;
+    border: 3.5px solid transparent;
     background-clip: content-box;
   }
   ::-webkit-scrollbar-thumb:hover {
@@ -139,139 +164,246 @@
   ::-webkit-scrollbar-track {
     background: transparent;
   }
+
+  /* Kein Wackeln beim Wechsel auf eine Seite ohne Bildlauf. */
+  html {
+    scrollbar-gutter: stable;
+  }
 }
 
 @layer components {
-  /* ------------------------------ Flächen ------------------------------ */
-  .panel {
-    @apply rounded-xl border border-line bg-surface;
-    box-shadow:
-      0 1px 1px rgb(var(--shadow-color) / 0.04),
-      0 4px 14px -8px rgb(var(--shadow-color) / 0.14);
+  /* ====================== TYPOGRAFISCHE STIMMEN ====================== */
+
+  /* Große Zahlen und Titel: breit, eng gesetzt, Ziffern gleich breit.
+     Alles, was sich verändert, braucht Tabellenziffern — sonst hüpft
+     die Zeile beim Hochzählen. */
+  .numeral {
+    font-variation-settings: 'wdth' 118;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
   }
 
-  /* Hebt sich beim Überfahren leicht an — für alles Anklickbare. */
-  .panel-link {
-    @apply panel transition-[transform,box-shadow,border-color] duration-200;
+  /* Kennzeichnung: Monospace übernimmt hier bewusst Aufgaben außerhalb
+     von Code — Rubriken, Einheiten, Kürzel. Das gibt der Oberfläche
+     einen technischen Grundton, ohne ein einziges Icon. */
+  .eyebrow {
+    @apply font-mono text-[10.5px] font-medium uppercase leading-none tracking-[0.13em] text-faint;
   }
-  .panel-link:hover {
-    @apply border-lineStrong;
-    transform: translateY(-1px);
-    box-shadow:
-      0 1px 1px rgb(var(--shadow-color) / 0.05),
-      0 10px 26px -12px rgb(var(--shadow-color) / 0.24);
+
+  /* Rubrik mit durchlaufender Linie — das redaktionelle Grundmuster
+     dieser App. Ersetzt überall die Karten-Überschrift. */
+  .legend {
+    @apply flex items-center gap-3;
+  }
+  .legend::after {
+    content: '';
+    @apply h-px flex-1 bg-rule;
+  }
+
+  /* ============================= FLÄCHEN ============================= */
+
+  /* Ein „panel" ist ein Bogen Papier auf dem Untergrund: eine Haarlinie,
+     kein Schatten. Tiefe kommt aus dem Helligkeitsunterschied zwischen
+     Untergrund und Bogen. */
+  .panel {
+    @apply rounded-md border border-rule bg-surface;
   }
 
   .panel-quiet {
-    @apply rounded-xl border border-line bg-sunken;
+    @apply rounded-md border border-rule bg-raised;
   }
 
-  .eyebrow {
-    @apply text-[11px] font-semibold uppercase tracking-[0.1em] text-faint;
+  /* Anklickbar: die Linie zieht an und links wächst ein Ultramarinstrich
+     ein. Kein Anheben, kein größerer Schatten — Bewegung nach oben
+     erzählt „schwebt", und hier schwebt nichts. */
+  .panel-link {
+    @apply relative rounded-md border border-rule bg-surface
+           transition-[border-color,background-color] duration-200 ease-out;
+  }
+  .panel-link::before {
+    content: '';
+    @apply absolute inset-y-2 left-[-1px] w-[2px] scale-y-0 rounded-full bg-accent
+           transition-transform duration-200 ease-out;
+    transform-origin: center;
+  }
+  .panel-link:hover {
+    @apply border-ruleStrong bg-raised;
+  }
+  .panel-link:hover::before {
+    @apply scale-y-100;
   }
 
-  /* Display-Ziffern: für alles, was groß und wichtig ist. */
-  .numeral {
-    font-family: var(--font-display), Georgia, serif;
-    font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 96;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
-  }
+  /* ========================== SCHALTFLÄCHEN ========================== */
 
-  /* ----------------------------- Schaltflächen ----------------------------- */
   .btn {
-    @apply inline-flex select-none items-center justify-center gap-2 rounded-lg px-3.5 py-2
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-md px-3.5 py-[7px]
            text-[13.5px] font-medium leading-5
-           transition-[background-color,border-color,color,transform,box-shadow] duration-150
-           active:scale-[0.985] disabled:pointer-events-none disabled:opacity-45;
+           transition-[background-color,border-color,color,box-shadow] duration-150 ease-out
+           disabled:pointer-events-none disabled:opacity-40;
+    font-variation-settings: 'wdth' 100;
   }
+
   .btn-primary {
     @apply btn bg-accent text-accentInk;
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.14),
-      0 1px 2px rgb(var(--shadow-color) / 0.2);
   }
   .btn-primary:hover {
-    background: rgb(var(--accent) / 0.9);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.18),
-      0 3px 10px -3px rgb(var(--accent) / 0.5);
+    background: rgb(var(--accent) / 0.88);
   }
+  .btn-primary:active {
+    background: rgb(var(--accent) / 0.8);
+  }
+
   .btn-secondary {
-    @apply btn border border-lineStrong bg-surface text-ink hover:bg-sunken;
+    @apply btn border border-ruleStrong bg-surface text-ink hover:border-ink hover:bg-raised;
   }
+
   .btn-quiet {
-    @apply btn text-muted hover:bg-sunken hover:text-ink;
+    @apply btn text-muted hover:bg-raised hover:text-ink;
   }
+
   .btn-danger {
-    @apply btn border border-bad/35 text-bad hover:bg-bad/8;
+    @apply btn border border-neg/40 text-neg hover:bg-negSoft;
   }
+
   .btn-lg {
-    @apply px-5 py-2.5 text-[15px];
+    @apply px-5 py-[11px] text-[14.5px];
   }
   .btn-sm {
-    @apply px-2.5 py-1.5 text-[12.5px];
+    @apply gap-1.5 rounded px-2.5 py-1 text-[12.5px];
   }
 
-  /* -------------------------------- Marken -------------------------------- */
+  /* ============================= MARKEN ============================= */
+
+  /* Kürzel laufen in Monospace — sie sind Daten, kein Fließtext. */
   .tag {
-    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-sunken px-1.5 py-0.5
-           text-[11px] font-medium leading-[1.5] text-muted;
+    @apply inline-flex items-center gap-1.5 rounded-sm border border-rule bg-raised px-1.5 py-[3px]
+           font-mono text-[10.5px] font-medium uppercase leading-none tracking-[0.06em] text-muted;
   }
-  .tag-py { @apply border-py/30 bg-py/8 text-py; }
-  .tag-java { @apply border-java/30 bg-java/8 text-java; }
-  .tag-accent { @apply border-accent/30 bg-accent/8 text-accent; }
-  .tag-brass { @apply border-brass/35 bg-brass/10 text-brass; }
-  .tag-ok { @apply border-ok/30 bg-ok/8 text-ok; }
-  .tag-warn { @apply border-warn/30 bg-warn/8 text-warn; }
-  .tag-bad { @apply border-bad/30 bg-bad/8 text-bad; }
+  .tag-py {
+    @apply border-accent/28 bg-accent/8 text-accent;
+  }
+  .tag-java {
+    @apply border-oxide/28 bg-oxide/8 text-oxide;
+  }
+  .tag-accent {
+    @apply border-accent/28 bg-accent/8 text-accent;
+  }
+  .tag-ok {
+    @apply border-pos/28 bg-pos/8 text-pos;
+  }
+  .tag-warn {
+    @apply border-oxide/28 bg-oxide/8 text-oxide;
+  }
+  .tag-bad {
+    @apply border-neg/28 bg-neg/8 text-neg;
+  }
+  .tag-brass {
+    @apply border-accent/28 bg-accent/8 text-accent;
+  }
 
-  /* ------------------------------- Eingaben ------------------------------- */
+  /* ============================ EINGABEN ============================ */
+
   .field {
-    @apply w-full rounded-lg border border-lineStrong bg-surface px-3 py-2 text-[14px] text-ink
-           placeholder:text-faint transition-colors
-           focus:border-accent focus:outline-none focus:ring-4 focus:ring-accent/12;
+    @apply w-full rounded-md border border-ruleStrong bg-surface px-3 py-2 text-[14px] text-ink
+           transition-[border-color,box-shadow] duration-150
+           placeholder:text-faint
+           focus:border-accent focus:outline-none focus:ring-[3px] focus:ring-accent/18;
   }
   .field-mono {
-    @apply field font-mono text-[13px];
+    @apply field font-mono text-[13px] leading-[1.6];
   }
   .label {
     @apply mb-1.5 block text-[12.5px] font-medium text-muted;
   }
 
-  /* --------------------------------- Text --------------------------------- */
+  /* ============================= FLIESSTEXT ============================= */
+
   .prose-ofp {
-    @apply text-[15px] leading-[1.68] text-ink;
+    @apply text-[15.5px] leading-[1.72] text-ink;
   }
-  .prose-ofp > *:first-child { @apply mt-0; }
-  .prose-ofp > *:last-child { @apply mb-0; }
-  .prose-ofp h1 { @apply mb-3 mt-8 text-[24px]; }
-  .prose-ofp h2 { @apply mb-2 mt-8 text-[19px]; }
-  .prose-ofp h3 { @apply mb-1.5 mt-6 text-[16px]; }
-  .prose-ofp p { @apply my-3; }
-  .prose-ofp ul { @apply my-3 list-disc space-y-1.5 pl-5 marker:text-brass; }
-  .prose-ofp ol { @apply my-3 list-decimal space-y-1.5 pl-5 marker:text-faint; }
-  .prose-ofp li > ul, .prose-ofp li > ol { @apply my-1; }
-  .prose-ofp a { @apply text-accent underline decoration-accent/35 underline-offset-2 hover:decoration-accent; }
-  .prose-ofp strong { @apply font-semibold; }
+  .prose-ofp > *:first-child {
+    @apply mt-0;
+  }
+  .prose-ofp > *:last-child {
+    @apply mb-0;
+  }
+  .prose-ofp h1 {
+    @apply mb-3 mt-10 text-[25px];
+  }
+  /* Zwischenüberschriften bekommen eine Oberlinie: sie trennen den Text
+     sichtbar in Abschnitte, ohne dass eine Karte nötig wäre. */
+  .prose-ofp h2 {
+    @apply mb-3 mt-10 border-t border-rule pt-5 text-[19px];
+  }
+  .prose-ofp h3 {
+    @apply mb-2 mt-7 text-[16px];
+  }
+  /* Sprungmarken dürfen nicht unter der klebenden Kopfzeile landen. */
+  .prose-ofp h2[id],
+  .prose-ofp h3[id] {
+    scroll-margin-top: 84px;
+  }
+  .prose-ofp p {
+    @apply my-3.5;
+  }
+  .prose-ofp ul {
+    @apply my-3.5 space-y-2 pl-5;
+    list-style: none;
+  }
+  .prose-ofp ul > li {
+    @apply relative;
+  }
+  .prose-ofp ul > li::before {
+    content: '';
+    @apply absolute -left-[14px] top-[0.62em] h-[5px] w-[5px] rounded-[1px] bg-accent/70;
+  }
+  .prose-ofp ol {
+    @apply my-3.5 list-decimal space-y-2 pl-5;
+  }
+  .prose-ofp ol > li::marker {
+    @apply font-mono text-[12px] text-faint;
+  }
+  .prose-ofp li > ul,
+  .prose-ofp li > ol {
+    @apply my-1.5;
+  }
+  .prose-ofp a {
+    @apply text-accent underline decoration-accent/30 underline-offset-[3px] transition-colors hover:decoration-accent;
+  }
+  .prose-ofp strong {
+    @apply font-semibold;
+  }
   .prose-ofp code {
-    @apply rounded border border-line bg-sunken px-1 py-px font-mono text-[0.86em];
+    @apply rounded-sm border border-rule bg-raised px-[5px] py-[1px] font-mono text-[0.85em];
   }
   .prose-ofp pre {
-    @apply my-4 overflow-x-auto rounded-lg border border-line bg-sunken p-3.5 font-mono text-[13px] leading-[1.62];
+    @apply my-5 overflow-x-auto rounded-md border border-rule bg-raised p-4 font-mono text-[13px] leading-[1.65];
   }
-  .prose-ofp pre code { @apply border-0 bg-transparent p-0 text-[13px]; }
+  .prose-ofp pre code {
+    @apply border-0 bg-transparent p-0 text-[13px];
+  }
   .prose-ofp blockquote {
-    @apply my-4 border-l-2 border-brass/50 py-1 pl-4 text-muted;
+    @apply my-5 border-l-2 border-accent/45 bg-accent/4 py-2.5 pl-4 pr-3 text-muted;
   }
-  .prose-ofp table { @apply my-4 w-full border-collapse text-[14px]; }
-  .prose-ofp th { @apply border-b border-lineStrong px-2.5 py-1.5 text-left font-semibold; }
-  .prose-ofp td { @apply border-b border-line px-2.5 py-1.5 align-top; }
-  .prose-ofp hr { @apply my-8 border-line; }
+  .prose-ofp table {
+    @apply my-5 w-full border-collapse text-[14px];
+  }
+  .prose-ofp th {
+    @apply border-b border-ruleStrong px-2.5 py-2 text-left align-bottom font-semibold;
+    font-variation-settings: 'wdth' 104;
+  }
+  .prose-ofp td {
+    @apply border-b border-rule px-2.5 py-2 align-top;
+  }
+  .prose-ofp hr {
+    @apply my-10 border-rule;
+  }
+
+  /* ============================== BALKEN ============================== */
 
   .meter {
-    @apply relative h-1.5 w-full overflow-hidden rounded-full bg-line;
+    @apply relative h-[5px] w-full overflow-hidden rounded-full bg-sink;
   }
   .meter > span {
     @apply absolute inset-y-0 left-0 rounded-full;
@@ -279,81 +411,162 @@
 }
 
 @layer utilities {
-  .tabnum { font-variant-numeric: tabular-nums; }
-  .balance { text-wrap: balance; }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { scrollbar-width: none; }
-  .font-display { font-family: var(--font-display), Georgia, serif; }
+  .tabnum {
+    font-variant-numeric: tabular-nums;
+  }
+  .balance {
+    text-wrap: balance;
+  }
+  .pretty {
+    text-wrap: pretty;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  /* Breitenachse als Werkzeug — für Stellen, an denen die Klasse zählt,
+     nicht das Element. */
+  .wide-100 {
+    font-variation-settings: 'wdth' 100;
+  }
+  .wide-110 {
+    font-variation-settings: 'wdth' 110;
+  }
+  .wide-118 {
+    font-variation-settings: 'wdth' 118;
+  }
+  .font-display {
+    font-variation-settings: 'wdth' 116;
+    letter-spacing: -0.024em;
+  }
+
+  /* Millimeterpapier — nur dort eingesetzt, wo eine Fläche als
+     „Planungsraum" gelesen werden soll (Kopf des Lernplans). */
+  .blueprint {
+    background-image:
+      linear-gradient(to right, rgb(var(--ink) / 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--ink) / 0.035) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
 }
 
-/* ------------------------------ Bewegung ------------------------------ */
+/* ============================== BEWEGUNG ==============================
+ *
+ *  Regel: Eine Animation darf bleiben, wenn ohne sie etwas an Klarheit
+ *  fehlt. „Alles fährt beim Scrollen von unten ein" fehlt nichts — das
+ *  ist Dekoration und nach drei Sekunden ermüdend. Was bleibt:
+ *  Ergebnisrückmeldung, Füllstände, Zustandswechsel.
+ * ==================================================================== */
 
-/* Richtig oder falsch — der Rahmen reagiert einmal kurz, dann ist Ruhe. */
-@keyframes pulse-ok {
-  0% { box-shadow: 0 0 0 0 rgb(var(--ok) / 0.35); }
-  100% { box-shadow: 0 0 0 14px rgb(var(--ok) / 0); }
+@keyframes ofp-ring-ok {
+  0% {
+    box-shadow: 0 0 0 0 rgb(var(--pos) / 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 12px rgb(var(--pos) / 0);
+  }
 }
-@keyframes pulse-bad {
-  0% { box-shadow: 0 0 0 0 rgb(var(--bad) / 0.35); }
-  100% { box-shadow: 0 0 0 14px rgb(var(--bad) / 0); }
+@keyframes ofp-ring-bad {
+  0% {
+    box-shadow: 0 0 0 0 rgb(var(--neg) / 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 12px rgb(var(--neg) / 0);
+  }
 }
-.pulse-ok { animation: pulse-ok 700ms ease-out; }
-.pulse-bad { animation: pulse-bad 700ms ease-out; }
+.pulse-ok {
+  animation: ofp-ring-ok 640ms ease-out;
+}
+.pulse-bad {
+  animation: ofp-ring-bad 640ms ease-out;
+}
 
-@keyframes nudge {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-5px); }
-  45% { transform: translateX(4px); }
-  70% { transform: translateX(-2px); }
+/* Falsche Antwort: die Karte wird einmal angestoßen. Kurz, gedämpft,
+   nicht als Strafe — als Quittung. */
+@keyframes ofp-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  22% {
+    transform: translateX(-4px);
+  }
+  48% {
+    transform: translateX(3px);
+  }
+  74% {
+    transform: translateX(-1.5px);
+  }
 }
-.nudge { animation: nudge 340ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+.nudge {
+  animation: ofp-nudge 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
 
-/* Häkchen zeichnet sich, statt zu erscheinen. */
-@keyframes draw {
-  to { stroke-dashoffset: 0; }
+/* Das Häkchen zeichnet sich, statt zu erscheinen — man sieht, dass
+   etwas abgeschlossen wurde, nicht nur, dass es abgeschlossen ist. */
+@keyframes ofp-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 .draw {
   stroke-dasharray: 32;
   stroke-dashoffset: 32;
-  animation: draw 420ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation: ofp-draw 400ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
-/* Schimmer für Ladezustände — dezent, nicht blinkend. */
-@keyframes shimmer {
-  100% { transform: translateX(100%); }
+/* Ladezustand: ein wandernder Lichtstreifen über der Platzhalterfläche.
+   Kein blinkender Kreisel. */
+@keyframes ofp-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 .shimmer {
-  @apply relative overflow-hidden bg-sunken;
+  @apply relative overflow-hidden bg-raised;
 }
 .shimmer::after {
   content: '';
   @apply absolute inset-0 -translate-x-full;
-  background: linear-gradient(90deg, transparent, rgb(var(--ink) / 0.06), transparent);
-  animation: shimmer 1.6s infinite;
+  background: linear-gradient(90deg, transparent, rgb(var(--ink) / 0.055), transparent);
+  animation: ofp-shimmer 1.5s infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* ---------------------------- CodeMirror ---------------------------- */
+/* ============================= CODEMIRROR ============================= */
+
 .cm-editor {
   font-size: 13px;
   background: rgb(var(--surface));
 }
-.cm-editor.cm-focused { outline: none; }
+.cm-editor.cm-focused {
+  outline: none;
+}
 .cm-gutters {
-  background: rgb(var(--sunken)) !important;
-  border-right: 1px solid rgb(var(--line)) !important;
+  background: rgb(var(--raised)) !important;
+  border-right: 1px solid rgb(var(--rule)) !important;
   color: rgb(var(--faint)) !important;
 }
-.cm-activeLine { background: rgb(var(--accent) / 0.05) !important; }
-.cm-activeLineGutter { background: rgb(var(--accent) / 0.08) !important; }
+.cm-activeLine {
+  background: rgb(var(--accent) / 0.05) !important;
+}
+.cm-activeLineGutter {
+  background: rgb(var(--accent) / 0.09) !important;
+  color: rgb(var(--accent)) !important;
+}
 .cm-selectionBackground,
 .cm-editor .cm-selectionBackground {
-  background: rgb(var(--accent) / 0.18) !important;
+  background: rgb(var(--accent) / 0.2) !important;
 }

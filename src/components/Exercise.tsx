@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Exercise as Ex } from '@/lib/types'
+import type { Confidence, Exercise as Ex } from '@/lib/types'
 import { combineCodeResult, gradeAnswer, gradeCodeStatic, normOutput, type GradeResult } from '@/lib/grade'
 import { usePython } from '@/lib/usePython'
 import { useJava } from '@/lib/useJava'
@@ -13,32 +13,69 @@ import { Markdown } from './Markdown'
 import { Mermaid } from './Mermaid'
 import { AnimatedNumber, Disclosure, EASE, Spinner } from './ui'
 import { OutputDiff } from './viz'
+import { SourceList } from './Sources'
+import { splitLead } from '@/lib/text'
 
 const DIFF = ['', 'Aufwärmen', 'Leicht', 'Klausurniveau', 'Schwer', 'Härtetest']
+
+/* Drei Stufen reichen. Bei fünf Stufen wählen Lernende fast nur noch
+   die Mitte, und die Kalibrierung verliert ihre Aussagekraft. */
+const CONFIDENCE = [
+  { value: 0, label: 'Rate ich', hint: 'Ich habe keine belastbare Idee' },
+  { value: 1, label: 'Denke schon', hint: 'Bin mir ziemlich sicher, aber nicht ganz' },
+  { value: 2, label: 'Sicher', hint: 'Das kann ich' },
+] as const
 
 export interface ExerciseResult {
   score: number
   ms: number
   usedHints: number
   revealed: boolean
+  /** Selbsteinschätzung vor dem Prüfen */
+  confidence?: Confidence
 }
+
+/**
+ * Wie viel Hilfe die Aufgabe von sich aus anbietet.
+ *
+ * Für Anfänger ist das Studieren einer fertigen Lösung nachweislich
+ * effizienter als freies Herumprobieren — freies Problemlösen erzeugt
+ * bei fehlendem Vorwissen vor allem Belastung, kein Wissen. Mit
+ * wachsendem Können kehrt sich das um, deshalb wird die Hilfe
+ * schrittweise entzogen (guidance fading):
+ *
+ *   beispiel  — Lösung und Erklärung stehen VOR dem Versuch
+ *   gefuehrt  — der erste Tipp ist schon aufgeklappt
+ *   frei      — nichts, wie in der Klausur
+ */
+export type Support = 'beispiel' | 'gefuehrt' | 'frei'
 
 export function ExerciseView({
   exercise,
   onDone,
+  onNext,
   onSkip,
   position,
   total,
+  support = 'frei',
   examMode = false,
   onAnswerChange,
   flagged,
   onToggleFlag,
 }: {
   exercise: Ex
+  /** Wird EINMAL aufgerufen, wenn die Antwort endgültig bewertet ist. Bucht nur — blättert nicht weiter. */
   onDone: (r: ExerciseResult) => void
+  /**
+   * Weiterblättern. Bewusst getrennt von `onDone`: Wer nach dem Prüfen
+   * sofort die nächste Aufgabe sieht, liest keine einzige Erklärung —
+   * und genau die Erklärung ist der Teil, an dem gelernt wird.
+   */
+  onNext?: () => void
   onSkip?: () => void
   position?: number
   total?: number
+  support?: Support
   /** Klausurmodus: keine Lösung, keine Tipps, keine Sofortbewertung */
   examMode?: boolean
   onAnswerChange?: (answer: unknown) => void
@@ -53,6 +90,12 @@ export function ExerciseView({
   const [result, setResult] = useState<GradeResult | null>(null)
   const [hints, setHints] = useState(0)
   const [revealed, setRevealed] = useState(false)
+  /* Selbsteinschätzung VOR dem Prüfen. Sie kostet zwei Sekunden und ist
+     der Hebel für zwei Dinge: die Kalibrierung auf der Fortschrittsseite
+     und die Hervorhebung hochsicherer Fehler (Hypercorrection). */
+  const [confidence, setConfidence] = useState<Confidence | null>(null)
+  /** true, sobald die Antwort gebucht ist — dann erscheint «Weiter». */
+  const [recorded, setRecorded] = useState(false)
   const [busy, setBusy] = useState<'check' | 'run' | null>(null)
   const [output, setOutput] = useState<{ stdout: string; stderr?: string | null } | null>(null)
   /** kurzes visuelles Echo nach dem Prüfen */
@@ -69,8 +112,10 @@ export function ExerciseView({
   useEffect(() => {
     setAnswer(initialAnswer(exercise))
     setResult(null)
-    setHints(0)
+    setHints(support === 'gefuehrt' && exercise.hints?.length ? 1 : 0)
     setRevealed(false)
+    setConfidence(null)
+    setRecorded(false)
     setOutput(null)
     setEcho(null)
     started.current = Date.now()
@@ -95,9 +140,19 @@ export function ExerciseView({
     (score: number) => {
       if (finished.current) return
       finished.current = true
-      onDone({ score, ms: Date.now() - started.current, usedHints: hints, revealed })
+      setRecorded(true)
+      onDone({
+        score,
+        ms: Date.now() - started.current,
+        /* Geführte Lösungen zählen wie genutzte Tipps: Wer die Lösung
+           vorher gesehen hat, hat sie nicht abgerufen — die Aufgabe muss
+           früher wiederkommen. */
+        usedHints: hints + (support === 'beispiel' ? 2 : 0),
+        revealed,
+        confidence: confidence ?? undefined,
+      })
     },
-    [hints, onDone, revealed],
+    [hints, onDone, revealed, confidence, support],
   )
 
   /* ------------------------------ Prüfen ------------------------------ */
@@ -192,11 +247,33 @@ export function ExerciseView({
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
         e.preventDefault()
         if (!result) void check()
+        return
+      }
+      /* Tasten 1–3 setzen die Sicherheit — aber nur, wenn gerade nicht
+         in ein Eingabefeld getippt wird. */
+      const el = document.activeElement as HTMLElement | null
+      const typing =
+        !!el &&
+        (el.tagName === 'INPUT' ||
+          el.tagName === 'TEXTAREA' ||
+          el.isContentEditable ||
+          !!el.closest('.cm-editor'))
+      if (typing || e.metaKey || e.ctrlKey || e.altKey) return
+      if (!result && !examMode && ['1', '2', '3'].includes(e.key)) {
+        e.preventDefault()
+        setConfidence((Number(e.key) - 1) as Confidence)
+        return
+      }
+      /* Weiterblättern per Eingabetaste, sobald gebucht ist — damit eine
+         Runde flüssig durchläuft, ohne zur Maus zu greifen. */
+      if (recorded && onNext && !examMode && e.key === 'Enter') {
+        e.preventDefault()
+        onNext()
       }
     }
     window.addEventListener('keydown', h)
     return () => window.removeEventListener('keydown', h)
-  }, [check, result])
+  }, [check, result, examMode, recorded, onNext])
 
   const solved = result?.correct === true
   const loading = busy === 'check' && python.status === 'loading'
@@ -214,48 +291,76 @@ export function ExerciseView({
 
   return (
     <article>
-      {/* Kopfzeile */}
-      <div className="mb-3 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[12.5px] text-muted">
+      {/* Gelöstes Beispiel: Lösung und Erklärung stehen VOR dem Versuch.
+          Bei einem neuen Thema bringt das mehr als Herumprobieren — und
+          es kostet weniger Zeit. */}
+      {support === 'beispiel' && !examMode && (
+        <div className="mb-4 rounded-md border-l-2 border-l-accent border-y border-r border-rule bg-surface">
+          <div className="px-5 py-4">
+            <div className="eyebrow !text-accent">Gelöstes Beispiel · neues Thema</div>
+            <p className="pretty mt-2 max-w-prose text-[13.5px] leading-relaxed text-ink">
+              Diese Aufgabe kommt mit fertiger Lösung. Bei einem Thema, das du zum ersten Mal siehst, bringt das
+              Durchdenken einer richtigen Lösung mehr als das Suchen nach einer eigenen. Geh sie Schritt für Schritt
+              durch, bis du jede Zeile begründen kannst — und schreib sie danach unten selbst hin.
+            </p>
+            {topic && (
+              <a
+                href={`/themen/${exercise.topicId}`}
+                className="mt-2.5 inline-block text-[13px] text-accent hover:underline"
+              >
+                Theorie zu {topic.title} lesen →
+              </a>
+            )}
+          </div>
+          <div className="border-t border-rule px-5 py-4">
+            <Solution exercise={exercise} open />
+          </div>
+        </div>
+      )}
+
+      {/* Kopfzeile — bewusst karg: Sprache, Thema, Schwierigkeit, Punkte.
+          Alles Weitere („Klausurformat", Typbezeichnung) stand hier mal
+          und hat nur vom Aufgabentext abgelenkt. */}
+      <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
         <span className={`tag ${exercise.lang === 'python' ? 'tag-py' : 'tag-java'}`}>
           {exercise.lang === 'python' ? 'Python' : 'Java'}
         </span>
-        <span>{topic?.title ?? exercise.topicId}</span>
-        <span className="text-faint">·</span>
-        <span title={`Schwierigkeit ${exercise.difficulty} von 5`} className="flex items-center gap-1.5">
-          <span className="flex gap-[3px]" aria-hidden>
+        <span className="truncate text-[12px] text-faint">{topic?.title ?? exercise.topicId}</span>
+
+        <div className="ml-auto flex items-center gap-3">
+          <span
+            title={`Schwierigkeit: ${DIFF[exercise.difficulty]} (${exercise.difficulty}/5)`}
+            className="flex gap-[3px]"
+            aria-label={`Schwierigkeit ${exercise.difficulty} von 5`}
+          >
             {[1, 2, 3, 4, 5].map((i) => (
               <span
                 key={i}
-                className={`h-1 w-1 rounded-full ${i <= exercise.difficulty ? 'bg-brass' : 'bg-line'}`}
+                className={`h-[5px] w-[5px] rounded-[1px] ${i <= exercise.difficulty ? 'bg-accent' : 'bg-sink'}`}
               />
             ))}
           </span>
-          {DIFF[exercise.difficulty]}
-        </span>
-        <span className="text-faint">·</span>
-        <span className="tabnum">{exercise.points} P</span>
-        {exercise.examStyle && <span className="tag tag-brass">Klausurformat</span>}
-
-        <div className="ml-auto flex items-center gap-2.5">
+          <span className="font-mono text-[11px] tabular-nums text-faint">{exercise.points} P</span>
           {!examMode && typeof position === 'number' && typeof total === 'number' && (
-            <span className="tabnum text-faint">
-              {position + 1} / {total}
+            <span className="font-mono text-[11px] tabular-nums text-faint">
+              {position + 1}/{total}
             </span>
           )}
           {onToggleFlag && (
             <button
               onClick={onToggleFlag}
-              className={`text-[12.5px] transition-colors ${flagged ? 'text-brass' : 'text-faint hover:text-ink'}`}
+              className={`text-[12.5px] transition-colors ${flagged ? 'text-accent' : 'text-faint hover:text-ink'}`}
               title="Zum Wiederholen markieren"
+              aria-pressed={flagged}
             >
-              {flagged ? '★ markiert' : '☆ merken'}
+              {flagged ? '★' : '☆'}
             </button>
           )}
         </div>
       </div>
 
       <div className={`panel overflow-hidden ${echo === 'ok' ? 'pulse-ok' : echo === 'bad' ? 'pulse-bad' : ''}`}>
-        <header className="border-b border-line px-5 py-5">
+        <header className="border-b border-rule px-5 py-5">
           <h2 className="balance text-[19px] leading-snug">{exercise.title}</h2>
           <div className="mt-2">
             <Markdown>{exercise.prompt}</Markdown>
@@ -263,7 +368,7 @@ export function ExerciseView({
           {exercise.constraints?.length ? (
             <ul className="mt-3 space-y-1">
               {exercise.constraints.map((c, i) => (
-                <li key={i} className="flex gap-2 text-[13px] text-bad">
+                <li key={i} className="flex gap-2 text-[13px] text-neg">
                   <span aria-hidden>▸</span>
                   <span>{c}</span>
                 </li>
@@ -302,7 +407,36 @@ export function ExerciseView({
           </AnimatePresence>
         </motion.div>
 
-        <footer className="flex flex-wrap items-center gap-2 border-t border-line bg-sunken/70 px-5 py-3.5">
+        {/* Sicherheitsabfrage — bewusst VOR der Prüfung und in einer
+            eigenen Zeile, damit sie nicht neben dem Prüfknopf untergeht. */}
+        {!examMode && !result && (
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-rule px-5 py-2.5">
+            <span className="eyebrow">Wie sicher bist du?</span>
+            <div className="flex gap-1.5" role="radiogroup" aria-label="Sicherheitseinschätzung">
+              {CONFIDENCE.map((c) => (
+                <button
+                  key={c.value}
+                  role="radio"
+                  aria-checked={confidence === c.value}
+                  onClick={() => setConfidence(confidence === c.value ? null : (c.value as Confidence))}
+                  title={`${c.hint} (Taste ${c.value + 1})`}
+                  className={`rounded-md border px-2.5 py-1 text-[12.5px] transition-colors ${
+                    confidence === c.value
+                      ? 'border-accent bg-accent/10 text-accent'
+                      : 'border-rule text-muted hover:border-ruleStrong hover:text-ink'
+                  }`}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
+            <span className="text-[11.5px] text-faint">
+              freiwillig · macht Selbstbild und Können vergleichbar
+            </span>
+          </div>
+        )}
+
+        <footer className="flex flex-wrap items-center gap-2 border-t border-rule bg-raised/70 px-5 py-3.5">
           {examMode && (
             <span className="text-[12.5px] text-faint">
               In der Klausursimulation gibt es keine Rückmeldung — bewertet wird bei der Abgabe.
@@ -358,21 +492,26 @@ export function ExerciseView({
 
           {result && (
             <div className="ml-auto flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => {
-                  setResult(null)
-                  setOutput(null)
-                  finished.current = false
-                  started.current = Date.now()
-                  if (!examMode) setAnswer(initialAnswer(exercise))
-                }}
-                className="btn-quiet"
-              >
-                Nochmal versuchen
-              </button>
-              {!result.needsSelfCheck && !examMode && (
-                <button onClick={() => finish(result.score)} className="btn-primary">
+              {!recorded && (
+                <button
+                  onClick={() => {
+                    setResult(null)
+                    setOutput(null)
+                    finished.current = false
+                    started.current = Date.now()
+                    if (!examMode) setAnswer(initialAnswer(exercise))
+                  }}
+                  className="btn-quiet"
+                >
+                  Nochmal versuchen
+                </button>
+              )}
+              {recorded && onNext && !examMode && (
+                <button onClick={onNext} className="btn-primary" autoFocus>
                   Weiter
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M2 7h9M7.5 3.5 11 7l-3.5 3.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </button>
               )}
             </div>
@@ -395,9 +534,9 @@ export function ExerciseView({
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, ease: EASE }}
-                className="rounded-lg border border-brass/30 bg-brassWash px-4 py-3"
+                className="rounded-lg border border-accent/30 bg-accentSoft px-4 py-3"
               >
-                <div className="eyebrow !text-brass">Tipp {i + 1}</div>
+                <div className="eyebrow !text-accent">Tipp {i + 1}</div>
                 <Markdown className="mt-1 !text-[14px]">{h}</Markdown>
               </motion.li>
             ))}
@@ -421,6 +560,7 @@ export function ExerciseView({
               revealed={revealed}
               onSelfGrade={finish}
               examMode={examMode}
+              confidence={confidence}
             />
             {diff && <OutputDiff expected={diff.expected} got={diff.got} />}
             {!examMode && <Solution exercise={exercise} open={!solved || revealed} />}
@@ -439,29 +579,61 @@ function Feedback({
   revealed,
   onSelfGrade,
   examMode,
+  confidence,
 }: {
   exercise: Ex
   result: GradeResult
   revealed: boolean
   onSelfGrade: (score: number) => void
   examMode: boolean
+  confidence: Confidence | null
 }) {
   const [picked, setPicked] = useState<number | null>(null)
   const solved = result.correct
+  /* Statusfarbe nur als Strich am Rand — eine vollflächig eingefärbte
+     Karte schreit, und nach der zwanzigsten Aufgabe ermüdet das. */
   const tone = solved
-    ? 'border-ok/40 bg-okWash'
+    ? 'border-l-pos'
     : result.needsSelfCheck
-      ? 'border-line bg-surface'
+      ? 'border-l-accent'
       : result.nearMiss
-        ? 'border-warn/40 bg-warnWash'
-        : 'border-bad/40 bg-badWash'
+        ? 'border-l-oxide'
+        : 'border-l-neg'
+
+  /* Hypercorrection: Ein Fehler, bei dem man sich SICHER war, wird nach
+     einer Rückmeldung besonders zuverlässig korrigiert — vorausgesetzt,
+     der Widerspruch wird bemerkt. Genau dafür ist dieser Kasten da. */
+  const overconfident = !solved && !result.needsSelfCheck && confidence === 2
+  const underconfident = solved && confidence === 0
 
   return (
-    <div className={`rounded-xl border px-5 py-4 ${tone}`}>
+    <div className={`space-y-3`}>
+      {overconfident && (
+        <div className="rounded-md border-l-2 border-l-neg border-y border-r border-rule bg-surface px-5 py-4">
+          <div className="eyebrow !text-neg">Achtung — hier lagst du sicher daneben</div>
+          <p className="pretty mt-2 max-w-prose text-[13.5px] leading-relaxed text-ink">
+            Du warst dir sicher und es war trotzdem falsch. Das ist die wertvollste Stelle im ganzen Lernen: Falsches
+            Wissen, das sich richtig anfühlt, hält sich bis in die Klausur — es sei denn, man sieht den Widerspruch
+            einmal deutlich. Lies die Erklärung unten wirklich, nicht überfliegend. Diese Aufgabe kommt am Ende der
+            Runde noch einmal.
+          </p>
+        </div>
+      )}
+
+      {underconfident && (
+        <div className="rounded-md border border-rule bg-surface px-5 py-3">
+          <p className="text-[13.5px] text-muted">
+            <span className="font-medium text-pos">Richtig — und du hattest geraten.</span> Das heißt: Du kannst mehr,
+            als du dir zutraust. Bei der nächsten Aufgabe ruhig eine Stufe höher einschätzen.
+          </p>
+        </div>
+      )}
+
+      <div className={`rounded-md border border-rule border-l-2 bg-surface px-5 py-4 ${tone}`}>
       <div className="flex items-start gap-3">
         <span
-          className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full ${
-            solved ? 'bg-ok/15 text-ok' : result.needsSelfCheck ? 'bg-accent/12 text-accent' : 'bg-bad/15 text-bad'
+          className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center ${
+            solved ? 'text-pos' : result.needsSelfCheck ? 'text-accent' : 'text-neg'
           }`}
           aria-hidden
         >
@@ -485,7 +657,7 @@ function Feedback({
           <div className="flex flex-wrap items-baseline gap-x-3">
             <span
               className={`text-[16px] font-semibold ${
-                solved ? 'text-ok' : result.needsSelfCheck ? 'text-ink' : result.nearMiss ? 'text-warn' : 'text-bad'
+                solved ? 'text-pos' : result.needsSelfCheck ? 'text-ink' : result.nearMiss ? 'text-oxide' : 'text-neg'
               }`}
             >
               {solved
@@ -513,11 +685,9 @@ function Feedback({
                   initial={{ opacity: 0, x: -6 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.28, ease: EASE, delay: i * 0.05 }}
-                  className={`flex gap-2.5 rounded-lg border px-3 py-2 text-[13px] ${
-                    p.correct ? 'border-ok/25 bg-surface' : 'border-line bg-surface'
-                  }`}
+                  className="flex gap-2.5 border-b border-rule/70 py-2 text-[13px] last:border-b-0"
                 >
-                  <span className={`shrink-0 font-semibold ${p.correct ? 'text-ok' : 'text-bad'}`} aria-hidden>
+                  <span className={`shrink-0 font-semibold ${p.correct ? 'text-pos' : 'text-neg'}`} aria-hidden>
                     {p.correct ? '✓' : '✗'}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -527,12 +697,12 @@ function Feedback({
                         {p.got ? (
                           <div>
                             <span className="text-faint">deine Antwort: </span>
-                            <span className="text-bad">{p.got}</span>
+                            <span className="text-neg">{p.got}</span>
                           </div>
                         ) : null}
                         <div>
                           <span className="text-faint">erwartet: </span>
-                          <span className="text-ok">{p.expected}</span>
+                          <span className="text-pos">{p.expected}</span>
                         </div>
                       </div>
                     )}
@@ -544,7 +714,11 @@ function Feedback({
 
           {result.needsSelfCheck && !examMode && (
             <div className="mt-4">
-              <div className="eyebrow">Wie sicher konntest du das?</div>
+              <div className="eyebrow">
+                {confidence !== null
+                  ? `Vorher: „${CONFIDENCE[confidence].label}“ — und, hat es gestimmt?`
+                  : 'Wie sicher konntest du das?'}
+              </div>
               <div className="mt-2 flex flex-wrap gap-2">
                 {[
                   { label: 'Gar nicht', score: 0 },
@@ -573,37 +747,83 @@ function Feedback({
           )}
         </div>
       </div>
+      </div>
+
+      {/* Stolperfallen sofort bei einem Fehler zeigen, nicht erst
+          zusammengeklappt in der Musterlösung — an dieser Stelle ist die
+          Aufmerksamkeit am höchsten. */}
+      {!solved && !result.needsSelfCheck && exercise.pitfalls?.length ? (
+        <div className="rounded-md border border-rule bg-surface px-5 py-4">
+          <div className="eyebrow">Woran es meistens liegt</div>
+          <ul className="mt-2 space-y-1.5">
+            {exercise.pitfalls.slice(0, 3).map((p, i) => (
+              <li key={i} className="flex gap-2.5 text-[13.5px] leading-relaxed">
+                <span className="mt-[8px] h-[5px] w-[5px] shrink-0 rounded-[1px] bg-oxide" aria-hidden />
+                <Markdown className="!text-[13.5px]">{p}</Markdown>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   )
 }
 
+/**
+ * Musterlösung und Erklärung — in der Reihenfolge, in der man sie
+ * braucht:
+ *
+ *   1. MERKSATZ — die ein, zwei Sätze, die man mitnehmen soll. Groß,
+ *      zuerst, unübersehbar. Niemand liest nach jeder Aufgabe einen
+ *      Aufsatz; diesen einen Satz liest jeder.
+ *   2. Die Lösung selbst (Code, richtige Kreuze, Korrekturen).
+ *   3. Die ausführliche Begründung — vorhanden, aber einen Klick
+ *      entfernt statt als Textwand dazwischen.
+ *   4. Stolperfallen und die Fundstelle in den Vorlesungsfolien.
+ */
 export function Solution({ exercise, open }: { exercise: Ex; open: boolean }) {
+  const { lead, rest } = splitLead(exercise.explanation ?? '')
+
   return (
     <Disclosure summary="Musterlösung und Erklärung" defaultOpen={open} key={exercise.id + String(open)}>
-      <div className="space-y-4">
+      <div className="space-y-5">
+        {lead && (
+          <div className="border-l-2 border-accent pl-4">
+            <div className="eyebrow !text-accent">Merksatz</div>
+            <Markdown className="mt-1.5 !text-[15.5px] !leading-[1.65] [&_p]:!my-0 [&_p]:font-medium">
+              {lead}
+            </Markdown>
+          </div>
+        )}
+
         {exercise.type === 'mc' || exercise.type === 'multi-mc' ? (
-          <ul className="space-y-1.5">
+          <ul className="space-y-px overflow-hidden rounded-md border border-rule">
             {exercise.choices?.map((c) => (
-              <li key={c.id} className={`rounded-lg border px-3 py-2 text-[13.5px] ${c.correct ? 'border-ok/35 bg-okWash' : 'border-line'}`}>
-                <span className={c.correct ? 'font-medium text-ok' : 'text-muted'}>
-                  {c.correct ? '✓ ' : '✗ '}
-                  {c.text}
-                </span>
-                {c.why && <div className="mt-0.5 text-[13px] text-muted">{c.why}</div>}
+              <li
+                key={c.id}
+                className={`border-b border-rule px-3.5 py-2.5 text-[13.5px] last:border-b-0 ${
+                  c.correct ? 'border-l-2 border-l-pos bg-pos/4' : 'border-l-2 border-l-transparent'
+                }`}
+              >
+                <span className={c.correct ? 'font-medium' : 'text-muted'}>{c.text}</span>
+                {c.why && <div className="mt-0.5 text-[12.5px] leading-relaxed text-muted">{c.why}</div>}
               </li>
             ))}
           </ul>
         ) : exercise.type === 'find-errors' && exercise.errors?.length ? (
           <ul className="space-y-2">
             {exercise.errors.map((e, i) => (
-              <li key={i} className="rounded-lg border border-line px-3.5 py-2.5">
-                <div className="eyebrow !text-bad">
+              <li key={i} className="rounded-md border border-rule px-3.5 py-2.5">
+                <div className="eyebrow">
                   Fehler {i + 1}
-                  {e.line ? ` — Zeile ${e.line}` : ''}
+                  {e.line ? ` · Zeile ${e.line}` : ''}
                 </div>
-                <div className="mt-1 font-mono text-[13px] text-bad line-through">{e.wrong}</div>
-                <div className="font-mono text-[13px] text-ok">{e.fix}</div>
-                <p className="mt-1 text-[13px] text-muted">{e.why}</p>
+                <div className="mt-1.5 font-mono text-[13px]">
+                  <span className="text-neg line-through decoration-neg/50">{e.wrong}</span>
+                  <span className="mx-2 text-faint" aria-hidden>→</span>
+                  <span className="text-pos">{e.fix}</span>
+                </div>
+                <p className="mt-1 text-[12.5px] leading-relaxed text-muted">{e.why}</p>
               </li>
             ))}
           </ul>
@@ -617,19 +837,21 @@ export function Solution({ exercise, open }: { exercise: Ex; open: boolean }) {
           <CodeBlock code={exercise.expectedOutput} language="text" caption="Erwartete Ausgabe" showLineNumbers={false} />
         )}
 
-        <div>
-          <div className="eyebrow">Warum</div>
-          <Markdown className="mt-1">{exercise.explanation}</Markdown>
-        </div>
+        {rest && (
+          <Disclosure tone="quiet" summary={<span className="text-muted">Ausführliche Begründung</span>}>
+            <Markdown className="!text-[14px]">{rest}</Markdown>
+          </Disclosure>
+        )}
+        {!lead && !rest && exercise.explanation && <Markdown>{exercise.explanation}</Markdown>}
 
         {exercise.pitfalls?.length ? (
-          <div className="rounded-lg border border-warn/25 bg-warnWash px-4 py-3">
-            <div className="eyebrow !text-warn">Typische Fehler</div>
-            <ul className="mt-1.5 space-y-1 text-[13.5px]">
+          <div>
+            <div className="eyebrow">Stolperfallen</div>
+            <ul className="mt-2 space-y-1.5">
               {exercise.pitfalls.map((p, i) => (
-                <li key={i} className="flex gap-2">
-                  <span className="text-warn" aria-hidden>–</span>
-                  <span>{p}</span>
+                <li key={i} className="flex gap-2.5 text-[13px] leading-relaxed text-muted">
+                  <span className="mt-[7px] h-[5px] w-[5px] shrink-0 rounded-[1px] bg-oxide" aria-hidden />
+                  <Markdown className="!text-[13px] !text-muted [&>p]:!my-0">{p}</Markdown>
                 </li>
               ))}
             </ul>
@@ -637,16 +859,9 @@ export function Solution({ exercise, open }: { exercise: Ex; open: boolean }) {
         ) : null}
 
         {exercise.sources?.length ? (
-          <div className="flex flex-wrap items-center gap-1.5 border-t border-line pt-3 text-[12px] text-faint">
-            <span className="eyebrow">Quelle</span>
-            {exercise.sources.map((s, i) => (
-              <span key={i}>
-                {s.file}
-                {s.page ? `, S. ${s.page}` : ''}
-                {s.label ? ` — ${s.label}` : ''}
-                {i < exercise.sources!.length - 1 ? ';' : ''}
-              </span>
-            ))}
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1.5 border-t border-rule pt-3">
+            <span className="eyebrow">Nachlesen</span>
+            <SourceList sources={exercise.sources} />
           </div>
         ) : null}
       </div>
@@ -699,27 +914,27 @@ function AnswerArea({
                 }}
                 animate={
                   shown && c.correct
-                    ? { borderColor: 'rgb(var(--ok) / 0.5)' }
+                    ? { borderColor: 'rgb(var(--pos) / 0.5)' }
                     : shown && on && !c.correct
-                      ? { borderColor: 'rgb(var(--bad) / 0.5)' }
+                      ? { borderColor: 'rgb(var(--neg) / 0.5)' }
                       : {}
                 }
                 transition={{ duration: 0.3, delay: shown ? i * 0.05 : 0 }}
                 className={`flex w-full items-start gap-3 rounded-lg border px-4 py-3 text-left transition-colors
                   ${
                     shown && c.correct
-                      ? 'bg-okWash'
+                      ? 'bg-posSoft'
                       : shown && on && !c.correct
-                        ? 'bg-badWash'
+                        ? 'bg-negSoft'
                         : on
-                          ? 'border-accent bg-accentWash'
-                          : 'border-line hover:border-lineStrong hover:bg-sunken'
+                          ? 'border-accent bg-accentSoft'
+                          : 'border-rule hover:border-ruleStrong hover:bg-raised'
                   } disabled:cursor-default`}
               >
                 <span
                   className={`mt-px grid h-5 w-5 shrink-0 place-items-center border text-[11px] font-semibold transition-colors
                     ${multi ? 'rounded-[5px]' : 'rounded-full'}
-                    ${on ? 'border-accent bg-accent text-accentInk' : 'border-lineStrong text-faint'}`}
+                    ${on ? 'border-accent bg-accent text-accentInk' : 'border-ruleStrong text-faint'}`}
                 >
                   {on ? '✓' : c.id.toUpperCase()}
                 </span>
@@ -751,7 +966,7 @@ function AnswerArea({
                 </label>
                 <input
                   id={`gap-${g.id}`}
-                  className={`field-mono ${part ? (part.correct ? '!border-ok' : '!border-bad') : ''}`}
+                  className={`field-mono ${part ? (part.correct ? '!border-pos' : '!border-neg') : ''}`}
                   value={vals[String(g.id)] ?? ''}
                   disabled={disabled}
                   spellCheck={false}

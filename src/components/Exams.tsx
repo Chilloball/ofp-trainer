@@ -31,8 +31,17 @@ export function ExamList() {
 
   return (
     <Page
+      eyebrow="Unter Zeitdruck"
       title="Probeklausuren"
-      lead="Zuerst die beiden Originalklausuren des Lehrstuhls, danach beliebig viele neue Varianten nach demselben Bauplan."
+      lead="Zuerst die beiden Originalklausuren des Lehrstuhls, danach beliebig viele neue Varianten nach demselben Bauplan. Eine vollständige Klausur unter Zeitdruck zeigt Dinge, die keine Übungsrunde zeigt — vor allem, wie viel Zeit einzelne Aufgaben wirklich kosten."
+      meta={[
+        { label: 'Klausuren', value: index.exams.length },
+        { label: 'Geschrieben', value: progress.exams.length },
+        {
+          label: 'Bestes Ergebnis',
+          value: best.size ? `${Math.round(Math.max(...best.values()) * 100)} %` : '—',
+        },
+      ]}
     >
       <div className="space-y-9">
         <section>
@@ -70,7 +79,7 @@ export function ExamList() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] border-collapse text-[13.5px]">
                 <thead>
-                  <tr className="border-b border-lineStrong text-left text-[12px] uppercase tracking-[0.06em] text-faint">
+                  <tr className="border-b border-ruleStrong text-left text-[12px] uppercase tracking-[0.06em] text-faint">
                     <th className="py-2 pr-3 font-semibold">Datum</th>
                     <th className="py-2 pr-3 font-semibold">Klausur</th>
                     <th className="py-2 pr-3 text-right font-semibold">Punkte</th>
@@ -83,7 +92,7 @@ export function ExamList() {
                     const meta = index.exams.find((e) => e.id === a.examId)
                     const pct = a.max > 0 ? Math.round((a.total / a.max) * 100) : 0
                     return (
-                      <tr key={a.id} className="border-b border-line">
+                      <tr key={a.id} className="border-b border-rule">
                         <td className="py-2 pr-3 tabnum text-muted">
                           {new Date(a.startedAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' })}
                         </td>
@@ -92,7 +101,7 @@ export function ExamList() {
                           {Math.round(a.total * 10) / 10} / {a.max}
                         </td>
                         <td className="py-2 pr-3 text-right tabnum">{pct} %</td>
-                        <td className={`py-2 text-right tabnum font-medium ${pct >= 50 ? 'text-ok' : 'text-bad'}`}>
+                        <td className={`py-2 text-right tabnum font-medium ${pct >= 50 ? 'text-pos' : 'text-neg'}`}>
                           {a.grade ?? '—'}
                         </td>
                       </tr>
@@ -137,7 +146,7 @@ function ExamRow({
           </span>
           <span
             className={`font-medium sm:w-16 sm:text-right ${
-              best === undefined ? 'text-faint' : best >= 0.5 ? 'text-ok' : 'text-bad'
+              best === undefined ? 'text-faint' : best >= 0.5 ? 'text-pos' : 'text-neg'
             }`}
           >
             {best === undefined ? 'neu' : `${Math.round(best * 100)} %`}

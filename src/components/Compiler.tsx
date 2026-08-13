@@ -290,7 +290,7 @@ export function Compiler() {
           ? 'Java wird hier vollständig im Browser übersetzt und ausgeführt — kein JDK nötig.'
           : 'Python läuft als echtes CPython über WebAssembly, direkt in diesem Tab.'
       }
-      wide
+      width="wide"
       actions={
         <Segmented
           value={lang}
@@ -380,7 +380,7 @@ export function Compiler() {
               </div>
             </>
           ) : (
-            <div className="rounded-md border border-dashed border-line px-5 py-10 text-center">
+            <div className="rounded-md border border-dashed border-rule px-5 py-10 text-center">
               <p className="text-[14px] text-muted">Noch nichts ausgeführt.</p>
               <p className="mt-1 text-[13px] text-faint">
                 Die Ausgabe erscheint hier — inklusive Compilerfehlern mit Zeilennummer.
@@ -388,7 +388,7 @@ export function Compiler() {
             </div>
           )}
 
-          <div className="mt-5 rounded-md border border-line bg-sunken px-4 py-3.5">
+          <div className="mt-5 rounded-md border border-rule bg-raised px-4 py-3.5">
             <div className="eyebrow">Gut zu wissen</div>
             <ul className="mt-2 space-y-1.5 text-[13px] text-muted">
               {lang === 'java' ? (

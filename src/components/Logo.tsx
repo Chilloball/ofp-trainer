@@ -3,71 +3,94 @@
 import { motion, useReducedMotion } from 'motion/react'
 
 /* ==================================================================== *
- *  OFP-Logo
+ *  Bildmarke
  *
- *  Die Marke bringt beide Hälften des Fachs zusammen: die geschweiften
- *  Klammern der objektorientierten Welt und das Lambda der funktionalen.
- *  Beim ersten Erscheinen zeichnet sich das Zeichen — als kleine
- *  Erinnerung daran, dass hier etwas gebaut wird.
+ *  Zwei eckige Klammern — das Zeichen für Quelltext — und dazwischen
+ *  eine Treppe aus drei Stufen: der Lernpfad. Die oberste Stufe steht in
+ *  Ultramarin, weil sie das Ziel ist: die Klausur.
+ *
+ *  Das ist bewusst kein rundes Feld mit `{ }` darin. Diese Marke lässt
+ *  sich in einer Zeile erklären, und genau das macht sie zu einer Marke
+ *  statt zu einem Platzhalter.
  * ==================================================================== */
 
-export function LogoMark({ size = 30, className = '', animate = false }: { size?: number; className?: string; animate?: boolean }) {
-  const still = useReducedMotion()
-  const draw = animate && !still
+const STEPS = [
+  { x: 8.1, y: 13.3 },
+  { x: 10.4, y: 10.4 },
+  { x: 12.7, y: 7.5 },
+]
 
-  const stroke = {
-    stroke: 'rgb(var(--paper))',
-    strokeWidth: 1.7,
-    strokeLinecap: 'round' as const,
-    strokeLinejoin: 'round' as const,
-    fill: 'none',
-  }
+export function LogoMark({ size = 24, animate = false }: { size?: number; animate?: boolean }) {
+  const still = useReducedMotion()
+  const move = animate && !still
 
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" className={className} role="img" aria-label="OFP">
-      <rect width="32" height="32" rx="8" fill="rgb(var(--ink))" />
-      <motion.path
-        d="M11.6 7.4c-2.1 0-2.2 1.6-2.2 3.4 0 2.5-1.6 5.2-1.6 5.2s1.6 2.7 1.6 5.2c0 1.8.1 3.4 2.2 3.4"
-        {...stroke}
-        initial={draw ? { pathLength: 0 } : false}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 0.7, ease: 'easeInOut' }}
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+      className="shrink-0 overflow-visible"
+    >
+      {/* Klammern */}
+      <path
+        d="M7.4 3.4H4.3v17.2h3.1"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="square"
+        opacity="0.85"
       />
-      <motion.path
-        d="M20.4 7.4c2.1 0 2.2 1.6 2.2 3.4 0 2.5 1.6 5.2 1.6 5.2s-1.6 2.7-1.6 5.2c0 1.8-.1 3.4-2.2 3.4"
-        {...stroke}
-        initial={draw ? { pathLength: 0 } : false}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 0.7, ease: 'easeInOut' }}
+      <path
+        d="M16.6 3.4h3.1v17.2h-3.1"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="square"
+        opacity="0.85"
       />
-      <motion.path
-        d="M13.15 10.1 18.9 21.9"
-        {...stroke}
-        stroke="rgb(var(--brass))"
-        initial={draw ? { pathLength: 0 } : false}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 0.5, ease: 'easeInOut', delay: 0.35 }}
-      />
-      <motion.path
-        d="M16.35 16.55 13.6 21.9"
-        {...stroke}
-        stroke="rgb(var(--brass))"
-        initial={draw ? { pathLength: 0 } : false}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 0.35, ease: 'easeInOut', delay: 0.6 }}
-      />
+
+      {/* Treppe: unten breit gelernt, oben das Ziel */}
+      {STEPS.map((s, i) => {
+        const last = i === STEPS.length - 1
+        return (
+          <motion.rect
+            key={i}
+            x={s.x}
+            y={s.y}
+            width="3.4"
+            height="3.4"
+            rx="0.6"
+            fill={last ? 'rgb(var(--accent))' : 'currentColor'}
+            opacity={last ? 1 : 0.55 + i * 0.15}
+            initial={move ? { scale: 0, opacity: 0 } : false}
+            animate={{ scale: 1, opacity: last ? 1 : 0.55 + i * 0.15 }}
+            transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1], delay: 0.12 + i * 0.11 }}
+            style={{ transformOrigin: `${s.x + 1.7}px ${s.y + 1.7}px` }}
+          />
+        )
+      })}
     </svg>
   )
 }
 
-export function Wordmark({ compact = false, animate = false }: { compact?: boolean; animate?: boolean }) {
+/**
+ * Wortmarke. „OFP" läuft breit (Archivos Breitenachse), „TRAINER" steht
+ * gesperrt in Monospace darunter — der typografische Kontrast trägt die
+ * Marke, nicht ein Effekt.
+ */
+export function Wordmark({ subtitle = true }: { subtitle?: boolean }) {
   return (
-    <span className="flex items-center gap-2.5">
-      <LogoMark size={compact ? 26 : 32} animate={animate} />
-      <span className="leading-none">
-        <span className="block font-display text-[16px] font-semibold tracking-[-0.01em]">OFP&#8202;Trainer</span>
-        {!compact && (
-          <span className="mt-[4px] block text-[10px] font-medium uppercase tracking-[0.13em] text-faint">
+    <span className="flex items-center gap-2.5 text-ink">
+      <LogoMark size={26} />
+      <span className="min-w-0">
+        <span className="flex items-baseline gap-[7px]">
+          <span className="numeral text-[17px] leading-none">OFP</span>
+          <span className="font-mono text-[10px] font-medium uppercase leading-none tracking-[0.2em] text-muted">
+            Trainer
+          </span>
+        </span>
+        {subtitle && (
+          <span className="mt-[5px] block font-mono text-[9.5px] uppercase leading-none tracking-[0.14em] text-faint">
             Universität Siegen
           </span>
         )}

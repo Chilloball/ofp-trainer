@@ -3,15 +3,19 @@
 import {
   createContext, useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from 'react'
-import type { ContentIndex, ExamAttempt, ExerciseMeta, ItemState, Settings, UserProgress } from './types'
+import type {
+  Confidence, ContentIndex, ExamAttempt, ExerciseMeta, ItemState, Settings, UserProgress,
+} from './types'
 import { EXAM_DATE, TOPIC_BY_ID } from '@/content/topics'
 import { daysUntil, newItemState, review, scoreToGrade } from './srs'
 import { readiness as computeReadiness, topicMastery, type Readiness, type TopicMastery } from './mastery'
 import { loadIndex } from './content'
-import { dayKey, previousDayKey } from './day'
+import { buildPlan, nextAction, type NextAction, type Plan } from './curriculum'
+import { calendarDaysUntil, dayKey, previousDayKey } from './day'
 import {
-  backupFilename, clearProgress, emptyProgress, exportProgress, getStorageError, importProgress,
-  installUnloadFlush, loadProgress, mergeProgress, saveProgress,
+  backupFilename, clearProgress, emptyProgress, exportProgress, getLoadSource, getStorageError,
+  importProgress, installUnloadFlush, loadProgress, markBackupTaken, mergeProgress,
+  requestPersistentStorage, saveProgress, storageHealth, type StorageHealth,
 } from './storage'
 
 /* ==================================================================== *
@@ -28,6 +32,8 @@ export interface AnswerRecord {
   ms: number
   usedHints: number
   revealed: boolean
+  /** Selbsteinschätzung VOR dem Prüfen, falls abgegeben */
+  confidence?: Confidence
 }
 
 export interface Toast {
@@ -44,6 +50,10 @@ interface StoreValue {
   index: ContentIndex | null
   loadError: string | null
   storageError: string | null
+  /** Zustand des Browserspeichers — für die ehrliche Anzeige und das Onboarding */
+  health: StorageHealth | null
+  /** Woher der Stand beim Start kam ('schnappschuss' = Rettung war nötig) */
+  loadSource: ReturnType<typeof getLoadSource>
 
   metaById: Map<string, ExerciseMeta>
   metaByTopic: Record<string, ExerciseMeta[]>
@@ -51,6 +61,10 @@ interface StoreValue {
   mastery: Record<string, TopicMastery>
   todayCount: number
   dueCount: number
+  /** Lernplan bis zur Klausur; null, solange der Aufgabenindex fehlt */
+  plan: Plan | null
+  /** der eine nächste Schritt */
+  next: NextAction | null
 
   recordAnswer(meta: ExerciseMeta, r: AnswerRecord): ItemState
   recordExam(attempt: ExamAttempt): void
@@ -63,6 +77,9 @@ interface StoreValue {
   resetTopic(topicId: string): void
   downloadBackup(): void
   restoreBackup(file: File, mode: 'replace' | 'merge'): Promise<void>
+  /** Bittet den Browser, den Speicher dauerhaft zu behalten */
+  makeStoragePersistent(): Promise<boolean>
+  refreshHealth(): Promise<void>
 
   theme: 'light' | 'dark'
   setTheme(t: 'light' | 'dark' | 'system'): void
@@ -89,12 +106,25 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [storageError, setStorageError] = useState<string | null>(null)
   const [toasts, setToasts] = useState<Toast[]>([])
   const [systemDark, setSystemDark] = useState(false)
+  const [health, setHealth] = useState<StorageHealth | null>(null)
   const toastSeq = useRef(0)
 
   /* ------------------------------ Laden ------------------------------ */
   useEffect(() => {
-    installUnloadFlush()
     let alive = true
+
+    /* Ein anderer Tab hat geschrieben → nachladen, statt den eigenen
+       veralteten Stand darüberzulegen. */
+    installUnloadFlush(() => {
+      void loadProgress().then((p) => {
+        if (!alive || !p) return
+        if (p.updatedAt > progressRef.current.updatedAt) {
+          progressRef.current = p
+          setProgress(p)
+        }
+      })
+    })
+
     ;(async () => {
       const [stored, idx] = await Promise.all([
         loadProgress().catch(() => null),
@@ -110,6 +140,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       }
       if (idx) setIndex(idx)
       setReady(true)
+      void storageHealth().then((h) => alive && setHealth(h))
     })()
 
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
@@ -172,7 +203,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         ? computeReadiness(progress, metaByTopic)
         : {
             score: 0, current: 0, python: 0, java: 0, grade: '5.0', quickWin: 0,
-            coverage: 0, daysToExam: Math.ceil(Math.max(0, daysUntil(EXAM_DATE))), risks: [],
+            coverage: 0, daysToExam: Math.max(0, calendarDaysUntil(EXAM_DATE)), risks: [],
           },
     [progress, metaByTopic, index],
   )
@@ -187,6 +218,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [progress.items])
 
   const isNew = !progress.settings.onboarded && Object.keys(progress.items).length === 0
+
+  /* Der Lernplan wird EINMAL zentral gerechnet und von Startseite,
+     Planseite und Übungsrunde geteilt — sonst käme jede Seite auf eine
+     leicht andere „nächste Aufgabe", und das untergräbt das Vertrauen
+     in den Plan mehr als jede Ungenauigkeit. */
+  const plan = useMemo(
+    () => (index ? buildPlan(progress, metaByTopic) : null),
+    [progress, metaByTopic, index],
+  )
+
+  const next = useMemo(
+    () => (plan ? nextAction(plan, progress, dueCount, todayCount) : null),
+    [plan, progress, dueCount, todayCount],
+  )
 
   /* ------------------------------ Aktionen ------------------------------ */
 
@@ -215,6 +260,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           ms: r.ms,
           daysToExam: Math.max(0, daysUntil(EXAM_DATE, now)),
         })
+        /* Die Sicherheitseinschätzung hängt am jüngsten Verlaufseintrag —
+           daraus wird auf der Fortschrittsseite die Kalibrierung. */
+        if (r.confidence !== undefined && computed.history[0]) {
+          computed = {
+            ...computed,
+            history: [{ ...computed.history[0], confidence: r.confidence }, ...computed.history.slice(1)],
+          }
+        }
 
         const day = today()
         const dayStat = p.days[day] ?? { done: 0, minutes: 0, correct: 0 }
@@ -253,11 +306,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           },
           streak,
           log: [
-            { t: now, exerciseId: meta.id, topicId: meta.topicId, score: r.score, ms: r.ms, usedHints: r.usedHints, revealed: r.revealed },
+            {
+              t: now, exerciseId: meta.id, topicId: meta.topicId, score: r.score, ms: r.ms,
+              usedHints: r.usedHints, revealed: r.revealed, confidence: r.confidence,
+            },
             ...p.log,
           ].slice(0, 800),
         }
-      })
+      /* SOFORT schreiben, nicht gebündelt. Eine beantwortete Aufgabe ist
+         das Wertvollste, was diese App produziert — sie darf nicht an
+         einem 300-Millisekunden-Fenster hängen, wenn jemand direkt
+         danach den Tab schließt. */
+      }, true)
 
       return computed
     },
@@ -270,6 +330,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     },
     [commit],
   )
+
+  const refreshHealth = useCallback(async () => {
+    setHealth(await storageHealth())
+  }, [])
+
+  const makeStoragePersistent = useCallback(async () => {
+    const ok = await requestPersistentStorage()
+    setHealth(await storageHealth())
+    return ok
+  }, [])
 
   const setName = useCallback(
     (name: string) => {
@@ -342,8 +412,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     a.download = backupFilename(current)
     a.click()
     setTimeout(() => URL.revokeObjectURL(url), 2000)
+    markBackupTaken()
+    void refreshHealth()
     toast('Sicherung gespeichert.', 'ok')
-  }, [toast])
+  }, [toast, refreshHealth])
 
   const restoreBackup = useCallback(
     async (file: File, mode: 'replace' | 'merge') => {
@@ -359,10 +431,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   )
 
   const value: StoreValue = {
-    ready, isNew, progress, index, loadError, storageError,
-    metaById, metaByTopic, readiness, mastery, todayCount, dueCount,
+    ready, isNew, progress, index, loadError, storageError, health, loadSource: getLoadSource(),
+    metaById, metaByTopic, readiness, mastery, todayCount, dueCount, plan, next,
     recordAnswer, recordExam, setName, setSetting, toggleFlag, toggleStar, setScratch,
-    resetAll, resetTopic, downloadBackup, restoreBackup,
+    resetAll, resetTopic, downloadBackup, restoreBackup, makeStoragePersistent, refreshHealth,
     theme, setTheme, toasts, toast,
   }
 

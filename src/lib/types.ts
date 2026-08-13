@@ -124,6 +124,19 @@ export interface Topic {
 
 export type Grade = 0 | 1 | 2 | 3 // again | hard | good | easy
 
+/**
+ * Selbsteinschätzung VOR dem Prüfen (judgment of learning).
+ *   0 = geraten · 1 = denke schon · 2 = sicher
+ *
+ * Zwei Gründe, warum das erhoben wird:
+ *  • Kalibrierung — der Abstand zwischen Sicherheit und Trefferquote ist
+ *    die aussagekräftigste Einzelzahl über den eigenen Lernstand.
+ *  • Hypercorrection — ein Fehler, den man sich SICHER war, wird nach
+ *    einer Rückmeldung besonders zuverlässig korrigiert. Dafür muss man
+ *    ihn aber erkennen können.
+ */
+export type Confidence = 0 | 1 | 2
+
 export interface ItemState {
   exerciseId: string
   topicId: string
@@ -135,7 +148,7 @@ export interface ItemState {
   lastReview: number | null
   due: number
   /** letzte Ergebnisse, neuestes zuerst (max 10) */
-  history: { t: number; score: number; ms: number; grade: Grade }[]
+  history: { t: number; score: number; ms: number; grade: Grade; confidence?: Confidence }[]
   /** 0..1 */
   mastery: number
   /** wurde als "kann ich" markiert */
@@ -176,11 +189,21 @@ export interface SessionLog {
   ms: number
   usedHints: number
   revealed: boolean
+  confidence?: Confidence
 }
 
 export interface Settings {
   /** Aufgaben pro Tag */
   dailyGoal: number
+  /**
+   * Tage vor der Klausur, an denen der Stoff fertig sein soll.
+   *
+   * Der Plan zielt bewusst NICHT auf den Klausurtag. Wer auf Kante
+   * plant, hat bei einem kranken Wochenende keinen Ausweg mehr — und
+   * die letzten Tage vor einer Prüfung sind ohnehin die schlechtesten,
+   * um Neues anzufangen.
+   */
+  bufferDays: number
   theme: 'dark' | 'light' | 'system'
   focus: 'balanced' | 'python' | 'java' | 'weakest'
   showTimer: boolean

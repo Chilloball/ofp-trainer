@@ -1,6 +1,7 @@
 import type { ExerciseMeta, UserProgress } from './types'
 import { TOPICS, TOPIC_BY_ID, EXAM_DATE, examWeight } from '@/content/topics'
 import { daysUntil, itemMastery, retrievability } from './srs'
+import { calendarDaysUntil } from './day'
 
 /* ==================================================================== *
  *  Themen-Beherrschung, Klausur-Readiness und adaptive Aufgabenwahl
@@ -125,8 +126,6 @@ export function readiness(
   now = Date.now(),
 ): Readiness {
   const tm = topicMastery(progress, exercisesByTopic, now)
-  const dte = Math.max(0, daysUntil(EXAM_DATE, now))
-
   let projected = 0
   let current = 0
   let py = 0
@@ -165,7 +164,7 @@ export function readiness(
     grade: percentToGrade(score),
     quickWin: Math.max(0, quickWin),
     coverage: covW > 0 ? Math.round((cov / covW) * 100) : 0,
-    daysToExam: Math.ceil(dte),
+    daysToExam: calendarDaysUntil(EXAM_DATE, now),
     risks: Object.values(tm).sort((a, b) => b.riskPoints - a.riskPoints),
   }
 }

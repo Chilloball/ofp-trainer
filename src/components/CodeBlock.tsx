@@ -80,16 +80,16 @@ export function CodeBlock({
   const lines = body.split('\n').length
 
   return (
-    <div className={`group relative my-3 overflow-hidden rounded-md border border-line bg-sunken ${className}`}>
+    <div className={`group relative my-3 overflow-hidden rounded-md border border-rule bg-raised ${className}`}>
       {caption && (
-        <div className="flex items-center border-b border-line px-3 py-1.5">
+        <div className="flex items-center border-b border-rule px-3 py-1.5">
           <span className="eyebrow">{caption}</span>
           <span className="ml-auto text-[11px] tabnum text-faint">{lines} Zeilen</span>
         </div>
       )}
       <button
         onClick={copy}
-        className="absolute right-1.5 top-1.5 z-10 rounded border border-line bg-surface px-1.5 py-1 text-[11px] text-muted
+        className="absolute right-1.5 top-1.5 z-10 rounded border border-rule bg-surface px-1.5 py-1 text-[11px] text-muted
                    opacity-0 transition-opacity hover:text-ink focus:opacity-100 group-hover:opacity-100"
         style={caption ? { top: '2.4rem' } : undefined}
         aria-label="Code kopieren"
@@ -112,8 +112,8 @@ export function CodeBlock({
                 <div
                   key={i}
                   {...getLineProps({ line })}
-                  className={`table-row ${hl ? 'bg-warn/12' : ''}`}
-                  style={hl ? { boxShadow: 'inset 2px 0 0 rgb(var(--warn))' } : undefined}
+                  className={`table-row ${hl ? 'bg-oxide/12' : ''}`}
+                  style={hl ? { boxShadow: 'inset 2px 0 0 rgb(var(--oxide))' } : undefined}
                 >
                   {showLineNumbers && (
                     <span className="table-cell select-none pr-3.5 text-right text-[11px] tabnum text-faint/70">
@@ -151,17 +151,17 @@ export function Console({
 }) {
   const hasErr = !!stderr && stderr.trim().length > 0
   return (
-    <div className="overflow-hidden rounded-md border border-line">
-      <div className="flex items-center border-b border-line bg-sunken px-3 py-1.5">
+    <div className="overflow-hidden rounded-md border border-rule">
+      <div className="flex items-center border-b border-rule bg-raised px-3 py-1.5">
         <span className="eyebrow">{label}</span>
-        {hasErr && <span className="ml-auto text-[11px] font-medium text-bad">Fehler</span>}
+        {hasErr && <span className="ml-auto text-[11px] font-medium text-neg">Fehler</span>}
       </div>
       <pre
         className="overflow-auto whitespace-pre-wrap break-words bg-surface px-3 py-2.5 font-mono text-[12.5px] leading-[1.6]"
         style={{ maxHeight }}
       >
         {stdout || (!hasErr ? <span className="text-faint">{empty}</span> : null)}
-        {hasErr && <span className="text-bad">{stdout ? '\n' : ''}{stderr}</span>}
+        {hasErr && <span className="text-neg">{stdout ? '\n' : ''}{stderr}</span>}
       </pre>
     </div>
   )

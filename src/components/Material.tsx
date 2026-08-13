@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { TOPICS } from '@/content/topics'
 import { Segmented } from './ui'
+import { hasPdf, pdfUrl } from '@/lib/material'
 import { Page } from './Shell'
 
 /* ==================================================================== *
@@ -85,8 +86,9 @@ export function Material() {
 
   return (
     <Page
+      eyebrow="Ablage"
       title="Kursmaterial"
-      lead="Welche Datei welches Thema abdeckt. Die Dateien selbst liegen in deinem OFP-Ordner — sie gehören dem Lehrstuhl und werden hier nicht mitgeliefert."
+      lead="Alle Folien, Aufgabenblätter und Probeklausuren des Kurses — die PDFs öffnen direkt hier, Quellenverweise in Aufgaben springen auf die richtige Seite."
       actions={
         <Segmented
           value={lang}
@@ -111,27 +113,55 @@ export function Material() {
         {grouped.map(([kind, items]) => (
           <section key={kind}>
             <h2 className="mb-3 text-[19px]">{kind}</h2>
-            <ul className="divide-y divide-line overflow-hidden rounded-lg border border-line bg-surface">
+            <ul className="divide-y divide-rule overflow-hidden rounded-lg border border-rule bg-surface">
               {items.map((m) => {
                 const topics = sourceIndex.get(m.file) ?? []
                 return (
                   <li key={m.file} className="px-4 py-3">
                     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <span className="text-[14.5px] font-medium">{m.title}</span>
+                      {hasPdf(m.file) ? (
+                        <a
+                          href={pdfUrl(m.file)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group text-[14.5px] font-medium text-ink hover:text-accent"
+                        >
+                          {m.title}
+                          <span className="ml-1.5 inline-block text-accent opacity-60 transition-transform group-hover:translate-x-0.5" aria-hidden>
+                            ↗
+                          </span>
+                        </a>
+                      ) : (
+                        <span className="text-[14.5px] font-medium">{m.title}</span>
+                      )}
                       <span className={`tag ${m.lang === 'python' ? 'tag-py' : m.lang === 'java' ? 'tag-java' : ''}`}>
                         {m.lang === 'beide' ? 'Beides' : m.lang === 'python' ? 'Python' : 'Java'}
                       </span>
-                      <code className="ml-auto font-mono text-[12px] text-faint">{m.file}</code>
+                      <code className="ml-auto hidden font-mono text-[11px] text-faint sm:inline">{m.file}</code>
                     </div>
                     {m.note && <p className="mt-1 text-[13px] text-muted">{m.note}</p>}
                     {topics.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[12.5px]">
                         <span className="text-faint">Themen:</span>
                         {topics.slice(0, 8).map((t, i) => (
-                          <Link key={i} href={`/themen/${t.topicId}`} className="text-accent hover:underline">
-                            {t.title}
-                            {t.page ? ` (S. ${t.page})` : ''}
-                          </Link>
+                          <span key={i}>
+                            <Link href={`/themen/${t.topicId}`} className="text-accent hover:underline">
+                              {t.title}
+                            </Link>
+                            {t.page && hasPdf(m.file) ? (
+                              <a
+                                href={pdfUrl(m.file, t.page)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="ml-1 font-mono text-[11px] text-muted hover:text-accent"
+                                title={t.label ?? `Seite ${t.page} öffnen`}
+                              >
+                                S.&thinsp;{t.page}
+                              </a>
+                            ) : t.page ? (
+                              <span className="ml-1 font-mono text-[11px] text-faint">S.&thinsp;{t.page}</span>
+                            ) : null}
+                          </span>
                         ))}
                         {topics.length > 8 && <span className="text-faint">und {topics.length - 8} weitere</span>}
                       </div>

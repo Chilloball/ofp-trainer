@@ -39,3 +39,19 @@ export function lastDayKeys(n: number, from: Date | number = Date.now()): string
   }
   return out
 }
+
+/**
+ * Verbleibende KALENDERTAGE bis zu einem Termin.
+ *
+ * Bewusst nicht `(ziel - jetzt) / 86400000`: Am 11. um 23 Uhr wären das
+ * bis zum 31. „19,4 Tage" und damit je nach Rundung 19 oder 20 — die
+ * Oberfläche zeigte dann an zwei Stellen verschiedene Zahlen. Ein
+ * Lernender zählt Tage im Kalender ab, nicht in Stunden.
+ */
+export function calendarDaysUntil(iso: string, from: Date | number = Date.now()): number {
+  const a = typeof from === 'number' ? new Date(from) : new Date(from.getTime())
+  const b = new Date(iso)
+  a.setHours(12, 0, 0, 0)
+  b.setHours(12, 0, 0, 0)
+  return Math.round((b.getTime() - a.getTime()) / 86_400_000)
+}

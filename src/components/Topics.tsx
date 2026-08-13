@@ -51,8 +51,15 @@ export function Topics() {
 
   return (
     <Page
+      eyebrow="Landkarte"
       title="Themen"
-      lead="Die vollständige Landkarte des Stoffs. In der Kartenansicht entspricht die Fläche eines Feldes seinem Punktegewicht in der Klausur."
+      width="wide"
+      lead="Der vollständige Stoff der Vorlesung. In der Kartenansicht entspricht die Fläche eines Feldes seinem Punktegewicht in der Klausur — große blasse Felder sind die Stellen, an denen am meisten liegen bleibt."
+      meta={[
+        { label: 'Themen', value: TOPICS.length },
+        { label: 'Aufgaben', value: index.total },
+        { label: 'Python / Java', value: `${index.byLang.python} / ${index.byLang.java}` },
+      ]}
       actions={
         <>
           <Segmented
@@ -96,14 +103,14 @@ export function Topics() {
             <Reveal key={g.title} index={gi}>
               <section>
                 <h2 className="mb-3 text-[19px]">{g.title}</h2>
-                <ul className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
+                <ul className="divide-y divide-rule overflow-hidden rounded-xl border border-rule bg-surface">
                   {g.topics.map((t, i) => {
                     const m = mastery[t.id]
                     return (
                       <li key={t.id}>
                         <Link
                           href={`/themen/${t.id}`}
-                          className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 transition-colors hover:bg-sunken sm:flex-nowrap"
+                          className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 transition-colors hover:bg-raised sm:flex-nowrap"
                         >
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">

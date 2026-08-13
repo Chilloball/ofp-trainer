@@ -47,7 +47,7 @@ export function Mermaid({ chart, className = '' }: { chart: string; className?: 
 
   if (error) {
     return (
-      <pre className="my-3 overflow-x-auto rounded-xl border border-warn/40 bg-warn/8 p-3 font-mono text-xs text-muted">
+      <pre className="my-3 overflow-x-auto rounded-xl border border-oxide/40 bg-oxide/8 p-3 font-mono text-xs text-muted">
         {chart}
       </pre>
     )
@@ -56,7 +56,7 @@ export function Mermaid({ chart, className = '' }: { chart: string; className?: 
   return (
     <div
       ref={ref}
-      className={`my-4 flex justify-center overflow-x-auto rounded-xl border border-line bg-surface2 p-4 ${className}`}
+      className={`my-4 flex justify-center overflow-x-auto rounded-xl border border-rule bg-surface2 p-4 ${className}`}
     />
   )
 }
